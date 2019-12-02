@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -eu
+
+DIR=$(dirname $(realpath $0))
+OS_MIGRATE_DIR=$(realpath "$DIR/..")
+
+if ! podman images | grep '^localhost/os_migrate_toolbox \+latest '; then
+    pushd "$OS_MIGRATE_DIR"
+    make toolbox-build
+    popd
+fi
+
+IDX=0
+while podman inspect os_migrate_$IDX &> /dev/null; do
+    ((IDX++))
+done || true
+
+podman run \
+       --name os_migrate_$IDX \
+       --detach-keys='ctrl-^' \
+       --rm \
+       --net host \
+       -v "$OS_MIGRATE_DIR:/root/os_migrate:z" \
+       ${OS_MIGRATE_TOOLBOX_ARGS:-} \
+       localhost/os_migrate_toolbox:latest \
+       "$@"

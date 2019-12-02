@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -eu
+
+DIR=$(dirname $(realpath $0))
+OS_MIGRATE_DIR=$(realpath "$DIR/..")
+
+OS_MIGRATE_TOOLBOX_ARGS=-ti $OS_MIGRATE_DIR/toolbox/run bash
