@@ -12,3 +12,12 @@ toolbox-build:
 
 toolbox-clean:
 	podman rmi localhost/tmit-toolbox:latest
+
+
+# VIRTUALENV
+
+venv-build:
+	bash toolbox/venv-build
+
+venv-clean:
+	rm -r .venv

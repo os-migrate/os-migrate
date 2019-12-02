@@ -21,6 +21,7 @@ podman run \
        --detach-keys='ctrl-^' \
        --rm \
        --net host \
+       --security-opt label=disable \
        -v "$OS_MIGRATE_DIR:/root/os_migrate:z" \
        ${OS_MIGRATE_TOOLBOX_ARGS:-} \
        localhost/os_migrate_toolbox:latest \
