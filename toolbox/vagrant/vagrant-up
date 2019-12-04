@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -euxo pipefail
+
+if ! virsh pool-list | grep vagrant &> /dev/null; then
+    virsh pool-create-as vagrant dir --target $HOME/.local/share/libvirt/vagrant
+fi
+if ! vagrant box list | grep fedora29 &> /dev/null; then
+    vagrant box add --name fedora29 https://download.fedoraproject.org/pub/fedora/linux/releases/29/Cloud/x86_64/images/Fedora-Cloud-Base-Vagrant-29-1.2.x86_64.vagrant-libvirt.box
+fi
+
+vagrant up

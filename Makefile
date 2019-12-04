@@ -11,7 +11,7 @@ toolbox-build:
 	podman tag localhost/os_migrate_toolbox:latest localhost/os_migrate_toolbox:$$(date "+%Y_%m_%d")
 
 toolbox-clean:
-	podman rmi localhost/tmit-toolbox:latest
+	podman rmi localhost/os_migrate_toolbox:latest
 
 
 # VIRTUALENV

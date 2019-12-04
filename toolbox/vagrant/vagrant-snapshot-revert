@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -euxo pipefail
+
+virsh snapshot-revert --domain os_migrate_devstack --snapshotname "${1:-clean}"

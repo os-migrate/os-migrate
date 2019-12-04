@@ -1,0 +1,14 @@
+- name: clone devstack
+  git:
+    repo: https://opendev.org/openstack/devstack
+    version: master
+    dest: /home/stack/devstack
+  become: true
+  become_user: stack
+
+- name: write devstack config
+  template:
+    src: local.conf.j2
+    dest: /home/stack/devstack/local.conf
+  become: true
+  become_user: stack

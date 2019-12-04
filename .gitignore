@@ -1,1 +1,3 @@
 /.venv
+/toolbox/vagrant/.vagrant
+/toolbox/vagrant/env

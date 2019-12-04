@@ -1,0 +1,17 @@
+- name: install packages for devstack
+  package:
+    name:
+      - git
+      - python3-devel
+      - tmux
+    state: present
+
+- name: create stack user
+  user:
+    name: stack
+
+- name: create sudoers entry for stack
+  copy:
+    dest: /etc/sudoers.d/stack
+    content: |
+      stack ALL=(ALL) NOPASSWD:ALL

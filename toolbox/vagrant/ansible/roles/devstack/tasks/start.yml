@@ -1,0 +1,7 @@
+- name: start devstack
+  shell: |
+    cd /home/stack/devstack
+    ./stack.sh 2>&1 | tee /home/stack/start-devstack.log
+    exit ${PIPESTATUS[0]}
+  become: true
+  become_user: stack

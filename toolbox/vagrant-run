@@ -1,0 +1,75 @@
+#!/bin/bash
+
+set -eu
+
+DIR=$(dirname $(realpath $0))
+OS_MIGRATE_DIR=$(realpath "$DIR/..")
+
+if ! podman images | grep '^localhost/os_migrate_toolbox \+latest '; then
+    pushd "$OS_MIGRATE_DIR"
+    make toolbox-build
+    popd
+fi
+
+CONTAINER_IMAGE=${CONTAINER_IMAGE:-localhost/os_migrate_toolbox}
+ROOTLESS_IMAGE_ID=$(podman inspect -f '{{.Id}}' $CONTAINER_IMAGE || true)
+ROOTFUL_IMAGE_ID=$(sudo podman inspect -f '{{.Id}}' $CONTAINER_IMAGE || true)
+if [ "$ROOTLESS_IMAGE_ID" != "$ROOTFUL_IMAGE_ID" ]; then
+    echo "Refreshing rootful image $CONTAINER_IMAGE..."
+    podman save $CONTAINER_IMAGE | sudo podman load $CONTAINER_IMAGE
+fi
+
+[ -e /usr/lib/passwd ] && USR_LIB_PASSWD="-v /usr/lib/passwd:/usr/lib/passwd:ro" || USR_LIB_PASSWD=""
+[ -e /usr/lib/group ] && USR_LIB_GROUP="-v /usr/lib/group:/usr/lib/group:ro" || USR_LIB_GROUP=""
+
+IDX=0
+while sudo podman inspect os_migrate_vagrant_$IDX &> /dev/null; do
+    ((IDX++))
+done || true
+
+mkdir -p $HOME/.vagrant.d
+mkdir -p $HOME/.cache/libvirt
+mkdir -p $HOME/.config/libvirt
+mkdir -p $HOME/.local/share/libvirt/vagrant
+
+sudo podman run \
+    --name os_migrate_vagrant_shell_$IDX \
+    --detach-keys='ctrl-^' \
+    --rm \
+    --net host \
+    --pid host \
+    --privileged \
+    --security-opt label=disable \
+    -u $UID:$UID \
+    -v $HOME/.vagrant.d:$HOME/.vagrant.d \
+    -v $HOME/.cache/libvirt:$HOME/.cache/libvirt \
+    -v $HOME/.config/libvirt:$HOME/.config/libvirt \
+    -v $HOME/.local/share/libvirt:$HOME/.local/share/libvirt \
+    -v $OS_MIGRATE_DIR:$OS_MIGRATE_DIR \
+    \
+    -v $XDG_RUNTIME_DIR:$XDG_RUNTIME_DIR \
+    -v /etc/passwd:/etc/passwd:ro \
+    -v /etc/group:/etc/group:ro \
+    -v /etc/libvirt:/etc/libvirt:ro \
+    -v /lib/modules:/lib/modules:ro \
+    -v /run/libvirt:/run/libvirt:shared \
+    -v /var/lib/libvirt:/var/lib/libvirt \
+    $USR_LIB_PASSWD \
+    $USR_LIB_GROUP \
+    \
+    -e LC_ALL=C.UTF-8 \
+    -e HOME="$HOME" \
+    -e SHELL="$SHELL" \
+    -e XDG_CURRENT_DESKTOP="$XDG_CURRENT_DESKTOP" \
+    -e XDG_DATA_DIRS="$XDG_DATA_DIRS" \
+    -e XDG_MENU_PREFIX="$XDG_MENU_PREFIX" \
+    -e XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
+    -e XDG_SEAT="$XDG_SEAT" \
+    -e XDG_SESSION_DESKTOP="$XDG_SESSION_DESKTOP" \
+    -e XDG_SESSION_ID="$XDG_SESSION_ID" \
+    -e XDG_SESSION_TYPE="$XDG_SESSION_TYPE" \
+    -e XDG_VTNR="$XDG_VTNR" \
+    -w "$OS_MIGRATE_DIR/toolbox/vagrant" \
+    ${OS_MIGRATE_VAGRANT_TOOLBOX_ARGS:-} \
+    localhost/os_migrate_toolbox \
+    "$@"
