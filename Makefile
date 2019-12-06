@@ -12,12 +12,3 @@ toolbox-build:
 
 toolbox-clean:
 	podman rmi localhost/os_migrate_toolbox:latest
-
-
-# VIRTUALENV
-
-venv-build:
-	bash toolbox/venv/venv-build
-
-venv-clean:
-	rm -r .venv
