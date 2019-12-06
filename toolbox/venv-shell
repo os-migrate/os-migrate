@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -eu
+
+DIR=$(dirname $(realpath $0))
+
+OS_MIGRATE_TOOLBOX_ARGS=-ti $DIR/run /usr/local/bin/venv-wrapper bash

@@ -5,7 +5,7 @@ set -eu
 DIR=$(dirname $(realpath $0))
 OS_MIGRATE_DIR=$(realpath "$DIR/..")
 
-if ! podman images | grep '^localhost/os_migrate_toolbox \+latest '; then
+if ! podman images | grep -q '^localhost/os_migrate_toolbox \+latest '; then
     pushd "$OS_MIGRATE_DIR"
     make toolbox-build
     popd
