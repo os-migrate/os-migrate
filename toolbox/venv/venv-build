@@ -3,11 +3,11 @@
 set -euo pipefail
 
 DIR=$(dirname $(realpath $0))
-OS_MIGRATE_DIR=$(realpath "$DIR/..")
+OS_MIGRATE_DIR=$(realpath "$DIR/../..")
 
 python3 -m venv $OS_MIGRATE_DIR/.venv
 source $OS_MIGRATE_DIR/.venv/bin/activate
 set -x
 pip install --upgrade pip
 pip install --upgrade setuptools
-pip install -r $OS_MIGRATE_DIR/toolbox/venv-requirements.txt
+pip install -r $OS_MIGRATE_DIR/toolbox/venv/venv-requirements.txt

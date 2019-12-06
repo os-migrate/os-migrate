@@ -17,7 +17,7 @@ toolbox-clean:
 # VIRTUALENV
 
 venv-build:
-	bash toolbox/venv-build
+	bash toolbox/venv/venv-build
 
 venv-clean:
 	rm -r .venv
