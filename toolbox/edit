@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -eu
+
+DIR=$(dirname $(realpath $0))
+OS_MIGRATE_DIR=$(realpath "$DIR/..")
+
+if ! podman images | grep '^localhost/os_migrate_toolbox \+latest '; then
+    pushd "$OS_MIGRATE_DIR"
+    make toolbox-build
+    popd
+fi
+
+if ! buildah ps | grep os_migrate_toolbox_edit; then
+    buildah from --name os_migrate_toolbox_edit localhost/os_migrate_toolbox:latest
+fi
+echo
+echo "Making edits to localhost/os_migrate_toolbox:latest in an interactive shell."
+echo "Close the shell ('exit') to commit the changes."
+echo "Close the shell with nonzero rc ('exit 1') to throw away the changes."
+echo
+if buildah run -t os_migrate_toolbox_edit -- bash; then
+    buildah commit --rm os_migrate_toolbox_edit localhost/os_migrate_toolbox:latest
+else
+    buildah rm os_migrate_toolbox_edit
+fi
