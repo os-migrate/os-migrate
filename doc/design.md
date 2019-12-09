@@ -47,6 +47,75 @@ High-level development goals
   needs of a particular tenant migration, a knowledgeable human is
   running OS-Migrate manually and/or has tweaked it to their needs.
 
+Basic Ansible workflow design
+-----------------------------
+
+* The challenge and a goal here is to give meaningful Ansible log
+  output for debugging. This means, for example, that we shouldn't
+  have a single Ansible task (one module call) to export/import the
+  whole tenant, and we should also consider not having a single task
+  to export/import all resources of some type. Ideally, each resource
+  export/import would have its own module call (own task in Ansible
+  playbook), so if the export or import fails, we can easily tell
+  which resource was the one that caused a failure.
+
+  * An open question here could be, do we want a file per resource
+    then, or do we want the modules to be able to add a resource to an
+    existing resource YAML file (=> a file per resource type, or file
+    per tenant)?
+
+* Example workflow: export networks. Provided playbook.
+
+  * Ansible task, provided: fetch metadata (at least name and ID, but
+    perhaps the more the better for advanced filtering) of all
+    networks that are visible for the tenant, register a list
+    variable.
+
+  * Ansible task(s) optionally added by user into our playbook on
+    per-environment basis: filter the metadata according to custom
+    needs, re-register the list var.
+
+    * Eventually we may want to provide some hooks here, but initially
+      we'd be fine with users simply editing the provided playbook.
+
+  * Anisble task, provided, calling our custom module: Iterate (`loop`)
+    over the list of metadata, and call our module which will fetch
+    the data and write a YAML with our defined format for Network
+    resources. If necessary, do any data mangling here to satisfy the
+    format requirements.
+
+* Example workflow: transform networks.
+
+  * Initially we will not provide any tooling here, but at this point
+    the user should have a YAML file (or a bunch of them) with the
+    serialized resources. They can use any automation (Ansible, yq,
+    sed, ...) to go through them and edit as they please before
+    importing.
+
+* Example workflow: import networks. Provided playbook.
+
+  * Ansible task, provided: read the serialized YAML networks into
+    memory, register a list variable.
+
+  * Anisble task, provided: Iterate (`loop`) over the list of
+    networks, and call an Ansible module to create each network. We'll
+    want to create our own module here to deal with our file format
+    specifics, but underneath we may be calling the community
+    OpenStack Ansible module if that proves helpful.
+
+* Example workflow: import/export tenant. Provided playbook.
+
+  * Just `import_playbook` for individual resource type playbooks.
+
+* We may want to consider using `tags` on our tasks to allow some
+  sub-executions. However, it may be that chunking up the code and
+  using `import_playbook` might be more clear and safe to use than
+  `tags` in many cases. If we do happen to add `tags`, they shouldn't
+  be added wildly, use cases should be thought throught and documented
+  for both users and developers. Tags need clarity and disciplined use
+  in order to be helpful.
+
+
 Misc
 ----
 
@@ -56,3 +125,6 @@ Misc
   * Github does not support underscores in organization URLs
     though. So we have repo named os-migrate/os-migrate, and inside we
     have os_migrate Ansible collection.
+
+* Distribution - the preference is to distribute os-migrate via
+  Ansible Galaxy.
