@@ -1,0 +1,43 @@
+clouds:
+  testsrc:
+    auth:
+      auth_url: http://192.168.122.247/identity
+      password: password
+      project_domain_id: default
+      project_name: demo
+      user_domain_id: default
+      username: demo
+    identity_api_version: '3'
+    region_name: RegionOne
+    volume_api_version: '3'
+  devstack-admin:
+    auth:
+      auth_url: http://192.168.122.247/identity
+      password: password
+      project_domain_id: default
+      project_name: admin
+      user_domain_id: default
+      username: admin
+    identity_api_version: '3'
+    region_name: RegionOne
+    volume_api_version: '3'
+  testdst:
+    auth:
+      auth_url: http://192.168.122.247/identity
+      password: password
+      project_domain_id: default
+      project_name: alt_demo
+      user_domain_id: default
+      username: alt_demo
+    identity_api_version: '3'
+    region_name: RegionOne
+    volume_api_version: '3'
+  devstack-system-admin:
+    auth:
+      auth_url: http://192.168.122.247/identity
+      password: password
+      system_scope: all
+      username: admin
+    identity_api_version: '3'
+    region_name: RegionOne
+    volume_api_version: '3'

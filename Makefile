@@ -34,6 +34,27 @@ os_migrate-os_migrate-latest.tar.gz:
 	ln -sf $$LATEST os_migrate-os_migrate-latest.tar.gz
 
 
+# TESTS
+
+test-setup-vagrant-devstack:
+	cp toolbox/vagrant/env/clouds.yaml tests/func/clouds.yaml && \
+	sed -i -e "s/ devstack:/ testsrc:/" tests/func/clouds.yaml && \
+	sed -i -e "s/ devstack-alt:/ testdst:/" tests/func/clouds.yaml
+
+test: test-func
+
+test-func:
+	set -euxo pipefail; \
+	cd tests/func; \
+	ls; \
+	ansible-playbook \
+		-v \
+		-i $(ROOT_DIR)/os_migrate/localhost_inventory.yml \
+		-e os_migrate_src_cloud=testsrc \
+		-e os_migrate_dst_cloud=testdst \
+		test_full.yml
+
+
 # TOOLBOX
 
 toolbox-build:

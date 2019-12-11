@@ -1,0 +1,6 @@
+- hosts: migrator
+  tasks:
+    - import_tasks: clean/full.yml
+    - import_tasks: seed/full.yml
+    - import_tasks: run/full.yml
+    - import_tasks: clean/full.yml
