@@ -43,7 +43,7 @@ test-setup-vagrant-devstack:
 
 test: test-func
 
-test-func:
+test-func: reinstall
 	set -euxo pipefail; \
 	cd tests/func; \
 	ls; \
