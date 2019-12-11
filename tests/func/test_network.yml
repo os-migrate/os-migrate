@@ -1,0 +1,6 @@
+- hosts: migrator
+  tasks:
+    - import_tasks: clean/network.yml
+    - import_tasks: seed/network.yml
+    - import_tasks: run/network.yml
+    - import_tasks: clean/network.yml

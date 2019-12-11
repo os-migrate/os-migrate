@@ -96,3 +96,8 @@ make them connect to your Devstack:
 And finally run functional tests:
 
     make test-func
+
+To run functional tests for just the resource you're working on, run
+e.g.:
+
+    FUNC_TEST_PLAYBOOK=network make test-func

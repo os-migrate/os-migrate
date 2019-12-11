@@ -2,6 +2,8 @@
 SHELL := /bin/bash
 ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
+FUNC_TEST_PLAYBOOK ?= all
+
 
 # ANSIBLE COLLECTION
 
@@ -52,7 +54,7 @@ test-func: reinstall
 		-i $(ROOT_DIR)/os_migrate/localhost_inventory.yml \
 		-e os_migrate_src_cloud=testsrc \
 		-e os_migrate_dst_cloud=testdst \
-		test_all.yml
+		test_$(FUNC_TEST_PLAYBOOK).yml
 
 
 # TOOLBOX
