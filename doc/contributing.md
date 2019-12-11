@@ -78,3 +78,21 @@ To destroy the Vagrant VM, e.g. when you want to recreate it from
 scratch later, run:
 
     ./vagrant-destroy
+
+
+Running functional tests
+------------------------
+
+Assuming you've set up Vagrant+Devstack for functional testing, go
+ahead and enter a virtualenv-enabled toolbox shell:
+
+    ./toolbox/venv-shell
+
+And within it you can set up clouds.yaml file for functional tests to
+make them connect to your Devstack:
+
+    make test-setup-vagrant-devstack
+
+And finally run functional tests:
+
+    make test-func
