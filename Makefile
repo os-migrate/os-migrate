@@ -52,7 +52,7 @@ test-func: reinstall
 		-i $(ROOT_DIR)/os_migrate/localhost_inventory.yml \
 		-e os_migrate_src_cloud=testsrc \
 		-e os_migrate_dst_cloud=testdst \
-		test_full.yml
+		test_all.yml
 
 
 # TOOLBOX
