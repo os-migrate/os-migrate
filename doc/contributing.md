@@ -83,17 +83,23 @@ scratch later, run:
 Running functional tests
 ------------------------
 
+Functional tests expect `tests/func/clouds.yaml` file to exist and
+contain `testsrc` and `testdst` named clouds. The tests will connect
+to wherever these clouds.yaml entries point and create/delete
+resources there.
+
 Assuming you've set up Vagrant+Devstack for functional testing, go
 ahead and enter a virtualenv-enabled toolbox shell:
 
     ./toolbox/venv-shell
 
-And within it you can set up clouds.yaml file for functional tests to
-make them connect to your Devstack:
+Within it run a make target which will set up the aforementioned
+`tests/func/clouds.yaml` file to connect to your Vagrant+Devstack
+instance:
 
     make test-setup-vagrant-devstack
 
-And finally run functional tests:
+Finally, run the functional tests:
 
     make test-func
 
