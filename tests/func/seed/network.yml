@@ -1,6 +1,3 @@
-- debug:
-    msg: Seeding is broken due to Ansible vs openstacksdk incompatibility
-
 # Fails with: TypeError: create_network() got an unexpected keyword argument 'dns_domain'
 #
 # - name: create osm_net
@@ -8,3 +5,8 @@
 #     cloud: "{{ os_migrate_src_cloud }}"
 #     name: osm_net
 #     state: present
+- name: workaround - create osm_net via CLI
+  shell: |
+    openstack network create \
+        --os-cloud "{{ os_migrate_src_cloud }}" \
+        osm_net
