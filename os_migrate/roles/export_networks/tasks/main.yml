@@ -1,0 +1,11 @@
+- name: scan available networks
+  os_networks_info:
+    cloud: "{{ os_migrate_src_cloud }}"
+  register: src_networks_info
+
+- name: export networks
+  os_migrate.os_migrate.export_network:
+    cloud: "{{ os_migrate_src_cloud }}"
+    dir: "{{ os_migrate_data_dir }}"
+    name: "{{ item }}"
+  loop: "{{ src_networks_info.openstack_networks | json_query('[*].name') }}"

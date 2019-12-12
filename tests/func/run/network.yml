@@ -1,2 +1,10 @@
-- debug:
-    msg: Test needs to go here
+# FIXME: Find a way we can test the whole playbook rather than just
+# the role. Either make sure we're not in a play here and use
+# import_playbook, or spawn an ansible-playbook subprocess? The latter
+# might be actually a more precise way to test the real end-user
+# experience.
+- include_role:
+    name: os_migrate.os_migrate.export_networks
+
+# TODO: once the module actually writes the file, we should read and
+# verify it here.

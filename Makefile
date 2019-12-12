@@ -48,12 +48,12 @@ test: test-func
 test-func: reinstall
 	set -euxo pipefail; \
 	cd tests/func; \
-	ls; \
 	ansible-playbook \
 		-v \
 		-i $(ROOT_DIR)/os_migrate/localhost_inventory.yml \
 		-e os_migrate_src_cloud=testsrc \
 		-e os_migrate_dst_cloud=testdst \
+		-e os_migrate_data_dir=$(ROOT_DIR)/tests/func/tmpdata \
 		test_$(FUNC_TEST_PLAYBOOK).yml
 
 
