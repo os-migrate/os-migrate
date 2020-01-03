@@ -4,6 +4,11 @@ set -eu
 
 DIR=$(dirname $(realpath $0))
 OS_MIGRATE_DIR=$(realpath "$DIR/..")
+if [ -t 1 ]; then
+    CONTAINER_TTY="${CONTAINER_TTY:--ti}"
+else
+    CONTAINER_TTY="${CONTAINER_TTY:-}"
+fi
 
 if ! podman images | grep '^localhost/os_migrate_toolbox \+latest '; then
     pushd "$OS_MIGRATE_DIR"
@@ -35,6 +40,7 @@ mkdir -p $HOME/.local/share/libvirt/vagrant
 sudo podman run \
     --name os_migrate_vagrant_shell_$IDX \
     --detach-keys='ctrl-^' \
+    $CONTAINER_TTY \
     --rm \
     --net host \
     --pid host \
