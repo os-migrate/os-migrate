@@ -28,6 +28,23 @@ ephemeral container using the provided wrapper:
     ./toolbox/run echo "Hello from os-migrate toolbox."
 
 
+Sanity and unit tests
+---------------------
+
+You can run sanity tests this way:
+
+    ./toolbox/run make test-sanity
+
+And unit tests this way:
+
+    ./toolbox/run make test-unit
+
+To run sanity tests and then unit tests together, a shorthand target
+"test-fast" can be used:
+
+    ./toolbox/run make test-fast
+
+
 Vagrant for functional tests
 ----------------------------
 

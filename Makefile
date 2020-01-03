@@ -27,8 +27,8 @@ unlink-latest:
 	rm os_migrate-os_migrate-latest.tar.gz || true
 
 os_migrate-os_migrate-latest.tar.gz:
-	set -euxo pipefail; \
-	if [ -n "${VIRTUAL_ENV:-}" ]; then \
+	set -euo pipefail; \
+	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
 		source /root/venv/bin/activate; \
 	fi; \
 	ansible-galaxy collection build --force os_migrate; \
@@ -43,10 +43,13 @@ test-setup-vagrant-devstack:
 	sed -i -e "s/ devstack:/ testsrc:/" tests/func/clouds.yaml && \
 	sed -i -e "s/ devstack-alt:/ testdst:/" tests/func/clouds.yaml
 
-test: test-func
+test: test-fast test-func
 
 test-func: reinstall
-	set -euxo pipefail; \
+	set -euo pipefail; \
+	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
+		source /root/venv/bin/activate; \
+	fi; \
 	cd tests/func; \
 	ansible-playbook \
 		-v \
@@ -56,6 +59,25 @@ test-func: reinstall
 		-e os_migrate_data_dir=$(ROOT_DIR)/tests/func/tmpdata \
 		test_$(FUNC_TEST_PLAYBOOK).yml
 
+test-fast: test-sanity test-unit
+
+# We have to skip validate-modules sanity test because it checks for
+# GPLv3 licensing and AFAICT that check can't be disabled.
+test-sanity: reinstall
+	set -euo pipefail; \
+	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
+		source /root/venv/bin/activate; \
+	fi; \
+	cd /root/.ansible/collections/ansible_collections/os_migrate/os_migrate; \
+	ansible-test sanity --skip-test validate-modules
+
+test-unit: reinstall
+	set -euo pipefail; \
+	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
+		source /root/venv/bin/activate; \
+	fi; \
+	cd /root/.ansible/collections/ansible_collections/os_migrate/os_migrate; \
+	ansible-test units
 
 # TOOLBOX
 

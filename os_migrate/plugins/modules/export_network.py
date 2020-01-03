@@ -1,5 +1,8 @@
 #!/usr/bin/python
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
 ANSIBLE_METADATA = {
     'metadata_version': '1.1',
     'status': ['preview'],
@@ -48,6 +51,7 @@ from os import path
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
 from ansible.module_utils.basic import AnsibleModule
 
+
 def run_module():
     module_args = dict(
         cloud=dict(type='str', required=True),
@@ -68,9 +72,9 @@ def run_module():
 
     result['file_path'] = path.join(
         module.params['dir'],
-        "{}{}.yml".format(const.FILE_PREFIX_NETWORK, module.params['name']))
+        "{0}{1}.yml".format(const.FILE_PREFIX_NETWORK, module.params['name']))
     result['msg'] = (
-        "I should export network '{}' into file '{}' "
+        "I should export network '{0}' into file '{1}' "
         "but right now i do nothing!".format(
             module.params['name'],
             result['file_path'],
@@ -79,8 +83,10 @@ def run_module():
 
     module.exit_json(**result)
 
+
 def main():
     run_module()
+
 
 if __name__ == '__main__':
     main()
