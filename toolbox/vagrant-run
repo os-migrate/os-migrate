@@ -56,6 +56,7 @@ sudo podman run \
     -v $XDG_RUNTIME_DIR:$XDG_RUNTIME_DIR \
     -v /etc/passwd:/etc/passwd:ro \
     -v /etc/group:/etc/group:ro \
+    -v /etc/qemu:/etc/qemu:ro \
     -v /etc/libvirt:/etc/libvirt:ro \
     -v /lib/modules:/lib/modules:ro \
     -v /run/libvirt:/run/libvirt:shared \
