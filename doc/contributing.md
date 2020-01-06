@@ -88,7 +88,6 @@ When you want to develop again, you will be able to reuse the
 snapshotted Vagrant environment:
 
     ./toolbox/vagrant-shell
-    ./vagrant-up
     ./vagrant-snapshot-revert
 
 To destroy the Vagrant VM, e.g. when you want to recreate it from

@@ -2,4 +2,8 @@
 
 set -euxo pipefail
 
+if vagrant status | grep ^devstack | grep shutoff; then
+   ./vagrant-up
+fi
+
 virsh snapshot-revert --domain os_migrate_devstack --snapshotname "${1:-clean}"
