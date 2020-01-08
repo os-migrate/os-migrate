@@ -1,0 +1,87 @@
+name: e2e-devstack-test
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [2.7]
+    services:
+      rabbitmq:
+        image: rabbitmq:latest
+        ports:
+          - 5672:5672
+        options: --health-cmd "rabbitmqctl node_health_check" --health-interval 10s --health-timeout 5s --health-retries 5
+      # TODO: We should use the DB service as a container
+      # once MySQL is dropped we should use it like this:
+      #mysql:
+      #  image: mysql:5.7
+      #  env:
+      #    MYSQL_ROOT_PASSWORD: devstack
+      #    MYSQL_ALLOW_EMPTY_PASSWORD: true
+      #    MYSQL_DATABASE: devstack
+      #  ports:
+      #  - 3306/tcp
+      #  options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        sudo add-apt-repository -y ppa:projectatomic/ppa
+        sudo apt update -y
+        sudo apt install software-properties-common -y
+        sudo apt install python-dev build-essential python-mysqldb libmysqlclient-dev -y
+        sudo apt install mysql-client -y
+        sudo apt install build-essential -y
+        sudo apt install podman -y
+        python -m pip install --upgrade pip
+        pip install tox
+    - name: Verify MySQL connection from container 
+      run: |
+        mysql --host 127.0.0.1 -uroot -proot -e "SHOW DATABASES"
+    - name: Clone devstack
+      run: |
+        git clone https://opendev.org/openstack/devstack
+    - name: Install devstack
+      run: |
+        cd devstack
+        cat << EOF > local.conf
+        [[local|localrc]]
+        USE_PYTHON3=True
+        SERVICE_PASSWORD=devstack
+        ADMIN_PASSWORD=devstack
+        SERVICE_TOKEN=devstack
+        DATABASE_PASSWORD=root
+        HOST_IP=127.0.0.1
+        SERVICE_HOST=127.0.0.1
+        MYSQL_HOST=127.0.0.1
+        RABBIT_HOST=127.0.0.1
+        RABBIT_USERID=guest
+        RABBIT_PASSWORD=guest
+        # Pre-requisite
+        ENABLED_SERVICES=mysql,key
+        # Neutron
+        ENABLED_SERVICES+=,q-svc,q-agt,q-dhcp,q-l3,q-meta,neutron
+        EOF
+        cat local.conf
+        sudo ./tools/create-stack-user.sh
+        sudo chown -R stack ../devstack
+        sudo -u stack ./stack.sh
+    - name: Run sanity checks
+      run: |
+        echo "- Source stackrc"
+        source devstack/stackrc
+        echo "- Get network and routers list"
+        openstack --os-cloud devstack-admin --os-region RegionOne network list
+        openstack --os-cloud devstack-admin --os-region RegionOne router list
+    - name: Make the container image to launch the tests
+      run: |
+        make toolbox-build
+    - name: Run functional tests
+      run: |
+        ./toolbox/run make test-func
