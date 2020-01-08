@@ -27,3 +27,6 @@ pip install -r /build/venv-requirements.txt
 
 cp /build/venv-wrapper /usr/local/bin/venv-wrapper
 chmod a+x /usr/local/bin/venv-wrapper
+
+touch /.os-migrate-toolbox
+chmod 0444 /.os-migrate-toolbox
