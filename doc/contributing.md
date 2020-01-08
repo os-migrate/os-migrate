@@ -27,6 +27,10 @@ ephemeral container using the provided wrapper:
 
     ./toolbox/run echo "Hello from os-migrate toolbox."
 
+Note: the `./toolbox/<cmd>` commands are alternatives to each
+other. They shouldn't be nested, e.g. running `./toolbox/run` from
+`./toolbox/shell` will deliberately fail.
+
 
 Sanity and unit tests
 ---------------------

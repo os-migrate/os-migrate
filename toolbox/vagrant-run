@@ -2,6 +2,12 @@
 
 set -eu
 
+if [ -e /.os-migrate-toolbox ]; then
+    echo "ERROR: You're already within an os-migrate toolbox container."
+    echo "Calls to toolbox shouldn't be nested."
+    exit 1
+fi
+
 DIR=$(dirname $(realpath $0))
 OS_MIGRATE_DIR=$(realpath "$DIR/..")
 if [ -t 1 ]; then
