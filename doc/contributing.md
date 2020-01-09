@@ -79,7 +79,15 @@ known-good state later:
 
     ./vagrant-snapshot-create
 
-When a time for reverting the env comes, run:
+**Important:** the life of the Vagrant VM is tied to the life of the
+container started by `./toolbox/vagrant-shell`. That means you should
+keep the `vagrant-shell` open, and run functional tests via
+`./toolbox/run make test-func` from a different terminal. If you close
+the `vagrant-shell`, the Vagrant VM will get killed. If that happens,
+you can start it again and use `./vagrant-snapshot-revert` to revive
+the VM.
+
+If you need to revert the VM at any time, run:
 
     ./vagrant-snapshot-revert
 
