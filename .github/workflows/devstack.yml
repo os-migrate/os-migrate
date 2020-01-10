@@ -47,6 +47,13 @@ jobs:
     - name: Clone devstack
       run: |
         git clone https://opendev.org/openstack/devstack
+    # We're hitting filesystem ownership issue on some GH Actions workers:
+    # https://ubuntuforums.org/showthread.php?t=2406453
+    - name: Make sure filesystem ownership is correct
+      run: |
+        set -x
+        sudo chown root:root /
+        sudo chown root:root /bin
     - name: Install devstack
       run: |
         cd devstack
