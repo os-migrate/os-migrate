@@ -47,6 +47,11 @@ jobs:
     - name: Clone devstack
       run: |
         git clone https://opendev.org/openstack/devstack
+    - name: Fix attempt
+      run: |
+        set -x
+        sudo chown root:root /
+        sudo chown root:root /bin
     - name: Install devstack
       run: |
         cd devstack
@@ -71,7 +76,16 @@ jobs:
         cat local.conf
         sudo ./tools/create-stack-user.sh
         sudo chown -R stack ../devstack
-        sudo -u stack ./stack.sh
+        sudo -u stack ./stack.sh || true
+    - name: Debug haproxy
+      run: |
+        set -x
+        sudo ls -ld /
+        sudo ls -l /
+        sudo ls -l /run
+        sudo ls -l /run/haproxy || true
+        sudo ls -l /bin
+        sudo journalctl -u haproxy
     - name: Run sanity checks
       run: |
         echo "- Source stackrc"
