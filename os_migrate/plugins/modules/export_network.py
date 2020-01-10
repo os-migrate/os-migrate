@@ -25,10 +25,13 @@ options:
     description:
       - Named cloud to operate against.
     required: true
-  dir:
+  path:
     description:
-      - Directory where the network YAML file will be created.
-      - The name of the created file will be network-<name>.yml.
+      - Resources YAML file to where network will be serialized.
+      - In case the resource file already exists, it must match the
+        os-migrate version.
+      - In case the resource of same type and name exists in the file,
+        it will be replaced.
   name:
     description:
       - Name of the network to export. OS-Migrate requires unique resource names.
@@ -36,26 +39,28 @@ options:
 '''
 
 EXAMPLES = '''
-- name: Export mynetwork into /opt/os-migrate/network-mynetwork.yml
+- name: Export mynetwork into /opt/os-migrate/networks.yml
   os_migrate.os_migrate.export_network:
     cloud: source_cloud
-    dir: /opt/os-migrate
+    path: /opt/os-migrate/networks.yml
     name: mynetwork
 '''
 
 RETURN = '''
 '''
 
-from os import path
-
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
+import openstack
 from ansible.module_utils.basic import AnsibleModule
+
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import filesystem
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import network
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import serialization
 
 
 def run_module():
     module_args = dict(
         cloud=dict(type='str', required=True),
-        dir=dict(type='str', required=True),
+        path=dict(type='str', required=True),
         name=dict(type='str', required=True),
     )
 
@@ -70,16 +75,12 @@ def run_module():
         # supports_check_mode=True,
     )
 
-    result['file_path'] = path.join(
-        module.params['dir'],
-        "{0}{1}.yml".format(const.FILE_PREFIX_NETWORK, module.params['name']))
-    result['msg'] = (
-        "I should export network '{0}' into file '{1}' "
-        "but right now i do nothing!".format(
-            module.params['name'],
-            result['file_path'],
-        )
-    )
+    conn = openstack.connect(cloud=module.params['cloud'])
+    net = conn.get_network(module.params['name'])
+    serialized = network.serialize_network(net)
+
+    result['changed'] = filesystem.write_or_replace_resource(
+        module.params['path'], serialized)
 
     module.exit_json(**result)
 

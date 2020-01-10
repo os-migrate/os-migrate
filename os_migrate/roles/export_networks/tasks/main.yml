@@ -6,6 +6,6 @@
 - name: export networks
   os_migrate.os_migrate.export_network:
     cloud: "{{ os_migrate_src_cloud }}"
-    dir: "{{ os_migrate_data_dir }}"
+    path: "{{ os_migrate_data_dir }}/networks.yml"
     name: "{{ item }}"
   loop: "{{ src_networks_info.openstack_networks | json_query('[*].name') }}"

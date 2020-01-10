@@ -1,43 +1,33 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
 
-def serialize_network(network):
-    resource = {}
-    params = {}
-    info = {}
-    resource['params'] = params
-    resource['info'] = info
-    resource['type'] = 'openstack.network'
 
-    params['availability_zone_hints'] = network['availability_zone_hints']
-    params['availability_zones'] = network['availability_zones']
-    params['description'] = network['description']
-    params['dns_domain'] = network['dns_domain']
-    params['is_admin_state_up'] = network['is_admin_state_up']
-    params['is_default'] = network['is_default']
-    params['is_port_security_enabled'] = network['is_port_security_enabled']
-    params['is_router_external'] = network['is_router_external']
-    params['is_shared'] = network['is_shared']
-    params['is_vlan_transparent'] = network['is_vlan_transparent']
-    params['mtu'] = network['mtu']
-    params['name'] = network['name']
-    params['provider_network_type'] = network['provider_network_type']
-    params['provider_physical_network'] = network['provider_physical_network']
-    params['provider_segmentation_id'] = network['provider_segmentation_id']
-    params['qos_policy_id'] = network['qos_policy_id']
-    params['revision_number'] = network['revision_number']
-    params['segments'] = network['segments']
+def new_resources_file_struct():
+    data = {}
+    data['os_migrate_version'] = const.OS_MIGRATE_VERSION
+    data['resources'] = []
+    return data
 
-    info['created_at'] = network['created_at']
-    info['project_id'] = network['project_id']
-    info['status'] = network['status']
-    info['subnet_ids'] = network['subnet_ids']
-    info['updated_at'] = network['updated_at']
 
-    # TODO: Add a (cached?) lookup for names of id-like properties.
-    #     params['qos_policy_name']
-    #     info['project_name']
-    #     info['subnet_names']
+# Edits resources_file_struct in place.
+def add_or_replace_resource(resources, resource):
+    for i, r in enumerate(resources):
+        if is_same_resource(r, resource):
+            resources[i] = resource
+            return
 
-    return resource
+    # If we didn't return by now, the resource wasn't found, so append it.
+    resources.append(resource)
+
+
+def is_same_resource(res1, res2):
+    if res1.get('type', '__undefined1__') != res2.get('type', '__undefined2__'):
+        return False
+
+    # We can add special cases if something else than ['type'] &&
+    # ['params']['name'] should be the deciding factors for sameness,
+    # but it's not necessary for now.
+    return (res1.get('params', {}).get('name', '__undefined1__') ==
+            res2.get('params', {}).get('name', '__undefined1__'))

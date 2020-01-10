@@ -10,35 +10,59 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
 
 class TestSerialization(unittest.TestCase):
 
-    def test_serialize_network(self):
-        network = fixtures.network()
-        serialized = serialization.serialize_network(network)
-        s_params = serialized['params']
-        s_info = serialized['info']
+    def test_new_resources_file_struct(self):
+        file_struct = serialization.new_resources_file_struct()
+        self.assertEqual(file_struct['os_migrate_version'], '0.1.0')
+        self.assertEqual(file_struct['resources'], [])
 
-        self.assertEqual(serialized['type'], 'openstack.network')
-        self.assertEqual(s_params['name'], 'test-net')
-        self.assertEqual(s_params['availability_zone_hints'], ['nova', 'zone2'])
-        self.assertEqual(s_params['availability_zones'], ['nova', 'zone3'])
-        self.assertEqual(s_params['description'], 'test network')
-        self.assertEqual(s_params['dns_domain'], 'example.org')
-        self.assertEqual(s_params['is_admin_state_up'], True)
-        self.assertEqual(s_params['is_default'], False)
-        self.assertEqual(s_params['is_port_security_enabled'], True)
-        self.assertEqual(s_params['is_router_external'], False)
-        self.assertEqual(s_params['is_shared'], False)
-        self.assertEqual(s_params['is_vlan_transparent'], False)
-        self.assertEqual(s_params['mtu'], 1400)
-        self.assertEqual(s_params['name'], 'test-net')
-        self.assertEqual(s_params['provider_network_type'], 'vxlan')
-        self.assertEqual(s_params['provider_physical_network'], 'physnet')
-        self.assertEqual(s_params['provider_segmentation_id'], '456')
-        self.assertEqual(s_params['qos_policy_id'], 'uuid-test-qos-policy')
-        self.assertEqual(s_params['revision_number'], 3)
-        self.assertEqual(s_params['segments'], [])
+    def test_add_or_replace_resource(self):
+        resources = [
+            {
+                'type': 'openstack.network',
+                'params': {'name': 'one', 'description': 'one'},
+            },
+            {
+                'type': 'openstack.network',
+                'params': {'name': 'two', 'description': 'two'},
+            },
+        ]
 
-        self.assertEqual(s_info['created_at'], '2020-01-06T15:50:55Z')
-        self.assertEqual(s_info['project_id'], 'uuid-test-project')
-        self.assertEqual(s_info['status'], 'ACTIVE')
-        self.assertEqual(s_info['subnet_ids'], ['uuid-test-subnet1', 'uuid-test-subnet2'])
-        self.assertEqual(s_info['updated_at'], '2020-01-06T15:51:00Z')
+        # append at the end
+        serialization.add_or_replace_resource(resources, {
+            'type': 'openstack.network',
+            'params': {'name': 'three', 'description': 'three'},
+        })
+        self.assertEqual(resources, [
+            {
+                'type': 'openstack.network',
+                'params': {'name': 'one', 'description': 'one'},
+            },
+            {
+                'type': 'openstack.network',
+                'params': {'name': 'two', 'description': 'two'},
+            },
+            {
+                'type': 'openstack.network',
+                'params': {'name': 'three', 'description': 'three'},
+            },
+        ])
+
+        # replace existing
+        serialization.add_or_replace_resource(resources, {
+            'type': 'openstack.network',
+            'params': {'name': 'two', 'description': 'two updated'},
+        })
+        self.assertEqual(resources, [
+            {
+                'type': 'openstack.network',
+                'params': {'name': 'one', 'description': 'one'},
+            },
+            {
+                'type': 'openstack.network',
+                'params': {'name': 'two', 'description': 'two updated'},
+            },
+            {
+                'type': 'openstack.network',
+                'params': {'name': 'three', 'description': 'three'},
+            },
+        ])

@@ -4,9 +4,11 @@
 #   os_network:
 #     cloud: "{{ os_migrate_src_cloud }}"
 #     name: osm_net
+#     description: osm_net test network
 #     state: present
 - name: workaround - create osm_net via CLI
   shell: |
     openstack network create \
         --os-cloud "{{ os_migrate_src_cloud }}" \
+        --description "osm_net test network" \
         osm_net
