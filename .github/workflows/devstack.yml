@@ -2,7 +2,8 @@ name: e2e-devstack-test
 on: [push, pull_request]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       max-parallel: 4
       matrix:
