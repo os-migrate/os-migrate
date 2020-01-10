@@ -41,7 +41,7 @@ jobs:
         sudo apt install podman -y
         python -m pip install --upgrade pip
         pip install tox
-    - name: Verify MySQL connection from container 
+    - name: Verify MySQL connection from container
       run: |
         mysql --host 127.0.0.1 -uroot -proot -e "SHOW DATABASES"
     - name: Clone devstack
@@ -82,6 +82,11 @@ jobs:
     - name: Make the container image to launch the tests
       run: |
         make toolbox-build
+    - name: Connect functional tests to devstack
+      run: |
+        cp /etc/openstack/clouds.yaml tests/func/clouds.yaml && \
+        sed -i -e "s/ devstack:/ testsrc:/" tests/func/clouds.yaml && \
+        sed -i -e "s/ devstack-alt:/ testdst:/" tests/func/clouds.yaml
     - name: Run functional tests
       run: |
         ./toolbox/run make test-func

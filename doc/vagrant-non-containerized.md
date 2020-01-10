@@ -1,4 +1,4 @@
-# Installing Vagrant
+# Installing Vagrant directly on host
 
 ```
 yum install https://releases.hashicorp.com/vagrant/2.2.6/vagrant_2.2.6_x86_64.rpm -y
@@ -37,4 +37,3 @@ Start the environment using the libvirt provider
 ```
 vagrant up --provider libvirt
 ```
-
