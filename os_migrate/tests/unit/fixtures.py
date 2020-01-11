@@ -3,6 +3,25 @@ __metaclass__ = type
 
 import openstack
 
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
+
+
+def minimal_resource():
+    return {
+        'type': 'openstack.minimal',
+        'params': {
+            'name': 'minimal',
+            'description': 'minimal resource',
+        },
+    }
+
+
+def minimal_resource_file_struct():
+    return {
+        'os_migrate_version': const.OS_MIGRATE_VERSION,
+        'resources': [minimal_resource()],
+    }
+
 
 def network():
     return openstack.network.v2.network.Network(

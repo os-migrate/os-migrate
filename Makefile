@@ -69,7 +69,7 @@ test-sanity: reinstall
 		source /root/venv/bin/activate; \
 	fi; \
 	cd /root/.ansible/collections/ansible_collections/os_migrate/os_migrate; \
-	ansible-test sanity --skip-test validate-modules
+	ansible-test sanity --skip-test import --skip-test validate-modules
 
 test-unit: reinstall
 	set -euo pipefail; \

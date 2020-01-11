@@ -6,5 +6,13 @@
 - include_role:
     name: os_migrate.os_migrate.export_networks
 
-# TODO: once the module actually writes the file, we should read and
-# verify it here.
+- name: load exported data
+  set_fact:
+    resources: "{{ (lookup('file', os_migrate_data_dir + '/networks.yml') | from_yaml)
+                   ['resources'] }}"
+
+- name: verify data contents
+  assert:
+    that:
+      - (resources | json_query("[?params.name == 'osm_net'].params.description")
+        == ['osm_net test network'])
