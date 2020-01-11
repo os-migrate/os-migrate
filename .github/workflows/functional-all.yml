@@ -1,4 +1,4 @@
-name: e2e-devstack-test
+name: functional-all
 on: [push, pull_request]
 jobs:
   build:
@@ -6,7 +6,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [2.7]
+        python-version: [3.7]
     services:
       rabbitmq:
         image: rabbitmq:latest
@@ -35,7 +35,7 @@ jobs:
         sudo add-apt-repository -y ppa:projectatomic/ppa
         sudo apt update -y
         sudo apt install software-properties-common -y
-        sudo apt install python-dev build-essential python-mysqldb libmysqlclient-dev -y
+        sudo apt install python3-dev build-essential python3-mysqldb libmysqlclient-dev -y
         sudo apt install mysql-client -y
         sudo apt install build-essential -y
         sudo apt install podman -y
