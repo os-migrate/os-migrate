@@ -66,3 +66,20 @@ class TestSerialization(unittest.TestCase):
                 'params': {'name': 'three', 'description': 'three'},
             },
         ])
+
+    def test_set_sdk_param(self):
+        ser_params = {'a': 'b', 'c': 'd', 'e': 'f'}
+        sdk_params = {'g': 'h'}
+        serialization.set_sdk_param(ser_params, 'a', sdk_params, 'a')
+        self.assertEqual(sdk_params, {'a': 'b', 'g': 'h'})
+        serialization.set_sdk_param(ser_params, 'z', sdk_params, 'z')
+        self.assertEqual(sdk_params, {'a': 'b', 'g': 'h'})
+        serialization.set_sdk_param(ser_params, 'c', sdk_params, 'e')
+        self.assertEqual(sdk_params, {'a': 'b', 'g': 'h', 'e': 'd'})
+
+    def test_set_sdk_params_same_name(self):
+        ser_params = {'a': 'b', 'c': 'd', 'e': 'f'}
+        sdk_params = {'g': 'h'}
+        serialization.set_sdk_params_same_name(
+            ser_params, sdk_params, ['a', 'e', 'z'])
+        self.assertEqual(sdk_params, {'a': 'b', 'g': 'h', 'e': 'f'})

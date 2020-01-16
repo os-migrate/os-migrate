@@ -18,7 +18,7 @@ class TestFilesystem(unittest.TestCase):
             filesystem.write_or_replace_resource(
                 file_path, fixtures.minimal_resource())
 
-            file_struct = filesystem._load_resources_file(file_path)
+            file_struct = filesystem.load_resources_file(file_path)
             resource = file_struct['resources'][0]
             self.assertEqual(resource['type'], 'openstack.minimal')
             self.assertEqual(resource['params']['name'], 'minimal')
@@ -36,7 +36,7 @@ class TestFilesystem(unittest.TestCase):
             minimal2['params']['description'] = 'minimal two'
             filesystem.write_or_replace_resource(file_path, minimal2)
 
-            file_struct = filesystem._load_resources_file(file_path)
+            file_struct = filesystem.load_resources_file(file_path)
             resource0 = file_struct['resources'][0]
             resource1 = file_struct['resources'][1]
             self.assertEqual(resource0['type'], 'openstack.minimal')
