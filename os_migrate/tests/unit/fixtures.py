@@ -18,7 +18,7 @@ def minimal_resource():
 
 def minimal_resource_file_struct():
     return {
-        'os_migrate_version': const.OS_MIGRATE_VERSION,
+        'os_migrate_version': const.Manifest().os_migrate_version(),
         'resources': [minimal_resource()],
     }
 

@@ -6,7 +6,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
 
 def new_resources_file_struct():
     data = {}
-    data['os_migrate_version'] = const.OS_MIGRATE_VERSION
+    data['os_migrate_version'] = const.Manifest().os_migrate_version()
     data['resources'] = []
     return data
 
