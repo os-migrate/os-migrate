@@ -28,10 +28,10 @@ class TestSerialization(unittest.TestCase):
         ]
 
         # append at the end
-        serialization.add_or_replace_resource(resources, {
+        self.assertTrue(serialization.add_or_replace_resource(resources, {
             'type': 'openstack.network',
             'params': {'name': 'three', 'description': 'three'},
-        })
+        }))
         self.assertEqual(resources, [
             {
                 'type': 'openstack.network',
@@ -48,10 +48,30 @@ class TestSerialization(unittest.TestCase):
         ])
 
         # replace existing
-        serialization.add_or_replace_resource(resources, {
+        self.assertTrue(serialization.add_or_replace_resource(resources, {
             'type': 'openstack.network',
             'params': {'name': 'two', 'description': 'two updated'},
-        })
+        }))
+        self.assertEqual(resources, [
+            {
+                'type': 'openstack.network',
+                'params': {'name': 'one', 'description': 'one'},
+            },
+            {
+                'type': 'openstack.network',
+                'params': {'name': 'two', 'description': 'two updated'},
+            },
+            {
+                'type': 'openstack.network',
+                'params': {'name': 'three', 'description': 'three'},
+            },
+        ])
+
+        # same replacement again - should return False, nothing changed
+        self.assertFalse(serialization.add_or_replace_resource(resources, {
+            'type': 'openstack.network',
+            'params': {'name': 'two', 'description': 'two updated'},
+        }))
         self.assertEqual(resources, [
             {
                 'type': 'openstack.network',

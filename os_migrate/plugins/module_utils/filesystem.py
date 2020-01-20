@@ -16,12 +16,11 @@ def write_or_replace_resource(file_path, resource):
 
     resources = file_struct['resources']
 
-    serialization.add_or_replace_resource(resources, resource)
-
-    # TODO: Write the file only if contents changed.
-    # Return True if contents changed, False otherwise
-    _write_resources_file(file_path, file_struct)
-    return True
+    if serialization.add_or_replace_resource(resources, resource):
+        _write_resources_file(file_path, file_struct)
+        return True
+    else:
+        return False
 
 
 def load_resources_file(file_path):

@@ -11,15 +11,19 @@ def new_resources_file_struct():
     return data
 
 
-# Edits resources_file_struct in place.
+# Edits resources_file_struct in place. Returns bool whether something changed.
 def add_or_replace_resource(resources, resource):
     for i, r in enumerate(resources):
         if is_same_resource(r, resource):
-            resources[i] = resource
-            return
+            if r == resource:
+                return False
+            else:
+                resources[i] = resource
+                return True
 
     # If we didn't return by now, the resource wasn't found, so append it.
     resources.append(resource)
+    return True
 
 
 def is_same_resource(res1, res2):

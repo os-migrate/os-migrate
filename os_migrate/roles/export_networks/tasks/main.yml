@@ -8,4 +8,4 @@
     cloud: "{{ os_migrate_src_cloud }}"
     path: "{{ os_migrate_data_dir }}/networks.yml"
     name: "{{ item }}"
-  loop: "{{ src_networks_info.openstack_networks | json_query('[*].name') }}"
+  loop: "{{ src_networks_info.openstack_networks | json_query('[*].name') | sort }}"

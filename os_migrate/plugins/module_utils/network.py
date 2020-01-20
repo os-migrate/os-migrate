@@ -15,7 +15,7 @@ def serialize_network(network):
     resource['info'] = info
     resource['type'] = 'openstack.network'
 
-    params['availability_zone_hints'] = network['availability_zone_hints']
+    params['availability_zone_hints'] = sorted(network['availability_zone_hints'])
     params['description'] = network['description']
     params['dns_domain'] = network['dns_domain']
     params['is_admin_state_up'] = network['is_admin_state_up']
@@ -37,7 +37,7 @@ def serialize_network(network):
     info['project_id'] = network['project_id']
     info['revision_number'] = network['revision_number']
     info['status'] = network['status']
-    info['subnet_ids'] = network['subnet_ids']
+    info['subnet_ids'] = sorted(network['subnet_ids'])
     info['updated_at'] = network['updated_at']
 
     # TODO: Add a (cached?) lookup for names of id-like properties.

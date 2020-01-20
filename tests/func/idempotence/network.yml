@@ -1,0 +1,17 @@
+- include_role:
+    name: os_migrate.os_migrate.export_networks
+
+- name: re-load resources for idempotency test
+  set_fact:
+    resources_idem: "{{ (lookup('file', os_migrate_data_dir + '/networks.yml') | from_yaml)
+                        ['resources'] }}"
+
+- name: verify that export file did not change
+  assert:
+    that:
+      - resources_idem == resources
+    fail_msg: |
+      resources_idem:
+      {{ resources_idem | to_nice_yaml }}
+      resources:
+      {{ resources | to_nice_yaml }}
