@@ -27,13 +27,7 @@ unlink-latest:
 	rm os_migrate-os_migrate-latest.tar.gz || true
 
 os_migrate-os_migrate-latest.tar.gz:
-	set -euo pipefail; \
-	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
-		source /root/venv/bin/activate; \
-	fi; \
-	ansible-galaxy collection build --force os_migrate; \
-	LATEST=$$(ls os_migrate-os_migrate*.tar.gz | grep -v latest | sort -V | tail -n1); \
-	ln -sf $$LATEST os_migrate-os_migrate-latest.tar.gz
+	./scripts/build.sh
 
 
 # TESTS
