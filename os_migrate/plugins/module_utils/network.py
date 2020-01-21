@@ -76,3 +76,9 @@ def network_sdk_params(serialized):
     ])
 
     return sdk_params
+
+
+def network_needs_update(sdk_network, target_serialized_state):
+    current_params = serialize_network(sdk_network)['params']
+    target_params = target_serialized_state['params']
+    return current_params != target_params
