@@ -32,6 +32,7 @@ options:
         os-migrate version.
       - In case the resource of same type and name exists in the file,
         it will be replaced.
+    required: true
   name:
     description:
       - Name of the network to export. OS-Migrate requires unique resource names.
@@ -76,7 +77,7 @@ def run_module():
     )
 
     conn = openstack.connect(cloud=module.params['cloud'])
-    net = conn.get_network(module.params['name'])
+    net = conn.network.find_network(module.params['name'], ignore_missing=False)
     serialized = network.serialize_network(net)
 
     result['changed'] = filesystem.write_or_replace_resource(
