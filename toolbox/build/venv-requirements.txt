@@ -1,6 +1,8 @@
+# runtime
 ansible>=2.9.1,<2.10
 openstacksdk>=0.39.0
 
+# test
 pylint>=2.4.0
 pytest-xdist>=1.30.0
 pycodestyle>=2.5.0

@@ -10,7 +10,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import seria
 
 def write_or_replace_resource(file_path, resource):
     if path.exists(file_path):
-        file_struct = _load_resources_file(file_path)
+        file_struct = load_resources_file(file_path)
     else:
         file_struct = serialization.new_resources_file_struct()
 
@@ -24,7 +24,7 @@ def write_or_replace_resource(file_path, resource):
     return True
 
 
-def _load_resources_file(file_path):
+def load_resources_file(file_path):
     with open(file_path, 'r') as f:
         file_struct = yaml.load(f)
     return file_struct

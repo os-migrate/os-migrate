@@ -31,3 +31,13 @@ def is_same_resource(res1, res2):
     # but it's not necessary for now.
     return (res1.get('params', {}).get('name', '__undefined1__') ==
             res2.get('params', {}).get('name', '__undefined1__'))
+
+
+def set_sdk_param(ser_params, ser_key, sdk_params, sdk_key):
+    if ser_params.get(ser_key, None) is not None:
+        sdk_params[sdk_key] = ser_params[ser_key]
+
+
+def set_sdk_params_same_name(ser_params, sdk_params, param_names):
+    for p_name in param_names:
+        set_sdk_param(ser_params, p_name, sdk_params, p_name)

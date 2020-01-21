@@ -23,7 +23,7 @@ def minimal_resource_file_struct():
     }
 
 
-def network():
+def sdk_network():
     return openstack.network.v2.network.Network(
         availability_zone_hints=['nova', 'zone2'],
         availability_zones=['nova', 'zone3'],
@@ -51,3 +51,36 @@ def network():
         updated_at='2020-01-06T15:51:00Z',
         is_vlan_transparent=False,
     )
+
+
+def serialized_network():
+    return {
+        'params': {
+            'availability_zone_hints': ['nova', 'zone2'],
+            'description': 'test network',
+            'dns_domain': 'example.org',
+            'is_admin_state_up': True,
+            'is_default': False,
+            'is_port_security_enabled': True,
+            'is_router_external': False,
+            'is_shared': False,
+            'is_vlan_transparent': False,
+            'mtu': 1400,
+            'name': 'test-net',
+            'provider_network_type': 'vxlan',
+            'provider_physical_network': 'physnet',
+            'provider_segmentation_id': '456',
+            'qos_policy_id': 'uuid-test-qos-policy',
+            'segments': [],
+        },
+        'info': {
+            'availability_zones': ['nova', 'zone3'],
+            'created_at': '2020-01-06T15:50:55Z',
+            'project_id': 'uuid-test-project',
+            'revision_number': 3,
+            'status': 'ACTIVE',
+            'subnet_ids': ['uuid-test-subnet1', 'uuid-test-subnet2'],
+            'updated_at': '2020-01-06T15:51:00Z',
+        },
+        'type': 'openstack.network',
+    }
