@@ -57,6 +57,8 @@ jobs:
     - name: Install devstack
       run: |
         cd devstack
+        # Pin a specific version until we fix it.
+        git checkout 46fd6448978897c9e215fc5e038b3d91daa8db5a
         cat << EOF > local.conf
         [[local|localrc]]
         USE_PYTHON3=True
