@@ -13,10 +13,11 @@ install: os_migrate-os_migrate-latest.tar.gz
 	if [ -n "${VIRTUAL_ENV:-}" ]; then \
 		source /root/venv/bin/activate; \
 	fi; \
+        cd releases; \
 	ansible-galaxy collection install --force os_migrate-os_migrate-latest.tar.gz
 
 clean:
-	ls os_migrate-os_migrate*.tar.gz | xargs rm
+	ls releases/os_migrate-os_migrate*.tar.gz | xargs rm
 
 reinstall: build install
 
@@ -24,7 +25,7 @@ reinstall: build install
 # ANSIBLE COLLECTION -- utility targets
 
 unlink-latest:
-	rm os_migrate-os_migrate-latest.tar.gz || true
+	rm releases/os_migrate-os_migrate-latest.tar.gz || true
 
 os_migrate-os_migrate-latest.tar.gz:
 	./scripts/build.sh

@@ -59,9 +59,7 @@ done
 
 if [ "$publish" == "1" ]; then
     echo 'This version is not published, publishing!...'
-    cd ./actions/
-    mkdir -p releases
-    ansible-galaxy collection build -v --force --output-path releases/
+    ./scripts/build.sh
     ansible-galaxy collection publish \
-      releases/$current_galaxy_namespace-$current_galaxy_name-$current_galaxy_version.tar.gz --api-key $KARG
+      releases/$current_galaxy_namespace-$current_galaxy_name-latest.tar.gz --api-key $KARG
 fi
