@@ -1,4 +1,4 @@
-/os_migrate-os_migrate*.tar.gz
+/releases/*
 
 /.venv
 /tests/func/clouds.yaml
