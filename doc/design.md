@@ -47,6 +47,37 @@ High-level development goals
   needs of a particular tenant migration, a knowledgeable human is
   running OS-Migrate manually and/or has tweaked it to their needs.
 
+Challenges of the problem domain
+--------------------------------
+
+* Generally, admins can view resources of all projects, but cannot
+  create resources in those projects (unless they have a role in the
+  project). To create a resource under a project, either credentials
+  of the target non-admin user have to be used for importing, or the
+  admin user has to be added into the project for the duration of the
+  import.
+
+  * This is not true for *some* resources. As of January 2020,
+    e.g. networking resources can be created under arbitrary
+    domain/project by admin using Networking API v2, but it's not the
+    case for e.g. volumes, servers, keypairs. At least initially, we
+    will assume the general scenario that we're running the migration
+    as the tenant who owns the resources on both src/dst sides.
+
+* OpenStack doesn't have strict requirements on resource naming
+  (doesn't require non-empty, unique names). The migration tool will
+  enforce names which are non-empty, and unique per resource
+  type. This is to allow idempotent imports, which is necessary for
+  retrying imports on failure. The tool should allow to
+  export/serialize resources that are not properly named, but the
+  exported data should fail validation and be refused when fed into
+  the import command.
+
+  * In the future, if we implement running all migrations as admin
+    (might need OpenStack RFEs) instead of the tenant, we'd perhaps
+    require uniqueness per resource type per tenant, rather than just
+    per resource type.
+
 Basic Ansible workflow design
 -----------------------------
 
