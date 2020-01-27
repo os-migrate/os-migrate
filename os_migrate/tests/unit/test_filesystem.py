@@ -34,7 +34,11 @@ class TestFilesystem(unittest.TestCase):
             minimal2 = fixtures.minimal_resource()
             minimal2['params']['name'] = 'minimal2'
             minimal2['params']['description'] = 'minimal two'
-            filesystem.write_or_replace_resource(file_path, minimal2)
+            self.assertTrue(
+                filesystem.write_or_replace_resource(file_path, minimal2))
+            # repeated replacement should report no changes - return False
+            self.assertFalse(
+                filesystem.write_or_replace_resource(file_path, minimal2))
 
             file_struct = filesystem.load_resources_file(file_path)
             resource0 = file_struct['resources'][0]

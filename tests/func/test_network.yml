@@ -1,6 +1,9 @@
-- hosts: migrator
+- name: Migration
+  hosts: migrator
   tasks:
+    - import_tasks: global/prep.yml
     - import_tasks: clean/network.yml
     - import_tasks: seed/network.yml
     - import_tasks: run/network.yml
+    - import_tasks: idempotence/network.yml
     - import_tasks: clean/network.yml
