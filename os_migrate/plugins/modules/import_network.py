@@ -68,11 +68,12 @@ def run_module():
     )
 
     conn = openstack.connect(cloud=module.params['cloud'])
-    net_params = network.network_sdk_params(module.params['data'])
-    existing_network = conn.network.find_network(net_params['name'])
-    if existing_network:
-        if network.network_needs_update(
-                existing_network, module.params['data']):
+    ser_net = module.params['data']
+    net_refs = network.network_refs_from_ser(conn, ser_net)
+    net_params = network.network_sdk_params(ser_net, net_refs)
+    existing_net = conn.network.find_network(net_params['name'])
+    if existing_net:
+        if network.network_needs_update(existing_net, net_refs, ser_net):
             conn.network.update_network(net_params['name'], **net_params)
             result['changed'] = True
         # else: pass -- nothing to update

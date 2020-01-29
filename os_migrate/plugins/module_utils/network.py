@@ -8,10 +8,10 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils.serializatio
     import set_sdk_params_same_name, set_ser_params_same_name
 
 
-def serialize_network(network):
+def serialize_network(sdk_net, net_refs):
     expected_type = openstack.network.v2.network.Network
-    if type(network) != expected_type:
-        raise exc.UnexpectedResourceType(expected_type, type(network))
+    if type(sdk_net) != expected_type:
+        raise exc.UnexpectedResourceType(expected_type, type(sdk_net))
 
     resource = {}
     params = {}
@@ -20,8 +20,8 @@ def serialize_network(network):
     resource['info'] = info
     resource['type'] = 'openstack.network'
 
-    params['availability_zone_hints'] = sorted(network['availability_zone_hints'])
-    set_ser_params_same_name(params, network, [
+    params['availability_zone_hints'] = sorted(sdk_net['availability_zone_hints'])
+    set_ser_params_same_name(params, sdk_net, [
         'description',
         'dns_domain',
         'is_admin_state_up',
@@ -35,34 +35,32 @@ def serialize_network(network):
         'provider_network_type',
         'provider_physical_network',
         'provider_segmentation_id',
-        'qos_policy_id',
         'segments',
     ])
+    set_ser_params_same_name(params, net_refs, [
+        'qos_policy_name',
+    ])
 
-    info['subnet_ids'] = sorted(network['subnet_ids'])
-    set_ser_params_same_name(info, network, [
+    info['subnet_ids'] = sorted(sdk_net['subnet_ids'])
+    set_ser_params_same_name(info, sdk_net, [
         'availability_zones',
         'created_at',
         'project_id',
+        'qos_policy_id',
         'revision_number',
         'status',
         'updated_at',
     ])
 
-    # TODO: Add a (cached?) lookup for names of id-like properties.
-    #     params['qos_policy_name']
-    #     info['project_name']
-    #     info['subnet_names']
-
     return resource
 
 
-def network_sdk_params(serialized):
-    res_type = serialized.get('type', None)
+def network_sdk_params(ser_net, net_refs):
+    res_type = ser_net.get('type', None)
     if res_type != 'openstack.network':
         raise exc.UnexpectedResourceType('openstack.network', res_type)
 
-    ser_params = serialized['params']
+    ser_params = ser_net['params']
     sdk_params = {}
 
     set_sdk_params_same_name(ser_params, sdk_params, [
@@ -80,14 +78,64 @@ def network_sdk_params(serialized):
         'provider_network_type',
         'provider_physical_network',
         'provider_segmentation_id',
-        'qos_policy_id',
         'segments',
+    ])
+    set_sdk_params_same_name(net_refs, sdk_params, [
+        'qos_policy_id',
     ])
 
     return sdk_params
 
 
-def network_needs_update(sdk_network, target_serialized_state):
-    current_params = serialize_network(sdk_network)['params']
-    target_params = target_serialized_state['params']
+def network_needs_update(sdk_net, net_refs, target_ser_net):
+    current_params = serialize_network(sdk_net, net_refs)['params']
+    target_params = target_ser_net['params']
     return current_params != target_params
+
+
+def network_refs_from_sdk(conn, sdk_net):
+    expected_type = openstack.network.v2.network.Network
+    if type(sdk_net) != expected_type:
+        raise exc.UnexpectedResourceType(expected_type, type(sdk_net))
+    refs = {}
+
+    # when creating refs from SDK Network object, we copy IDs and
+    # query the cloud for names
+
+    # TODO: consider adding project_name and subnet_names. They aren't
+    # required for import but may be interesting for the transform
+    # phase.
+    for field in ['project_id', 'qos_policy_id', 'subnet_ids']:
+        refs[field] = sdk_net[field]
+    for field in ['project_name', 'qos_policy_name', 'subnet_names']:
+        refs[field] = None
+
+    if sdk_net['qos_policy_id']:
+        refs['qos_policy_name'] = conn.network.get_qos_policy(
+            sdk_net['qos_policy_id'])['name']
+
+    return refs
+
+
+def network_refs_from_ser(conn, ser_net):
+    if ser_net['type'] != 'openstack.network':
+        raise exc.UnexpectedResourceType('openstack.network', ser_net['type'])
+    ser_params = ser_net['params']
+    refs = {}
+
+    # when creating refs from serialized Network, we copy names and
+    # query the cloud for IDs
+
+    # TODO: consider adding project_name and subnet_names. They aren't
+    # required for import but may be interesting for the transform
+    # phase.
+    for field in ['qos_policy_id']:
+        refs[field] = None
+    for field in ['qos_policy_name']:
+        refs[field] = ser_params[field]
+
+    if ser_params['qos_policy_name']:
+        refs['qos_policy_id'] = conn.network.get_qos_policy(
+            ser_params['qos_policy_name'])['id']
+
+    return refs
