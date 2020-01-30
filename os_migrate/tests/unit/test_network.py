@@ -65,3 +65,15 @@ class TestNetwork(unittest.TestCase):
         # disallowed params when creating a network
         self.assertNotIn('availability_zones', sdk_params)
         self.assertNotIn('revision_number', sdk_params)
+
+    def test_network_needs_update(self):
+        sdk_net = fixtures.sdk_network()
+        serialized = network.serialize_network(sdk_net)
+
+        self.assertFalse(network.network_needs_update(sdk_net, serialized))
+
+        serialized['info']['id'] = 'different id'
+        self.assertFalse(network.network_needs_update(sdk_net, serialized))
+
+        serialized['params']['description'] = 'updated description'
+        self.assertTrue(network.network_needs_update(sdk_net, serialized))

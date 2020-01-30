@@ -1,6 +1,7 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
+import openstack
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import exc
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils.serialization \
@@ -8,6 +9,10 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils.serializatio
 
 
 def serialize_network(network):
+    expected_type = openstack.network.v2.network.Network
+    if type(network) != expected_type:
+        raise exc.UnexpectedResourceType(expected_type, type(network))
+
     resource = {}
     params = {}
     info = {}
@@ -76,3 +81,9 @@ def network_sdk_params(serialized):
     ])
 
     return sdk_params
+
+
+def network_needs_update(sdk_network, target_serialized_state):
+    current_params = serialize_network(sdk_network)['params']
+    target_params = target_serialized_state['params']
+    return current_params != target_params
