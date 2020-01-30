@@ -4,6 +4,7 @@ __metaclass__ = type
 import openstack
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import exc
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import reference
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils.serialization \
     import set_sdk_params_same_name, set_ser_params_same_name
 
@@ -110,9 +111,8 @@ def network_refs_from_sdk(conn, sdk_net):
     for field in ['project_name', 'qos_policy_name', 'subnet_names']:
         refs[field] = None
 
-    if sdk_net['qos_policy_id']:
-        refs['qos_policy_name'] = conn.network.get_qos_policy(
-            sdk_net['qos_policy_id'])['name']
+    refs['qos_policy_name'] = reference.qos_policy_name(
+        conn, sdk_net['qos_policy_id'])
 
     return refs
 
@@ -134,8 +134,7 @@ def network_refs_from_ser(conn, ser_net):
     for field in ['qos_policy_name']:
         refs[field] = ser_params[field]
 
-    if ser_params['qos_policy_name']:
-        refs['qos_policy_id'] = conn.network.get_qos_policy(
-            ser_params['qos_policy_name'])['id']
+    refs['qos_policy_name'] = reference.qos_policy_name(
+        conn, ser_params['qos_policy_name'])
 
     return refs
