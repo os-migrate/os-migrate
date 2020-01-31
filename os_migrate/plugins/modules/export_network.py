@@ -77,11 +77,12 @@ def run_module():
     )
 
     conn = openstack.connect(cloud=module.params['cloud'])
-    net = conn.network.find_network(module.params['name'], ignore_missing=False)
-    serialized = network.serialize_network(net)
+    sdk_net = conn.network.find_network(module.params['name'], ignore_missing=False)
+    net_refs = network.network_refs_from_sdk(conn, sdk_net)
+    ser_net = network.serialize_network(sdk_net, net_refs)
 
     result['changed'] = filesystem.write_or_replace_resource(
-        module.params['path'], serialized)
+        module.params['path'], ser_net)
 
     module.exit_json(**result)
 

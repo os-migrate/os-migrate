@@ -53,6 +53,17 @@ def sdk_network():
     )
 
 
+def network_refs():
+    return {
+        'project_id': 'uuid-test-project',
+        'project_name': 'test-project',
+        'qos_policy_id': 'uuid-test-qos-policy',
+        'qos_policy_name': 'test-qos-policy',
+        'subnet_ids': ['uuid-test-subnet1', 'uuid-test-subnet2'],
+        'subnet_names': ['test-subnet1', 'test-subnet2'],
+    }
+
+
 def serialized_network():
     return {
         'params': {
@@ -67,10 +78,11 @@ def serialized_network():
             'is_vlan_transparent': False,
             'mtu': 1400,
             'name': 'test-net',
+            'project_name': 'test-project',
             'provider_network_type': 'vxlan',
             'provider_physical_network': 'physnet',
             'provider_segmentation_id': '456',
-            'qos_policy_id': 'uuid-test-qos-policy',
+            'qos_policy_name': 'test-qos-policy',
             'segments': [],
         },
         'info': {
@@ -80,6 +92,7 @@ def serialized_network():
             'revision_number': 3,
             'status': 'ACTIVE',
             'subnet_ids': ['uuid-test-subnet1', 'uuid-test-subnet2'],
+            'qos_policy_id': 'uuid-test-qos-policy',
             'updated_at': '2020-01-06T15:51:00Z',
         },
         'type': 'openstack.network',

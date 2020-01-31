@@ -3,7 +3,6 @@ __metaclass__ = type
 
 import unittest
 
-from ansible_collections.os_migrate.os_migrate.tests.unit import fixtures
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import serialization
 
@@ -103,3 +102,14 @@ class TestSerialization(unittest.TestCase):
         serialization.set_sdk_params_same_name(
             ser_params, sdk_params, ['a', 'e', 'z'])
         self.assertEqual(sdk_params, {'a': 'b', 'g': 'h', 'e': 'f'})
+
+    def test_set_ser_params_same_name(self):
+        ser_params = {'g': 'h'}
+        sdk_params = {'a': 'b', 'c': 'd', 'e': 'f'}
+        serialization.set_ser_params_same_name(
+            ser_params, sdk_params, ['a', 'e'])
+        self.assertEqual(ser_params, {'a': 'b', 'g': 'h', 'e': 'f'})
+
+        with self.assertRaises(KeyError):
+            serialization.set_ser_params_same_name(
+                ser_params, sdk_params, ['a', 'e', 'z'])

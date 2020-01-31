@@ -4,14 +4,15 @@ __metaclass__ = type
 import openstack
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import exc
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import reference
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils.serialization \
-    import set_sdk_params_same_name
+    import set_sdk_params_same_name, set_ser_params_same_name
 
 
-def serialize_network(network):
+def serialize_network(sdk_net, net_refs):
     expected_type = openstack.network.v2.network.Network
-    if type(network) != expected_type:
-        raise exc.UnexpectedResourceType(expected_type, type(network))
+    if type(sdk_net) != expected_type:
+        raise exc.UnexpectedResourceType(expected_type, type(sdk_net))
 
     resource = {}
     params = {}
@@ -20,45 +21,47 @@ def serialize_network(network):
     resource['info'] = info
     resource['type'] = 'openstack.network'
 
-    params['availability_zone_hints'] = sorted(network['availability_zone_hints'])
-    params['description'] = network['description']
-    params['dns_domain'] = network['dns_domain']
-    params['is_admin_state_up'] = network['is_admin_state_up']
-    params['is_default'] = network['is_default']
-    params['is_port_security_enabled'] = network['is_port_security_enabled']
-    params['is_router_external'] = network['is_router_external']
-    params['is_shared'] = network['is_shared']
-    params['is_vlan_transparent'] = network['is_vlan_transparent']
-    params['mtu'] = network['mtu']
-    params['name'] = network['name']
-    params['provider_network_type'] = network['provider_network_type']
-    params['provider_physical_network'] = network['provider_physical_network']
-    params['provider_segmentation_id'] = network['provider_segmentation_id']
-    params['qos_policy_id'] = network['qos_policy_id']
-    params['segments'] = network['segments']
+    params['availability_zone_hints'] = sorted(sdk_net['availability_zone_hints'])
+    set_ser_params_same_name(params, sdk_net, [
+        'description',
+        'dns_domain',
+        'is_admin_state_up',
+        'is_default',
+        'is_port_security_enabled',
+        'is_router_external',
+        'is_shared',
+        'is_vlan_transparent',
+        'mtu',
+        'name',
+        'provider_network_type',
+        'provider_physical_network',
+        'provider_segmentation_id',
+        'segments',
+    ])
+    set_ser_params_same_name(params, net_refs, [
+        'qos_policy_name',
+    ])
 
-    info['availability_zones'] = network['availability_zones']
-    info['created_at'] = network['created_at']
-    info['project_id'] = network['project_id']
-    info['revision_number'] = network['revision_number']
-    info['status'] = network['status']
-    info['subnet_ids'] = sorted(network['subnet_ids'])
-    info['updated_at'] = network['updated_at']
-
-    # TODO: Add a (cached?) lookup for names of id-like properties.
-    #     params['qos_policy_name']
-    #     info['project_name']
-    #     info['subnet_names']
+    info['subnet_ids'] = sorted(sdk_net['subnet_ids'])
+    set_ser_params_same_name(info, sdk_net, [
+        'availability_zones',
+        'created_at',
+        'project_id',
+        'qos_policy_id',
+        'revision_number',
+        'status',
+        'updated_at',
+    ])
 
     return resource
 
 
-def network_sdk_params(serialized):
-    res_type = serialized.get('type', None)
+def network_sdk_params(ser_net, net_refs):
+    res_type = ser_net.get('type', None)
     if res_type != 'openstack.network':
         raise exc.UnexpectedResourceType('openstack.network', res_type)
 
-    ser_params = serialized['params']
+    ser_params = ser_net['params']
     sdk_params = {}
 
     set_sdk_params_same_name(ser_params, sdk_params, [
@@ -76,14 +79,62 @@ def network_sdk_params(serialized):
         'provider_network_type',
         'provider_physical_network',
         'provider_segmentation_id',
-        'qos_policy_id',
         'segments',
+    ])
+    set_sdk_params_same_name(net_refs, sdk_params, [
+        'qos_policy_id',
     ])
 
     return sdk_params
 
 
-def network_needs_update(sdk_network, target_serialized_state):
-    current_params = serialize_network(sdk_network)['params']
-    target_params = target_serialized_state['params']
+def network_needs_update(sdk_net, net_refs, target_ser_net):
+    current_params = serialize_network(sdk_net, net_refs)['params']
+    target_params = target_ser_net['params']
     return current_params != target_params
+
+
+def network_refs_from_sdk(conn, sdk_net):
+    expected_type = openstack.network.v2.network.Network
+    if type(sdk_net) != expected_type:
+        raise exc.UnexpectedResourceType(expected_type, type(sdk_net))
+    refs = {}
+
+    # when creating refs from SDK Network object, we copy IDs and
+    # query the cloud for names
+
+    # TODO: consider adding project_name and subnet_names. They aren't
+    # required for import but may be interesting for the transform
+    # phase.
+    for field in ['project_id', 'qos_policy_id', 'subnet_ids']:
+        refs[field] = sdk_net[field]
+    for field in ['project_name', 'qos_policy_name', 'subnet_names']:
+        refs[field] = None
+
+    refs['qos_policy_name'] = reference.qos_policy_name(
+        conn, sdk_net['qos_policy_id'])
+
+    return refs
+
+
+def network_refs_from_ser(conn, ser_net):
+    if ser_net['type'] != 'openstack.network':
+        raise exc.UnexpectedResourceType('openstack.network', ser_net['type'])
+    ser_params = ser_net['params']
+    refs = {}
+
+    # when creating refs from serialized Network, we copy names and
+    # query the cloud for IDs
+
+    # TODO: consider adding project_name and subnet_names. They aren't
+    # required for import but may be interesting for the transform
+    # phase.
+    for field in ['qos_policy_id']:
+        refs[field] = None
+    for field in ['qos_policy_name']:
+        refs[field] = ser_params[field]
+
+    refs['qos_policy_name'] = reference.qos_policy_name(
+        conn, ser_params['qos_policy_name'])
+
+    return refs

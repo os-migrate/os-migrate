@@ -45,3 +45,8 @@ def set_sdk_param(ser_params, ser_key, sdk_params, sdk_key):
 def set_sdk_params_same_name(ser_params, sdk_params, param_names):
     for p_name in param_names:
         set_sdk_param(ser_params, p_name, sdk_params, p_name)
+
+
+def set_ser_params_same_name(ser_params, sdk_params, param_names):
+    for p_name in param_names:
+        ser_params[p_name] = sdk_params[p_name]
