@@ -1,10 +1,10 @@
-OS-Migrate - contributing
-=========================
+OS-Migrate - Development Environment Setup
+==========================================
 
 Prerequisites
 -------------
 
-* Podman and Buildah for running rootless qdevelopment environment
+* Podman and Buildah for running rootless development environment
   containers.
 
 
