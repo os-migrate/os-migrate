@@ -102,15 +102,7 @@ def network_refs_from_sdk(conn, sdk_net):
 
     # when creating refs from SDK Network object, we copy IDs and
     # query the cloud for names
-
-    # TODO: consider adding project_name and subnet_names. They aren't
-    # required for import but may be interesting for the transform
-    # phase.
-    for field in ['project_id', 'qos_policy_id', 'subnet_ids']:
-        refs[field] = sdk_net[field]
-    for field in ['project_name', 'qos_policy_name', 'subnet_names']:
-        refs[field] = None
-
+    refs['qos_policy_id'] = sdk_net['qos_policy_id']
     refs['qos_policy_name'] = reference.qos_policy_name(
         conn, sdk_net['qos_policy_id'])
 
@@ -125,16 +117,8 @@ def network_refs_from_ser(conn, ser_net):
 
     # when creating refs from serialized Network, we copy names and
     # query the cloud for IDs
-
-    # TODO: consider adding project_name and subnet_names. They aren't
-    # required for import but may be interesting for the transform
-    # phase.
-    for field in ['qos_policy_id']:
-        refs[field] = None
-    for field in ['qos_policy_name']:
-        refs[field] = ser_params[field]
-
-    refs['qos_policy_name'] = reference.qos_policy_name(
+    refs['qos_policy_name'] = ser_params['qos_policy_name']
+    refs['qos_policy_id'] = reference.qos_policy_id(
         conn, ser_params['qos_policy_name'])
 
     return refs
