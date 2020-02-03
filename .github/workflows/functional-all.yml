@@ -1,5 +1,11 @@
 name: functional-all
-on: [push, pull_request]
+on:
+  push:
+    paths-ignore:
+    - 'doc/**'
+  pull_request:
+    paths-ignore:
+    - 'doc/**'
 jobs:
   build:
     runs-on: ubuntu-latest
