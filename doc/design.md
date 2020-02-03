@@ -1,6 +1,7 @@
 High-level development goals
 ----------------------------
 
+
 * I/O-based. Fetch metadata and/or content from source cloud -> write
   them as outputs -> read them as inputs -> push it to the destination
   cloud. This allows other tools to enter the phase between the "write
