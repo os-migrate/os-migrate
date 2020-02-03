@@ -2,7 +2,7 @@
 SHELL := /bin/bash
 ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
-FUNC_TEST_PLAYBOOK ?= all
+FUNC_TEST_ARGS ?=
 
 
 # ANSIBLE COLLECTION
@@ -52,7 +52,7 @@ test-func: reinstall
 		-e os_migrate_src_cloud=testsrc \
 		-e os_migrate_dst_cloud=testdst \
 		-e os_migrate_data_dir=$(ROOT_DIR)/tests/func/tmpdata \
-		test_$(FUNC_TEST_PLAYBOOK).yml
+		$(FUNC_TEST_ARGS) test_all.yml
 
 test-fast: test-sanity test-unit
 
