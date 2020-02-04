@@ -1,15 +1,15 @@
 OS-Migrate Developer Documentation
 ==================================
 
-* [Development environment setup](dev-env-setup.md) - environment
-  setup so that you can run tests your patches locally. Emphasizes use
-  of containers to keep your workstation clean.
+* [Development environment setup](dev-env-setup.md) - Environment
+  configuration to test your patches locally. Emphasizes use of
+  containers to keep your workstation clean.
 
   * [Using non-containerized
-    Vagrant](dev-env-vagrant-non-containerized.md) - the main
+    Vagrant](dev-env-vagrant-non-containerized.md) - The main
     developer docs talk about using containerized Vagrant, which
     requires running a container as root. You can use
     non-containerized Vagrant if you prefer.
 
-* [Design doc](design.md) - explanation of high-level design goals and
+* [Design doc](design.md) - Explanation of high-level design goals and
   choices.
