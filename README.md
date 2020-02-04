@@ -22,6 +22,10 @@
   </a>
 </p>
 
-## Contributing
+## Usage
 
-Refer to [doc/contributing.md](doc/contributing.md).
+Refer to [user docs](doc/user/README.md).
+
+## Development
+
+Refer to [developer docs](doc/devel/README.md).
