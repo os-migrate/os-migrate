@@ -1,1 +1,5 @@
-- import_tasks: network.yml
+- include_tasks:
+    file: network.yml
+    apply:
+      tags:
+        - test_network
