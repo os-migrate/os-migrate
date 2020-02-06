@@ -13,7 +13,7 @@ install: os_migrate-os_migrate-latest.tar.gz
 	if [ -n "${VIRTUAL_ENV:-}" ]; then \
 		source /root/venv/bin/activate; \
 	fi; \
-        cd releases; \
+	cd releases; \
 	ansible-galaxy collection install --force os_migrate-os_migrate-latest.tar.gz
 
 clean:
