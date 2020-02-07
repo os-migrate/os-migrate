@@ -11,6 +11,11 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils.serializatio
 
 
 def serialize_network(sdk_net, net_refs):
+    """Serialize OpenStack SDK network `sdk_net` into OS-Migrate
+    format. Use `net_refs` for id-to-name mappings.
+
+    Returns: Dict - OS-Migrate structure for Network
+    """
     expected_type = openstack.network.v2.network.Network
     if type(sdk_net) != expected_type:
         raise exc.UnexpectedResourceType(expected_type, type(sdk_net))
@@ -58,6 +63,12 @@ def serialize_network(sdk_net, net_refs):
 
 
 def network_sdk_params(ser_net, net_refs):
+    """Create OpenStack SDK parameters dict for creation or update of the
+    OS-Migrate Network serialization `ser_net`. Use `net_refs` for
+    name-to-id mappings.
+
+    Returns: Parameters to be fed into `openstack.network.v2.network.Network`
+    """
     res_type = ser_net.get(const.RES_TYPE, None)
     if res_type != const.RES_TYPE_NETWORK:
         raise exc.UnexpectedResourceType(const.RES_TYPE_NETWORK, res_type)
@@ -90,12 +101,26 @@ def network_sdk_params(ser_net, net_refs):
 
 
 def network_needs_update(sdk_net, net_refs, target_ser_net):
+    """Having OpenStack SDK network `sdk_net` and corresponding id-name
+    mappings `net_refs`, decide if the network needs to be updated to
+    reach state represented in OS-Migrate Network serialization
+    `target_ser_net`.
+
+    Returns: True if network needs to be updated, False otherwise
+    """
     current_params = serialize_network(sdk_net, net_refs)[const.RES_PARAMS]
     target_params = target_ser_net[const.RES_PARAMS]
     return current_params != target_params
 
 
 def network_refs_from_sdk(conn, sdk_net):
+    """Create a dict of name/id mappings for resources referenced from
+    OpenStack SDK Network `sdk_net`. Fetch any necessary information
+    from OpenStack SDK connection `conn`.
+
+    Returns: dict with names and IDs of resources referenced from
+    `sdk_net` (only those important for OS-Migrate)
+    """
     expected_type = openstack.network.v2.network.Network
     if type(sdk_net) != expected_type:
         raise exc.UnexpectedResourceType(expected_type, type(sdk_net))
@@ -111,6 +136,13 @@ def network_refs_from_sdk(conn, sdk_net):
 
 
 def network_refs_from_ser(conn, ser_net):
+    """Create a dict of name/id mappings for resources referenced from
+    OS-Migrage network serialization `sdk_net`. Fetch any necessary
+    information from OpenStack SDK connection `conn`.
+
+    Returns: dict with names and IDs of resources referenced from
+    `sdk_net` (only those important for OS-Migrate)
+    """
     if ser_net[const.RES_TYPE] != const.RES_TYPE_NETWORK:
         raise exc.UnexpectedResourceType(
             const.RES_TYPE_NETWORK, ser_net[const.RES_TYPE])
