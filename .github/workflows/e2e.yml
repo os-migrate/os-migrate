@@ -1,0 +1,145 @@
+name: e2e
+on:
+  push:
+    paths-ignore:
+    - 'doc/**'
+  pull_request:
+    paths-ignore:
+    - 'doc/**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.7]
+    services:
+      rabbitmq:
+        image: rabbitmq:latest
+        ports:
+          - 5672:5672
+        options: --health-cmd "rabbitmqctl node_health_check" --health-interval 10s --health-timeout 5s --health-retries 5
+      # TODO: We should use the DB service as a container
+      # once MySQL is dropped we should use it like this:
+      #mysql:
+      #  image: mysql:5.7
+      #  env:
+      #    MYSQL_ROOT_PASSWORD: devstack
+      #    MYSQL_ALLOW_EMPTY_PASSWORD: true
+      #    MYSQL_DATABASE: devstack
+      #  ports:
+      #  - 3306/tcp
+      #  options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        # We use ppa:projectatomic repo to install podman
+        sudo add-apt-repository -y ppa:projectatomic/ppa
+        sudo apt install podman -y
+        # We install Ansible
+        sudo apt-add-repository -y ppa:ansible/ansible
+        sudo apt install ansible -y
+        # MySQL requirements
+        sudo apt install python3-mysqldb libmysqlclient-dev mysql-client -y
+        # Httplib2 requirements
+        # We need to install this library un purpose, if not the devstack
+        # installer will crash as pip is not able to determine if its
+        # installed or not
+        sudo apt install python3-httplib2 -y
+    - name: Verify MySQL connection from container
+      run: |
+        mysql --host 127.0.0.1 -uroot -proot -e "SHOW DATABASES"
+    - name: Make the container image to launch the tests
+      run: |
+        NO_VAGRANT=1 make toolbox-build
+    # We're hitting filesystem ownership issue on some GH Actions workers:
+    # https://ubuntuforums.org/showthread.php?t=2406453
+    - name: Make sure filesystem ownership is correct
+      run: |
+        set -x
+        sudo chown root:root /
+        sudo chown root:root /bin
+    - name: Clone devstack
+      run: |
+        git clone https://opendev.org/openstack/devstack
+    - name: Configure devstack
+      run: |
+        DIR=$(pwd)
+        # Now we can use this variable across steps
+        echo "::set-env name=DIR::$DIR"
+        cd devstack
+        cat << EOF > local.conf
+        [[local|localrc]]
+        USE_PYTHON3=True
+        SERVICE_PASSWORD=devstack
+        ADMIN_PASSWORD=devstack
+        SERVICE_TOKEN=devstack
+        DATABASE_PASSWORD=root
+        HOST_IP=127.0.0.1
+        SERVICE_HOST=127.0.0.1
+        MYSQL_HOST=127.0.0.1
+        RABBIT_HOST=127.0.0.1
+        RABBIT_USERID=guest
+        RABBIT_PASSWORD=guest
+        # Pre-requisite
+        ENABLED_SERVICES=mysql,key
+        # Neutron
+        ENABLED_SERVICES+=,q-svc,q-agt,q-dhcp,q-l3,q-meta,neutron
+        EOF
+        cat local.conf
+        sudo ./tools/create-stack-user.sh
+        sudo mv $DIR/devstack /opt/stack/devstack
+        sudo chown -R stack: /opt/stack/devstack
+    #- name: Start devstack
+    #  run: |
+    #    sudo -iu stack bash -c 'cd /opt/stack/devstack; ./stack.sh'
+    #- name: Run sanity checks
+    #  run: |
+    #    echo "- Get network and routers list"
+    #    openstack --os-cloud devstack-admin --os-region RegionOne network list
+    #    openstack --os-cloud devstack-admin --os-region RegionOne router list
+    #- name: Configure environment
+    #  run: |
+    #    cp /etc/openstack/clouds.yaml tests/func/clouds.yaml && \
+    #    sed -i -e "s/ devstack:/ testsrc:/" tests/func/clouds.yaml && \
+    #    sed -i -e "s/ devstack-alt:/ testdst:/" tests/func/clouds.yaml
+    - name: Build and install the collection
+      run: |
+        # Fixme: Installing in root we should allow the -p option
+        # ./toolbox/run make build
+        #./toolbox/run make install
+        mkdir -p releases
+        ansible-galaxy collection build os_migrate -v --force --output-path releases/
+        cd releases
+        LATEST=$(ls os_migrate-os_migrate*.tar.gz | grep -v latest | sort -V | tail -n1)
+        ln -sf $LATEST os_migrate-os_migrate-latest.tar.gz
+        ansible-galaxy collection install --force -p ~/ansible-roles os_migrate-os_migrate-latest.tar.gz
+        cd ..
+    - name: Set up env
+      run: |
+        # The collection is installed globally
+        export OS_MIGRATE_DATA="$DIR/os-migrate-data"
+        mkdir -p "$OS_MIGRATE_DATA"
+        cat <<EOF > $DIR/os-migrate-vars.yml
+        # source and destination clouds, referring to names chosen in clouds.yml
+        os_migrate_src_cloud: testsrc
+        os_migrate_dst_cloud: testsrc
+        # where to put exported resources
+        os_migrate_data_dir: $DIR/os-migrate-data
+        ansible_python_interpreter: /usr/bin/python3
+        EOF
+    - name: Run the playbook
+      run: |
+        ls ~/ansible-roles/ansible_collections/os_migrate/os_migrate/roles/
+        export ANSIBLE_ROLES_PATH="~/ansible-roles/ansible_collections/os_migrate/os_migrate/roles:$ANSIBLE_ROLES_PATH"
+        export ANSIBLE_LIBRARY="~/ansible-roles/ansible_collections/os_migrate/os_migrate/plugins/modules:$ANSIBLE_LIBRARY"
+
+        ansible-playbook \
+            -i ./os_migrate/localhost_inventory.yml \
+            -e @$DIR/os-migrate-vars.yml \
+            ./os_migrate/playbooks/export_networks.yml
