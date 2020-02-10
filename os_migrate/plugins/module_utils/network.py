@@ -3,6 +3,7 @@ __metaclass__ = type
 
 import openstack
 
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import exc
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import reference
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils.serialization \
@@ -17,9 +18,9 @@ def serialize_network(sdk_net, net_refs):
     resource = {}
     params = {}
     info = {}
-    resource['params'] = params
-    resource['info'] = info
-    resource['type'] = 'openstack.network'
+    resource[const.RES_PARAMS] = params
+    resource[const.RES_INFO] = info
+    resource[const.RES_TYPE] = const.RES_TYPE_NETWORK
 
     params['availability_zone_hints'] = sorted(sdk_net['availability_zone_hints'])
     set_ser_params_same_name(params, sdk_net, [
@@ -57,11 +58,11 @@ def serialize_network(sdk_net, net_refs):
 
 
 def network_sdk_params(ser_net, net_refs):
-    res_type = ser_net.get('type', None)
-    if res_type != 'openstack.network':
-        raise exc.UnexpectedResourceType('openstack.network', res_type)
+    res_type = ser_net.get(const.RES_TYPE, None)
+    if res_type != const.RES_TYPE_NETWORK:
+        raise exc.UnexpectedResourceType(const.RES_TYPE_NETWORK, res_type)
 
-    ser_params = ser_net['params']
+    ser_params = ser_net[const.RES_PARAMS]
     sdk_params = {}
 
     set_sdk_params_same_name(ser_params, sdk_params, [
@@ -89,8 +90,8 @@ def network_sdk_params(ser_net, net_refs):
 
 
 def network_needs_update(sdk_net, net_refs, target_ser_net):
-    current_params = serialize_network(sdk_net, net_refs)['params']
-    target_params = target_ser_net['params']
+    current_params = serialize_network(sdk_net, net_refs)[const.RES_PARAMS]
+    target_params = target_ser_net[const.RES_PARAMS]
     return current_params != target_params
 
 
@@ -110,9 +111,10 @@ def network_refs_from_sdk(conn, sdk_net):
 
 
 def network_refs_from_ser(conn, ser_net):
-    if ser_net['type'] != 'openstack.network':
-        raise exc.UnexpectedResourceType('openstack.network', ser_net['type'])
-    ser_params = ser_net['params']
+    if ser_net[const.RES_TYPE] != const.RES_TYPE_NETWORK:
+        raise exc.UnexpectedResourceType(
+            const.RES_TYPE_NETWORK, ser_net[const.RES_TYPE])
+    ser_params = ser_net[const.RES_PARAMS]
     refs = {}
 
     # when creating refs from serialized Network, we copy names and

@@ -20,7 +20,7 @@ class TestFilesystem(unittest.TestCase):
 
             file_struct = filesystem.load_resources_file(file_path)
             resource = file_struct['resources'][0]
-            self.assertEqual(resource['type'], 'openstack.minimal')
+            self.assertEqual(resource['type'], 'openstack.Minimal')
             self.assertEqual(resource['params']['name'], 'minimal')
             self.assertEqual(
                 resource['params']['description'], 'minimal resource')
@@ -43,11 +43,11 @@ class TestFilesystem(unittest.TestCase):
             file_struct = filesystem.load_resources_file(file_path)
             resource0 = file_struct['resources'][0]
             resource1 = file_struct['resources'][1]
-            self.assertEqual(resource0['type'], 'openstack.minimal')
+            self.assertEqual(resource0['type'], 'openstack.Minimal')
             self.assertEqual(resource0['params']['name'], 'minimal')
             self.assertEqual(
                 resource0['params']['description'], 'minimal resource')
-            self.assertEqual(resource1['type'], 'openstack.minimal')
+            self.assertEqual(resource1['type'], 'openstack.Minimal')
             self.assertEqual(resource1['params']['name'], 'minimal2')
             self.assertEqual(
                 resource1['params']['description'], 'minimal two')

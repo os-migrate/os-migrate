@@ -8,10 +8,13 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
 
 def minimal_resource():
     return {
-        'type': 'openstack.minimal',
-        'params': {
+        const.RES_TYPE: 'openstack.Minimal',
+        const.RES_PARAMS: {
             'name': 'minimal',
             'description': 'minimal resource',
+        },
+        const.RES_INFO: {
+            'detail': 'not important for import and idempotence',
         },
     }
 
@@ -66,7 +69,7 @@ def network_refs():
 
 def serialized_network():
     return {
-        'params': {
+        const.RES_PARAMS: {
             'availability_zone_hints': ['nova', 'zone2'],
             'description': 'test network',
             'dns_domain': 'example.org',
@@ -85,7 +88,7 @@ def serialized_network():
             'qos_policy_name': 'test-qos-policy',
             'segments': [],
         },
-        'info': {
+        const.RES_INFO: {
             'availability_zones': ['nova', 'zone3'],
             'created_at': '2020-01-06T15:50:55Z',
             'project_id': 'uuid-test-project',
@@ -95,5 +98,5 @@ def serialized_network():
             'qos_policy_id': 'uuid-test-qos-policy',
             'updated_at': '2020-01-06T15:51:00Z',
         },
-        'type': 'openstack.network',
+        const.RES_TYPE: 'openstack.network.Network',
     }
