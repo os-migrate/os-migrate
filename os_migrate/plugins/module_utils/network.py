@@ -6,6 +6,7 @@ import openstack
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import exc
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import reference
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import serialization
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils.serialization \
     import set_sdk_params_same_name, set_ser_params_same_name
 
@@ -108,9 +109,8 @@ def network_needs_update(sdk_net, net_refs, target_ser_net):
 
     Returns: True if network needs to be updated, False otherwise
     """
-    current_params = serialize_network(sdk_net, net_refs)[const.RES_PARAMS]
-    target_params = target_ser_net[const.RES_PARAMS]
-    return current_params != target_params
+    current_ser_net = serialize_network(sdk_net, net_refs)
+    return serialization.resource_needs_update(current_ser_net, target_ser_net)
 
 
 def network_refs_from_sdk(conn, sdk_net):
