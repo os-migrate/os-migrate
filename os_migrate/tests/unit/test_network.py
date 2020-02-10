@@ -15,9 +15,9 @@ class TestNetwork(unittest.TestCase):
         net_refs = fixtures.network_refs()
         serialized = network.serialize_network(net, net_refs)
         s_params = serialized['params']
-        s_info = serialized['info']
+        s_info = serialized['_info']
 
-        self.assertEqual(serialized['type'], 'openstack.network')
+        self.assertEqual(serialized['type'], 'openstack.network.Network')
         self.assertEqual(s_params['availability_zone_hints'], ['nova', 'zone2'])
         self.assertEqual(s_params['description'], 'test network')
         self.assertEqual(s_params['dns_domain'], 'example.org')
@@ -77,7 +77,7 @@ class TestNetwork(unittest.TestCase):
         self.assertFalse(network.network_needs_update(
             sdk_net, net_refs, serialized))
 
-        serialized['info']['id'] = 'different id'
+        serialized['_info']['id'] = 'different id'
         self.assertFalse(network.network_needs_update(
             sdk_net, net_refs, serialized))
 

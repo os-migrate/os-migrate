@@ -27,14 +27,15 @@ def add_or_replace_resource(resources, resource):
 
 
 def is_same_resource(res1, res2):
-    if res1.get('type', '__undefined1__') != res2.get('type', '__undefined2__'):
+    if res1.get(const.RES_TYPE, '__undefined1__') != res2.get(
+            const.RES_TYPE, '__undefined2__'):
         return False
 
     # We can add special cases if something else than ['type'] &&
     # ['params']['name'] should be the deciding factors for sameness,
     # but it's not necessary for now.
-    return (res1.get('params', {}).get('name', '__undefined1__') ==
-            res2.get('params', {}).get('name', '__undefined1__'))
+    return (res1.get(const.RES_PARAMS, {}).get('name', '__undefined1__') ==
+            res2.get(const.RES_PARAMS, {}).get('name', '__undefined1__'))
 
 
 def set_sdk_param(ser_params, ser_key, sdk_params, sdk_key):
