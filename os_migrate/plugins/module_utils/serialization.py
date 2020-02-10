@@ -5,14 +5,22 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
 
 
 def new_resources_file_struct():
+    """Create an empty resources file data structure into which resources
+    can be added.
+    """
     data = {}
     data['os_migrate_version'] = const.OS_MIGRATE_VERSION
     data['resources'] = []
     return data
 
 
-# Edits resources_file_struct in place. Returns bool whether something changed.
 def add_or_replace_resource(resources, resource):
+    """Add a `resource` into `resources` struct, or replace it if already
+    present (check via is_same_resource). Edits `resources` in place.
+
+    Returns: True if something changed in resources structure, False
+    otherwise
+    """
     for i, r in enumerate(resources):
         if is_same_resource(r, resource):
             if r == resource:
@@ -27,6 +35,11 @@ def add_or_replace_resource(resources, resource):
 
 
 def is_same_resource(res1, res2):
+    """Check whether two `res1` and `res2` dicts represent the same
+    resource. Type and name are deciding factors.
+
+    Returns: True if same, False otherwise
+    """
     if res1.get(const.RES_TYPE, '__undefined1__') != res2.get(
             const.RES_TYPE, '__undefined2__'):
         return False
@@ -39,15 +52,25 @@ def is_same_resource(res1, res2):
 
 
 def set_sdk_param(ser_params, ser_key, sdk_params, sdk_key):
+    """Assign value from `ser_key` in `ser_params` dict as value for
+    `sdk_key` in `sdk_params`, but only if it isn't None.
+    """
     if ser_params.get(ser_key, None) is not None:
         sdk_params[sdk_key] = ser_params[ser_key]
 
 
 def set_sdk_params_same_name(ser_params, sdk_params, param_names):
+    """Copy values from `ser_params` into `sdk_params` for all keys in
+    `param_names` (list of strings), only for values in `ser_params`
+    which aren't None.
+    """
     for p_name in param_names:
         set_sdk_param(ser_params, p_name, sdk_params, p_name)
 
 
 def set_ser_params_same_name(ser_params, sdk_params, param_names):
+    """Copy values from `sdk_params` to `ser_params` for keys listed in
+    `param_names` (list of strings).
+    """
     for p_name in param_names:
         ser_params[p_name] = sdk_params[p_name]
