@@ -1,11 +1,28 @@
+### EXPORT IDEMPOTENCE ###
+
+- include_role:
+    name: os_migrate.os_migrate.export_networks
+  vars:
+    export_networks_name_filter:
+      - regex: '^osm_'
+
+- name: re-load resources for idempotency test
+  set_fact:
+    resources_idem: "{{ (lookup('file', os_migrate_data_dir + '/networks.yml') | from_yaml)
+                        ['resources'] }}"
+
+- name: verify that export file did not change
+  assert:
+    that:
+      - resources_idem == resources
+    fail_msg: |
+      resources_idem:
+      {{ resources_idem | to_nice_yaml }}
+      resources:
+      {{ resources | to_nice_yaml }}
+
 ### IMPORT IDEMPOTENCE ###
 
-# Testing import idempotency first, because until
-# https://github.com/os-migrate/os-migrate/issues/22 is implemented,
-# the export is only fully idempotent w/r/t osm_net, not the other
-# networks. For import idempotency test, we still want to use the
-# "hacked" resource YAML from:
-# https://github.com/os-migrate/os-migrate/pull/23/commits/eae2ec721336b18f5119df80fb82343bce306746#diff-4118187bf0e50204179ea9267d71c2a6R20-R21
 - name: look up osm_net dst cloud
   os_networks_info:
     cloud: "{{ os_migrate_dst_cloud }}"
@@ -34,23 +51,3 @@
       {{ network_import_idem_before['openstack_networks'][0].updated_at }}
       network_import_idem_after updated_at:
       {{ network_import_idem_after['openstack_networks'][0].updated_at }}
-
-### EXPORT IDEMPOTENCE ###
-
-- include_role:
-    name: os_migrate.os_migrate.export_networks
-
-- name: re-load resources for idempotency test
-  set_fact:
-    resources_idem: "{{ (lookup('file', os_migrate_data_dir + '/networks.yml') | from_yaml)
-                        ['resources'] }}"
-
-- name: verify that export file did not change
-  assert:
-    that:
-      - resources_idem == resources
-    fail_msg: |
-      resources_idem:
-      {{ resources_idem | to_nice_yaml }}
-      resources:
-      {{ resources | to_nice_yaml }}
