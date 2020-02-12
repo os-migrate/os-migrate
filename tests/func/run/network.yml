@@ -5,6 +5,9 @@
 # experience.
 - include_role:
     name: os_migrate.os_migrate.export_networks
+  vars:
+    export_networks_name_filter:
+      - regex: '^osm_'
 
 - name: load exported data
   set_fact:
@@ -16,22 +19,6 @@
     that:
       - (resources | json_query("[?params.name == 'osm_net'].params.description")
         == ['osm_net test network'])
-
-# FIXME: replace this with nice filtering on export, then delete this whole block
-# https://github.com/os-migrate/os-migrate/issues/22
-- name: ugly rewrite of resource file to only contain osm_net
-  block:
-    - set_fact:
-        file_struct: "{{ (lookup('file', os_migrate_data_dir + '/networks.yml') | from_yaml) }}"
-
-    - set_fact:
-        new_file_struct:
-          os_migrate_version: "{{ file_struct['os_migrate_version'] }}"
-          resources: "{{ file_struct['resources'] | json_query(\"[?params.name == 'osm_net']\") }}"
-
-    - copy:
-        dest: "{{ os_migrate_data_dir }}/networks.yml"
-        content: "{{ new_file_struct | to_nice_yaml }}"
 
 - include_role:
     name: os_migrate.os_migrate.import_networks

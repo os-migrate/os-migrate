@@ -3,9 +3,13 @@
     cloud: "{{ os_migrate_src_cloud }}"
   register: src_networks_info
 
+- name: filter names of networks to export
+  set_fact:
+    export_networks_names: "{{ src_networks_info.openstack_networks | json_query('[*].name') | sort | os_migrate.os_migrate.stringfilter(export_networks_name_filter) }}"
+
 - name: export networks
   os_migrate.os_migrate.export_network:
     cloud: "{{ os_migrate_src_cloud }}"
     path: "{{ os_migrate_data_dir }}/networks.yml"
     name: "{{ item }}"
-  loop: "{{ src_networks_info.openstack_networks | json_query('[*].name') | sort }}"
+  loop: "{{ export_networks_names }}"
