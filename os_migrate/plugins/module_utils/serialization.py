@@ -51,6 +51,20 @@ def is_same_resource(res1, res2):
             res2.get(const.RES_PARAMS, {}).get('name', '__undefined1__'))
 
 
+def resource_needs_update(current, target):
+    """Having two serialized resources, `current` and `target`, check if
+    the `current` resource is already in `target` state or if it needs
+    an update. The method compares the resource representations,
+    ignoring anything under `_info` dictionary keys, even in nested
+    subresources.
+
+    Returns: True if resource needs to be updated, False otherwise
+    """
+    current_trimmed = _trim_info(current)
+    target_trimmed = _trim_info(target)
+    return current_trimmed != target_trimmed
+
+
 def set_sdk_param(ser_params, ser_key, sdk_params, sdk_key):
     """Assign value from `ser_key` in `ser_params` dict as value for
     `sdk_key` in `sdk_params`, but only if it isn't None.
@@ -74,3 +88,28 @@ def set_ser_params_same_name(ser_params, sdk_params, param_names):
     """
     for p_name in param_names:
         ser_params[p_name] = sdk_params[p_name]
+
+
+def _trim_info(resource):
+    """Returns: serialized `resource` with all the '_info' keys removed,
+    even from nested resources. The original `resource` structure is
+    untouched, but the returned structure does reuse data contents to
+    save memory (it is not a deep copy).
+    """
+    def _recursive_trim(obj):
+        if isinstance(obj, dict):
+            result_dict = {}
+            for k, v in obj.items():
+                if k == const.RES_INFO:
+                    continue
+                result_dict[k] = _recursive_trim(v)
+            return result_dict
+        elif isinstance(obj, list):
+            result_list = []
+            for item in obj:
+                result_list.append(_recursive_trim(item))
+            return result_list
+        else:
+            return obj
+
+    return _recursive_trim(resource)

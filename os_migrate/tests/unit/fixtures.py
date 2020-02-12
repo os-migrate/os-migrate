@@ -26,6 +26,39 @@ def minimal_resource_file_struct():
     }
 
 
+def resource_with_nested():
+    return {
+        const.RES_TYPE: 'openstack.WithNested',
+        const.RES_PARAMS: {
+            'name': 'with-nested',
+            'description': 'resource with nested resources',
+            'subresources': [
+                {
+                    const.RES_TYPE: 'openstack.Nested',
+                    const.RES_PARAMS: {
+                        'name': 'nested-1',
+                    },
+                    const.RES_INFO: {
+                        'nested-detail': 'not important',
+                    },
+                },
+                {
+                    const.RES_TYPE: 'openstack.Nested',
+                    const.RES_PARAMS: {
+                        'name': 'nested-2',
+                    },
+                    const.RES_INFO: {
+                        'nested-detail': 'also not important',
+                    },
+                },
+            ],
+        },
+        const.RES_INFO: {
+            'detail': 'not important for import and idempotence',
+        },
+    }
+
+
 def sdk_network():
     return openstack.network.v2.network.Network(
         availability_zone_hints=['nova', 'zone2'],
