@@ -35,7 +35,7 @@ options:
     required: true
   name:
     description:
-      - Name of the network to export. OS-Migrate requires unique resource names.
+      - Name (or ID) of a Network to export.
     required: true
 '''
 
