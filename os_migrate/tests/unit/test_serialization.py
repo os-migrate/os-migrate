@@ -22,10 +22,12 @@ class TestSerialization(unittest.TestCase):
             {
                 'type': 'openstack.network.Network',
                 'params': {'name': 'one', 'description': 'one'},
+                '_info': {'id': 'id-one'},
             },
             {
                 'type': 'openstack.network.Network',
                 'params': {'name': 'two', 'description': 'two'},
+                '_info': {'id': 'id-two'},
             },
         ]
 
@@ -33,19 +35,23 @@ class TestSerialization(unittest.TestCase):
         self.assertTrue(serialization.add_or_replace_resource(resources, {
             'type': 'openstack.network.Network',
             'params': {'name': 'three', 'description': 'three'},
+            '_info': {'id': 'id-three'},
         }))
         self.assertEqual(resources, [
             {
                 'type': 'openstack.network.Network',
                 'params': {'name': 'one', 'description': 'one'},
+                '_info': {'id': 'id-one'},
             },
             {
                 'type': 'openstack.network.Network',
                 'params': {'name': 'two', 'description': 'two'},
+                '_info': {'id': 'id-two'},
             },
             {
                 'type': 'openstack.network.Network',
                 'params': {'name': 'three', 'description': 'three'},
+                '_info': {'id': 'id-three'},
             },
         ])
 
@@ -53,19 +59,23 @@ class TestSerialization(unittest.TestCase):
         self.assertTrue(serialization.add_or_replace_resource(resources, {
             'type': 'openstack.network.Network',
             'params': {'name': 'two', 'description': 'two updated'},
+            '_info': {'id': 'id-two'},
         }))
         self.assertEqual(resources, [
             {
                 'type': 'openstack.network.Network',
                 'params': {'name': 'one', 'description': 'one'},
+                '_info': {'id': 'id-one'},
             },
             {
                 'type': 'openstack.network.Network',
                 'params': {'name': 'two', 'description': 'two updated'},
+                '_info': {'id': 'id-two'},
             },
             {
                 'type': 'openstack.network.Network',
                 'params': {'name': 'three', 'description': 'three'},
+                '_info': {'id': 'id-three'},
             },
         ])
 
@@ -73,19 +83,23 @@ class TestSerialization(unittest.TestCase):
         self.assertFalse(serialization.add_or_replace_resource(resources, {
             'type': 'openstack.network.Network',
             'params': {'name': 'two', 'description': 'two updated'},
+            '_info': {'id': 'id-two'},
         }))
         self.assertEqual(resources, [
             {
                 'type': 'openstack.network.Network',
                 'params': {'name': 'one', 'description': 'one'},
+                '_info': {'id': 'id-one'},
             },
             {
                 'type': 'openstack.network.Network',
                 'params': {'name': 'two', 'description': 'two updated'},
+                '_info': {'id': 'id-two'},
             },
             {
                 'type': 'openstack.network.Network',
                 'params': {'name': 'three', 'description': 'three'},
+                '_info': {'id': 'id-three'},
             },
         ])
 
@@ -142,7 +156,9 @@ class TestSerialization(unittest.TestCase):
         self.assertTrue(serialization.is_same_resource(r1, r2))
 
         r2['params']['name'] = 'different-name'
-        self.assertFalse(serialization.is_same_resource(r1, r2))
+        self.assertTrue(serialization.is_same_resource(r1, r2))
+
+        r2['_info']['id'] = 'different-id'
 
         # reset to sameness
         r1 = fixtures.minimal_resource()
@@ -159,8 +175,8 @@ class TestSerialization(unittest.TestCase):
         r1 = fixtures.minimal_resource()
         r2 = fixtures.minimal_resource()
 
-        del r1['params']['name']
-        del r2['params']['name']
+        del r1['_info']['id']
+        del r2['_info']['id']
         self.assertFalse(serialization.is_same_resource(r1, r2))
 
     def test_set_sdk_param(self):

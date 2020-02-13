@@ -14,6 +14,7 @@ def minimal_resource():
             'description': 'minimal resource',
         },
         const.RES_INFO: {
+            'id': 'id-minimal',
             'detail': 'not important for import and idempotence',
         },
     }
@@ -39,6 +40,7 @@ def resource_with_nested():
                         'name': 'nested-1',
                     },
                     const.RES_INFO: {
+                        'id': 'id-nested-1',
                         'nested-detail': 'not important',
                     },
                 },
@@ -48,12 +50,14 @@ def resource_with_nested():
                         'name': 'nested-2',
                     },
                     const.RES_INFO: {
+                        'id': 'id-nested-2',
                         'nested-detail': 'also not important',
                     },
                 },
             ],
         },
         const.RES_INFO: {
+            'id': 'id-with-nested',
             'detail': 'not important for import and idempotence',
         },
     }
@@ -66,6 +70,7 @@ def sdk_network():
         created_at='2020-01-06T15:50:55Z',
         description='test network',
         dns_domain='example.org',
+        id='uuid-test-net',
         ipv4_address_scope_id=None,
         ipv6_address_scope_id=None,
         is_admin_state_up=True,

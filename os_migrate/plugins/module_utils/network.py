@@ -53,6 +53,7 @@ def serialize_network(sdk_net, net_refs):
     set_ser_params_same_name(info, sdk_net, [
         'availability_zones',
         'created_at',
+        'id',
         'project_id',
         'qos_policy_id',
         'revision_number',
