@@ -48,7 +48,7 @@ def is_same_resource(res1, res2):
     # ['params']['name'] should be the deciding factors for sameness,
     # but it's not necessary for now.
     return (res1.get(const.RES_PARAMS, {}).get('name', '__undefined1__') ==
-            res2.get(const.RES_PARAMS, {}).get('name', '__undefined1__'))
+            res2.get(const.RES_PARAMS, {}).get('name', '__undefined2__'))
 
 
 def resource_needs_update(current, target):

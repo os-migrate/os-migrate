@@ -133,6 +133,36 @@ class TestSerialization(unittest.TestCase):
             = 'openstack.UpdatedType'
         self.assertTrue(serialization.resource_needs_update(current, target))
 
+    def test_is_same_resource(self):
+        r1 = fixtures.minimal_resource()
+        r2 = fixtures.minimal_resource()
+        self.assertTrue(serialization.is_same_resource(r1, r2))
+
+        r2['params']['description'] = 'different description'
+        self.assertTrue(serialization.is_same_resource(r1, r2))
+
+        r2['params']['name'] = 'different-name'
+        self.assertFalse(serialization.is_same_resource(r1, r2))
+
+        # reset to sameness
+        r1 = fixtures.minimal_resource()
+        r2 = fixtures.minimal_resource()
+
+        r2['type'] = 'different.type'
+        self.assertFalse(serialization.is_same_resource(r1, r2))
+
+        del r1['type']
+        del r2['type']
+        self.assertFalse(serialization.is_same_resource(r1, r2))
+
+        # reset to sameness
+        r1 = fixtures.minimal_resource()
+        r2 = fixtures.minimal_resource()
+
+        del r1['params']['name']
+        del r2['params']['name']
+        self.assertFalse(serialization.is_same_resource(r1, r2))
+
     def test_set_sdk_param(self):
         ser_params = {'a': 'b', 'c': 'd', 'e': 'f'}
         sdk_params = {'g': 'h'}
