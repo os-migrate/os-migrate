@@ -3,6 +3,7 @@
     repo: https://opendev.org/openstack/devstack
     version: master
     dest: /home/stack/devstack
+    update: no
   become: true
   become_user: stack
 
