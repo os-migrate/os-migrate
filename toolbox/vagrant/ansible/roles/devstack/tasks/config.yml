@@ -7,6 +7,12 @@
   become: true
   become_user: stack
 
+- name: hack devstack until we switch to Fedora 30 or CentOS 8
+  lineinfile:
+    path: /home/stack/devstack/lib/nova
+    regexp: sudo dnf copr enable -y iwienand/iscsi-initiator-utils
+    state: absent
+
 - name: write devstack config
   template:
     src: local.conf.j2
