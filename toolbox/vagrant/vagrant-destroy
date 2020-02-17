@@ -2,4 +2,8 @@
 
 set -euxo pipefail
 
+if ! virsh pool-list | grep vagrant &> /dev/null; then
+    virsh pool-create-as vagrant dir --target $HOME/.local/share/libvirt/vagrant
+fi
+
 vagrant destroy
