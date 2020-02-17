@@ -2,9 +2,16 @@
   package:
     name:
       - git
+      - python2
       - python3-devel
       - tmux
     state: present
+
+- name: remove packages which devstack does not like
+  package:
+    name:
+      - python3-pyyaml
+    state: absent
 
 - name: create stack user
   user:
