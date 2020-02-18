@@ -10,9 +10,11 @@ OS_MIGRATE_DIR=$(realpath "$DIR/../..")
 dnf clean all
 dnf -y update
 dnf -y install ansible gcc make python3-devel python3-openstackclient jq shyaml
-# This below packages are for vagrant-libvirt and take a lot of deps,
-# comment out if you run vagrant from host rather than from container.
-dnf -y install ansible libvirt-client rsync openssh-clients vagrant-libvirt
+# The below packages are for vagrant-libvirt and take a lot of deps,
+# build with `NO_VAGRANT=1 make toolbox-build` if Vagrant isn't required.
+if [ "${NO_VAGRANT:-}" != "1" ]; then
+    dnf -y install ansible libvirt-client rsync openssh-clients vagrant-libvirt
+fi
 dnf clean all
 
 
