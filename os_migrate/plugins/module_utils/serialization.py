@@ -36,19 +36,22 @@ def add_or_replace_resource(resources, resource):
 
 def is_same_resource(res1, res2):
     """Check whether two `res1` and `res2` dicts represent the same
-    resource. Type and name are deciding factors.
+    resource. Type and id are checked.
 
     Returns: True if same, False otherwise
     """
+    # UUID should be enough of a check but just in case we get back to
+    # checking by name in the future, let's keep the type check as
+    # well, it doesn't hurt.
     if res1.get(const.RES_TYPE, '__undefined1__') != res2.get(
             const.RES_TYPE, '__undefined2__'):
         return False
 
     # We can add special cases if something else than ['type'] &&
-    # ['params']['name'] should be the deciding factors for sameness,
+    # ['_info']['id'] should be the deciding factors for sameness,
     # but it's not necessary for now.
-    return (res1.get(const.RES_PARAMS, {}).get('name', '__undefined1__') ==
-            res2.get(const.RES_PARAMS, {}).get('name', '__undefined2__'))
+    return (res1.get(const.RES_INFO, {}).get('id', '__undefined1__') ==
+            res2.get(const.RES_INFO, {}).get('id', '__undefined2__'))
 
 
 def resource_needs_update(current, target):

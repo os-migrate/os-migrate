@@ -34,6 +34,7 @@ class TestFilesystem(unittest.TestCase):
             minimal2 = fixtures.minimal_resource()
             minimal2['params']['name'] = 'minimal2'
             minimal2['params']['description'] = 'minimal two'
+            minimal2['_info']['id'] = 'id-minimal2'
             self.assertTrue(
                 filesystem.write_or_replace_resource(file_path, minimal2))
             # repeated replacement should report no changes - return False
@@ -45,9 +46,11 @@ class TestFilesystem(unittest.TestCase):
             resource1 = file_struct['resources'][1]
             self.assertEqual(resource0['type'], 'openstack.Minimal')
             self.assertEqual(resource0['params']['name'], 'minimal')
+            self.assertEqual(resource0['_info']['id'], 'id-minimal')
             self.assertEqual(
                 resource0['params']['description'], 'minimal resource')
             self.assertEqual(resource1['type'], 'openstack.Minimal')
             self.assertEqual(resource1['params']['name'], 'minimal2')
+            self.assertEqual(resource1['_info']['id'], 'id-minimal2')
             self.assertEqual(
                 resource1['params']['description'], 'minimal two')

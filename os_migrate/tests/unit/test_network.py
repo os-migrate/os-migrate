@@ -37,6 +37,7 @@ class TestNetwork(unittest.TestCase):
 
         self.assertEqual(s_info['availability_zones'], ['nova', 'zone3'])
         self.assertEqual(s_info['created_at'], '2020-01-06T15:50:55Z')
+        self.assertEqual(s_info['id'], 'uuid-test-net')
         self.assertEqual(s_info['project_id'], 'uuid-test-project')
         self.assertEqual(s_info['revision_number'], 3)
         self.assertEqual(s_info['status'], 'ACTIVE')
