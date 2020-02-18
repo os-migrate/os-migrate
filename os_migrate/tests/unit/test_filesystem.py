@@ -5,6 +5,7 @@ import yaml
 from os import path
 import unittest
 
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import exc
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import filesystem
 from ansible_collections.os_migrate.os_migrate.tests.unit import fixtures
 from ansible_collections.os_migrate.os_migrate.tests.unit import utils
@@ -51,3 +52,24 @@ class TestFilesystem(unittest.TestCase):
             self.assertEqual(resource1['params']['name'], 'minimal2')
             self.assertEqual(
                 resource1['params']['description'], 'minimal two')
+
+    def test_load_resources_file(self):
+        with utils.tmp_dir_context() as tmp_dir:
+            file_path = path.join(tmp_dir, 'resources.yml')
+
+            struct = fixtures.minimal_resource_file_struct()
+            with open(file_path, 'w') as f:
+                f.write(yaml.dump(struct))
+            self.assertEqual(filesystem.load_resources_file(file_path), struct)
+
+            struct['os_migrate_version'] = '0.0.never-released'
+            with open(file_path, 'w') as f:
+                f.write(yaml.dump(struct))
+            with self.assertRaises(exc.DataVersionMismatch):
+                filesystem.load_resources_file(file_path)
+
+            del struct['os_migrate_version']
+            with open(file_path, 'w') as f:
+                f.write(yaml.dump(struct))
+            with self.assertRaises(exc.DataVersionMismatch):
+                filesystem.load_resources_file(file_path)
