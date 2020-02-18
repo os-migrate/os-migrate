@@ -33,7 +33,7 @@ jobs:
         podman -v
     - name: Make the container image to launch the tests
       run: |
-        make toolbox-build
+        NO_VAGRANT=1 make toolbox-build
     - name: Run sanity and unit test
       run: |
         ./toolbox/run make test-fast

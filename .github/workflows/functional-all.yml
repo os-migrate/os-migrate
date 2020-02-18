@@ -95,7 +95,7 @@ jobs:
         openstack --os-cloud devstack-admin --os-region RegionOne router list
     - name: Make the container image to launch the tests
       run: |
-        make toolbox-build
+        NO_VAGRANT=1 make toolbox-build
     - name: Connect functional tests to devstack
       run: |
         cp /etc/openstack/clouds.yaml tests/func/clouds.yaml && \

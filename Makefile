@@ -78,7 +78,7 @@ test-unit: reinstall
 
 toolbox-build:
 	cd toolbox && \
-	podman build -t localhost/os_migrate_toolbox:latest . && \
+	podman build --build-arg NO_VAGRANT=$(NO_VAGRANT) -t localhost/os_migrate_toolbox:latest . && \
 	podman tag localhost/os_migrate_toolbox:latest localhost/os_migrate_toolbox:$$(date "+%Y_%m_%d")
 
 toolbox-clean:
