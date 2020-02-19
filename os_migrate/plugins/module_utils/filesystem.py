@@ -5,6 +5,7 @@ import yaml
 from os import path
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import exc
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import serialization
 
 
@@ -36,6 +37,11 @@ def load_resources_file(file_path):
     """
     with open(file_path, 'r') as f:
         file_struct = yaml.load(f)
+
+    file_os_migrate_version = file_struct.get('os_migrate_version', None)
+    if file_os_migrate_version != const.OS_MIGRATE_VERSION:
+        raise exc.DataVersionMismatch(file_os_migrate_version)
+
     return file_struct
 
 
