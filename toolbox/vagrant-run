@@ -11,7 +11,7 @@ fi
 DIR=$(dirname $(realpath $0))
 OS_MIGRATE_DIR=$(realpath "$DIR/..")
 if [ -t 1 ]; then
-    CONTAINER_TTY="${CONTAINER_TTY:--ti}"
+    CONTAINER_TTY="${CONTAINER_TTY:--ai}"
 else
     CONTAINER_TTY="${CONTAINER_TTY:-}"
 fi
@@ -37,16 +37,15 @@ IDX=0
 while sudo podman inspect os_migrate_vagrant_$IDX &> /dev/null; do
     ((IDX++))
 done || true
+CONTAINER_NAME=os_migrate_vagrant_shell_$IDX
 
 mkdir -p $HOME/.vagrant.d
 mkdir -p $HOME/.cache/libvirt
 mkdir -p $HOME/.config/libvirt
 mkdir -p $HOME/.local/share/libvirt/vagrant
 
-sudo podman run \
-    --name os_migrate_vagrant_shell_$IDX \
-    --detach-keys='ctrl-^' \
-    $CONTAINER_TTY \
+sudo podman create \
+    --name $CONTAINER_NAME \
     --rm \
     --net host \
     --pid host \
@@ -83,3 +82,18 @@ sudo podman run \
     ${OS_MIGRATE_VAGRANT_TOOLBOX_ARGS:-} \
     localhost/os_migrate_toolbox \
     "$@"
+
+CONTAINER_FS=$(sudo podman mount $CONTAINER_NAME)
+if [ -z "$CONTAINER_FS" ]; then
+    echo "ERROR: Empty container filesystem root path, cannot initialize the container."
+    exit 1
+fi
+sudo mkdir -p "${CONTAINER_FS}${HOME}/.cache"
+sudo mkdir -p "${CONTAINER_FS}${HOME}/.config"
+sudo mkdir -p "${CONTAINER_FS}${HOME}/.local/share"
+sudo mkdir -p "${CONTAINER_FS}${OS_MIGRATE_DIR}"
+sudo chown -R "$USER:" "${CONTAINER_FS}${HOME}"
+
+sudo podman start $CONTAINER_NAME \
+    --detach-keys='ctrl-^' \
+    $CONTAINER_TTY
