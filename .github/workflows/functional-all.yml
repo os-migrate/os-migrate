@@ -51,9 +51,9 @@ jobs:
     - name: Verify MySQL connection from container
       run: |
         mysql --host 127.0.0.1 -uroot -proot -e "SHOW DATABASES"
-    - name: Clone devstack
+    - name: Make the container image to launch the tests
       run: |
-        git clone https://opendev.org/openstack/devstack
+        NO_VAGRANT=1 make toolbox-build
     # We're hitting filesystem ownership issue on some GH Actions workers:
     # https://ubuntuforums.org/showthread.php?t=2406453
     - name: Make sure filesystem ownership is correct
@@ -61,8 +61,13 @@ jobs:
         set -x
         sudo chown root:root /
         sudo chown root:root /bin
-    - name: Install devstack
+    - name: Clone devstack
       run: |
+        git clone https://opendev.org/openstack/devstack
+    - name: Configure devstack
+      run: |
+        DIR=$(pwd)
+
         cd devstack
         cat << EOF > local.conf
         [[local|localrc]]
@@ -84,18 +89,17 @@ jobs:
         EOF
         cat local.conf
         sudo ./tools/create-stack-user.sh
-        sudo chown -R stack ../devstack
-        sudo -u stack ./stack.sh
+
+        sudo mv $DIR/devstack /opt/stack/devstack
+        sudo chown -R stack: /opt/stack/devstack
+    - name: Start devstack
+      run: |
+        sudo -iu stack bash -c 'cd /opt/stack/devstack; ./stack.sh'
     - name: Run sanity checks
       run: |
-        echo "- Source stackrc"
-        source devstack/stackrc
         echo "- Get network and routers list"
         openstack --os-cloud devstack-admin --os-region RegionOne network list
         openstack --os-cloud devstack-admin --os-region RegionOne router list
-    - name: Make the container image to launch the tests
-      run: |
-        NO_VAGRANT=1 make toolbox-build
     - name: Connect functional tests to devstack
       run: |
         cp /etc/openstack/clouds.yaml tests/func/clouds.yaml && \
