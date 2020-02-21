@@ -1,0 +1,17 @@
+- name: scan available security groups
+  os_migrate.os_migrate.os_security_groups_info:
+    cloud: "{{ os_migrate_src_cloud }}"
+  register: src_security_groups_info
+
+- name: filter names of security_groups to export
+  set_fact:
+    export_security_groups_names: "{{ src_security_groups_info.openstack_security_groups | json_query('[*].name') | sort | os_migrate.os_migrate.stringfilter(export_security_groups_name_filter) }}"
+
+# In this case we will export all the security groups
+# rules for all the security groups filtered before
+- name: export security group rules
+  os_migrate.os_migrate.export_security_group_rules:
+    cloud: "{{ os_migrate_src_cloud }}"
+    path: "{{ os_migrate_data_dir }}/security_group_rules.yml"
+    name: "{{ item }}"
+  loop: "{{ export_security_groups_names }}"

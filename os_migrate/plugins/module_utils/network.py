@@ -157,3 +157,133 @@ def network_refs_from_ser(conn, ser_net):
         conn, ser_params['qos_policy_name'])
 
     return refs
+
+
+def serialize_security_group_rule(sdk_sec_rule):
+    """Serialize OpenStack SDK security group rule
+    `sdk_sec_rule` into OS-Migrate format.
+
+    Returns: Dict - OS-Migrate structure for Security group rule.
+    """
+    expected_type = openstack.network.v2.security_group_rule.SecurityGroupRule
+    if type(sdk_sec_rule) != expected_type:
+        raise exc.UnexpectedResourceType(expected_type, type(sdk_sec_rule))
+
+    resource = {}
+    params = {}
+    info = {}
+    sdk_params = {}
+
+    resource[const.RES_PARAMS] = params
+    resource[const.RES_INFO] = info
+    resource[const.RES_TYPE] = const.RES_TYPE_SECURITYGROUPRULE
+
+    params['tags'] = sorted(sdk_sec_rule['tags'])
+
+    # Decide which attrs are param and which are info
+    set_ser_params_same_name(info, sdk_sec_rule, [
+        'id',
+        'security_group_id',
+        'remote_group_id',
+        'project_id',
+        'created_at',
+        'updated_at',
+        'revision_number',
+    ])
+
+    # FIXME: missing remote_group_name and security_group_name
+    set_ser_params_same_name(params, sdk_sec_rule, [
+        'description',
+        'direction',
+        'port_range_max',
+        'port_range_min',
+        'protocol',
+        'remote_ip_prefix',
+    ])
+
+    return resource
+
+
+def serialize_security_group(sdk_sec):
+    """Serialize OpenStack SDK security group `sdk_sec`
+    into OS-Migrate format.
+
+    Returns: Dict - OS-Migrate structure for Security group.
+    """
+    expected_type = openstack.network.v2.security_group.SecurityGroup
+    if type(sdk_sec) != expected_type:
+        raise exc.UnexpectedResourceType(expected_type, type(sdk_sec))
+
+    resource = {}
+    params = {}
+    info = {}
+    sdk_params = {}
+
+    resource[const.RES_PARAMS] = params
+    resource[const.RES_INFO] = info
+    resource[const.RES_TYPE] = const.RES_TYPE_SECURITYGROUP
+    params['tags'] = sorted(sdk_sec['tags'])
+
+    # Decide which attrs are param and which are info
+    set_ser_params_same_name(info, sdk_sec, [
+        'id',
+        'project_id',
+        'created_at',
+        'updated_at',
+        'revision_number',
+    ])
+
+    set_ser_params_same_name(params, sdk_sec, [
+        'name',
+        'description',
+    ])
+
+    return resource
+
+
+def security_group_sdk_params(ser_sec):
+    """Create OpenStack SDK parameters dict for creation or update of the
+    OS-Migrate Security groups `ser_sec`.
+
+    Returns: Parameters to be fed into `openstack.network.v2.security_group.SecurityGroup`
+    """
+    res_type = ser_sec.get(const.RES_TYPE, None)
+    if res_type != const.RES_TYPE_SECURITYGROUP:
+        raise exc.UnexpectedResourceType(const.RES_TYPE_SECURITYGROUP, res_type)
+
+    ser_params = ser_sec[const.RES_PARAMS]
+    sdk_params = {}
+
+    set_sdk_params_same_name(ser_params, sdk_params, [
+        'description',
+        'name',
+    ])
+
+    return sdk_params
+
+
+def security_group_rule_sdk_params(ser_sec_rule):
+    """Create OpenStack SDK parameters dict for creation or update of the
+    OS-Migrate Security group rules `ser_sec_rule`.
+
+    Returns: Parameters to be fed into `openstack.network.v2.security_group_rule.SecurityGroupRule`
+    """
+    res_type = ser_sec_rule.get(const.RES_TYPE, None)
+    if res_type != const.RES_TYPE_SECURITYGROUPRULE:
+        raise exc.UnexpectedResourceType(const.RES_TYPE_SECURITYGROUPRULE, res_type)
+
+    ser_params = ser_sec_rule[const.RES_PARAMS]
+    sdk_params = {}
+
+    # FIXME: missing remote_group_id and security_group_id
+    set_sdk_params_same_name(ser_params, sdk_params, [
+        'description',
+        'direction',
+        'port_range_max',
+        'port_range_min',
+        'protocol',
+        'remote_ip_prefix',
+        'revision_number',
+    ])
+
+    return sdk_params
