@@ -1,0 +1,8 @@
+- name: remove osm_subnet
+  os_subnet:
+    cloud: "{{ item }}"
+    name: osm_subnet
+    state: absent
+  loop:
+    - "{{ os_migrate_src_cloud }}"
+    - "{{ os_migrate_dst_cloud }}"
