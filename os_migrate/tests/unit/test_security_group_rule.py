@@ -12,11 +12,14 @@ class TestSecurityGroupRule(unittest.TestCase):
 
     def test_serialize_security_group_rule(self):
         sec = fixtures.sdk_security_group_rule()
-        serialized = network.serialize_security_group_rule(sec)
+        sec_refs = fixtures.security_group_rule_refs()
+        serialized = network.serialize_security_group_rule(sec, sec_refs)
         s_params = serialized['params']
         s_info = serialized['_info']
 
         self.assertEqual(serialized['type'], 'openstack.network.SecurityGroupRule')
+        self.assertEqual(s_params['security_group_name'], 'default')
+        self.assertEqual(s_params['remote_group_name'], 'default')
         self.assertEqual(s_params['description'], 'null')
         self.assertEqual(s_params['direction'], 'ingress')
         self.assertEqual(s_params['port_range_max'], 100)

@@ -85,7 +85,8 @@ def run_module():
         # We check that serialize_security_group_rule receives
         # a openstack.network.v2.security_group_rule.SecurityGroupRule
         sec_rule_obj = openstack.network.v2.security_group_rule.SecurityGroupRule(**rule)
-        ser_sec = network.serialize_security_group_rule(sec_rule_obj)
+        sec_refs = network.security_group_rule_refs_from_sdk(conn, sec_rule_obj)
+        ser_sec = network.serialize_security_group_rule(sec_rule_obj, sec_refs)
 
     result['changed'] = filesystem.write_or_replace_resource(
         module.params['path'], ser_sec)
