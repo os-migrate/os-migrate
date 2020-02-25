@@ -3,13 +3,23 @@
     cloud: "{{ os_migrate_src_cloud }}"
   register: src_security_groups_info
 
-- name: filter names of security_groups to export
+- name: create id-name pairs of security groups to export
   set_fact:
-    export_security_groups_names: "{{ src_security_groups_info.openstack_security_groups | json_query('[*].name') | sort | os_migrate.os_migrate.stringfilter(export_security_groups_name_filter) }}"
+    export_security_groups_ids_names: "{{ (
+      src_security_groups_info.openstack_security_groups
+        | json_query('[*].{name: name, id: id}')
+        | sort(attribute='id') ) }}"
+
+- name: filter names of security groups to export
+  set_fact:
+    export_security_groups_ids_names: "{{ (
+      export_security_groups_ids_names
+        | os_migrate.os_migrate.stringfilter(export_security_groups_name_filter,
+                                             attribute='name') ) }}"
 
 - name: export security groups
   os_migrate.os_migrate.export_security_group:
     cloud: "{{ os_migrate_src_cloud }}"
     path: "{{ os_migrate_data_dir }}/security_groups.yml"
-    name: "{{ item }}"
-  loop: "{{ export_security_groups_names }}"
+    name: "{{ item['id'] }}"
+  loop: "{{ export_security_groups_ids_names }}"
