@@ -136,6 +136,29 @@ def network_refs_from_sdk(conn, sdk_net):
     return refs
 
 
+def security_group_rule_refs_from_sdk(conn, sdk_rule):
+    """Create a dict of name/id mappings for resources referenced from
+    OpenStack SDK Security Group Rule `sdk_rule`. Fetch any necessary information
+    from OpenStack SDK connection `conn`.
+
+    Returns: dict with names and IDs of resources referenced from
+    `sdk_rule` (only those important for OS-Migrate)
+    """
+    expected_type = openstack.network.v2.security_group_rule.SecurityGroupRule
+    if type(sdk_rule) != expected_type:
+        raise exc.UnexpectedResourceType(expected_type, type(sdk_rule))
+    refs = {}
+
+    # when creating refs from SDK Security Group Rule object, we copy IDs and
+    # query the cloud for names
+    refs['security_group_name'] = reference.security_group_name(
+        conn, sdk_rule['security_group_id'])
+    refs['remote_group_name'] = reference.security_group_name(
+        conn, sdk_rule['remote_group_id'])
+
+    return refs
+
+
 def network_refs_from_ser(conn, ser_net):
     """Create a dict of name/id mappings for resources referenced from
     OS-Migrage network serialization `sdk_net`. Fetch any necessary
@@ -159,7 +182,7 @@ def network_refs_from_ser(conn, ser_net):
     return refs
 
 
-def serialize_security_group_rule(sdk_sec_rule):
+def serialize_security_group_rule(sdk_sec_rule, sec_refs):
     """Serialize OpenStack SDK security group rule
     `sdk_sec_rule` into OS-Migrate format.
 
@@ -191,7 +214,11 @@ def serialize_security_group_rule(sdk_sec_rule):
         'revision_number',
     ])
 
-    # FIXME: missing remote_group_name and security_group_name
+    set_ser_params_same_name(params, sec_refs, [
+        'security_group_name',
+        'remote_group_name',
+    ])
+
     set_ser_params_same_name(params, sdk_sec_rule, [
         'description',
         'direction',

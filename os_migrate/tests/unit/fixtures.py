@@ -105,6 +105,13 @@ def network_refs():
     }
 
 
+def security_group_rule_refs():
+    return {
+        'security_group_name': 'default',
+        'remote_group_name': 'default',
+    }
+
+
 def serialized_network():
     return {
         const.RES_PARAMS: {
@@ -175,7 +182,9 @@ def sdk_security_group_rule():
     return openstack.network.v2.security_group_rule.SecurityGroupRule(
         id='uuid',
         security_group_id='uuid-sec-group',
+        security_group_name='default',
         remote_group_id='uuid-group',
+        remote_group_name='default',
         project_id='uuid-project',
         created_at='2020-01-30T14:49:06Z',
         updated_at='2020-01-30T14:49:06Z',
