@@ -1,4 +1,11 @@
-- name: Migration
+- name: Independent tests
+  hosts: migrator
+  tasks:
+    - import_tasks: independent/all.yml
+  tags:
+    - test_independent
+
+- name: Migration tests
   hosts: migrator
   tasks:
     - import_tasks: global/prep.yml
@@ -7,3 +14,5 @@
     - import_tasks: run/all.yml
     - import_tasks: idempotence/all.yml
     - import_tasks: clean/all.yml
+  tags:
+    - test_migration
