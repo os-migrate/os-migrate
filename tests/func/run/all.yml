@@ -3,3 +3,9 @@
     apply:
       tags:
         - test_network
+
+- include_tasks:
+    file: subnet.yml
+    apply:
+      tags:
+        - test_subnet

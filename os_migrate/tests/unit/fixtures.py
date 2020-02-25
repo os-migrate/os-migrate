@@ -219,3 +219,57 @@ def serialized_security_group_rule():
         },
         const.RES_TYPE: 'openstack.network.SecurityGroupRule',
     }
+
+
+def sdk_subnet():
+    return openstack.network.v2.subnet.Subnet(
+        id='uuid-test-subnet1',
+        name='test-subnet1',
+        tenant_id='uuid-tenant',
+        network_id='uuid-test-net',
+        ip_version=4,
+        enable_dhcp=True,
+        gateway_ip='10.10.10.1',
+        cidr='10.10.10.0/24',
+        allocation_pools=[{
+            'start': '10.10.10.2',
+            'end': '10.10.10.254'
+        }],
+        description='test-subnet',
+        created_at='2020-02-21T17:34:54Z',
+        revision_number=0
+    )
+
+
+def serialized_subnet():
+    return {
+        const.RES_PARAMS: {
+            'allocation_pools': [
+                {'start': '10.10.10.2', 'end': '10.10.10.254'}],
+            'cidr': '10.10.10.0/24',
+            'description': 'test-subnet',
+            'dns_nameservers': None,
+            'gateway_ip': '10.10.10.1',
+            'host_routes': None,
+            'ip_version': 4,
+            'ipv6_address_mode': None,
+            'ipv6_ra_mode': None,
+            'is_dhcp_enabled': True,
+            'name': 'test-subnet1',
+            'service_types': None,
+            'tags': [],
+            'use_default_subnet_pool': None,
+        },
+        const.RES_INFO: {
+            'created_at': '2020-02-21T17:34:54Z',
+            'id': 'uuid-test-subnet1',
+            'network_id': 'uuid-test-net',
+            'prefix_length': None,
+            'project_id': 'uuid-tenant',
+            'revision_number': 0,
+            'segment_id': None,
+            'subnet_pool_id': None,
+            'updated_at': None,
+        },
+        const.RES_TYPE: 'openstack.network.Subnet',
+    }
