@@ -77,7 +77,7 @@ def run_module():
     )
 
     conn = openstack.connect(cloud=module.params['cloud'])
-    sdk_sec = conn.get_security_group(module.params['name'])
+    sdk_sec = conn.network.find_security_group(module.params['name'], ignore_missing=False)
 
     for rule in sdk_sec['security_group_rules']:
         # In this particular case we are creating a SecurityGroupRule

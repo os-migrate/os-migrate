@@ -9,3 +9,15 @@
     apply:
       tags:
         - test_subnet
+
+- include_tasks:
+    file: security_group.yml
+    apply:
+      tags:
+        - test_security_group
+
+- include_tasks:
+    file: security_group_rule.yml
+    apply:
+      tags:
+        - test_security_group_rule

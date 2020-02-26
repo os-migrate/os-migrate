@@ -77,7 +77,7 @@ def run_module():
     )
 
     conn = openstack.connect(cloud=module.params['cloud'])
-    sdk_sec = conn.get_security_group(module.params['name'])
+    sdk_sec = conn.network.find_security_group(module.params['name'], ignoring_missing=False)
 
     ser_sec = network.serialize_security_group(sdk_sec)
 
