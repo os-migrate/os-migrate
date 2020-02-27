@@ -114,6 +114,18 @@ def network_needs_update(sdk_net, net_refs, target_ser_net):
     return serialization.resource_needs_update(current_ser_net, target_ser_net)
 
 
+def security_group_needs_update(sdk_sec, target_ser_sec):
+    """Having OpenStack SDK security group `sdk_sec`,
+    decide if the security group needs to be updated to
+    reach state represented in OS-Migrate Security group serialization
+    `target_ser_sec`.
+
+    Returns: True if security group needs to be updated, False otherwise
+    """
+    current_ser_sec = serialize_security_group(sdk_sec)
+    return serialization.resource_needs_update(current_ser_sec, target_ser_sec)
+
+
 def network_refs_from_sdk(conn, sdk_net):
     """Create a dict of name/id mappings for resources referenced from
     OpenStack SDK Network `sdk_net`. Fetch any necessary information
@@ -178,6 +190,29 @@ def network_refs_from_ser(conn, ser_net):
     refs['qos_policy_name'] = ser_params['qos_policy_name']
     refs['qos_policy_id'] = reference.qos_policy_id(
         conn, ser_params['qos_policy_name'])
+
+    return refs
+
+
+def security_group_rule_refs_from_ser(conn, ser_sec):
+    """Create a dict of name/id mappings for resources referenced from
+    OS-Migrage security group rule serialization `sdk_sec`. Fetch any necessary
+    information from OpenStack SDK connection `conn`.
+
+    Returns: dict with names and IDs of resources referenced from
+    `sdk_sec` (only those important for OS-Migrate)
+    """
+    if ser_sec[const.RES_TYPE] != const.RES_TYPE_SECURITYGROUPRULE:
+        raise exc.UnexpectedResourceType(
+            const.RES_TYPE_SECURITYGROUPRULE, ser_sec[const.RES_TYPE])
+    ser_params = ser_sec[const.RES_PARAMS]
+    refs = {}
+
+    # when creating refs from serialized security group, we copy names and
+    # query the cloud for IDs
+    refs['security_group_name'] = ser_params['security_group_name']
+    refs['security_group_id'] = reference.security_group_id(
+        conn, ser_params['security_group_name'])
 
     return refs
 
@@ -289,9 +324,10 @@ def security_group_sdk_params(ser_sec):
     return sdk_params
 
 
-def security_group_rule_sdk_params(ser_sec_rule):
+def security_group_rule_sdk_params(ser_sec_rule, sec_refs):
     """Create OpenStack SDK parameters dict for creation or update of the
-    OS-Migrate Security group rules `ser_sec_rule`.
+    OS-Migrate Security group rules `ser_sec_rule`. Use `sec_refs` for
+    name-to-id mappings.
 
     Returns: Parameters to be fed into `openstack.network.v2.security_group_rule.SecurityGroupRule`
     """
@@ -302,7 +338,11 @@ def security_group_rule_sdk_params(ser_sec_rule):
     ser_params = ser_sec_rule[const.RES_PARAMS]
     sdk_params = {}
 
-    # FIXME: missing remote_group_id and security_group_id
+    set_sdk_params_same_name(sec_refs, sdk_params, [
+        'remote_group_id',
+        'security_group_id',
+    ])
+
     set_sdk_params_same_name(ser_params, sdk_params, [
         'description',
         'direction',

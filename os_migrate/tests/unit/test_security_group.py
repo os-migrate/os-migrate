@@ -30,3 +30,18 @@ class TestSecurityGroup(unittest.TestCase):
         sdk_params = network.security_group_sdk_params(ser_sec)
 
         self.assertEqual(sdk_params['description'], 'Default security group')
+
+    def test_security_group_needs_update(self):
+        sdk_sec = fixtures.sdk_security_group()
+        serialized = network.serialize_security_group(sdk_sec)
+
+        self.assertFalse(network.security_group_needs_update(
+            sdk_sec, serialized))
+
+        serialized['_info']['id'] = 'different id'
+        self.assertFalse(network.security_group_needs_update(
+            sdk_sec, serialized))
+
+        serialized['params']['description'] = 'updated description'
+        self.assertTrue(network.security_group_needs_update(
+            sdk_sec, serialized))

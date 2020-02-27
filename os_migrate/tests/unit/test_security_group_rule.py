@@ -38,7 +38,8 @@ class TestSecurityGroupRule(unittest.TestCase):
 
     def test_security_group_rule_sdk_params(self):
         ser_sec = fixtures.serialized_security_group_rule()
-        sdk_params = network.security_group_rule_sdk_params(ser_sec)
+        sec_refs = fixtures.security_group_rule_refs()
+        sdk_params = network.security_group_rule_sdk_params(ser_sec, sec_refs)
 
         self.assertEqual(sdk_params['description'], 'null')
         self.assertEqual(sdk_params['direction'], 'ingress')

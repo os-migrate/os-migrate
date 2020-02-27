@@ -14,6 +14,18 @@ def qos_policy_name(conn, id_, required=True):
     return _fetch_name(conn.network.find_qos_policy, id_, required)
 
 
+def qos_policy_id(conn, name, required=True):
+    """Fetch ID of QoS Policy identified by name `name`. Use OpenStack SDK
+    connection `conn` to fetch the info. If `required`, ensure the
+    fetch is successful.
+
+    Returns: the ID, or None if not found and not `required`
+
+    Raises: openstack's ResourceNotFound when `required` but not found
+    """
+    return _fetch_id(conn.network.find_qos_policy, name, required)
+
+
 def security_group_name(conn, id_, required=True):
     """Fetch name of the Security Group identified by ID `id_`. Use OpenStack SDK
     connection `conn` to fetch the info. If `required`, ensure the
@@ -26,8 +38,8 @@ def security_group_name(conn, id_, required=True):
     return _fetch_name(conn.network.find_security_group, id_, required)
 
 
-def qos_policy_id(conn, name, required=True):
-    """Fetch ID of QoS Policy identified by name `name`. Use OpenStack SDK
+def security_group_id(conn, name, required=True):
+    """Fetch ID of SEcurity group identified by name `name`. Use OpenStack SDK
     connection `conn` to fetch the info. If `required`, ensure the
     fetch is successful.
 
@@ -35,7 +47,7 @@ def qos_policy_id(conn, name, required=True):
 
     Raises: openstack's ResourceNotFound when `required` but not found
     """
-    return _fetch_id(conn.network.find_qos_policy, name, required)
+    return _fetch_id(conn.network.find_security_group, name, required)
 
 
 def _fetch_name(get_method, id_, required=True):
