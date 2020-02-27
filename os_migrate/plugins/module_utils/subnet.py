@@ -3,32 +3,16 @@ __metaclass__ = type
 
 import openstack
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils import exc
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils.const \
+    import ResourceType
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils.serialization \
-    import set_sdk_params_same_name, set_ser_params_same_name
+    import Resource
 
 
-def serialize_subnet(sdk_subnet):
-    """Serialize OpenStack SDK network `sdk_net` into OS-Migrate
-    format. Use `net_refs` for id-to-name mappings.
-
-    Returns: Dict - OS-Migrate structure for Network
-    """
+class SubnetResource(Resource):
     expected_type = openstack.network.v2.subnet.Subnet
-    if type(sdk_subnet) != expected_type:
-        raise exc.UnexpectedResourceType(expected_type, type(sdk_subnet))
-
-    resource = {}
-    params = {}
-    info = {}
-    resource[const.RES_PARAMS] = params
-    resource[const.RES_INFO] = info
-    resource[const.RES_TYPE] = const.RES_TYPE_SUBNET
-
-    # FIXME: We will need to eventually add network_name, subnet_pool_name
-    # and segment_name into params.  See issue #88.
-    set_ser_params_same_name(params, sdk_subnet, [
+    serialized_type = ResourceType.SUBNET
+    parameters = [
         'allocation_pools',
         'cidr',
         'description',
@@ -43,9 +27,8 @@ def serialize_subnet(sdk_subnet):
         'service_types',
         'tags',
         'use_default_subnet_pool'
-    ])
-
-    set_ser_params_same_name(info, sdk_subnet, [
+    ]
+    information = [
         'created_at',
         'id',
         'network_id',
@@ -55,6 +38,4 @@ def serialize_subnet(sdk_subnet):
         'segment_id',
         'subnet_pool_id',
         'updated_at',
-    ])
-
-    return resource
+    ]

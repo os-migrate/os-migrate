@@ -4,32 +4,20 @@ __metaclass__ = type
 import openstack
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils.const \
+    import ResourceType, Sections
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import exc
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import reference
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import serialization
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils.serialization \
-    import set_sdk_params_same_name, set_ser_params_same_name
+    import Resource, set_sdk_params_same_name, set_ser_params_same_name
 
 
-def serialize_network(sdk_net, net_refs):
-    """Serialize OpenStack SDK network `sdk_net` into OS-Migrate
-    format. Use `net_refs` for id-to-name mappings.
-
-    Returns: Dict - OS-Migrate structure for Network
-    """
+class NetworkResource(Resource):
     expected_type = openstack.network.v2.network.Network
-    if type(sdk_net) != expected_type:
-        raise exc.UnexpectedResourceType(expected_type, type(sdk_net))
-
-    resource = {}
-    params = {}
-    info = {}
-    resource[const.RES_PARAMS] = params
-    resource[const.RES_INFO] = info
-    resource[const.RES_TYPE] = const.RES_TYPE_NETWORK
-
-    params['availability_zone_hints'] = sorted(sdk_net['availability_zone_hints'])
-    set_ser_params_same_name(params, sdk_net, [
+    serialized_type = ResourceType.NETWORK
+    sorted_parameters = ['availability_zone_hints']
+    parameters = [
         'description',
         'dns_domain',
         'is_admin_state_up',
@@ -44,13 +32,9 @@ def serialize_network(sdk_net, net_refs):
         'provider_physical_network',
         'provider_segmentation_id',
         'segments',
-    ])
-    set_ser_params_same_name(params, net_refs, [
-        'qos_policy_name',
-    ])
-
-    info['subnet_ids'] = sorted(sdk_net['subnet_ids'])
-    set_ser_params_same_name(info, sdk_net, [
+    ]
+    sorted_information = ['subnet_ids']
+    information = [
         'availability_zones',
         'created_at',
         'id',
@@ -59,9 +43,8 @@ def serialize_network(sdk_net, net_refs):
         'revision_number',
         'status',
         'updated_at',
-    ])
-
-    return resource
+    ]
+    external_parameters = ['qos_policy_name']
 
 
 def network_sdk_params(ser_net, net_refs):
@@ -110,7 +93,10 @@ def network_needs_update(sdk_net, net_refs, target_ser_net):
 
     Returns: True if network needs to be updated, False otherwise
     """
-    current_ser_net = serialize_network(sdk_net, net_refs)
+    current_ser_net = NetworkResource(
+        content=sdk_net,
+        external_content=net_refs
+    ).serialize()
     return serialization.resource_needs_update(current_ser_net, target_ser_net)
 
 

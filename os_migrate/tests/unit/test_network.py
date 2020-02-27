@@ -3,6 +3,8 @@ __metaclass__ = type
 
 import unittest
 
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils.const \
+    import ResourceType
 from ansible_collections.os_migrate.os_migrate.tests.unit import fixtures
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import network
@@ -13,11 +15,17 @@ class TestNetwork(unittest.TestCase):
     def test_serialize_network(self):
         net = fixtures.sdk_network()
         net_refs = fixtures.network_refs()
-        serialized = network.serialize_network(net, net_refs)
+        serialized = network.NetworkResource(
+            content=net,
+            external_content=net_refs
+        ).serialize()
         s_params = serialized['params']
         s_info = serialized['_info']
 
-        self.assertEqual(serialized['type'], 'openstack.network.Network')
+        print(net_refs)
+        print(s_info)
+
+        self.assertEqual(serialized['type'], ResourceType.NETWORK)
         self.assertEqual(s_params['availability_zone_hints'], ['nova', 'zone2'])
         self.assertEqual(s_params['description'], 'test network')
         self.assertEqual(s_params['dns_domain'], 'example.org')
@@ -73,7 +81,10 @@ class TestNetwork(unittest.TestCase):
     def test_network_needs_update(self):
         sdk_net = fixtures.sdk_network()
         net_refs = fixtures.network_refs()
-        serialized = network.serialize_network(sdk_net, net_refs)
+        serialized = network.NetworkResource(
+            content=sdk_net,
+            external_content=net_refs
+        ).serialize()
 
         self.assertFalse(network.network_needs_update(
             sdk_net, net_refs, serialized))

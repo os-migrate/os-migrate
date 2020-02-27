@@ -4,6 +4,8 @@ __metaclass__ = type
 import unittest
 
 from ansible_collections.os_migrate.os_migrate.tests.unit import fixtures
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils.const \
+    import ResourceType
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import subnet
 
@@ -12,11 +14,11 @@ class TestSubnet(unittest.TestCase):
 
     def test_serialize_subnet(self):
         subnet_data = fixtures.sdk_subnet()
-        serialized = subnet.serialize_subnet(subnet_data)
-        s_params = serialized['params']
-        s_info = serialized['_info']
+        ser_subnet = subnet.SubnetResource(content=subnet_data).serialize()
+        s_params = ser_subnet['params']
+        s_info = ser_subnet['_info']
 
-        self.assertEqual(serialized['type'], 'openstack.subnet.Subnet')
+        self.assertEqual(ser_subnet['type'], ResourceType.SUBNET)
         self.assertEqual(s_params['allocation_pools'],
                          [{'start': '10.10.10.2', 'end': '10.10.10.254'}])
         self.assertEqual(s_params['cidr'], '10.10.10.0/24')

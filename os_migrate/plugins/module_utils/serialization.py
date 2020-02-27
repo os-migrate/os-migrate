@@ -1,7 +1,11 @@
 from __future__ import (absolute_import, division, print_function)
+
 __metaclass__ = type
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils.const \
+    import ResourceType, Sections
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import exc
 
 
 def new_resources_file_struct():
@@ -99,6 +103,7 @@ def _trim_info(resource):
     untouched, but the returned structure does reuse data contents to
     save memory (it is not a deep copy).
     """
+
     def _recursive_trim(obj):
         if isinstance(obj, dict):
             result_dict = {}
@@ -116,3 +121,65 @@ def _trim_info(resource):
             return obj
 
     return _recursive_trim(resource)
+
+
+class Resource:
+    expected_type = None
+    content = None
+    serialized_type = None
+    parameters = []
+    sorted_parameters = []
+    information = []
+    sorted_information = []
+    # supporting one external source for now.
+    # could expand this in the future if needed
+    external_content = None
+    external_parameters = []
+    external_sorted_parameters = []
+    external_information = []
+    external_sorted_information = []
+
+    def __init__(self, **kwargs):
+        # Go through keyword arguments, and either save their values to our
+        # instance, or raise an error.
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+        expected_type = self.expected_type
+        if type(self.content) != expected_type:
+            raise exc.UnexpectedResourceType(expected_type, type(self.content))
+
+    def serialize(self):
+        """Serialize OpenStack SDK resource `content` into OS-Migrate
+            format. Use `net_refs` for id-to-name mappings.
+
+            Returns: Dict - OS-Migrate structure for Network
+            """
+        resource = {}
+        params = {}
+        info = {}
+        resource[Sections.PARAMS.value] = params
+        resource[Sections.INFO.value] = info
+        resource[Sections.TYPE.value] = self.serialized_type.value
+
+        for sorted_param in self.sorted_parameters:
+            params[sorted_param] = sorted(self.content[sorted_param])
+        set_ser_params_same_name(params, self.content, self.parameters)
+
+        for sorted_info in self.sorted_information:
+            info[sorted_info] = sorted(self.content[sorted_info])
+        set_ser_params_same_name(info, self.content, self.information)
+
+        if self.external_content is not None:
+            set_ser_params_same_name(params, self.external_content,
+                                     self.external_parameters)
+            set_ser_params_same_name(info, self.external_content,
+                                     self.external_information)
+            for ext_sorted_param in self.external_sorted_parameters:
+                params[ext_sorted_param] = sorted(
+                    self.external_content[ext_sorted_param])
+            for ext_sorted_info in self.external_sorted_information:
+                info[ext_sorted_info] = sorted(
+                    self.external_content[ext_sorted_info])
+
+        return resource
