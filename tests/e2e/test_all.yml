@@ -1,18 +1,9 @@
-- name: Independent tests
-  hosts: migrator
-  tasks:
-    - import_tasks: independent/all.yml
-  tags:
-    - test_independent
-
-- name: Migration functional tests
+- name: Migration end to end tests
   hosts: migrator
   tasks:
     - import_tasks: ../common/global/prep.yml
     - import_tasks: ../common/clean/all.yml
     - import_tasks: ../common/seed/all.yml
-    - import_tasks: run/all.yml
-    - import_tasks: idempotence/all.yml
     - import_tasks: ../common/clean/all.yml
   tags:
     - test_migration
