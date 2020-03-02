@@ -11,9 +11,11 @@ fi
 DIR=$(dirname $(realpath $0))
 OS_MIGRATE_DIR=$(realpath "$DIR/..")
 if [ -t 1 ]; then
-    CONTAINER_TTY="${CONTAINER_TTY:--ai}"
+    CONTAINER_TTY_CREATE="${CONTAINER_TTY_CREATE:--ti}"
+    CONTAINER_TTY_START="${CONTAINER_TTY_START:--i}"
 else
-    CONTAINER_TTY="${CONTAINER_TTY:-}"
+    CONTAINER_TTY_CREATE="${CONTAINER_TTY_CREATE:-}"
+    CONTAINER_TTY_START="${CONTAINER_TTY_START:-}"
 fi
 
 if ! podman images | grep '^localhost/os_migrate_toolbox \+latest '; then
@@ -46,6 +48,7 @@ mkdir -p $HOME/.local/share/libvirt/vagrant
 
 sudo podman create \
     --name $CONTAINER_NAME \
+    $CONTAINER_TTY_CREATE \
     --rm \
     --net host \
     --pid host \
@@ -95,5 +98,6 @@ sudo mkdir -p "${CONTAINER_FS}${OS_MIGRATE_DIR}"
 sudo chown -R "$USER:" "${CONTAINER_FS}${HOME}"
 
 sudo podman start $CONTAINER_NAME \
-    --detach-keys='ctrl-^' \
-    $CONTAINER_TTY
+    $CONTAINER_TTY_START \
+    -a \
+    --detach-keys='ctrl-^'
