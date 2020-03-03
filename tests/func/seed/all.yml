@@ -21,3 +21,9 @@
     apply:
       tags:
         - test_security_group_rule
+
+- include_tasks:
+    file: router.yml
+    apply:
+      tags:
+        - test_router

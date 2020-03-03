@@ -7,6 +7,7 @@ RES_INFO = '_info'
 
 # Supported resource types
 RES_TYPE_NETWORK = 'openstack.network.Network'
+RES_TYPE_ROUTER = 'openstack.network.Router'
 RES_TYPE_SECURITYGROUPRULE = 'openstack.network.SecurityGroupRule'
 RES_TYPE_SECURITYGROUP = 'openstack.network.SecurityGroup'
 RES_TYPE_SUBNET = 'openstack.subnet.Subnet'
