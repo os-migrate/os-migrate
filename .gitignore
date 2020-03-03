@@ -5,3 +5,4 @@
 /tests/func/tmpdata
 /toolbox/vagrant/.vagrant
 /toolbox/vagrant/env
+.tox/*
