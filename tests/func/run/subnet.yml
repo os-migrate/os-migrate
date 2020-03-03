@@ -11,11 +11,14 @@
 
 - name: load exported data
   set_fact:
-    subnet_resources: "{{ (lookup('file', os_migrate_data_dir + '/subnets.yml') | from_yaml)
+    subnet_resources: "{{ (lookup('file',
+                                  os_migrate_data_dir +
+                                  '/subnets.yml') | from_yaml)
                    ['resources'] }}"
 
 - name: verify data contents
   assert:
     that:
-      - (subnet_resources | json_query("[?params.name == 'osm_subnet'].params.cidr")
+      - (subnet_resources |
+        json_query("[?params.name == 'osm_subnet'].params.cidr")
         == ['192.168.0.0/24'])

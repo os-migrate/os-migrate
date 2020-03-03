@@ -1,4 +1,6 @@
-# Fails with: TypeError: create_network() got an unexpected keyword argument 'dns_domain'
+# Fails with:
+# TypeError: create_network()
+#  got an unexpected keyword argument 'dns_domain'
 #
 # - name: create osm_net
 #   os_network:

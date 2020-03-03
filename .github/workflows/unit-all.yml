@@ -2,10 +2,10 @@ name: unit-all
 on:
   push:
     paths-ignore:
-    - 'doc/**'
+      - 'doc/**'
   pull_request:
     paths-ignore:
-    - 'doc/**'
+      - 'doc/**'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,26 +14,26 @@ jobs:
       matrix:
         python-version: [3.7]
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        sudo python -m pip install --upgrade pip
-        sudo pip install tox
-        sudo apt install software-properties-common -y
-        sudo add-apt-repository -y ppa:projectatomic/ppa
-        sudo apt update -y
-        sudo apt install build-essential -y
-        sudo apt install podman -y
-    - name: Print podman version
-      run: |
-        podman -v
-    - name: Make the container image to launch the tests
-      run: |
-        NO_VAGRANT=1 make toolbox-build
-    - name: Run sanity and unit test
-      run: |
-        ./toolbox/run make test-fast
+      - uses: actions/checkout@v1
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          sudo python -m pip install --upgrade pip
+          sudo pip install tox
+          sudo apt install software-properties-common -y
+          sudo add-apt-repository -y ppa:projectatomic/ppa
+          sudo apt update -y
+          sudo apt install build-essential -y
+          sudo apt install podman -y
+      - name: Print podman version
+        run: |
+          podman -v
+      - name: Make the container image to launch the tests
+        run: |
+          NO_VAGRANT=1 make toolbox-build
+      - name: Run sanity and unit test
+        run: |
+          ./toolbox/run make test-fast

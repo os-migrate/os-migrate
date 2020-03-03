@@ -11,13 +11,16 @@
 
 - name: load exported data
   set_fact:
-    resources: "{{ (lookup('file', os_migrate_data_dir + '/networks.yml') | from_yaml)
+    resources: "{{ (lookup('file',
+                   os_migrate_data_dir +
+                   '/networks.yml') | from_yaml)
                    ['resources'] }}"
 
 - name: verify data contents
   assert:
     that:
-      - (resources | json_query("[?params.name == 'osm_net'].params.description")
+      - (resources |
+        json_query("[?params.name == 'osm_net'].params.description")
         == ['osm_net test network'])
 
 - include_role:

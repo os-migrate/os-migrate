@@ -54,7 +54,6 @@ resources:
     type: list of str
 '''
 
-import openstack
 from ansible.module_utils.basic import AnsibleModule
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import filesystem

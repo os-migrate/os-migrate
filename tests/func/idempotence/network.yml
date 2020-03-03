@@ -8,7 +8,9 @@
 
 - name: re-load resources for idempotency test
   set_fact:
-    resources_idem: "{{ (lookup('file', os_migrate_data_dir + '/networks.yml') | from_yaml)
+    resources_idem: "{{ (lookup('file',
+                                os_migrate_data_dir +
+                                '/networks.yml') | from_yaml)
                         ['resources'] }}"
 
 - name: verify that export file did not change

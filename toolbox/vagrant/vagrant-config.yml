@@ -1,5 +1,11 @@
 libvirt:
-  # vagrant box add --name fedora30 https://download.fedoraproject.org/pub/fedora/linux/releases/30/Cloud/x86_64/images/Fedora-Cloud-Base-Vagrant-30-1.2.x86_64.vagrant-libvirt.box
+  # Use as a reference:
+  # vagrant box add
+  #  --name fedora30
+  #    https://download.fedoraproject.org/
+  #            pub/fedora/linux/releases/30/
+  #            Cloud/x86_64/images/
+  #            Fedora-Cloud-Base-Vagrant-30-1.2.x86_64.vagrant-libvirt.box
   box: fedora30
   default_prefix: os_migrate
   private_net_name: os_migrate
