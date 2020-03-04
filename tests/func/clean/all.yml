@@ -3,27 +3,42 @@
     apply:
       tags:
         - test_router
+        - test_clean
+  tags:
+    - always
 
 - include_tasks:
     file: subnet.yml
     apply:
       tags:
         - test_subnet
+        - test_clean
+  tags:
+    - always
 
 - include_tasks:
     file: network.yml
     apply:
       tags:
         - test_network
+        - test_clean
+  tags:
+    - always
 
 - include_tasks:
     file: security_group_rule.yml
     apply:
       tags:
         - test_security_group_rule
+        - test_clean
+  tags:
+    - always
 
 - include_tasks:
     file: security_group.yml
     apply:
       tags:
         - test_security_group
+        - test_clean
+  tags:
+    - always

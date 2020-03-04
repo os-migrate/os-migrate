@@ -3,3 +3,4 @@
     apply:
       tags:
         - test_network
+  tags: always
