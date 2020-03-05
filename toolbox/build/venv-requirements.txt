@@ -3,6 +3,9 @@ ansible>=2.9.1,<2.10
 openstacksdk>=0.39.0
 
 # test
+ansible-lint==4.1.0
+bashate>=2.0.0
+flake8==3.7.7
 pylint>=2.4.0
 pytest-xdist>=1.30.0
 pycodestyle>=2.5.0

@@ -33,6 +33,13 @@ os_migrate-os_migrate-latest.tar.gz:
 
 # TESTS
 
+test-lint:
+	set -euo pipefail; \
+	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
+		source /root/venv/bin/activate; \
+	fi; \
+	./scripts/linters.sh
+
 test-setup-vagrant-devstack:
 	cp toolbox/vagrant/env/clouds.yaml tests/func/clouds.yaml && \
 	sed -i -e "s/ devstack:/ testsrc:/" tests/func/clouds.yaml && \
@@ -54,7 +61,7 @@ test-func: reinstall
 		-e os_migrate_data_dir=$(ROOT_DIR)/tests/func/tmpdata \
 		$(FUNC_TEST_ARGS) test_all.yml
 
-test-fast: test-sanity test-unit
+test-fast: test-lint test-sanity test-unit
 
 # We have to skip validate-modules sanity test because it checks for
 # GPLv3 licensing and AFAICT that check can't be disabled.
