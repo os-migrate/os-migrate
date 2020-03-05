@@ -1,7 +1,7 @@
 - name: validate valid dir
   shell: |
     OS_MIGRATE="$HOME/.ansible/collections/ansible_collections/os_migrate/os_migrate"
-    OS_MIGRATE_DATA="{{playbook_dir}}/data/validate_data_dir/valid"
+    OS_MIGRATE_DATA="{{ playbook_dir }}/data/validate_data_dir/valid"
     ansible-playbook -v \
         -i $OS_MIGRATE/localhost_inventory.yml \
         -e "os_migrate_data_dir=$OS_MIGRATE_DATA" \
@@ -10,7 +10,7 @@
 - name: validate invalid dir
   shell: |
     OS_MIGRATE="$HOME/.ansible/collections/ansible_collections/os_migrate/os_migrate"
-    OS_MIGRATE_DATA="{{playbook_dir}}/data/validate_data_dir/invalid"
+    OS_MIGRATE_DATA="{{ playbook_dir }}/data/validate_data_dir/invalid"
     ansible-playbook -v \
         -i $OS_MIGRATE/localhost_inventory.yml \
         -e "os_migrate_data_dir=$OS_MIGRATE_DATA" \

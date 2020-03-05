@@ -1,5 +1,5 @@
-- include_tasks:
-    file: validate_data_dir.yml
-    apply:
-      tags:
-        - test_validate_data_dir
+- name: Include validate data dir
+  include_tasks: validate_data_dir.yml
+  apply:
+    tags:
+      - test_validate_data_dir
