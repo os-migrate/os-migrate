@@ -14,11 +14,8 @@
   <a href="https://opensource.org/licenses/Apache-2.0">
     <img src="https://img.shields.io/badge/License-Apache2.0-blue.svg">
   </a>
-  <a href="https://github.com/os-migrate/os-migrate/actions?workflow=unit-all">
-    <img src="https://github.com/os-migrate/os-migrate/workflows/unit-all/badge.svg?event=push">
-  </a>
-  <a href="https://github.com/os-migrate/os-migrate/actions?workflow=functional-all">
-    <img src="https://github.com/os-migrate/os-migrate/workflows/functional-all/badge.svg?event=push">
+  <a href="https://github.com/os-migrate/os-migrate/actions?workflow=consistency-functional">
+    <img src="https://github.com/os-migrate/os-migrate/workflows/consistency-functional/badge.svg?event=push">
   </a>
 </p>
 
