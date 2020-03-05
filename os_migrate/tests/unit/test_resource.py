@@ -86,7 +86,7 @@ class TestResource(unittest.TestCase):
         data = valid_fakeresource_data()
         data['type'] = 'some.InvalidType'
         with self.assertRaises(exc.UnexpectedResourceType):
-            res = FakeResource.from_data(data)
+            FakeResource.from_data(data)
 
     def test_from_sdk(self):
         sdk = valid_fakeresource_sdk()

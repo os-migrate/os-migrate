@@ -19,9 +19,11 @@ set -euxo pipefail
 # W503 line break before binary operator
 # W504 line break after binary operator
 #
+# E501 line too long 79 characters seems too little
+#
 # Flake
 # TODO: Have the Ansible and YAML lint fixed first
-#flake8 --exclude releasenotes,.tox --ignore E125,E251,E402,H405,W503,W504
+flake8 --exclude releasenotes,.tox --ignore E125,E251,E402,H405,W503,W504,E501
 
 # Bash hate
 find ./ -not -wholename "*.tox/*" -and -not -wholename "*.test/*" -and -name "*.sh" -print0 | xargs -0 bashate -v --ignore E006

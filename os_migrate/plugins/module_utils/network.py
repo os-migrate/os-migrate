@@ -156,7 +156,6 @@ def serialize_security_group_rule(sdk_sec_rule, sec_refs):
     resource = {}
     params = {}
     info = {}
-    sdk_params = {}
 
     resource[const.RES_PARAMS] = params
     resource[const.RES_INFO] = info
@@ -205,7 +204,6 @@ def serialize_security_group(sdk_sec):
     resource = {}
     params = {}
     info = {}
-    sdk_params = {}
 
     resource[const.RES_PARAMS] = params
     resource[const.RES_INFO] = info

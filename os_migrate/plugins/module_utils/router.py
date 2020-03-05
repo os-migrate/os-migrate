@@ -7,9 +7,8 @@ import openstack
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import exc
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import reference
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils import serialization
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils.serialization \
-    import set_sdk_params_same_name, set_ser_params_same_name
+    import set_ser_params_same_name
 
 
 def serialize_router(sdk_router, router_refs):

@@ -6,7 +6,6 @@ from os import path
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import exc
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils.resource import Resource
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import serialization
 
 

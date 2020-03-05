@@ -55,7 +55,6 @@ from ansible.module_utils.basic import AnsibleModule
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import filesystem
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import router
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils import serialization
 
 
 def run_module():
