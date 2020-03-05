@@ -24,7 +24,7 @@ set -euxo pipefail
 #flake8 --exclude releasenotes,.tox --ignore E125,E251,E402,H405,W503,W504
 
 # Bash hate
-#find ./ -not -wholename "*.tox/*" -and -not -wholename "*.test/*" -and -name "*.sh" -print0 | xargs -0 bashate -v --ignore E006
+find ./ -not -wholename "*.tox/*" -and -not -wholename "*.test/*" -and -name "*.sh" -print0 | xargs -0 bashate -v --ignore E006
 
 #Yaml lint
 #find ./ -not -wholename "*.tox/*" -and -name "*.yml"  -print0 | xargs -0 yamllint
