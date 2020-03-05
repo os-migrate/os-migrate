@@ -1,4 +1,6 @@
-- os_security_group:
+---
+- name: Create security group
+  os_security_group:
     cloud: "{{ os_migrate_src_cloud }}"
     state: present
     name: osm_security_group

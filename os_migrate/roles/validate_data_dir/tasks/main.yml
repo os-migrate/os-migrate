@@ -1,3 +1,4 @@
+---
 - name: list resource files
   find:
     paths:

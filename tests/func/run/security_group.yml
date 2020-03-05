@@ -1,3 +1,4 @@
+---
 # FIXME: Find a way we can test the whole playbook rather than just
 # the role. Either make sure we're not in a play here and use
 # import_playbook, or spawn an ansible-playbook subprocess? The latter
@@ -11,13 +12,18 @@
 
 - name: load exported data
   set_fact:
-    security_group_resources: "{{ (lookup('file', os_migrate_data_dir + '/security_groups.yml') | from_yaml)
+    security_group_resources: "{{ (lookup('file',
+                                          os_migrate_data_dir +
+                                          '/security_groups.yml') |
+                                          from_yaml)
                    ['resources'] }}"
 
 - name: verify data contents
   assert:
     that:
-      - (security_group_resources | json_query("[?params.name == 'osm_security_group'].params.description")
+      - (security_group_resources |
+        json_query("[?params.name ==
+        'osm_security_group'].params.description")
         == ['OSM security group'])
 
 - include_role:

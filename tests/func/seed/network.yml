@@ -1,4 +1,6 @@
-# Fails with: TypeError: create_network() got an unexpected keyword argument 'dns_domain'
+---
+# Fails with: TypeError: create_network()
+# got an unexpected keyword argument 'dns_domain'
 #
 # - name: create osm_net
 #   os_network:
@@ -7,6 +9,7 @@
 #     description: osm_net test network
 #     state: present
 - name: workaround - create osm_net via CLI
+  changed_when: true
   shell: |
     openstack network create \
         --os-cloud "{{ os_migrate_src_cloud }}" \

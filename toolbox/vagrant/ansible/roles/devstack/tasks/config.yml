@@ -1,3 +1,4 @@
+---
 - name: clone devstack
   git:
     repo: https://opendev.org/openstack/devstack

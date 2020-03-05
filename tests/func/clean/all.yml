@@ -1,5 +1,7 @@
-- include_tasks:
-    file: router.yml
+---
+- name: Include router tasks
+  include_tasks: router.yml
+  args:
     apply:
       tags:
         - test_router
@@ -7,8 +9,9 @@
   tags:
     - always
 
-- include_tasks:
-    file: subnet.yml
+- name: Include subnet tasks
+  include_tasks: subnet.yml
+  args:
     apply:
       tags:
         - test_subnet
@@ -16,8 +19,9 @@
   tags:
     - always
 
-- include_tasks:
-    file: network.yml
+- name: Include network tasks
+  include_tasks: network.yml
+  args:
     apply:
       tags:
         - test_network
@@ -25,8 +29,9 @@
   tags:
     - always
 
-- include_tasks:
-    file: security_group_rule.yml
+- name: Include security group rule tasks
+  include_tasks: security_group_rule.yml
+  args:
     apply:
       tags:
         - test_security_group_rule
@@ -34,8 +39,9 @@
   tags:
     - always
 
-- include_tasks:
-    file: security_group.yml
+- name: Include security group tasks
+  include_tasks: security_group.yml
+  args:
     apply:
       tags:
         - test_security_group

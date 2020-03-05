@@ -1,3 +1,4 @@
+---
 # FIXME: Find a way we can test the whole playbook rather than just
 # the role. Either make sure we're not in a play here and use
 # import_playbook, or spawn an ansible-playbook subprocess? The latter
@@ -11,10 +12,15 @@
 
 - name: load exported data
   set_fact:
-    router_resources: "{{ (lookup('file', os_migrate_data_dir + '/routers.yml') | from_yaml)
+    router_resources: "{{ (lookup('file',
+                                  os_migrate_data_dir +
+                                  '/routers.yml') | from_yaml)
                           ['resources'] }}"
 
 - name: verify data contents
   assert:
     that:
-      - "(router_resources | json_query(\"[?params.name == 'osm_router'].params.external_gateway_nameinfo.network_name\")) == [test_router_external_network|default('public')]"
+      - "(router_resources |
+          json_query(\"[?params.name ==
+          'osm_router'].params.external_gateway_nameinfo.network_name\")) ==
+          [test_router_external_network | default('public')]"

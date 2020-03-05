@@ -1,4 +1,6 @@
-- os_security_group_rule:
+---
+- name: Create security group rule
+  os_security_group_rule:
     cloud: "{{ os_migrate_src_cloud }}"
     security_group: osm_security_group
     protocol: tcp
