@@ -1,54 +1,141 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
+import openstack
 import unittest
 
-from ansible_collections.os_migrate.os_migrate.tests.unit import fixtures
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
-    import network
+    import const, network
+
+
+def sdk_network():
+    return openstack.network.v2.network.Network(
+        availability_zone_hints=['nova', 'zone2'],
+        availability_zones=['nova', 'zone3'],
+        created_at='2020-01-06T15:50:55Z',
+        description='test network',
+        dns_domain='example.org',
+        id='uuid-test-net',
+        ipv4_address_scope_id=None,
+        ipv6_address_scope_id=None,
+        is_admin_state_up=True,
+        is_default=False,
+        is_port_security_enabled=True,
+        is_router_external=False,
+        is_shared=False,
+        mtu=1400,
+        name='test-net',
+        project_id='uuid-test-project',
+        provider_network_type='vxlan',
+        provider_physical_network='physnet',
+        provider_segmentation_id='456',
+        qos_policy_id='uuid-test-qos-policy',
+        revision_number=3,
+        segments=[],
+        status='ACTIVE',
+        subnet_ids=['uuid-test-subnet1', 'uuid-test-subnet2'],
+        updated_at='2020-01-06T15:51:00Z',
+        is_vlan_transparent=False,
+    )
+
+
+def serialized_network():
+    return {
+        const.RES_PARAMS: {
+            'availability_zone_hints': ['nova', 'zone2'],
+            'description': 'test network',
+            'dns_domain': 'example.org',
+            'is_admin_state_up': True,
+            'is_default': False,
+            'is_port_security_enabled': True,
+            'is_router_external': False,
+            'is_shared': False,
+            'is_vlan_transparent': False,
+            'mtu': 1400,
+            'name': 'test-net',
+            'project_name': 'test-project',
+            'provider_network_type': 'vxlan',
+            'provider_physical_network': 'physnet',
+            'provider_segmentation_id': '456',
+            'qos_policy_name': 'test-qos-policy',
+            'segments': [],
+        },
+        const.RES_INFO: {
+            'availability_zones': ['nova', 'zone3'],
+            'created_at': '2020-01-06T15:50:55Z',
+            'project_id': 'uuid-test-project',
+            'revision_number': 3,
+            'status': 'ACTIVE',
+            'subnet_ids': ['uuid-test-subnet1', 'uuid-test-subnet2'],
+            'qos_policy_id': 'uuid-test-qos-policy',
+            'updated_at': '2020-01-06T15:51:00Z',
+        },
+        const.RES_TYPE: 'openstack.network.Network',
+    }
+
+
+def network_refs():
+    return {
+        'project_id': 'uuid-test-project',
+        'project_name': 'test-project',
+        'qos_policy_id': 'uuid-test-qos-policy',
+        'qos_policy_name': 'test-qos-policy',
+        'subnet_ids': ['uuid-test-subnet1', 'uuid-test-subnet2'],
+        'subnet_names': ['test-subnet1', 'test-subnet2'],
+    }
+
+
+# "Disconnected" variant of Network resource where we make sure not to
+# make requests using `conn`.
+class Network(network.Network):
+
+    def _refs_from_ser(self, conn):
+        return network_refs()
+
+    @staticmethod
+    def _refs_from_sdk(conn, sdk_res):
+        return network_refs()
 
 
 class TestNetwork(unittest.TestCase):
 
     def test_serialize_network(self):
-        net = fixtures.sdk_network()
-        net_refs = fixtures.network_refs()
-        serialized = network.serialize_network(net, net_refs)
-        s_params = serialized['params']
-        s_info = serialized['_info']
+        sdk_net = sdk_network()
+        net = Network.from_sdk(None, sdk_net)  # conn=None
+        params, info = net.params_and_info()
 
-        self.assertEqual(serialized['type'], 'openstack.network.Network')
-        self.assertEqual(s_params['availability_zone_hints'], ['nova', 'zone2'])
-        self.assertEqual(s_params['description'], 'test network')
-        self.assertEqual(s_params['dns_domain'], 'example.org')
-        self.assertEqual(s_params['is_admin_state_up'], True)
-        self.assertEqual(s_params['is_default'], False)
-        self.assertEqual(s_params['is_port_security_enabled'], True)
-        self.assertEqual(s_params['is_router_external'], False)
-        self.assertEqual(s_params['is_shared'], False)
-        self.assertEqual(s_params['is_vlan_transparent'], False)
-        self.assertEqual(s_params['mtu'], 1400)
-        self.assertEqual(s_params['name'], 'test-net')
-        self.assertEqual(s_params['provider_network_type'], 'vxlan')
-        self.assertEqual(s_params['provider_physical_network'], 'physnet')
-        self.assertEqual(s_params['provider_segmentation_id'], '456')
-        self.assertEqual(s_params['qos_policy_name'], 'test-qos-policy')
-        self.assertEqual(s_params['segments'], [])
+        self.assertEqual(net.type(), 'openstack.network.Network')
+        self.assertEqual(params['availability_zone_hints'], ['nova', 'zone2'])
+        self.assertEqual(params['description'], 'test network')
+        self.assertEqual(params['dns_domain'], 'example.org')
+        self.assertEqual(params['is_admin_state_up'], True)
+        self.assertEqual(params['is_default'], False)
+        self.assertEqual(params['is_port_security_enabled'], True)
+        self.assertEqual(params['is_router_external'], False)
+        self.assertEqual(params['is_shared'], False)
+        self.assertEqual(params['is_vlan_transparent'], False)
+        self.assertEqual(params['mtu'], 1400)
+        self.assertEqual(params['name'], 'test-net')
+        self.assertEqual(params['provider_network_type'], 'vxlan')
+        self.assertEqual(params['provider_physical_network'], 'physnet')
+        self.assertEqual(params['provider_segmentation_id'], '456')
+        self.assertEqual(params['qos_policy_name'], 'test-qos-policy')
+        self.assertEqual(params['segments'], [])
 
-        self.assertEqual(s_info['availability_zones'], ['nova', 'zone3'])
-        self.assertEqual(s_info['created_at'], '2020-01-06T15:50:55Z')
-        self.assertEqual(s_info['id'], 'uuid-test-net')
-        self.assertEqual(s_info['project_id'], 'uuid-test-project')
-        self.assertEqual(s_info['revision_number'], 3)
-        self.assertEqual(s_info['status'], 'ACTIVE')
-        self.assertEqual(s_info['subnet_ids'], ['uuid-test-subnet1', 'uuid-test-subnet2'])
-        self.assertEqual(s_info['updated_at'], '2020-01-06T15:51:00Z')
-        self.assertEqual(s_info['qos_policy_id'], 'uuid-test-qos-policy')
+        self.assertEqual(info['availability_zones'], ['nova', 'zone3'])
+        self.assertEqual(info['created_at'], '2020-01-06T15:50:55Z')
+        self.assertEqual(info['id'], 'uuid-test-net')
+        self.assertEqual(info['project_id'], 'uuid-test-project')
+        self.assertEqual(info['revision_number'], 3)
+        self.assertEqual(info['status'], 'ACTIVE')
+        self.assertEqual(info['subnet_ids'], ['uuid-test-subnet1', 'uuid-test-subnet2'])
+        self.assertEqual(info['updated_at'], '2020-01-06T15:51:00Z')
+        self.assertEqual(info['qos_policy_id'], 'uuid-test-qos-policy')
 
     def test_network_sdk_params(self):
-        ser_net = fixtures.serialized_network()
-        net_refs = fixtures.network_refs()
-        sdk_params = network.network_sdk_params(ser_net, net_refs)
+        net = Network.from_data(serialized_network())
+        refs = net._refs_from_ser(None)  # conn=None
+        sdk_params = net._to_sdk_params(refs)
 
         self.assertEqual(sdk_params['availability_zone_hints'], ['nova', 'zone2'])
         self.assertEqual(sdk_params['description'], 'test network')
@@ -69,19 +156,3 @@ class TestNetwork(unittest.TestCase):
         # disallowed params when creating a network
         self.assertNotIn('availability_zones', sdk_params)
         self.assertNotIn('revision_number', sdk_params)
-
-    def test_network_needs_update(self):
-        sdk_net = fixtures.sdk_network()
-        net_refs = fixtures.network_refs()
-        serialized = network.serialize_network(sdk_net, net_refs)
-
-        self.assertFalse(network.network_needs_update(
-            sdk_net, net_refs, serialized))
-
-        serialized['_info']['id'] = 'different id'
-        self.assertFalse(network.network_needs_update(
-            sdk_net, net_refs, serialized))
-
-        serialized['params']['description'] = 'updated description'
-        self.assertTrue(network.network_needs_update(
-            sdk_net, net_refs, serialized))
