@@ -1,11 +1,6 @@
 #!/bin/bash
 set -euxo pipefail
 
-# Ansible lint
-find ./ -not -wholename "*.tox/*" -and -name "*.yml"|while read file; do
-    ansible-lint $file
-done
-
 # E125 is deliberately excluded. See
 # https://github.com/jcrocholl/pep8/issues/126. It's just wrong.
 #
@@ -30,3 +25,6 @@ find ./ -not -wholename "*.tox/*" -and -not -wholename "*.test/*" -and -name "*.
 
 #Yaml lint
 find ./ -not -wholename "*.tox/*" -and -name "*.yml"  -print0 | xargs -0 yamllint
+
+# Ansible lint
+find ./ -not -wholename ".tox/" -and -name "*.yml" -print0 | xargs -0 ansible-lint
