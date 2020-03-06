@@ -56,18 +56,13 @@ class Network(resource.Resource):
         obj._sort_info('subnet_ids')
         return obj
 
-    def create_or_update(self, conn):
-        refs = self._refs_from_ser(conn)
-        sdk_params = self._to_sdk_params(refs)
-        existing = conn.network.find_network(sdk_params['name'])
-        if existing:
-            if self._needs_update(Network.from_sdk(conn, existing)):
-                conn.network.update_network(sdk_params['name'], **sdk_params)
-                return True
-        else:
-            conn.network.create_network(**sdk_params)
-            return True
-        return False  # no change done
+    @staticmethod
+    def _create_sdk_res(conn, sdk_params):
+        return conn.network.create_network(**sdk_params)
+
+    @staticmethod
+    def _find_sdk_res(conn, name_or_id):
+        return conn.network.find_network(name_or_id)
 
     @staticmethod
     def _refs_from_sdk(conn, sdk_res):
@@ -83,6 +78,10 @@ class Network(resource.Resource):
         refs['qos_policy_id'] = reference.qos_policy_id(
             conn, self.params()['qos_policy_name'])
         return refs
+
+    @staticmethod
+    def _update_sdk_res(conn, name_or_id, sdk_params):
+        return conn.network.update_network(name_or_id, **sdk_params)
 
 
 def security_group_needs_update(sdk_sec, target_ser_sec):

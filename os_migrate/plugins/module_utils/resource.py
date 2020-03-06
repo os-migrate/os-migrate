@@ -64,6 +64,31 @@ class Resource():
 
     # === PRIVATE CLASS/STATIC METHODS (alphabetic sort) ===
 
+    # Must be overriden in child class if `create_or_update` isn't
+    # overriden.
+    @classmethod
+    def _create_sdk_res(cls, conn, sdk_params):
+        """Create the OpenStack resource which matches a Resource subclass,
+        use `sdk_params` for the creation method call.
+
+        Returns: OpenStack SDK object
+
+        """
+        raise NotImplementedError("_create_sdk_res not implemented for {0}."
+                                  .format(cls))
+
+    # Must be overriden in child class if `create_or_update` isn't
+    # overriden.
+    @classmethod
+    def _find_sdk_res(cls, conn, name_or_id):
+        """Find the OpenStack resource of given `name_or_id` which matches a
+        Resource subclass.
+
+        Returns: OpenStack SDK object
+        """
+        raise NotImplementedError("_find_sdk_res not implemented for {0}."
+                                  .format(cls))
+
     # Used when creating Resource from SDK object, should be overriden
     # in majority of child classes.
     @staticmethod
@@ -104,6 +129,19 @@ class Resource():
         for p_name in param_names:
             ser_params[p_name] = sdk_params[p_name]
 
+    # Must be overriden in child class if `create_or_update` isn't
+    # overriden.
+    @classmethod
+    def _update_sdk_res(cls, conn, name_or_id, sdk_params):
+        """Update the OpenStack resource which matches a Resource subclass and
+        is identified by `name_or_id`, use `sdk_params` for the
+        update method call.
+
+        Returns: OpenStack SDK object
+        """
+        raise NotImplementedError("_update_sdk_res not implemented for {0}."
+                                  .format(cls))
+
     # ===== PUBLIC INSTANCE METHODS (alphabetic sort) =====
 
     # Meant to be reused in child classes, but can be overriden
@@ -115,12 +153,17 @@ class Resource():
 
         Returns: True if any change was made, False otherwise
         """
-        # TODO: It would be nice to provide a default implementation
-        # here, we'll have to do some dynamic method lookup though,
-        # because we need to reference methods under conn (runtime
-        # object), so AFAICT we cannot simply point to something
-        # static in OpenStack SDK.
-        return False
+        refs = self._refs_from_ser(conn)
+        sdk_params = self._to_sdk_params(refs)
+        existing = self._find_sdk_res(conn, sdk_params['name'])
+        if existing:
+            if self._needs_update(self.from_sdk(conn, existing)):
+                self._update_sdk_res(conn, sdk_params['name'], sdk_params)
+                return True
+        else:
+            self._create_sdk_res(conn, sdk_params)
+            return True
+        return False  # no change done
 
     def info(self):
         return self.data[const.RES_INFO]
