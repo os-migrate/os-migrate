@@ -2,7 +2,7 @@ name: consistency-functional
 on:
   push:
     paths-ignore:
-      - 'doc/**'
+    - 'doc/**'
   pull_request:
     paths-ignore:
       - 'doc/**'
