@@ -1,4 +1,3 @@
----
 - name: Include validate data dir tasks
   include_tasks: validate_data_dir.yml
   args:

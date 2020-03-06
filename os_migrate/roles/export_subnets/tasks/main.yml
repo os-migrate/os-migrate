@@ -1,4 +1,3 @@
----
 - name: scan available subnets
   os_subnets_info:
     cloud: "{{ os_migrate_src_cloud }}"

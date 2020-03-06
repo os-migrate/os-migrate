@@ -1,4 +1,3 @@
----
 - name: validate valid dir
   changed_when: true
   shell: |

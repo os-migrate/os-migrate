@@ -1,3 +1,2 @@
----
 export_routers_name_filter:
   - regex: .*

@@ -1,4 +1,3 @@
----
 - name: Include network tasks
   include_tasks: network.yml
   args:
