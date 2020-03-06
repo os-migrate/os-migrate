@@ -1,4 +1,3 @@
----
 # FIXME: Find a way we can test the whole playbook rather than just
 # the role. Either make sure we're not in a play here and use
 # import_playbook, or spawn an ansible-playbook subprocess? The latter

@@ -1,4 +1,3 @@
----
 - name: remove osm_net
   os_network:
     cloud: "{{ item }}"

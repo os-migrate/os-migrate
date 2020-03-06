@@ -1,4 +1,3 @@
----
 - name: scan available routers
   os_migrate.os_migrate.os_routers_info:
     cloud: "{{ os_migrate_src_cloud }}"

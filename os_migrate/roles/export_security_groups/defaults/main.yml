@@ -1,3 +1,2 @@
----
 export_security_groups_name_filter:
   - regex: .*

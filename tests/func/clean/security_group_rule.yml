@@ -1,4 +1,3 @@
----
 - name: remove osm_security_group_rule
   os_security_group_rule:
     cloud: "{{ item }}"

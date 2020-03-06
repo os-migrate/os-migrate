@@ -1,4 +1,3 @@
----
 - name: remove osm_subnet
   os_subnet:
     cloud: "{{ item }}"

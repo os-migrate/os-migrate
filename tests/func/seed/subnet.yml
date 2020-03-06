@@ -1,4 +1,3 @@
----
 - name: Create subnet
   os_subnet:
     cloud: "{{ os_migrate_src_cloud }}"
