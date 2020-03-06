@@ -1,8 +1,6 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
-
 
 def get_errors_in_file_structs(file_structs):
     """Validate a list of `file_structs` resources file

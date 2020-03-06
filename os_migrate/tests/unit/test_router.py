@@ -3,7 +3,8 @@ __metaclass__ = type
 
 import unittest
 
-from ansible_collections.os_migrate.os_migrate.tests.unit import fixtures
+from ansible_collections.os_migrate.os_migrate.tests.unit \
+    import fixtures
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import router
 
@@ -18,8 +19,10 @@ class TestRouter(unittest.TestCase):
         s_info = serialized['_info']
 
         self.assertEqual(serialized['type'], 'openstack.network.Router')
-        self.assertEqual(s_params['availability_zone_hints'], ['nova', 'zone2'])
-        self.assertEqual(s_params['availability_zones'], ['nova', 'zone3'])
+        self.assertEqual(s_params['availability_zone_hints'],
+                         ['nova', 'zone2'])
+        self.assertEqual(s_params['availability_zones'],
+                         ['nova', 'zone3'])
         self.assertEqual(s_params['description'], 'test router')
         self.assertEqual(s_params['is_admin_state_up'], True)
         self.assertEqual(s_params['is_distributed'], True)
@@ -32,8 +35,10 @@ class TestRouter(unittest.TestCase):
         self.assertEqual(s_params['external_gateway_nameinfo'], {
             'network_name': 'test-external-net',
             'external_fixed_ips': [
-                {'subnet_name': 'test-external-subnet', 'ip_address': '172.24.4.79'},
-                {'subnet_name': 'test-external-subnet-ipv6', 'ip_address': '2001:db8::1'}
+                {'subnet_name': 'test-external-subnet',
+                 'ip_address': '172.24.4.79'},
+                {'subnet_name': 'test-external-subnet-ipv6',
+                 'ip_address': '2001:db8::1'}
             ],
             'enable_snat': True,
         })
@@ -43,8 +48,10 @@ class TestRouter(unittest.TestCase):
         self.assertEqual(s_info['external_gateway_info'], {
             'network_id': 'uuid-test-external-net',
             'external_fixed_ips': [
-                {'subnet_id': 'uuid-test-external-subnet', 'ip_address': '172.24.4.79'},
-                {'subnet_id': 'uuid-test-external-subnet-ipv6', 'ip_address': '2001:db8::1'}
+                {'subnet_id': 'uuid-test-external-subnet',
+                 'ip_address': '172.24.4.79'},
+                {'subnet_id': 'uuid-test-external-subnet-ipv6',
+                 'ip_address': '2001:db8::1'}
             ],
             'enable_snat': True,
         })

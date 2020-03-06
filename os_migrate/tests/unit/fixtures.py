@@ -3,7 +3,8 @@ __metaclass__ = type
 
 import openstack
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
+    import const
 
 
 def minimal_resource():
@@ -72,8 +73,10 @@ def sdk_router():
         external_gateway_info={
             'network_id': 'uuid-test-external-net',
             'external_fixed_ips': [
-                {'subnet_id': 'uuid-test-external-subnet', 'ip_address': '172.24.4.79'},
-                {'subnet_id': 'uuid-test-external-subnet-ipv6', 'ip_address': '2001:db8::1'},
+                {'subnet_id': 'uuid-test-external-subnet',
+                 'ip_address': '172.24.4.79'},
+                {'subnet_id': 'uuid-test-external-subnet-ipv6',
+                 'ip_address': '2001:db8::1'},
             ],
             'enable_snat': True,
         },
@@ -86,8 +89,10 @@ def sdk_router():
         project_id='uuid-test-project',
         revision_number=3,
         routes=[
-            {'destination': '192.168.50.0/24', 'nexthop': '10.0.0.50'},
-            {'destination': '192.168.50.0/24', 'nexthop': '10.0.0.51'},
+            {'destination': '192.168.50.0/24',
+             'nexthop': '10.0.0.50'},
+            {'destination': '192.168.50.0/24',
+             'nexthop': '10.0.0.51'},
         ],
         status='ACTIVE',
         updated_at='2020-02-26T15:51:00Z',
@@ -99,16 +104,20 @@ def router_refs():
         'external_gateway_nameinfo': {
             'network_name': 'test-external-net',
             'external_fixed_ips': [
-                {'subnet_name': 'test-external-subnet', 'ip_address': '172.24.4.79'},
-                {'subnet_name': 'test-external-subnet-ipv6', 'ip_address': '2001:db8::1'}
+                {'subnet_name': 'test-external-subnet',
+                 'ip_address': '172.24.4.79'},
+                {'subnet_name': 'test-external-subnet-ipv6',
+                 'ip_address': '2001:db8::1'}
             ],
             'enable_snat': True,
         },
         'external_gateway_info': {
             'network_id': 'uuid-test-external-net',
             'external_fixed_ips': [
-                {'subnet_id': 'uuid-test-external-subnet', 'ip_address': '172.24.4.79'},
-                {'subnet_id': 'uuid-test-external-subnet-ipv6', 'ip_address': '2001:db8::1'}
+                {'subnet_id': 'uuid-test-external-subnet',
+                 'ip_address': '172.24.4.79'},
+                {'subnet_id': 'uuid-test-external-subnet-ipv6',
+                 'ip_address': '2001:db8::1'}
             ],
             'enable_snat': True,
         },

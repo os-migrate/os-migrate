@@ -77,7 +77,9 @@ class TestStringfilter(unittest.TestCase):
         )
 
         self.assertEqual(
-            stringfilter(items, ['one', {'regex': '^prefixed'}], attribute='a'),
+            stringfilter(items,
+                         ['one', {'regex': '^prefixed'}],
+                         attribute='a'),
             [
                 {'a': 'one', 'b': 'another one'},
                 {'a': 'prefixed-one', 'b': 'another prefixed-one'},
