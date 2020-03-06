@@ -1,3 +1,4 @@
+---
 - name: scan available security groups
   os_migrate.os_migrate.os_security_groups_info:
     cloud: "{{ os_migrate_src_cloud }}"

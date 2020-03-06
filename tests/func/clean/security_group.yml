@@ -1,3 +1,4 @@
+---
 - name: remove osm_security_group
   os_security_group:
     cloud: "{{ item }}"

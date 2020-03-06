@@ -1,3 +1,4 @@
+---
 - name: Independent tests
   hosts: migrator
   tasks:

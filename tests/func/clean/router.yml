@@ -1,3 +1,4 @@
+---
 - name: remove osm_router
   os_router:
     cloud: "{{ item }}"

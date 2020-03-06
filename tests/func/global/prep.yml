@@ -1,3 +1,4 @@
+---
 # make sure no artifacts from prevoius test persisted
 - name: delete os_migrate_data_dir
   file:

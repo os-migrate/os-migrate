@@ -1,5 +1,7 @@
-- include_tasks:
-    file: network.yml
+---
+- name: Include network tasks
+  include_tasks: network.yml
+  args:
     apply:
       tags:
         - test_network

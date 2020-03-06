@@ -1,14 +1,16 @@
-- os_subnet:
+---
+- name: Create subnet
+  os_subnet:
     cloud: "{{ os_migrate_src_cloud }}"
     state: present
     network_name: osm_net
     name: osm_subnet
     cidr: 192.168.0.0/24
     dns_nameservers:
-       - 8.8.8.7
-       - 8.8.8.8
+      - 8.8.8.7
+      - 8.8.8.8
     host_routes:
-       - destination: 0.0.0.0/0
-         nexthop: 12.34.56.78
-       - destination: 192.168.0.0/24
-         nexthop: 192.168.0.1
+      - destination: 0.0.0.0/0
+        nexthop: 12.34.56.78
+      - destination: 192.168.0.0/24
+        nexthop: 192.168.0.1
