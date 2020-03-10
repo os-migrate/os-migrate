@@ -64,68 +64,6 @@ def resource_with_nested():
     }
 
 
-def sdk_router():
-    return openstack.network.v2.router.Router(
-        availability_zone_hints=['nova', 'zone2'],
-        availability_zones=['nova', 'zone3'],
-        created_at='2020-02-26T15:50:55Z',
-        description='test router',
-        external_gateway_info={
-            'network_id': 'uuid-test-external-net',
-            'external_fixed_ips': [
-                {'subnet_id': 'uuid-test-external-subnet',
-                 'ip_address': '172.24.4.79'},
-                {'subnet_id': 'uuid-test-external-subnet-ipv6',
-                 'ip_address': '2001:db8::1'},
-            ],
-            'enable_snat': True,
-        },
-        flavor_id='uuid-test-network-flavor',
-        id='uuid-test-net',
-        is_admin_state_up=True,
-        is_distributed=True,
-        is_ha=True,
-        name='test-router',
-        project_id='uuid-test-project',
-        revision_number=3,
-        routes=[
-            {'destination': '192.168.50.0/24',
-             'nexthop': '10.0.0.50'},
-            {'destination': '192.168.50.0/24',
-             'nexthop': '10.0.0.51'},
-        ],
-        status='ACTIVE',
-        updated_at='2020-02-26T15:51:00Z',
-    )
-
-
-def router_refs():
-    return {
-        'external_gateway_nameinfo': {
-            'network_name': 'test-external-net',
-            'external_fixed_ips': [
-                {'subnet_name': 'test-external-subnet',
-                 'ip_address': '172.24.4.79'},
-                {'subnet_name': 'test-external-subnet-ipv6',
-                 'ip_address': '2001:db8::1'}
-            ],
-            'enable_snat': True,
-        },
-        'external_gateway_info': {
-            'network_id': 'uuid-test-external-net',
-            'external_fixed_ips': [
-                {'subnet_id': 'uuid-test-external-subnet',
-                 'ip_address': '172.24.4.79'},
-                {'subnet_id': 'uuid-test-external-subnet-ipv6',
-                 'ip_address': '2001:db8::1'}
-            ],
-            'enable_snat': True,
-        },
-        'flavor_name': 'test-network-flavor',
-        'flavor_id': 'uuid-test-network-flavor',
-    }
-
-
 def security_group_rule_refs():
     return {
         'security_group_name': 'default',

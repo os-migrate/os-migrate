@@ -53,8 +53,8 @@ RETURN = '''
 import openstack
 from ansible.module_utils.basic import AnsibleModule
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils import filesystem
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils import router
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
+    import filesystem, router
 
 
 def run_module():
@@ -76,12 +76,11 @@ def run_module():
     )
 
     conn = openstack.connect(cloud=module.params['cloud'])
-    sdk_net = conn.network.find_router(module.params['name'], ignore_missing=False)
-    net_refs = router.router_refs_from_sdk(conn, sdk_net)
-    ser_net = router.serialize_router(sdk_net, net_refs)
+    sdk_rtr = conn.network.find_router(module.params['name'], ignore_missing=False)
+    rtr = router.Router.from_sdk(conn, sdk_rtr)
 
     result['changed'] = filesystem.write_or_replace_resource(
-        module.params['path'], ser_net)
+        module.params['path'], rtr)
 
     module.exit_json(**result)
 
