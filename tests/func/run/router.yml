@@ -23,3 +23,6 @@
           json_query(\"[?params.name ==
           'osm_router'].params.external_gateway_nameinfo.network_name\")) ==
           [test_router_external_network | default('public')]"
+
+- include_role:
+    name: os_migrate.os_migrate.import_routers

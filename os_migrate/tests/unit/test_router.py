@@ -89,19 +89,12 @@ class TestRouter(unittest.TestCase):
         params, info = rtr.params_and_info()
 
         self.assertEqual(rtr.type(), 'openstack.network.Router')
-        self.assertEqual(params['availability_zone_hints'],
-                         ['nova', 'zone2'])
-        self.assertEqual(params['availability_zones'],
-                         ['nova', 'zone3'])
+        self.assertEqual(params['availability_zone_hints'], ['nova', 'zone2'])
         self.assertEqual(params['description'], 'test router')
         self.assertEqual(params['is_admin_state_up'], True)
         self.assertEqual(params['is_distributed'], True)
         self.assertEqual(params['is_ha'], True)
         self.assertEqual(params['name'], 'test-router')
-        self.assertEqual(params['routes'], [
-            {'destination': '192.168.50.0/24', 'nexthop': '10.0.0.50'},
-            {'destination': '192.168.50.0/24', 'nexthop': '10.0.0.51'},
-        ])
         self.assertEqual(params['external_gateway_nameinfo'], {
             'network_name': 'test-external-net',
             'external_fixed_ips': [
@@ -114,6 +107,7 @@ class TestRouter(unittest.TestCase):
         })
         self.assertEqual(params['flavor_name'], 'test-network-flavor')
 
+        self.assertEqual(info['availability_zones'], ['nova', 'zone3'])
         self.assertEqual(info['created_at'], '2020-02-26T15:50:55Z')
         self.assertEqual(info['external_gateway_info'], {
             'network_id': 'uuid-test-external-net',
@@ -128,5 +122,9 @@ class TestRouter(unittest.TestCase):
         self.assertEqual(info['flavor_id'], 'uuid-test-network-flavor')
         self.assertEqual(info['project_id'], 'uuid-test-project')
         self.assertEqual(info['revision_number'], 3)
+        self.assertEqual(info['routes'], [
+            {'destination': '192.168.50.0/24', 'nexthop': '10.0.0.50'},
+            {'destination': '192.168.50.0/24', 'nexthop': '10.0.0.51'},
+        ])
         self.assertEqual(info['status'], 'ACTIVE')
         self.assertEqual(info['updated_at'], '2020-02-26T15:51:00Z')

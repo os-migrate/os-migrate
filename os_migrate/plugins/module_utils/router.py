@@ -14,23 +14,23 @@ class Router(resource.Resource):
     sdk_class = openstack.network.v2.router.Router
 
     info_from_sdk = [
+        'availability_zones',
         'created_at',
         'external_gateway_info',
         'flavor_id',
         'project_id',
         'revision_number',
+        'routes',
         'status',
         'updated_at',
     ]
     params_from_sdk = [
         'availability_zone_hints',
-        'availability_zones',
         'description',
         'is_admin_state_up',
         'is_distributed',
         'is_ha',
         'name',
-        'routes',
     ]
     params_from_refs = [
         'external_gateway_nameinfo',
@@ -46,7 +46,7 @@ class Router(resource.Resource):
     def from_sdk(cls, conn, sdk_resource):
         obj = super(Router, cls).from_sdk(conn, sdk_resource)
         obj._sort_param('availability_zone_hints')
-        obj._sort_param('availability_zones')
+        obj._sort_info('availability_zones')
         return obj
 
     @staticmethod
