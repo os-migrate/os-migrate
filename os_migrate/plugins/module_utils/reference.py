@@ -122,6 +122,54 @@ def subnet_id(conn, name, required=True):
     return _fetch_id(conn.network.find_subnet, name, required)
 
 
+def segment_name(conn, id_, required=True):
+    """Fetch name of Segment identified by ID `id_`. Use OpenStack
+    SDK connection `conn` to fetch the info. If `required`, ensure the
+    fetch is successful.
+
+    Returns: the name, or None if not found and not `required`
+
+    Raises: openstack's ResourceNotFound when `required` but not found
+    """
+    return _fetch_name(conn.network.find_segment, id_, required)
+
+
+def segment_id(conn, name, required=True):
+    """Fetch ID of Segment identified by name `name`. Use OpenStack
+    SDK connection `conn` to fetch the info. If `required`, ensure the
+    fetch is successful.
+
+    Returns: the ID, or None if not found and not `required`
+
+    Raises: openstack's ResourceNotFound when `required` but not found
+    """
+    return _fetch_id(conn.network.find_segment, name, required)
+
+
+def subnet_pool_name(conn, id_, required=True):
+    """Fetch name of Subnet Pool identified by ID `id_`. Use OpenStack
+    SDK connection `conn` to fetch the info. If `required`, ensure the
+    fetch is successful.
+
+    Returns: the name, or None if not found and not `required`
+
+    Raises: openstack's ResourceNotFound when `required` but not found
+    """
+    return _fetch_name(conn.network.find_subnet_pool, id_, required)
+
+
+def subnet_pool_id(conn, name, required=True):
+    """Fetch ID of Subnet Pool identified by name `name`. Use OpenStack
+    SDK connection `conn` to fetch the info. If `required`, ensure the
+    fetch is successful.
+
+    Returns: the ID, or None if not found and not `required`
+
+    Raises: openstack's ResourceNotFound when `required` but not found
+    """
+    return _fetch_id(conn.network.find_subnet_pool, name, required)
+
+
 def _fetch_name(get_method, id_, required=True):
     """Use `get_method` to fetch an OpenStack SDK resource by `id_` and
     return its name. If `required`, ensure the fetch is successful.
