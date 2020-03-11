@@ -43,7 +43,7 @@ RETURN = '''
 import openstack
 from ansible.module_utils.basic import AnsibleModule
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils import network
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import securitygroup
 
 
 def run_module():
@@ -64,17 +64,8 @@ def run_module():
     )
 
     conn = openstack.connect(cloud=module.params['cloud'])
-    ser_sec = module.params['data']
-    sec_params = network.security_group_sdk_params(ser_sec)
-    existing_secgroup = conn.network.find_security_group(sec_params['name'])
-    if existing_secgroup:
-        if network.security_group_needs_update(existing_secgroup, ser_sec):
-            conn.network.update_security_group(sec_params['name'], **sec_params)
-            result['changed'] = True
-        # else: pass -- nothing to update
-    else:
-        conn.network.create_security_group(**sec_params)
-        result['changed'] = True
+    sec = securitygroup.SecurityGroup.from_data(module.params['data'])
+    result['changed'] = sec.create_or_update(conn)
 
     module.exit_json(**result)
 
