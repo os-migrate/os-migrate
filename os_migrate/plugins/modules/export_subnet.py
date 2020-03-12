@@ -77,10 +77,10 @@ def run_module():
 
     conn = openstack.connect(cloud=module.params['cloud'])
     sdk_subnet = conn.network.find_subnet(module.params['name'], ignore_missing=False)
-    ser_subnet = subnet.serialize_subnet(sdk_subnet)
+    data = subnet.Subnet.from_sdk(conn, sdk_subnet)
 
     result['changed'] = filesystem.write_or_replace_resource(
-        module.params['path'], ser_subnet)
+        module.params['path'], data)
 
     module.exit_json(**result)
 
