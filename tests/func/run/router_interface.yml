@@ -20,10 +20,13 @@
   assert:
     that:
       - "(router_interface_resources |
-          json_query(\"[?params.router_name ==
+          json_query(\"[?params.device_name ==
           'osm_router'].params.fixed_ips_names[].ip_address\")) | sort ==
           ['192.168.0.10', '192.168.10.10']"
       - "(router_interface_resources |
-          json_query(\"[?params.router_name ==
+          json_query(\"[?params.device_name ==
           'osm_router'].params.fixed_ips_names[].subnet_name\")) | sort ==
-          ['osm_subnet', 'router_subnet']"
+          ['osm_router_subnet', 'osm_subnet']"
+
+- include_role:
+    name: os_migrate.os_migrate.import_router_interfaces

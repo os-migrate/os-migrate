@@ -6,12 +6,3 @@
   loop:
     - "{{ os_migrate_src_cloud }}"
     - "{{ os_migrate_dst_cloud }}"
-
-- name: remove 2nd router subnet
-  os_subnet:
-    cloud: "{{ item }}"
-    name: router_subnet
-    state: absent
-  loop:
-    - "{{ os_migrate_src_cloud }}"
-    - "{{ os_migrate_dst_cloud }}"

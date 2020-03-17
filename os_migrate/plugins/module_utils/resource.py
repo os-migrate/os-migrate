@@ -14,6 +14,9 @@ class Resource():
     info_from_refs = []
     params_from_sdk = []
     params_from_refs = []
+    # If sdk_params_from_params are kept as None, then they are
+    # assumed to be the same as params_from_sdk.
+    sdk_params_from_params = None
     sdk_params_from_refs = []
 
     # ===== PUBLIC CLASS/STATIC METHODS (alphabetic sort) =====
@@ -232,7 +235,13 @@ class Resource():
         """
         # we could move these methods from serialization.py to private
         # under Resource
-        self._set_sdk_params_same_name(self.params(), sdk_params, self.params_from_sdk)
+
+        if self.sdk_params_from_params is None:
+            sdk_params_from_params = self.params_from_sdk
+        else:
+            sdk_params_from_params = self.sdk_params_from_params
+
+        self._set_sdk_params_same_name(self.params(), sdk_params, sdk_params_from_params)
         self._set_sdk_params_same_name(refs, sdk_params, self.sdk_params_from_refs)
 
     # Not meant to be overriden in majority of subclasses.
@@ -259,7 +268,8 @@ class Resource():
         """Returns: serialized `self.data` with all the '_info' keys removed,
         even from nested resources. The original `self.data` structure
         is untouched, but the returned structure does reuse data
-        contents to save memory (it is not a deep copy).
+        contents to save memory (it is not a deep copy). Only lists
+        and dicts are fresh instances.
         """
         def _recursive_trim(obj):
             if isinstance(obj, dict):
