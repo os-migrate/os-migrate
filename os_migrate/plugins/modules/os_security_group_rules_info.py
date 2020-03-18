@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
@@ -11,28 +12,40 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = '''
 ---
-module: os_migrate.os_migrate.os_security_group_rules_info
+module: os_security_group_rules_info
 
 short_description: Get security group rules info
 
+extends_documentation_fragment: openstack
+
 version_added: "2.9"
+
+author: "OpenStack tenant migration tools (@os-migrate)"
 
 description:
   - "List security group rules information"
 
 options:
+  name:
+    description:
+      - The name of the Security Group rule to get the info.
+    required: true
+    type: str
+  filters:
+    description:
+      - Options for filtering the Security Group rules info.
+    required: true
+    type: dict
+  availability_zone:
+    description:
+      - Availability zone.
+    required: false
+    type: str
   cloud:
     description:
-      - Named cloud to operate against.
-    required: true
-  path:
-    description:
-      - Resources YAML file to where security groups will be serialized.
-      - In case the resource file already exists, it must match the
-        os-migrate version.
-      - In case the resource of same type and name exists in the file,
-        it will be replaced.
-    required: true
+      - Ignored. Present for backwards compatibility.
+    required: false
+    type: raw
 '''
 
 EXAMPLES = '''
@@ -68,6 +81,9 @@ def main():
         name=dict(required=False, default=None),
         filters=dict(required=False, type='dict', default=None)
     )
+    # TODO: check the del
+    # del argument_spec['cloud']
+
     module = AnsibleModule(argument_spec)
     sdk, cloud = openstack_cloud_from_module(module)
     try:

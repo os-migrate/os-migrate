@@ -8,7 +8,7 @@
 - name: stop when errors found
   fail:
     msg: "{{ networks_file_validation.errors|join(' ') }}"
-  when: not networks_file_validation.ok
+  when: not ( networks_file_validation.ok | bool )
 
 - name: read networks resource file
   os_migrate.os_migrate.read_resources:

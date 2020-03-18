@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
@@ -11,11 +12,13 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = '''
 ---
-module: os_migrate.os_migrate.validate_resource_files
+module: validate_resource_files
 
 short_description: Import OpenStack network
 
 version_added: "2.9"
+
+author: "OpenStack tenant migration tools (@os-migrate)"
 
 description:
   - "Validate OS-Migrate YAML resource files."
@@ -26,6 +29,7 @@ options:
     description:
       - Resources YAML files to read.
     required: true
+    type: list
 '''
 
 EXAMPLES = '''
@@ -47,11 +51,11 @@ RETURN = '''
 ok:
     description: Whether validation passed without errors
     returned: always
-    type: boolean
-resources:
+    type: str
+errors:
     description: Errors found
     returned: always but can be empty
-    type: list of str
+    type: dict
 '''
 
 from ansible.module_utils.basic import AnsibleModule
@@ -68,6 +72,8 @@ def run_module():
     result = dict(
         # This module doesn't change anything.
         changed=False,
+        ok="True",
+        errors=[]
     )
 
     module = AnsibleModule(
@@ -82,7 +88,10 @@ def run_module():
         file_structs.append(filesystem.load_resources_file(path))
     errors = validation.get_errors_in_file_structs(file_structs)
 
-    result['ok'] = len(errors) == 0
+    if len(errors) == 0:
+        result['ok'] = "True"
+    else:
+        result['ok'] = "False"
     result['errors'] = errors
 
     module.exit_json(**result)

@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
@@ -11,11 +12,15 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = '''
 ---
-module: os_migrate.os_migrate.os_routers_info
+module: os_routers_info
 
 short_description: Get routers info
 
+extends_documentation_fragment: openstack
+
 version_added: "2.9"
+
+author: "OpenStack tenant migration tools (@os-migrate)"
 
 description:
   - "List routers information"
@@ -25,14 +30,27 @@ options:
     description:
       - Dictionary with parameters for chosen auth type.
     required: true
+    type: dict
   auth_type:
     description:
       - Auth type plugin for OpenStack. Can be omitted if using password authentication.
     required: false
+    type: str
   region_name:
     description:
       - OpenStack region name. Can be omitted if using default region.
     required: false
+    type: str
+  availability_zone:
+    description:
+      - Availability zone.
+    required: false
+    type: str
+  cloud:
+    description:
+      - Ignored. Present for backwards compatibility.
+    required: false
+    type: raw
 '''
 
 EXAMPLES = '''

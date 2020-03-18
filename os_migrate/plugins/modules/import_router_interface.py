@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
@@ -11,11 +12,15 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = '''
 ---
-module: os_migrate.os_migrate.import_router_interface
+module: import_router_interface
 
 short_description: Import OpenStack network
 
+extends_documentation_fragment: openstack
+
 version_added: "2.9"
+
+author: "OpenStack tenant migration tools (@os-migrate)"
 
 description:
   - "Import OpenStack network from an OS-Migrate YAML structure"
@@ -25,19 +30,32 @@ options:
     description:
       - Dictionary with parameters for chosen auth type.
     required: true
+    type: dict
   auth_type:
     description:
       - Auth type plugin for OpenStack. Can be omitted if using password authentication.
     required: false
+    type: str
   region_name:
     description:
       - OpenStack region name. Can be omitted if using default region.
     required: false
-
+    type: str
   data:
     description:
       - Data structure with network parameters as loaded from OS-Migrate YAML file.
     required: true
+    type: dict
+  availability_zone:
+    description:
+      - Availability zone.
+    required: false
+    type: str
+  cloud:
+    description:
+      - Ignored. Present for backwards compatibility.
+    required: false
+    type: raw
 '''
 
 EXAMPLES = '''
@@ -68,7 +86,8 @@ def run_module():
     argument_spec = openstack_full_argument_spec(
         data=dict(type='dict', required=True),
     )
-    del argument_spec['cloud']
+    # TODO: check the del
+    # del argument_spec['cloud']
 
     result = dict(
         changed=False,

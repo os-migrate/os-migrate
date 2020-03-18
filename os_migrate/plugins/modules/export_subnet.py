@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
@@ -11,11 +12,15 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = '''
 ---
-module: os_migrate.os_migrate.export_subnet
+module: export_subnet
 
 short_description: Export OpenStack Subnet
 
+extends_documentation_fragment: openstack
+
 version_added: "2.9"
+
+author: "OpenStack tenant migration tools (@os-migrate)"
 
 description:
   - "Export OpenStack subnet definition into an OS-Migrate YAML"
@@ -25,15 +30,17 @@ options:
     description:
       - Dictionary with parameters for chosen auth type.
     required: true
+    type: dict
   auth_type:
     description:
       - Auth type plugin for OpenStack. Can be omitted if using password authentication.
     required: false
+    type: str
   region_name:
     description:
       - OpenStack region name. Can be omitted if using default region.
     required: false
-
+    type: str
   path:
     description:
       - Resources YAML file to where network will be serialized.
@@ -42,10 +49,22 @@ options:
       - In case the resource of same type and name exists in the file,
         it will be replaced.
     required: true
+    type: str
   name:
     description:
       - Name (or ID) of a Subnet to export.
     required: true
+    type: str
+  availability_zone:
+    description:
+      - Availability zone.
+    required: false
+    type: str
+  cloud:
+    description:
+      - Ignored. Present for backwards compatibility.
+    required: false
+    type: raw
 '''
 
 EXAMPLES = '''
@@ -72,7 +91,8 @@ def run_module():
         path=dict(type='str', required=True),
         name=dict(type='str', required=True),
     )
-    del argument_spec['cloud']
+    # TODO: check the del
+    # del argument_spec['cloud']
 
     result = dict(
         changed=False,

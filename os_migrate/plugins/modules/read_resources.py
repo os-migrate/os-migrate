@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
@@ -11,11 +12,13 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = '''
 ---
-module: os_migrate.os_migrate.read_resources
+module: read_resources
 
 short_description: Import OpenStack network
 
 version_added: "2.9"
+
+author: "OpenStack tenant migration tools (@os-migrate)"
 
 description:
   - "Read an OS-Migrate YAML resources file structure"
@@ -25,6 +28,7 @@ options:
     description:
       - Resources YAML file to read.
     required: true
+    type: str
 '''
 
 EXAMPLES = '''
