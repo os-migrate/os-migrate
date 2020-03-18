@@ -63,11 +63,11 @@ jobs:
       # mysql:
       #   image: mysql:5.7
       #   env:
-      #     MYSQL_ROOT_PASSWORD: devstack
+      #     MYSQL_ROOT_PASSWORD: root
       #     MYSQL_ALLOW_EMPTY_PASSWORD: true
       #     MYSQL_DATABASE: devstack
       #   ports:
-      #   - 3306/tcp
+      #     - 3306:3306
       #   options: >-
       #     --health-cmd="mysqladmin ping"
       #     --health-interval=10s
@@ -79,6 +79,11 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
+      # FIXME: We should use the MySQL service ASAP
+      - name: Start the MySQL service
+        run: |
+          sudo service mysql restart
+          sudo systemctl status mysql.service
       - name: Install dependencies
         run: |
           # We use ppa:projectatomic repo to install podman
@@ -92,8 +97,12 @@ jobs:
           # installed or not
           sudo apt install python3-httplib2 -y
       - name: Verify MySQL connection from container
-        run: |
-          mysql --host 127.0.0.1 -uroot -proot -e "SHOW DATABASES"
+        run: >-
+          mysql --host 127.0.0.1 \
+                --port 3306 \
+                -uroot \
+                -proot \
+                -e "SHOW DATABASES"
       - name: Make the container image to launch the tests
         run: |
           NO_VAGRANT=1 make toolbox-build
@@ -110,7 +119,6 @@ jobs:
       - name: Configure devstack
         run: |
           DIR=$(pwd)
-
           cd devstack
           cat << EOF > local.conf
           [[local|localrc]]
@@ -119,6 +127,7 @@ jobs:
           ADMIN_PASSWORD=devstack
           SERVICE_TOKEN=devstack
           DATABASE_PASSWORD=root
+          DATABASE_TYPE=mysql
           HOST_IP=127.0.0.1
           SERVICE_HOST=127.0.0.1
           MYSQL_HOST=127.0.0.1
@@ -128,11 +137,10 @@ jobs:
           # Pre-requisite
           ENABLED_SERVICES=mysql,key
           # Neutron
-          ENABLED_SERVICES+=,q-svc,q-agt,q-dhcp,q-l3,q-meta,neutron
+          ENABLED_SERVICES+=,q-svc,q-dhcp,q-meta,q-l3,q-agt
           EOF
           cat local.conf
           sudo ./tools/create-stack-user.sh
-
           sudo mv $DIR/devstack /opt/stack/devstack
           sudo chown -R stack: /opt/stack/devstack
       - name: Start devstack
