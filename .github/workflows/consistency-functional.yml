@@ -58,37 +58,30 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      # TODO: We should use the DB service as a container
-      # once MySQL is dropped we should use it like this:
-      # mysql:
-      #   image: mysql:5.7
-      #   env:
-      #     MYSQL_ROOT_PASSWORD: root
-      #     MYSQL_ALLOW_EMPTY_PASSWORD: true
-      #     MYSQL_DATABASE: devstack
-      #   ports:
-      #     - 3306:3306
-      #   options: >-
-      #     --health-cmd="mysqladmin ping"
-      #     --health-interval=10s
-      #     --health-timeout=5s
-      #     --health-retries=3
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_ALLOW_EMPTY_PASSWORD: true
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
     steps:
       - uses: actions/checkout@v1
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
-      # FIXME: We should use the MySQL service ASAP
-      - name: Start the MySQL service
-        run: |
-          sudo service mysql restart
-          sudo systemctl status mysql.service
       - name: Install dependencies
         run: |
           # We use ppa:projectatomic repo to install podman
           sudo add-apt-repository -y ppa:projectatomic/ppa
           sudo apt install podman -y
+          sudo apt remove mysql-server mysql-server -y
           # MySQL requirements
           sudo apt install python3-mysqldb libmysqlclient-dev mysql-client -y
           # Httplib2 requirements
@@ -98,11 +91,46 @@ jobs:
           sudo apt install python3-httplib2 -y
       - name: Verify MySQL connection from container
         run: >-
-          mysql --host 127.0.0.1 \
-                --port 3306 \
-                -uroot \
-                -proot \
-                -e "SHOW DATABASES"
+          mysql \
+            --host 127.0.0.1 \
+            -P 3306 \
+            -uroot \
+            -proot \
+            -e "SHOW DATABASES"
+          mysql \
+            --host 127.0.0.1 \
+            -P 3306 \
+            -uroot \
+            -proot \
+            -e 'USE mysql;
+                DELETE FROM `user` WHERE `Host` != "%" AND `User`="root";
+                FLUSH PRIVILEGES;'
+      # Devstack is not able to configure an external MySQL backend.
+      # There is a mandatory DB server restart from the stack.sh script
+      # that restart a service called mysql, even if the service is not
+      # supposed to be configured locally.
+      # In this case we configure the database to point to the external
+      # database container and we mock a dummy service called "mysql"
+      # to trick stack.sh and not fail.
+      - name: Create a dummy MySQL service to trick stack.sh
+        run: |
+          sudo tee /usr/mock.sh > /dev/null <<'EOF'
+          sleep 3600;
+          EOF
+          sudo chmod u+x /usr/mock.sh
+          sudo tee /lib/systemd/system/mysql.service > /dev/null <<'EOF'
+          [Unit]
+          Description=MySQL mock service
+          [Service]
+          Type=simple
+          ExecStart=/bin/bash /usr/mock.sh
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+          sudo systemctl enable mysql.service
+          sudo systemctl start mysql.service
+          sudo systemctl restart mysql.service
+          sudo systemctl status mysql.service
       - name: Make the container image to launch the tests
         run: |
           NO_VAGRANT=1 make toolbox-build
@@ -130,7 +158,7 @@ jobs:
           DATABASE_TYPE=mysql
           HOST_IP=127.0.0.1
           SERVICE_HOST=127.0.0.1
-          MYSQL_HOST=127.0.0.1
+          DATABASE_HOST=127.0.0.1
           RABBIT_HOST=127.0.0.1
           RABBIT_USERID=guest
           RABBIT_PASSWORD=guest
@@ -146,6 +174,11 @@ jobs:
       - name: Start devstack
         run: |
           sudo -iu stack bash -c 'cd /opt/stack/devstack; ./stack.sh'
+      - name: Get debug data
+        if: failure()
+        run: |
+            echo ">>> Journal logs"
+            sudo journalctl --no-pager
       - name: Run sanity checks
         run: |
           echo "- Get network and routers list"
