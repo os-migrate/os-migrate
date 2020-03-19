@@ -20,5 +20,9 @@
   assert:
     that:
       - (subnet_resources |
-        json_query("[?params.name == 'osm_subnet'].params.cidr")
+        json_query("[?params.name ==
+        'osm_subnet'].params.cidr")
         == ['192.168.0.0/24'])
+
+- include_role:
+    name: os_migrate.os_migrate.import_subnets

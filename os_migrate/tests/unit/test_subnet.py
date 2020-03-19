@@ -1,18 +1,100 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
+import openstack
 import unittest
 
-from ansible_collections.os_migrate.os_migrate.tests.unit import fixtures
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
-    import subnet
+    import const, subnet
+
+
+def sdk_subnet():
+    return openstack.network.v2.subnet.Subnet(
+        id='uuid-test-subnet1',
+        name='test-subnet1',
+        tenant_id='uuid-tenant',
+        network_id='uuid-test-net',
+        ip_version=4,
+        enable_dhcp=True,
+        gateway_ip='10.10.10.1',
+        cidr='10.10.10.0/24',
+        allocation_pools=[{
+            'start': '10.10.10.2',
+            'end': '10.10.10.254'
+        }],
+        description='test-subnet',
+        created_at='2020-02-21T17:34:54Z',
+        revision_number=0,
+        segment_id='uuid-test-segment',
+        subnet_pool_id='uuid-test-subnet-pool'
+    )
+
+
+def serialized_subnet():
+    return {
+        const.RES_PARAMS: {
+            'allocation_pools': [
+                {'start': '10.10.10.2', 'end': '10.10.10.254'}],
+            'cidr': '10.10.10.0/24',
+            'description': 'test-subnet',
+            'dns_nameservers': None,
+            'gateway_ip': '10.10.10.1',
+            'host_routes': None,
+            'ip_version': 4,
+            'ipv6_address_mode': None,
+            'ipv6_ra_mode': None,
+            'is_dhcp_enabled': True,
+            'name': 'test-subnet1',
+            'network_name': 'test-net',
+            'segment_name': 'test-segment',
+            'service_types': None,
+            'subnet_pool_name': 'test-subnet-pool',
+            'tags': [],
+            'use_default_subnet_pool': None,
+        },
+        const.RES_INFO: {
+            'created_at': '2020-02-21T17:34:54Z',
+            'id': 'uuid-test-subnet1',
+            'network_id': 'uuid-test-net',
+            'prefix_length': None,
+            'project_id': 'uuid-tenant',
+            'revision_number': 0,
+            'segment_id': 'uuid-test-segment',
+            'subnet_pool_id': 'uuid-test-subnet-pool',
+            'updated_at': None,
+        },
+        const.RES_TYPE: 'openstack.subnet.Subnet',
+    }
+
+
+def subnet_refs():
+    return {
+        'network_id': 'uuid-test-net',
+        'network_name': 'test-net',
+        'segment_id': 'uuid-test-segment',
+        'segment_name': 'test-segment',
+        'subnet_pool_id': 'uuid-test-subnet-pool',
+        'subnet_pool_name': 'test-subnet-pool',
+    }
+
+
+# "Disconnected" variant of Network resource where we make sure not to
+# make requests using `conn`.
+class Subnet(subnet.Subnet):
+
+    def _refs_from_ser(self, conn):
+        return subnet_refs()
+
+    @staticmethod
+    def _refs_from_sdk(conn, sdk_res):
+        return subnet_refs()
 
 
 class TestSubnet(unittest.TestCase):
 
     def test_serialize_subnet(self):
-        subnet_data = fixtures.sdk_subnet()
-        serialized = subnet.Subnet.from_sdk(None, subnet_data)
+        subnet_data = sdk_subnet()
+        serialized = Subnet.from_sdk(None, subnet_data)
         params, info = serialized.params_and_info()
 
         self.assertEqual(serialized.type(), 'openstack.subnet.Subnet')
@@ -28,8 +110,10 @@ class TestSubnet(unittest.TestCase):
         self.assertEqual(params['ipv6_ra_mode'], None)
         self.assertEqual(params['is_dhcp_enabled'], True)
         self.assertEqual(params['name'], 'test-subnet1')
+        self.assertEqual(params['network_name'], 'test-net')
+        self.assertEqual(params['segment_name'], 'test-segment')
         self.assertEqual(params['service_types'], None)
-        self.assertEqual(params['tags'], [])
+        self.assertEqual(params['subnet_pool_name'], 'test-subnet-pool')
         self.assertEqual(params['use_default_subnet_pool'], None)
 
         self.assertEqual(info['created_at'], '2020-02-21T17:34:54Z')
@@ -38,6 +122,24 @@ class TestSubnet(unittest.TestCase):
         self.assertEqual(info['prefix_length'], None)
         self.assertEqual(info['project_id'], 'uuid-tenant')
         self.assertEqual(info['revision_number'], 0)
-        self.assertEqual(info['segment_id'], None)
-        self.assertEqual(info['subnet_pool_id'], None)
+        self.assertEqual(info['segment_id'], 'uuid-test-segment')
+        self.assertEqual(info['subnet_pool_id'], 'uuid-test-subnet-pool')
+        self.assertEqual(info['tags'], [])
         self.assertEqual(info['updated_at'], None)
+
+    def test_deserialize_subnet(self):
+        sub = Subnet.from_data(serialized_subnet())
+        refs = sub._refs_from_ser(None)  # conn=None
+        sdk_params = sub._to_sdk_params(refs)
+
+        self.assertEqual(sdk_params['allocation_pools'],
+                         [{'start': '10.10.10.2', 'end': '10.10.10.254'}])
+        self.assertEqual(sdk_params['cidr'], '10.10.10.0/24')
+        self.assertEqual(sdk_params['description'], 'test-subnet')
+        self.assertEqual(sdk_params['gateway_ip'], '10.10.10.1')
+        self.assertEqual(sdk_params['ip_version'], 4)
+        self.assertEqual(sdk_params['is_dhcp_enabled'], True)
+        self.assertEqual(sdk_params['name'], 'test-subnet1')
+        self.assertEqual(sdk_params['network_id'], 'uuid-test-net')
+        self.assertEqual(sdk_params['segment_id'], 'uuid-test-segment')
+        self.assertEqual(sdk_params['subnet_pool_id'], 'uuid-test-subnet-pool')
