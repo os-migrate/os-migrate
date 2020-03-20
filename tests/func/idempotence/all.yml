@@ -13,3 +13,11 @@
       tags:
         - test_subnet
   tags: always
+
+- name: Include security group tasks
+  include_tasks: security_group.yml
+  args:
+    apply:
+      tags:
+        - test_security_group
+  tags: always
