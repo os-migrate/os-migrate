@@ -5,3 +5,11 @@
       tags:
         - test_network
   tags: always
+
+- name: Include subnet tasks
+  include_tasks: subnet.yml
+  args:
+    apply:
+      tags:
+        - test_subnet
+  tags: always
