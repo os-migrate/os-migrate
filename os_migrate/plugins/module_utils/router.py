@@ -18,6 +18,7 @@ class Router(resource.Resource):
         'created_at',
         'external_gateway_info',
         'flavor_id',
+        'id',
         'project_id',
         'revision_number',
         'routes',

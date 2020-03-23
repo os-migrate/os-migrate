@@ -74,6 +74,30 @@ def qos_policy_id(conn, name, required=True):
     return _fetch_id(conn.network.find_qos_policy, name, required)
 
 
+def router_name(conn, id_, required=True):
+    """Fetch name of Router identified by ID `id_`. Use OpenStack
+    SDK connection `conn` to fetch the info. If `required`, ensure the
+    fetch is successful.
+
+    Returns: the name, or None if not found and not `required`
+
+    Raises: openstack's ResourceNotFound when `required` but not found
+    """
+    return _fetch_name(conn.network.find_router, id_, required)
+
+
+def router_id(conn, name, required=True):
+    """Fetch ID of Router identified by name `name`. Use OpenStack
+    SDK connection `conn` to fetch the info. If `required`, ensure the
+    fetch is successful.
+
+    Returns: the ID, or None if not found and not `required`
+
+    Raises: openstack's ResourceNotFound when `required` but not found
+    """
+    return _fetch_id(conn.network.find_router, name, required)
+
+
 def security_group_name(conn, id_, required=True):
     """Fetch name of the Security Group identified by ID `id_`. Use OpenStack SDK
     connection `conn` to fetch the info. If `required`, ensure the
