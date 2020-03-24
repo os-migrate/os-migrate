@@ -59,7 +59,8 @@ openstack_security_groups:
 '''
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.openstack import openstack_full_argument_spec, openstack_cloud_from_module
+from ansible.module_utils.openstack import openstack_full_argument_spec, \
+    openstack_cloud_from_module
 
 
 def main():
@@ -72,7 +73,8 @@ def main():
     sdk, cloud = openstack_cloud_from_module(module)
     try:
         security_groups = cloud.list_security_groups(module.params['name'])
-        module.exit_json(changed=False, openstack_security_groups=security_groups)
+        module.exit_json(changed=False,
+                         openstack_security_groups=security_groups)
 
     except sdk.exceptions.OpenStackCloudException as e:
         module.fail_json(msg=str(e))
