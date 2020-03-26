@@ -6,6 +6,7 @@ authors:
   - Jiri Stransky <jistr@redhat.com>
   - Carlos Camacho <ccamacho@redhat.com>
   - Ryan Brady <rbrady@redhat.com>
+  - Sagi Shnaidman <sshnaidm@redhat.com>
 description: OpenStack tenant migration tooling
 license:
   - Apache-2.0
