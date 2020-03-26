@@ -54,7 +54,7 @@ import openstack
 from ansible.module_utils.basic import AnsibleModule
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import filesystem
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils import network
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import security_group_rule
 
 
 def run_module():
@@ -86,8 +86,8 @@ def run_module():
         # We check that serialize_security_group_rule receives
         # a openstack.network.v2.security_group_rule.SecurityGroupRule
         sec_rule_obj = openstack.network.v2.security_group_rule.SecurityGroupRule(**rule)
-        sec_refs = network.security_group_rule_refs_from_sdk(conn, sec_rule_obj)
-        ser_sec = network.serialize_security_group_rule(sec_rule_obj, sec_refs)
+        sec_refs = security_group_rule.security_group_rule_refs_from_sdk(conn, sec_rule_obj)
+        ser_sec = security_group_rule.serialize_security_group_rule(sec_rule_obj, sec_refs)
 
         rchanged = filesystem.write_or_replace_resource(module.params['path'], ser_sec)
         if rchanged:

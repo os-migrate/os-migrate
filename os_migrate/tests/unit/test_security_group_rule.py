@@ -5,7 +5,7 @@ import unittest
 
 from ansible_collections.os_migrate.os_migrate.tests.unit import fixtures
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
-    import network
+    import security_group_rule
 
 
 class TestSecurityGroupRule(unittest.TestCase):
@@ -13,7 +13,7 @@ class TestSecurityGroupRule(unittest.TestCase):
     def test_serialize_security_group_rule(self):
         sec = fixtures.sdk_security_group_rule()
         sec_refs = fixtures.security_group_rule_refs()
-        serialized = network.serialize_security_group_rule(sec, sec_refs)
+        serialized = security_group_rule.serialize_security_group_rule(sec, sec_refs)
         s_params = serialized['params']
         s_info = serialized['_info']
 
@@ -39,7 +39,7 @@ class TestSecurityGroupRule(unittest.TestCase):
     def test_security_group_rule_sdk_params(self):
         ser_sec = fixtures.serialized_security_group_rule()
         sec_refs = fixtures.security_group_rule_refs()
-        sdk_params = network.security_group_rule_sdk_params(ser_sec, sec_refs)
+        sdk_params = security_group_rule.security_group_rule_sdk_params(ser_sec, sec_refs)
 
         self.assertEqual(sdk_params['description'], 'null')
         self.assertEqual(sdk_params['direction'], 'ingress')

@@ -43,7 +43,7 @@ RETURN = '''
 import openstack
 from ansible.module_utils.basic import AnsibleModule
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils import network
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import security_group_rule
 
 
 def run_module():
@@ -65,8 +65,8 @@ def run_module():
 
     conn = openstack.connect(cloud=module.params['cloud'])
     ser_secrule = module.params['data']
-    secrule_refs = network.security_group_rule_refs_from_ser(conn, ser_secrule)
-    secrule_params = network.security_group_rule_sdk_params(ser_secrule, secrule_refs)
+    secrule_refs = security_group_rule.security_group_rule_refs_from_ser(conn, ser_secrule)
+    secrule_params = security_group_rule.security_group_rule_sdk_params(ser_secrule, secrule_refs)
 
     # The create security group rule method will return an exeption
     # If it's already created.
