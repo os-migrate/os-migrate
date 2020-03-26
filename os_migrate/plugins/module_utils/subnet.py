@@ -53,6 +53,13 @@ class Subnet(resource.Resource):
         'subnet_pool_id',
     ]
 
+    @classmethod
+    def from_sdk(cls, conn, sdk_resource):
+        obj = super(Subnet, cls).from_sdk(conn, sdk_resource)
+        obj._sort_param('allocation_pools')
+        obj._sort_param('dns_nameservers')
+        return obj
+
     @staticmethod
     def _create_sdk_res(conn, sdk_params):
         return conn.network.create_subnet(**sdk_params)

@@ -26,7 +26,8 @@ def sdk_subnet():
         created_at='2020-02-21T17:34:54Z',
         revision_number=0,
         segment_id='uuid-test-segment',
-        subnet_pool_id='uuid-test-subnet-pool'
+        subnet_pool_id='uuid-test-subnet-pool',
+        dns_nameservers=[],
     )
 
 
@@ -102,7 +103,7 @@ class TestSubnet(unittest.TestCase):
                          [{'start': '10.10.10.2', 'end': '10.10.10.254'}])
         self.assertEqual(params['cidr'], '10.10.10.0/24')
         self.assertEqual(params['description'], 'test-subnet')
-        self.assertEqual(params['dns_nameservers'], None)
+        self.assertEqual(params['dns_nameservers'], [])
         self.assertEqual(params['gateway_ip'], '10.10.10.1')
         self.assertEqual(params['host_routes'], None)
         self.assertEqual(params['ip_version'], 4)
