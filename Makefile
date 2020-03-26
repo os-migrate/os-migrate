@@ -33,7 +33,7 @@ os_migrate-os_migrate-latest.tar.gz:
 
 # TESTS
 
-test-lint:
+test-lint: reinstall
 	set -euo pipefail; \
 	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
 		source /root/venv/bin/activate; \
