@@ -15,10 +15,11 @@ class FakeResource(resource.Resource):
     sdk_class = dict
 
     info_from_sdk = ['info1', 'info2']
-    params_from_sdk = ['name', 'param1']
+    params_from_sdk = ['name', 'param1', 'readonly_param']
     info_from_refs = ['param3id', 'param4id']
     params_from_refs = ['param3name', 'param4name']
     sdk_params_from_refs = ['param3id', 'param4id']
+    readonly_sdk_params = ['readonly_param']
 
     @staticmethod
     def _create_sdk_res(conn, sdk_params):
@@ -54,6 +55,7 @@ def valid_fakeresource_sdk():
     return {
         'name': 'nameval',
         'param1': 'param1val',
+        'readonly_param': 'no_can_change',
         'param3id': 'param3idval',
         'param4id': 'param4idval',
         'info1': 'info1val',
@@ -65,6 +67,7 @@ def valid_fakeresource_sdk_creation_params():
     return {
         'name': 'nameval',
         'param1': 'param1val',
+        'readonly_param': 'no_can_change',
         'param3id': 'param3idval',
         'param4id': 'param4idval',
     }
@@ -76,6 +79,7 @@ def valid_fakeresource_data():
         'params': {
             'name': 'nameval',
             'param1': 'param1val',
+            'readonly_param': 'no_can_change',
             'param3name': 'param3nameval',
             'param4name': 'param4nameval',
         },
@@ -121,6 +125,11 @@ class TestResource(unittest.TestCase):
         self.assertFalse(res1._needs_update(res2))
         res2.params()['param1'] = 'changed'
         self.assertTrue(res1._needs_update(res2))
+
+    def test_remove_readonly_param(self):
+        res1 = FakeResource.from_data(valid_fakeresource_data())
+        sdk_params = res1._remove_readonly_params(valid_fakeresource_data())
+        self.assertFalse('readonly_param' in sdk_params)
 
     def test_create_and_update_all_ok(self):
         res = FakeResource.from_data(valid_fakeresource_data())

@@ -11,8 +11,6 @@ class Subnet(resource.Resource):
     resource_type = const.RES_TYPE_SUBNET
     sdk_class = openstack.network.v2.subnet.Subnet
 
-    #  add network_name, subnet_pool_name and segment_name to params from refs
-
     info_from_sdk = [
         'created_at',
         'id',
@@ -47,11 +45,14 @@ class Subnet(resource.Resource):
         'segment_name',
         'subnet_pool_name'
     ]
+
     sdk_params_from_refs = [
         'network_id',
         'segment_id',
         'subnet_pool_id',
     ]
+
+    readonly_sdk_params = ['network_id', 'project_id']
 
     @classmethod
     def from_sdk(cls, conn, sdk_resource):

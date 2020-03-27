@@ -18,6 +18,10 @@ class Resource():
     # assumed to be the same as params_from_sdk.
     sdk_params_from_params = None
     sdk_params_from_refs = []
+    # some parameters are allowed when creating a resource but not when
+    # updating it.  This list of parameter names is purged from the parameter
+    # list before calling update.
+    readonly_sdk_params = []
 
     # ===== PUBLIC CLASS/STATIC METHODS (alphabetic sort) =====
 
@@ -172,7 +176,8 @@ class Resource():
         existing = self._find_sdk_res(conn, sdk_params['name'])
         if existing:
             if self._needs_update(self.from_sdk(conn, existing)):
-                self._update_sdk_res(conn, sdk_params['name'], sdk_params)
+                update_params = self._remove_readonly_params(sdk_params)
+                self._update_sdk_res(conn, update_params['name'], update_params)
                 return True
         else:
             self._create_sdk_res(conn, sdk_params)
@@ -227,6 +232,18 @@ class Resource():
         Returns: True if `target` needs to be updated, False otherwise
         """
         return self._data_without_info() != target._data_without_info()
+
+    # Not meant to be overriden in majority of subclasses.
+    def _remove_readonly_params(self, sdk_params):
+        """Remove readonly parameters from the `sdk_params` collection that
+        cannot be used for update.
+
+        Returns: filtered dict of parameters
+        """
+        for name in self.readonly_sdk_params:
+            if name in sdk_params:
+                sdk_params.pop(name)
+        return sdk_params
 
     # Used when creating params for SDK calls, should be overriden in
     # majority of child classes.
