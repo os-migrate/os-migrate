@@ -5,14 +5,14 @@ import unittest
 
 from ansible_collections.os_migrate.os_migrate.tests.unit import fixtures
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
-    import network
+    import security_group
 
 
 class TestSecurityGroup(unittest.TestCase):
 
     def test_serialize_security_group(self):
         sec = fixtures.sdk_security_group()
-        serialized = network.serialize_security_group(sec)
+        serialized = security_group.serialize_security_group(sec)
         s_params = serialized['params']
         s_info = serialized['_info']
 
@@ -27,21 +27,21 @@ class TestSecurityGroup(unittest.TestCase):
 
     def test_security_group_sdk_params(self):
         ser_sec = fixtures.serialized_security_group()
-        sdk_params = network.security_group_sdk_params(ser_sec)
+        sdk_params = security_group.security_group_sdk_params(ser_sec)
 
         self.assertEqual(sdk_params['description'], 'Default security group')
 
     def test_security_group_needs_update(self):
         sdk_sec = fixtures.sdk_security_group()
-        serialized = network.serialize_security_group(sdk_sec)
+        serialized = security_group.serialize_security_group(sdk_sec)
 
-        self.assertFalse(network.security_group_needs_update(
+        self.assertFalse(security_group.security_group_needs_update(
             sdk_sec, serialized))
 
         serialized['_info']['id'] = 'different id'
-        self.assertFalse(network.security_group_needs_update(
+        self.assertFalse(security_group.security_group_needs_update(
             sdk_sec, serialized))
 
         serialized['params']['description'] = 'updated description'
-        self.assertTrue(network.security_group_needs_update(
+        self.assertTrue(security_group.security_group_needs_update(
             sdk_sec, serialized))
