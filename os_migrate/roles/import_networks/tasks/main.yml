@@ -17,6 +17,8 @@
 
 - name: import networks
   os_migrate.os_migrate.import_network:
-    cloud: "{{ os_migrate_dst_cloud }}"
+    auth: "{{ os_migrate_dst_auth }}"
+    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
     data: "{{ item }}"
   loop: "{{ read_networks.resources }}"

@@ -41,6 +41,7 @@ jobs:
       - name: Run all the tests non OpenStack dependant
         run: |
           ./toolbox/run make test-fast
+
   functional:
     needs: build
     runs-on: ubuntu-latest
@@ -187,6 +188,11 @@ jobs:
       - name: Connect functional tests to devstack
         run: |
           cp /etc/openstack/clouds.yaml tests/func/clouds.yaml && \
+          ./toolbox/run ./scripts/auth-from-clouds.sh \
+              --config tests/func/clouds.yaml \
+              --src devstack \
+              --dst devstack-alt \
+              > tests/func/auth.yml && \
           sed -i -e "s/ devstack:/ testsrc:/" tests/func/clouds.yaml && \
           sed -i -e "s/ devstack-alt:/ testdst:/" tests/func/clouds.yaml
       - name: Run functional tests
