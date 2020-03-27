@@ -94,10 +94,11 @@ def run_module():
         # In this particular case we are creating a SecurityGroupRule
         # object parsed from the rule dictionary.
         # We check that serialize_security_group_rule receives
-        # a openstack.network.v2.security_group_rule.SecurityGroupRule
+        # an openstack.network.v2.security_group_rule.SecurityGroupRule
         sec_rule_obj = sdk.network.v2.security_group_rule.SecurityGroupRule(**rule)
-        sec_refs = security_group_rule.security_group_rule_refs_from_sdk(conn, sec_rule_obj)
-        ser_sec = security_group_rule.serialize_security_group_rule(sec_rule_obj, sec_refs)
+        # sec_refs = security_group_rule.security_group_rule_refs_from_sdk(conn, sec_rule_obj)
+        # ser_sec = security_group_rule.serialize_security_group_rule(sec_rule_obj, sec_refs)
+        ser_sec = security_group_rule.SecurityGroupRule.from_sdk(conn, sec_rule_obj)
 
         rchanged = filesystem.write_or_replace_resource(module.params['path'], ser_sec)
         if rchanged:

@@ -111,7 +111,7 @@ def security_group_name(conn, id_, required=True):
 
 
 def security_group_id(conn, name, required=True):
-    """Fetch ID of SEcurity group identified by name `name`. Use OpenStack SDK
+    """Fetch ID of Security group identified by name `name`. Use OpenStack SDK
     connection `conn` to fetch the info. If `required`, ensure the
     fetch is successful.
 
