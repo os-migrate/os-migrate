@@ -78,7 +78,7 @@ def run_module():
     conn = openstack.connect(cloud=module.params['cloud'])
     sdk_sec = conn.network.find_security_group(module.params['name'], ignoring_missing=False)
 
-    ser_sec = security_group.serialize_security_group(sdk_sec)
+    ser_sec = security_group.SecurityGroup.from_sdk(conn, sdk_sec)
 
     result['changed'] = filesystem.write_or_replace_resource(
         module.params['path'], ser_sec)
