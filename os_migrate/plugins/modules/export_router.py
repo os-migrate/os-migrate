@@ -21,10 +21,19 @@ description:
   - "Export OpenStack router definition into an OS-Migrate YAML"
 
 options:
-  cloud:
+  auth:
     description:
-      - Named cloud to operate against.
+      - Dictionary with parameters for chosen auth type.
     required: true
+  auth_type:
+    description:
+      - Auth type plugin for OpenStack. Can be omitted if using password authentication.
+    required: false
+  region_name:
+    description:
+      - OpenStack region name. Can be omitted if using default region.
+    required: false
+
   path:
     description:
       - Resources YAML file to where router will be serialized.
@@ -50,32 +59,33 @@ EXAMPLES = '''
 RETURN = '''
 '''
 
-import openstack
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils.openstack \
+    import openstack_full_argument_spec, openstack_cloud_from_module
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import filesystem, router
 
 
 def run_module():
-    module_args = dict(
-        cloud=dict(type='str', required=True),
+    argument_spec = openstack_full_argument_spec(
         path=dict(type='str', required=True),
         name=dict(type='str', required=True),
     )
+    del argument_spec['cloud']
 
     result = dict(
         changed=False,
     )
 
     module = AnsibleModule(
-        argument_spec=module_args,
+        argument_spec=argument_spec,
         # TODO: Consider check mode. We'd fetch the resource and check
         # if the file representation matches it.
         # supports_check_mode=True,
     )
 
-    conn = openstack.connect(cloud=module.params['cloud'])
+    sdk, conn = openstack_cloud_from_module(module)
     sdk_rtr = conn.network.find_router(module.params['name'], ignore_missing=False)
     rtr = router.Router.from_sdk(conn, sdk_rtr)
 

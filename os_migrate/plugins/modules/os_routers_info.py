@@ -21,10 +21,18 @@ description:
   - "List routers information"
 
 options:
-  cloud:
+  auth:
     description:
-      - Named cloud to operate against.
+      - Dictionary with parameters for chosen auth type.
     required: true
+  auth_type:
+    description:
+      - Auth type plugin for OpenStack. Can be omitted if using password authentication.
+    required: false
+  region_name:
+    description:
+      - OpenStack region name. Can be omitted if using default region.
+    required: false
 '''
 
 EXAMPLES = '''
@@ -48,26 +56,25 @@ openstack_routers:
             type: str
 '''
 
-import openstack
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils.openstack \
+    import openstack_full_argument_spec, openstack_cloud_from_module
 
 
 def main():
-    module_args = dict(
-        cloud=dict(type='str', required=True),
-    )
+    argument_spec = openstack_full_argument_spec()
 
     module = AnsibleModule(
-        argument_spec=module_args,
+        argument_spec=argument_spec,
         supports_check_mode=True,
     )
 
     try:
-        conn = openstack.connect(cloud=module.params['cloud'])
+        sdk, conn = openstack_cloud_from_module(module)
         routers = list(map(lambda r: r.to_dict(), conn.network.routers()))
         module.exit_json(changed=False, openstack_routers=routers)
 
-    except openstack.exceptions.OpenStackCloudException as e:
+    except sdk.exceptions.OpenStackCloudException as e:
         module.fail_json(msg=str(e))
 
 

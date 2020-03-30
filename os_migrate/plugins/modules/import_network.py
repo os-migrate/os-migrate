@@ -62,7 +62,6 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import netwo
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        cloud=dict(type='str', required=True),
         data=dict(type='dict', required=True),
     )
     del argument_spec['cloud']
