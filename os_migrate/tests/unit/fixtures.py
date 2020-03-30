@@ -71,37 +71,6 @@ def security_group_rule_refs():
     }
 
 
-def sdk_security_group():
-    return openstack.network.v2.security_group.SecurityGroup(
-        description='Default security group',
-        name='default',
-        id='uuid',
-        project_id='uuid-project',
-        created_at='2020-01-30T14:49:06Z',
-        updated_at='2020-01-30T14:49:06Z',
-        tenant_id='uuid-tenant',
-        revision_number='1',
-    )
-
-
-def serialized_security_group():
-    return {
-        const.RES_PARAMS: {
-            'description': 'Default security group',
-            'name': 'default',
-        },
-        const.RES_INFO: {
-            'id': 'uuid',
-            'project_id': 'uuid-project',
-            'created_at': '2020-01-30T14:49:06Z',
-            'updated_at': '2020-01-30T14:49:06Z',
-            'tenant_id': 'uuid-tenant',
-            'revision_number': '0',
-        },
-        const.RES_TYPE: 'openstack.network.SecurityGroup',
-    }
-
-
 def sdk_security_group_rule():
     return openstack.network.v2.security_group_rule.SecurityGroupRule(
         id='uuid',
