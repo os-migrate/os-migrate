@@ -1,16 +1,8 @@
-# Fails with: TypeError: create_network()
-# got an unexpected keyword argument 'dns_domain'
-#
-# - name: create osm_net
-#   os_network:
-#     cloud: "{{ os_migrate_src_cloud }}"
-#     name: osm_net
-#     description: osm_net test network
-#     state: present
-- name: workaround - create osm_net via CLI
-  changed_when: true
-  shell: |
-    openstack network create \
-        --os-cloud "{{ os_migrate_src_cloud }}" \
-        --description "osm_net test network" \
-        osm_net
+- name: create osm_net
+  os_network:
+    auth: "{{ os_migrate_src_auth }}"
+    name: osm_net
+    # Apparently description is an unsupported param in Ansible even
+    # though OpenStack supports it.
+    # description: osm_net test network
+    state: present

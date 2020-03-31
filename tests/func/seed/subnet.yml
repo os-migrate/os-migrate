@@ -1,6 +1,6 @@
 - name: Create subnet
   os_subnet:
-    cloud: "{{ os_migrate_src_cloud }}"
+    auth: "{{ os_migrate_src_auth }}"
     state: present
     network_name: osm_net
     name: osm_subnet
@@ -16,7 +16,7 @@
 
 - name: Create a 2nd subnet for router testing
   os_subnet:
-    cloud: "{{ os_migrate_src_cloud }}"
+    auth: "{{ os_migrate_src_auth }}"
     state: present
     network_name: osm_net
     name: osm_router_subnet

@@ -1,6 +1,6 @@
 - name: create osm_router
   os_router:
-    cloud: "{{ os_migrate_src_cloud }}"
+    auth: "{{ os_migrate_src_auth }}"
     name: osm_router
     state: present
     network: "{{ test_router_external_network|default('public') }}"

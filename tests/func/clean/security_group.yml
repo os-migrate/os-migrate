@@ -1,8 +1,8 @@
 - name: remove osm_security_group
   os_security_group:
-    cloud: "{{ item }}"
+    auth: "{{ item }}"
     name: osm_security_group
     state: absent
   loop:
-    - "{{ os_migrate_src_cloud }}"
-    - "{{ os_migrate_dst_cloud }}"
+    - "{{ os_migrate_src_auth }}"
+    - "{{ os_migrate_dst_auth }}"

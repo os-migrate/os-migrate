@@ -1,6 +1,6 @@
 - name: Create security group
   os_security_group:
-    cloud: "{{ os_migrate_src_cloud }}"
+    auth: "{{ os_migrate_src_auth }}"
     state: present
     name: osm_security_group
     description: OSM security group

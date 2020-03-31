@@ -27,7 +27,7 @@
 
 - name: look up osm_net dst cloud
   os_networks_info:
-    cloud: "{{ os_migrate_dst_cloud }}"
+    auth: "{{ os_migrate_dst_auth }}"
     filters:
       name: osm_net
   register: network_import_idem_before
@@ -37,7 +37,7 @@
 
 - name: look up osm_net in dst cloud again
   os_networks_info:
-    cloud: "{{ os_migrate_dst_cloud }}"
+    auth: "{{ os_migrate_dst_auth }}"
     filters:
       name: osm_net
   register: network_import_idem_after
