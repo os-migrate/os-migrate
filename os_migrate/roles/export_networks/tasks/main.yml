@@ -1,6 +1,8 @@
 - name: scan available networks
   os_networks_info:
-    cloud: "{{ os_migrate_src_cloud }}"
+    auth: "{{ os_migrate_src_auth }}"
+    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
   register: src_networks_info
 
 - name: create id-name pairs of networks to export
@@ -19,7 +21,9 @@
 
 - name: export network
   os_migrate.os_migrate.export_network:
-    cloud: "{{ os_migrate_src_cloud }}"
+    auth: "{{ os_migrate_src_auth }}"
+    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
     path: "{{ os_migrate_data_dir }}/networks.yml"
     name: "{{ item['id'] }}"
   loop: "{{ export_networks_ids_names }}"
