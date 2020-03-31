@@ -132,6 +132,17 @@ class Resource():
         for p_name in param_names:
             ser_params[p_name] = sdk_params[p_name]
 
+    # Not meant to be overriden in majority of subclasses.
+    @staticmethod
+    def _sort_dicts(list_of_dicts, by_keys):
+        """Sort `list_of_dicts` by dict keys in `by_keys`."""
+        def keyfn(dct):
+            dct_compound_key = []
+            for by_key in by_keys:
+                dct_compound_key.append(dct[by_key])
+            return dct_compound_key
+        return sorted(list_of_dicts, key=keyfn)
+
     # Must be overriden in child class if `create_or_update` isn't
     # overriden.
     @classmethod
@@ -245,14 +256,20 @@ class Resource():
         self._set_sdk_params_same_name(refs, sdk_params, self.sdk_params_from_refs)
 
     # Not meant to be overriden in majority of subclasses.
-    def _sort_param(self, param_name):
-        """Sort internal param `param_name`."""
-        self.params()[param_name] = sorted(self.params()[param_name])
+    def _sort_info(self, info_name, by_keys=None):
+        """Sort internal info `info_name`."""
+        if by_keys:
+            self.info()[info_name] = self._sort_dicts(self.info()[info_name], by_keys)
+        else:
+            self.info()[info_name] = sorted(self.info()[info_name])
 
     # Not meant to be overriden in majority of subclasses.
-    def _sort_info(self, info_name):
-        """Sort internal info `info_name`."""
-        self.info()[info_name] = sorted(self.info()[info_name])
+    def _sort_param(self, param_name, by_keys=None):
+        """Sort internal param `param_name`."""
+        if by_keys:
+            self.params()[param_name] = self._sort_dicts(self.params()[param_name], by_keys)
+        else:
+            self.params()[param_name] = sorted(self.params()[param_name])
 
     # Not meant to be overriden in majority of subclasses.
     def _to_sdk_params(self, refs):
