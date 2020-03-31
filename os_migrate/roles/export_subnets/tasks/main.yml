@@ -1,6 +1,8 @@
 - name: scan available subnets
   os_subnets_info:
-    cloud: "{{ os_migrate_src_cloud }}"
+    auth: "{{ os_migrate_src_auth }}"
+    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
   register: src_subnets_info
 
 
@@ -20,7 +22,9 @@
 
 - name: export subnet
   os_migrate.os_migrate.export_subnet:
-    cloud: "{{ os_migrate_src_cloud }}"
+    auth: "{{ os_migrate_src_auth }}"
+    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
     path: "{{ os_migrate_data_dir }}/subnets.yml"
     name: "{{ item['id'] }}"
   loop: "{{ export_subnets_ids_names }}"

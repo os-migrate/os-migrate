@@ -21,8 +21,8 @@
     that:
       - (resources |
         json_query("[?params.name ==
-        'osm_net'].params.description")
-        == ['osm_net test network'])
+        'osm_net'].params.name")
+        == ['osm_net'])
 
 - include_role:
     name: os_migrate.os_migrate.import_networks

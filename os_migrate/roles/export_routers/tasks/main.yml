@@ -1,6 +1,8 @@
 - name: scan available routers
   os_migrate.os_migrate.os_routers_info:
-    cloud: "{{ os_migrate_src_cloud }}"
+    auth: "{{ os_migrate_src_auth }}"
+    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
   register: src_routers_info
 
 - name: create id-name pairs of routers to export
@@ -19,7 +21,9 @@
 
 - name: export router
   os_migrate.os_migrate.export_router:
-    cloud: "{{ os_migrate_src_cloud }}"
+    auth: "{{ os_migrate_src_auth }}"
+    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
     path: "{{ os_migrate_data_dir }}/routers.yml"
     name: "{{ item['id'] }}"
   loop: "{{ export_routers_ids_names }}"
