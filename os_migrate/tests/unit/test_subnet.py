@@ -17,6 +17,9 @@ def sdk_subnet():
         ip_version=4,
         enable_dhcp=True,
         gateway_ip='10.10.10.1',
+        host_routes=[
+            {'destination': '0.0.0.0/0', 'nexthop': '12.34.56.78'},
+        ],
         cidr='10.10.10.0/24',
         allocation_pools=[{
             'start': '10.10.10.2',
@@ -40,7 +43,9 @@ def serialized_subnet():
             'description': 'test-subnet',
             'dns_nameservers': None,
             'gateway_ip': '10.10.10.1',
-            'host_routes': None,
+            'host_routes': [
+                {'destination': '0.0.0.0/0', 'nexthop': '12.34.56.78'},
+            ],
             'ip_version': 4,
             'ipv6_address_mode': None,
             'ipv6_ra_mode': None,
@@ -105,7 +110,8 @@ class TestSubnet(unittest.TestCase):
         self.assertEqual(params['description'], 'test-subnet')
         self.assertEqual(params['dns_nameservers'], [])
         self.assertEqual(params['gateway_ip'], '10.10.10.1')
-        self.assertEqual(params['host_routes'], None)
+        self.assertEqual(params['host_routes'],
+                         [{'destination': '0.0.0.0/0', 'nexthop': '12.34.56.78'}])
         self.assertEqual(params['ip_version'], 4)
         self.assertEqual(params['ipv6_address_mode'], None)
         self.assertEqual(params['ipv6_ra_mode'], None)
