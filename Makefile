@@ -45,10 +45,7 @@ test-setup-vagrant-devstack:
 		--config toolbox/vagrant/env/clouds.yaml \
 		--src devstack \
 		--dst devstack-alt \
-		> tests/func/auth.yml && \
-	cp toolbox/vagrant/env/clouds.yaml tests/func/clouds.yaml && \
-	sed -i -e "s/ devstack:/ testsrc:/" tests/func/clouds.yaml && \
-	sed -i -e "s/ devstack-alt:/ testdst:/" tests/func/clouds.yaml
+		> tests/func/auth.yml
 
 test: test-fast test-func
 
@@ -61,8 +58,6 @@ test-func: reinstall
 	ansible-playbook \
 		-v \
 		-i $(ROOT_DIR)/os_migrate/localhost_inventory.yml \
-		-e os_migrate_src_cloud=testsrc \
-		-e os_migrate_dst_cloud=testdst \
 		-e os_migrate_data_dir=$(ROOT_DIR)/tests/func/tmpdata \
 		-e @$(ROOT_DIR)/tests/func/auth.yml \
 		$(FUNC_TEST_ARGS) test_all.yml

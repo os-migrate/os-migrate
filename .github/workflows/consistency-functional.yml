@@ -193,8 +193,7 @@ jobs:
               --src devstack \
               --dst devstack-alt \
               > tests/func/auth.yml && \
-          sed -i -e "s/ devstack:/ testsrc:/" tests/func/clouds.yaml && \
-          sed -i -e "s/ devstack-alt:/ testdst:/" tests/func/clouds.yaml
+          rm tests/func/clouds.yaml
       - name: Run functional tests
         run: |
           ./toolbox/run make test-func
