@@ -30,9 +30,9 @@ done
 namespace=os_migrate
 name=os_migrate
 all_published_versions=$(curl https://galaxy.ansible.com/api/v2/collections/$namespace/$name/versions/ | jq -r '.results' | jq -c '.[].version')
-current_galaxy_version=$(cat actions/galaxy.yml | shyaml get-value version)
-current_galaxy_namespace=$(cat actions/galaxy.yml | shyaml get-value namespace)
-current_galaxy_name=$(cat actions/galaxy.yml | shyaml get-value name)
+current_galaxy_version=$(cat os_migrate/galaxy.yml | shyaml get-value version)
+current_galaxy_namespace=$(cat os_migrate/galaxy.yml | shyaml get-value namespace)
+current_galaxy_name=$(cat os_migrate/galaxy.yml | shyaml get-value name)
 publish="1"
 
 #
@@ -59,6 +59,6 @@ if [ "$publish" == "1" ]; then
     echo 'This version is not published, publishing!...'
     ./scripts/build.sh
     ansible-galaxy collection publish \
-        releases/$current_galaxy_namespace-$current_galaxy_name-latest.tar.gz \
+        releases/$current_galaxy_namespace-$current_galaxy_name-$current_galaxy_version.tar.gz \
         --api-key $KARG
 fi

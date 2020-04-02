@@ -1,6 +1,6 @@
 namespace: os_migrate
 name: os_migrate
-version: 0.1.0
+version: 0.0.1
 readme: README.md
 authors:
   - Jiri Stransky <jistr@redhat.com>
@@ -10,10 +10,10 @@ authors:
 description: OpenStack tenant migration tooling
 license:
   - Apache-2.0
-license_file: ''
-tags: []
+tags:
+  - openstack
+  - migrations
 dependencies: {}
-repository: ''
-documentation: ''
-homepage: ''
-issues: ''
+repository: 'https://github.com/os-migrate/os-migrate'
+homepage: 'https://github.com/os-migrate/os-migrate'
+issues: 'https://github.com/os-migrate/os-migrate/issues'
