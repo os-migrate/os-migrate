@@ -74,17 +74,8 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    ser_secrule = module.params['data']
-    secrule_refs = security_group_rule.security_group_rule_refs_from_ser(conn, ser_secrule)
-    secrule_params = security_group_rule.security_group_rule_sdk_params(ser_secrule, secrule_refs)
-
-    # The create security group rule method will return an exeption
-    # If it's already created.
-    try:
-        conn.network.create_security_group_rule(**secrule_params)
-        result['changed'] = True
-    except sdk.exceptions.ConflictException:
-        result['msg'] = "This security group rule already exists"
+    ser_secrule = security_group_rule.SecurityGroupRule.from_data(module.params['data'])
+    result['changed'] = ser_secrule.create_or_update(conn)
 
     module.exit_json(**result)
 
