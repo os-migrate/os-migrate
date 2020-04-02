@@ -14,7 +14,7 @@ class TestSerialization(unittest.TestCase):
 
     def test_new_resources_file_struct(self):
         file_struct = serialization.new_resources_file_struct()
-        self.assertEqual(file_struct['os_migrate_version'], '0.1.0')
+        self.assertEqual(file_struct['os_migrate_version'], '0.0.1')
         self.assertEqual(file_struct['resources'], [])
 
     def test_add_or_replace_resource(self):
