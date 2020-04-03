@@ -7,7 +7,6 @@ Prerequisites
 * Podman and Buildah for running rootless development environment
   containers.
 
-
 Development environment
 -----------------------
 
