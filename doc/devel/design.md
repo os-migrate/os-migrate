@@ -90,10 +90,9 @@ Basic Ansible workflow design
   playbook), so if the export or import fails, we can easily tell
   which resource was the one that caused a failure.
 
-  * An open question here could be, do we want a file per resource
-    then, or do we want the modules to be able to add a resource to an
-    existing resource YAML file (=> a file per resource type, or file
-    per tenant)?
+  * We have a YAML file per resource type. Export modules are able to
+    add a resource (idempotently) to an existing YAML file without
+    affecting the rest. There is reusable code for this idempotence.
 
 * Example workflow: export networks. Provided playbook.
 
@@ -108,6 +107,9 @@ Basic Ansible workflow design
 
     * Eventually we may want to provide some hooks here, but initially
       we'd be fine with users simply editing the provided playbook.
+
+  * Ansible task, provided: filter networks by names, either via exact
+    matches or via regexes.
 
   * Anisble task, provided, calling our custom module: Iterate (`loop`)
     over the list of metadata, and call our module which will fetch

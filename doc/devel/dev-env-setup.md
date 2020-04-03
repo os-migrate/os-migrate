@@ -111,27 +111,23 @@ scratch later, run:
 Running functional tests
 ------------------------
 
-Functional tests expect `tests/func/clouds.yaml` file to exist and
-contain `testsrc` and `testdst` named clouds. The tests will connect
-to wherever these clouds.yaml entries point and create/delete
+Functional tests expect `tests/func/auth.yml` file to exist and
+contain `os_migrate_src_auth` and `os_migrate_dst_auth` variables with
+credentials for connecting to OpenStack cloud(s). The tests will
+connect to wherever these auth parameters point and create/delete
 resources there.
 
-Assuming you've set up Vagrant+Devstack for functional testing, go
-ahead and enter a virtualenv-enabled toolbox shell:
-
-    ./toolbox/venv-shell
-
-Within it run a make target which will set up the aforementioned
-`tests/func/clouds.yaml` file to connect to your Vagrant+Devstack
+Run a make target which will set up the aforementioned
+`tests/func/auth.yml` file to connect to your Vagrant+Devstack
 instance:
 
-    make test-setup-vagrant-devstack
+    ./toolbox/run make test-setup-vagrant-devstack
 
 Finally, run the functional tests:
 
-    make test-func
+    ./toolbox/run make test-func
 
 To run functional tests for just the resource you're working on, run
 e.g.:
 
-    FUNC_TEST_PLAYBOOK=network make test-func
+    ./toolbox/run bash -c "FUNC_TEST_ARGS='--tags test_network,test_subnet' make test-func"
