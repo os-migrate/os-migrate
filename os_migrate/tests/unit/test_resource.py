@@ -128,8 +128,8 @@ class TestResource(unittest.TestCase):
 
     def test_remove_readonly_param(self):
         res1 = FakeResource.from_data(valid_fakeresource_data())
-        sdk_params = res1._remove_readonly_params(valid_fakeresource_data())
-        self.assertFalse('readonly_param' in sdk_params)
+        res1._remove_readonly_params(res1.params())
+        self.assertFalse('readonly_param' in res1.params())
 
     def test_create_and_update_all_ok(self):
         res = FakeResource.from_data(valid_fakeresource_data())

@@ -190,8 +190,8 @@ class Resource():
         existing = self._find_sdk_res(conn, sdk_params['name'])
         if existing:
             if self._needs_update(self.from_sdk(conn, existing)):
-                update_params = self._remove_readonly_params(sdk_params)
-                self._update_sdk_res(conn, update_params['name'], update_params)
+                self._remove_readonly_params(sdk_params)
+                self._update_sdk_res(conn, sdk_params['name'], sdk_params)
                 return True
         else:
             self._create_sdk_res(conn, sdk_params)
@@ -257,7 +257,6 @@ class Resource():
         for name in self.readonly_sdk_params:
             if name in sdk_params:
                 sdk_params.pop(name)
-        return sdk_params
 
     # Used when creating params for SDK calls, should be overriden in
     # majority of child classes.
