@@ -7,16 +7,30 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
 
 class Resource():
 
+    # OS-Migrate resource type, checked in from_data constructor
     resource_type = 'UNDEFINED'
+    # OpenStack SDK class, checked in from_sdk constructor
     sdk_class = 'UNDEFINED'
 
+    # Properties of SDK resource object that are added to _info
+    # section when serializing.
     info_from_sdk = []
+    # Items of refs dict (mainly contains names/ids) that are added
+    # to _info section when serializing.
     info_from_refs = []
+    # Properties of SDK resource object that are added to params
+    # section when serializing.
     params_from_sdk = []
+    # Items of refs dict (mainly contains names/ids) that are added
+    # to params section when serializing.
     params_from_refs = []
-    # If sdk_params_from_params are kept as None, then they are
-    # assumed to be the same as params_from_sdk.
+    # Serialized params (from params section) that are used as SDK
+    # call kwargs when issuing a create/update REST API request. If
+    # sdk_params_from_params is kept None, then the params_from_sdk
+    # are used instead of it.
     sdk_params_from_params = None
+    # Items of refs dict that are used as SDK call kwargs when
+    # issuing a create/update REST API request.
     sdk_params_from_refs = []
     # some parameters are allowed when creating a resource but not when
     # updating it.  This list of parameter names is purged from the parameter
