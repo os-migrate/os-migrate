@@ -12,5 +12,4 @@ sed -i -e "s/^OS_MIGRATE_VERSION = .*$/OS_MIGRATE_VERSION = '$VERSION'  # update
 
 ansible-galaxy collection build os_migrate -v --force --output-path releases/
 cd releases
-LATEST=$(ls os_migrate-os_migrate*.tar.gz | grep -v latest | sort -V | tail -n1)
-ln -sf $LATEST os_migrate-os_migrate-latest.tar.gz
+ln -sf os_migrate-os_migrate-$VERSION.tar.gz os_migrate-os_migrate-latest.tar.gz
