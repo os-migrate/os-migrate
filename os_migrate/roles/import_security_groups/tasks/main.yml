@@ -8,7 +8,7 @@
 - name: stop when errors found
   fail:
     msg: "{{ security_groups_file_validation.errors|join(' ') }}"
-  when: not security_groups_file_validation.ok
+  when: not ( security_groups_file_validation.ok | bool )
 
 - name: read security groups resource file
   os_migrate.os_migrate.read_resources:

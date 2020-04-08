@@ -64,15 +64,13 @@ test-func: reinstall
 
 test-fast: test-lint test-sanity test-unit
 
-# We have to skip validate-modules sanity test because it checks for
-# GPLv3 licensing and AFAICT that check can't be disabled.
 test-sanity: reinstall
 	set -euo pipefail; \
 	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
 		source /root/venv/bin/activate; \
 	fi; \
 	cd /root/.ansible/collections/ansible_collections/os_migrate/os_migrate; \
-	ansible-test sanity --skip-test import --skip-test validate-modules
+	ansible-test sanity --skip-test import
 
 test-unit: reinstall
 	set -euo pipefail; \

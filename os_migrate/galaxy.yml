@@ -7,6 +7,8 @@ authors:
   - Carlos Camacho <ccamacho@redhat.com>
   - Ryan Brady <rbrady@redhat.com>
   - Sagi Shnaidman <sshnaidm@redhat.com>
+  # Keep this at the bottom
+  - os-migrate (https://github.com/os-migrate)
 description: OpenStack tenant migration tooling
 license:
   - Apache-2.0

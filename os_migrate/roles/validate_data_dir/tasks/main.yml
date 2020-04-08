@@ -18,4 +18,4 @@
 - name: stop if errors found
   fail:
     msg: "{{ validate_data_dir_result.errors | join(' ') }}"
-  when: not validate_data_dir_result.ok
+  when: not ( validate_data_dir_result.ok | bool )

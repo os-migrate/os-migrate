@@ -8,7 +8,7 @@
 - name: stop when errors found
   fail:
     msg: "{{ routers_file_validation.errors|join(' ') }}"
-  when: not routers_file_validation.ok
+  when: not ( routers_file_validation.ok | bool )
 
 - name: read routers resource file
   os_migrate.os_migrate.read_resources:
