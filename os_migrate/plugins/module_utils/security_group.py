@@ -4,7 +4,7 @@ __metaclass__ = type
 import openstack
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
-    import const, resource
+    import const, logger, resource
 
 
 class SecurityGroup(resource.Resource):
@@ -26,6 +26,7 @@ class SecurityGroup(resource.Resource):
 
     @classmethod
     def from_sdk(cls, conn, sdk_resource):
+        logger.get_logger("from_sdk").debug("Fetching data from SDK")
         obj = super(SecurityGroup, cls).from_sdk(conn, sdk_resource)
         return obj
 
