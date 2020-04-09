@@ -64,5 +64,5 @@ class TestServer(unittest.TestCase):
             ],
         })
         self.assertEqual(info['id'], 'uuid-test-server')
-        self.assertEqual(info['name'], 'test-server')
+        self.assertEqual(params['name'], 'test-server')
         self.assertEqual(info['status'], 'ACTIVE')

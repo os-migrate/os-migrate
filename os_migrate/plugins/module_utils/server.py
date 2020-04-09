@@ -15,8 +15,10 @@ class Server(resource.Resource):
     info_from_sdk = [
         'addresses',
         'id',
-        'name',
         'status',
+    ]
+    params_from_sdk = [
+        'name',
     ]
 
     @staticmethod
