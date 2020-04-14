@@ -24,7 +24,10 @@ python3 -m venv /root/venv
 set +x
 source /root/venv/bin/activate
 set -x
+# We need to be sure we use the latest versions of
+# pip, virtualenv and setuptools
 pip install --upgrade pip
+pip install --upgrade virtualenv
 pip install --upgrade setuptools
 pip install -r /build/venv-requirements.txt
 
