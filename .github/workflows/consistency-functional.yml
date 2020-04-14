@@ -94,6 +94,11 @@ jobs:
           # installer will crash as pip is not able to determine if its
           # installed or not
           sudo apt install python3-httplib2 -y
+          # We need to be sure we use the latest versions of
+          # pip, virtualenv and setuptools
+          sudo python -m pip install --upgrade pip
+          sudo python -m pip install --upgrade virtualenv
+          sudo python -m pip install --upgrade setuptools
       - name: Verify MySQL connection from container
         run: >-
           mysql \
