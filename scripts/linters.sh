@@ -3,9 +3,11 @@ set -euxo pipefail
 
 # E125 is deliberately excluded. See
 # https://github.com/jcrocholl/pep8/issues/126. It's just wrong.
+
 #
 # H405 is another one that is good as a guideline, but sometimes
 # multiline doc strings just don't have a natural summary
+
 # line. Rejecting code for this reason is wrong.
 #
 # E251 Skipped due to https://github.com/jcrocholl/pep8/issues/301
