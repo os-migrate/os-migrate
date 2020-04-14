@@ -65,6 +65,9 @@ class Router(resource.Resource):
         refs['flavor_id'] = sdk_res['flavor_id']
 
         def _external_gateway_nameinfo(conn, egi):
+            if egi is None:
+                return None
+
             egni = deepcopy(egi)
             del egni['network_id']
             del egni['external_fixed_ips']
