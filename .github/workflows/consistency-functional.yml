@@ -153,7 +153,7 @@ jobs:
           sudo chown root:root /bin
       - name: Clone devstack
         run: |
-          git clone https://opendev.org/openstack/devstack
+          git clone https://github.com/ccamacho/devstack
       - name: Configure devstack
         run: |
           DIR=$(pwd)
@@ -176,6 +176,8 @@ jobs:
           ENABLED_SERVICES=mysql,key
           # Neutron
           ENABLED_SERVICES+=,q-svc,q-dhcp,q-meta,q-l3,q-agt
+          # Nova
+          ENABLED_SERVICES+=,n-api,n-api-meta,n-cond
           EOF
           cat local.conf
           sudo ./tools/create-stack-user.sh
