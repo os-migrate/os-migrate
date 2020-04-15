@@ -9,10 +9,18 @@
   hosts: migrator
   tasks:
     - import_tasks: global/prep.yml
-    - import_tasks: clean/all.yml
+    - include_tasks: clean/all.yml
+      args:
+        apply:
+          tags: test_clean_before
+      tags: always
     - import_tasks: seed/all.yml
     - import_tasks: run/all.yml
     - import_tasks: idempotence/all.yml
-    - import_tasks: clean/all.yml
+    - include_tasks: clean/all.yml
+      args:
+        apply:
+          tags: test_clean_after
+      tags: always
   tags:
     - test_migration

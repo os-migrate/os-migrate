@@ -130,3 +130,8 @@ To run functional tests for just the resource you're working on, run
 e.g.:
 
     ./toolbox/run bash -c "FUNC_TEST_ARGS='--tags test_network,test_subnet' make test-func"
+
+To explore imported resoruces, skip the after-test cleanup of
+resources, e.g.:
+
+    ./toolbox/run bash -c "FUNC_TEST_ARGS='--tags test_network --skip_tags test_clean_after' make test-func"
