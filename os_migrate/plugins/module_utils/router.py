@@ -1,7 +1,6 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-from copy import deepcopy
 import openstack
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
@@ -37,11 +36,10 @@ class Router(resource.Resource):
         'external_gateway_nameinfo',
         'flavor_name',
     ]
-    # TODO: import
-    # sdk_params_from_refs = [
-    #     'external_gateway_info',
-    #     'flavor_id',
-    # ]
+    sdk_params_from_refs = [
+        'external_gateway_info',
+        'flavor_id',
+    ]
 
     @classmethod
     def from_sdk(cls, conn, sdk_resource):
@@ -68,10 +66,7 @@ class Router(resource.Resource):
             if egi is None:
                 return None
 
-            egni = deepcopy(egi)
-            del egni['network_id']
-            del egni['external_fixed_ips']
-
+            egni = {}
             egni['network_name'] = reference.network_name(conn, egi['network_id'])
             # We currently do not put external_fixed_ips into params:
             # * As a tenant we cannot fetch subnet_name for a subnet in a public
@@ -87,10 +82,26 @@ class Router(resource.Resource):
 
         return refs
 
-    # TODO: import
-    # def _refs_from_ser(self, conn):
-    #     refs = {}
-    #     return refs
+    def _refs_from_ser(self, conn):
+        refs = {}
+        params = self.params()
+        refs['external_gateway_nameinfo'] = params['external_gateway_nameinfo']
+        refs['flavor_name'] = params['flavor_name']
+
+        def _external_gateway_info(conn, egni):
+            if egni is None:
+                return None
+
+            egi = {}
+            egi['network_id'] = reference.network_id(conn, egni['network_name'])
+            return egi
+
+        refs['external_gateway_info'] = _external_gateway_info(
+            conn, params['external_gateway_nameinfo'])
+        refs['flavor_id'] = reference.network_flavor_id(
+            conn, params['flavor_name'])
+
+        return refs
 
     @staticmethod
     def _update_sdk_res(conn, name_or_id, sdk_params):
