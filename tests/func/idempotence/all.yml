@@ -21,3 +21,11 @@
       tags:
         - test_security_group
   tags: always
+
+- name: Include router tasks
+  include_tasks: router.yml
+  args:
+    apply:
+      tags:
+        - test_router
+  tags: always
