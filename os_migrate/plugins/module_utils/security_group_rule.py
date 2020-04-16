@@ -24,6 +24,7 @@ class SecurityGroupRule(resource.Resource):
     params_from_sdk = [
         'description',
         'direction',
+        'ether_type',
         'port_range_max',
         'port_range_min',
         'protocol',
