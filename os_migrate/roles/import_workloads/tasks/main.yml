@@ -1,0 +1,52 @@
+- name: validate loaded resources
+  os_migrate.os_migrate.validate_resource_files:
+    paths:
+      - "{{ os_migrate_data_dir }}/workloads.yml"
+  register: workloads_file_validation
+  when: import_workloads_validate_file
+
+- name: stop when errors found
+  fail:
+    msg: "{{ workloads_file_validation.errors|join(' ') }}"
+  when: not ( workloads_file_validation.ok | bool )
+
+- name: read workloads resource file
+  os_migrate.os_migrate.read_resources:
+    path: "{{ os_migrate_data_dir }}/workloads.yml"
+  register: read_workloads
+
+- name: get source conversion host address
+  os_migrate.os_migrate.os_server_address:
+    auth: "{{ os_migrate_src_auth }}"
+    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+    server_id: "{{ os_migrate_src_conversion_host }}"
+  register: os_src_conversion_host_address
+
+- name: get destination conversion host address
+  os_migrate.os_migrate.os_server_address:
+    auth: "{{ os_migrate_dst_auth }}"
+    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+    server_id: "{{ os_migrate_dst_conversion_host }}"
+  register: os_dst_conversion_host_address
+
+- name: import workloads
+  os_migrate.os_migrate.import_workload:
+    auth: "{{ os_migrate_dst_auth }}"
+    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+    dst_conversion_host_id: "{{ os_migrate_dst_conversion_host }}"
+    dst_conversion_host_address: "{{ os_dst_conversion_host_address.address }}"
+    src_conversion_host_id: "{{ os_migrate_src_conversion_host }}"
+    src_conversion_host_address: "{{ os_src_conversion_host_address.address }}"
+    src_auth: "{{ os_migrate_src_auth }}"
+    src_auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+    src_region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+    src_validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+    ssh_key_path: "{{ os_migrate_ssh_key }}"
+    data: "{{ item }}"
+  loop: "{{ read_workloads.resources }}"

@@ -2,6 +2,30 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 
+def flavor_name(conn, id_, required=True):
+    """Fetch name of flavor identified by ID `id_`. Use OpenStack
+    SDK connection `conn` to fetch the info. If `required`, ensure the
+    fetch is successful.
+
+    Returns: the name, or None if not found and not `required`
+
+    Raises: openstack's ResourceNotFound when `required` but not found
+    """
+    return _fetch_name(conn.compute.find_flavor, id_, required)
+
+
+def flavor_id(conn, name, required=True):
+    """Fetch ID of flavor identified by name `name`. Use OpenStack
+    SDK connection `conn` to fetch the info. If `required`, ensure the
+    fetch is successful.
+
+    Returns: the ID, or None if not found and not `required`
+
+    Raises: openstack's ResourceNotFound when `required` but not found
+    """
+    return _fetch_id(conn.compute.find_flavor, name, required)
+
+
 def network_name(conn, id_, required=True):
     """Fetch name of Network identified by ID `id_`. Use OpenStack
     SDK connection `conn` to fetch the info. If `required`, ensure the
