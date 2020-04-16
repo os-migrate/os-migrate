@@ -28,6 +28,7 @@ def sdk_security_group_rule():
         revision_number='0',
         description='null',
         direction='ingress',
+        ether_type='IPv4',
         port_range_max='100',
         port_range_min='10',
         protocol='null',
@@ -40,6 +41,7 @@ def serialized_security_group_rule():
         const.RES_PARAMS: {
             'description': 'null',
             'direction': 'ingress',
+            'ether_type': 'IPv4',
             'port_range_max': '100',
             'port_range_min': '10',
             'protocol': 'null',
@@ -82,6 +84,7 @@ class TestSecurityGroupRule(unittest.TestCase):
         self.assertEqual(params['remote_group_name'], 'default')
         self.assertEqual(params['description'], 'null')
         self.assertEqual(params['direction'], 'ingress')
+        self.assertEqual(params['ether_type'], 'IPv4')
         self.assertEqual(params['port_range_max'], 100)
         self.assertEqual(params['port_range_min'], 10)
         self.assertEqual(params['protocol'], 'null')
@@ -103,6 +106,7 @@ class TestSecurityGroupRule(unittest.TestCase):
 
         self.assertEqual(sdk_params['description'], 'null')
         self.assertEqual(sdk_params['direction'], 'ingress')
+        self.assertEqual(sdk_params['ether_type'], 'IPv4')
         self.assertEqual(sdk_params['port_range_max'], '100')
         self.assertEqual(sdk_params['port_range_min'], '10')
         self.assertEqual(sdk_params['protocol'], 'null')
