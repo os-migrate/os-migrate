@@ -248,22 +248,11 @@ def run_module():
         osp_security_groups_ids=params['security_group_names'],
         uci_container_image=module.params['uci_container_image'],
         ssh_key=ssh_key,
-        osp_environment=dict(
-            os_auth_url=dst_auth['auth_url'],
-            os_username=dst_auth['username'],
-            os_password=dst_auth['password'],
-            os_project_name=dst_auth['project_name'],
-            os_project_domain_name=dst_auth['project_domain_id'],
-            os_user_domain_name=dst_auth['user_domain_id'],
-        ),
-        osp_source_environment=dict(
-            os_auth_url=src_auth['auth_url'],
-            os_username=src_auth['username'],
-            os_password=src_auth['password'],
-            os_project_name=src_auth['project_name'],
-            os_project_domain_name=src_auth['project_domain_id'],
-            os_user_domain_name=src_auth['user_domain_id'],
-        ),
+        osp_environment={
+            'os_' + key: value for (key, value) in dst_auth.items()},
+        osp_source_environment={
+            'os_' + key: value for (key, value) in src_auth.items()
+        }
     )
 
     try:  # Create remote temporary directory
