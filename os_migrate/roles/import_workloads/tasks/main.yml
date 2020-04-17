@@ -48,5 +48,6 @@
     src_region_name: "{{ os_migrate_src_region_name|default(omit) }}"
     src_validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
     ssh_key_path: "{{ os_migrate_ssh_key }}"
+    uci_container_image: "{{ os_uci_container_image|default(omit) }}"
     data: "{{ item }}"
   loop: "{{ read_workloads.resources }}"

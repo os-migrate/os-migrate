@@ -91,9 +91,9 @@ options:
       - Path to an SSH private key authorized on both source and destination clouds.
     required: true
     type: str
-  uci_container_id:
+  uci_container_image:
     description:
-      - ID or name of the conversion host container to run inside the UCI appliance.
+      - ID or name of the conversion host container image to run inside the UCI appliance.
     required: false
     type: str
     default: v2v-conversion-host
@@ -198,7 +198,7 @@ def run_module():
         src_conversion_host_address=dict(type='str', required=True),
         data=dict(type='dict', required=True),
         ssh_key_path=dict(type='str', default=None),
-        uci_container_id=dict(type='str', default='v2v-conversion-host'),
+        uci_container_image=dict(type='str', default='v2v-conversion-host'),
     )
 
     module = AnsibleModule(
@@ -246,7 +246,7 @@ def run_module():
         osp_destination_project_id=conn.current_project_id,
         osp_flavor_id=params['flavor_name'],
         osp_security_groups_ids=params['security_group_names'],
-        uci_container=module.params['uci_container_id'],
+        uci_container_image=module.params['uci_container_image'],
         ssh_key=ssh_key,
         osp_environment=dict(
             os_auth_url=dst_auth['auth_url'],
@@ -298,7 +298,7 @@ def run_module():
             '--volume', v2v_dir + '/log/uci:/var/log/uci',
             '--volume', v2v_dir + '/lib/uci:/var/lib/uci',
             '--volume', v2v_dir + '/tmp:/var/tmp',
-            module.params['uci_container_id'],
+            module.params['uci_container_image'],
         ]
         args = _ssh_preamble(dst_addr, ssh_key_path)
         args.extend(virt_v2v_wrapper)
