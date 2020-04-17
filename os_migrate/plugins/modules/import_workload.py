@@ -46,26 +46,16 @@ options:
       - Validate HTTPS certificates when logging in to OpenStack.
     required: false
     type: bool
-  dst_conversion_host_id:
+  dst_conversion_host:
     description:
-      - ID of the UCI conversion host instance running on the destination OpenStack cloud.
+      - Dictionary with information about the destination conversion host (address, status, name, id)
     required: true
-    type: str
-  dst_conversion_host_address:
+    type: dict
+  src_conversion_host:
     description:
-      - IP address of the UCI conversion host instance on the destination OpenStack cloud.
+      - Dictionary with information about the source conversion host (address, status, name, id)
     required: true
-    type: str
-  src_conversion_host_id:
-    description:
-      - ID of the UCI conversion host instance running on the source OpenStack cloud.
-    required: true
-    type: str
-  src_conversion_host_address:
-    description:
-      - IP address of the UCI conversion host instance on the source OpenStack cloud.
-    required: true
-    type: str
+    type: dict
   src_auth:
     description:
       - Dictionary with parameters for chosen auth type on the source cloud.
@@ -128,7 +118,7 @@ EXAMPLES = '''
   register: read_workloads
 
 - name: get source conversion host address
-  os_migrate.os_migrate.os_server_address:
+  os_migrate.os_migrate.os_conversion_host_info:
     auth:
         auth_url: https://src-osp:13000/v3
         username: migrate
@@ -137,10 +127,10 @@ EXAMPLES = '''
         project_name: migration-source
         user_domain_id: default
     server_id: ce4dda96-5d8e-4b67-aee2-9845cdc943fe
-  register: os_src_conversion_host_address
+  register: os_src_conversion_host_info
 
 - name: get destination conversion host address
-  os_migrate.os_migrate.os_server_address:
+  os_migrate.os_migrate.os_conversion_host_info:
     auth:
         auth_url: https://dest-osp:13000/v3
         username: migrate
@@ -149,7 +139,7 @@ EXAMPLES = '''
         project_name: migration-destination
         user_domain_id: default
     server_id: 2d2afe57-ace5-4187-8fca-5f10f9059ba1
-  register: os_dst_conversion_host_address
+  register: os_dst_conversion_host_info
 
 - name: import workloads
   os_migrate.os_migrate.import_workload:
@@ -160,10 +150,8 @@ EXAMPLES = '''
         project_domain_id: default
         project_name: migration-destination
         user_domain_id: default
-    dst_conversion_host_id: 2d2afe57-ace5-4187-8fca-5f10f9059ba1
-    dst_conversion_host_address: "{{ os_dst_conversion_host_address.address }}"
-    src_conversion_host_id: ce4dda96-5d8e-4b67-aee2-9845cdc943fe
-    src_conversion_host_address: "{{ os_src_conversion_host_address.address }}"
+    dst_conversion_host: "{{ os_dst_conversion_host_info.openstack_conversion_host }}"
+    src_conversion_host: "{{ os_src_conversion_host_info.openstack_conversion_host }}"
     src_auth:
         auth_url: https://src-osp:13000/v3
         username: migrate
@@ -188,14 +176,12 @@ import subprocess
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        dst_conversion_host_id=dict(type='str', required=True),
-        dst_conversion_host_address=dict(type='str', required=True),
+        dst_conversion_host=dict(type='dict', required=True),
+        src_conversion_host=dict(type='dict', required=True),
         src_auth=dict(type='dict', required=True),
         src_auth_type=dict(default=None),
         src_region_name=dict(default=None),
         src_validate_certs=dict(default=None, type='bool'),
-        src_conversion_host_id=dict(type='str', required=True),
-        src_conversion_host_address=dict(type='str', required=True),
         data=dict(type='dict', required=True),
         ssh_key_path=dict(type='str', default=None),
         uci_container_image=dict(type='str', default='v2v-conversion-host'),
@@ -210,7 +196,7 @@ def run_module():
     params, info = src.params_and_info()
 
     # Do not convert source conversion host!
-    if info['id'] == module.params['src_conversion_host_id']:
+    if info['id'] == module.params['src_conversion_host']['id']:
         module.exit_json(skipped=True, skip_reason='Skipping conversion host.')
 
     # Assume an existing VM with the same name means it was already migrated.
@@ -224,7 +210,7 @@ def run_module():
         msg = 'Skipping instance {} because it is not in state SHUTOFF!'
         module.exit_json(skipped=True, skip_reason=msg.format(name))
 
-    dst_addr = module.params['dst_conversion_host_address']
+    dst_addr = module.params['dst_conversion_host']['address']
     dst_auth = module.params['auth']
     src_auth = module.params['src_auth']
     ssh_key_path = module.params['ssh_key_path']
@@ -240,8 +226,8 @@ def run_module():
         vm_name=params['name'],
         transport_method='ssh',
         insecure_connection=not module.params['validate_certs'],
-        osp_server_id=module.params['dst_conversion_host_id'],
-        osp_source_conversion_vm_id=module.params['src_conversion_host_id'],
+        osp_server_id=module.params['dst_conversion_host']['id'],
+        osp_source_conversion_vm_id=module.params['src_conversion_host']['id'],
         osp_source_vm_id=info['id'],
         osp_destination_project_id=conn.current_project_id,
         osp_flavor_id=params['flavor_name'],

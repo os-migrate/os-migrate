@@ -12,9 +12,9 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = '''
 ---
-module: os_server_address
+module: os_conversion_host_info
 
-short_description: Get IP address of OpenStack conversion host instance
+short_description: Get information about an OpenStack conversion host instance
 
 extends_documentation_fragment: openstack
 
@@ -23,12 +23,12 @@ version_added: "2.9"
 author: "OpenStack tenant migration tools (@os-migrate)"
 
 description:
-  - "Get OpenStack instance IP address, intended for migration conversion host instances only. Verifies that the instance is up."
+  - "Get information about a migration conversion host instance from OpenStack, in the format expected by the import_workload module."
 
 options:
-  server_id:
+  server:
     description:
-      - ID of server to inspect
+      - Name or ID of server to inspect
     required: true
     type: str
   auth:
@@ -59,7 +59,8 @@ options:
 '''
 
 EXAMPLES = '''
-- os_migrate.os_migrate.os_server_address:
+- os_migrate.os_migrate.os_conversion_host_info:
+    server: source-migration-conversion-host
     auth:
         auth_url: https://dest-osp:13000/v3
         username: migrate
@@ -67,18 +68,23 @@ EXAMPLES = '''
         project_domain_id: default
         project_name: migration-destination
         user_domain_id: default
-    server_id: 2d2afe57-ace5-4187-8fca-5f10f9059ba1
-  register: os_dst_conversion_host_address
+  register: os_dst_conversion_host_info
 '''
 
 RETURN = '''
-openstack_server_address:
-    description: IP address of an instance
-    returned: only when instance is in ACTIVE state
+openstack_conversion_host:
+    description: Useful information about a conversion host
+    returned: only when information gathering was successful
     type: complex
     contains:
         address:
             description: IP (v4) address of the specified instance
+        name:
+            description: Name of the specified instance
+        id:
+            description: ID of the specified instance
+        status:
+            description: Current status of the specified instance (ACTIVE, SHUTOFF, etc.)
 '''
 
 from ansible.module_utils.basic import AnsibleModule
@@ -88,26 +94,30 @@ from ansible.module_utils.openstack \
 
 def main():
     argument_spec = openstack_full_argument_spec(
-        server_id=dict(type='str', required=True)
+        server=dict(type='str', required=True)
     )
 
     module = AnsibleModule(
         argument_spec=argument_spec,
-        supports_check_mode=True,
     )
 
-    srv_id = module.params['server_id']
+    srv = module.params['server']
+    conversion_host = {}
 
     try:
         sdk, conn = openstack_cloud_from_module(module)
-        server = conn.get_server_by_id(srv_id)
-        if server.status != 'ACTIVE':
-            msg = 'Conversion host ' + server.name + ' is not in state ACTIVE!'
-            module.fail_json(msg=msg)
-        module.exit_json(changed=False, address=server.accessIPv4)
+        server = conn.get_server(name_or_id=srv)
+        if not server:
+            module.fail_json(msg='Conversion host ' + srv + ' not found!')
+        conversion_host['address'] = server.accessIPv4
+        conversion_host['status'] = server.status
+        conversion_host['name'] = server.name
+        conversion_host['id'] = server.id
 
     except sdk.exceptions.OpenStackCloudException as e:
         module.fail_json(msg=str(e))
+
+    module.exit_json(changed=False, openstack_conversion_host=conversion_host)
 
 
 if __name__ == '__main__':
