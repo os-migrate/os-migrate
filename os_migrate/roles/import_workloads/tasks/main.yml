@@ -47,7 +47,7 @@
     src_auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
     src_region_name: "{{ os_migrate_src_region_name|default(omit) }}"
     src_validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ssh_key_path: "{{ os_migrate_ssh_key }}"
+    ssh_key_path: "{{ os_migrate_conversion_host_key }}"
     uci_container_image: "{{ os_uci_container_image|default(omit) }}"
     data: "{{ item }}"
   loop: "{{ read_workloads.resources }}"
