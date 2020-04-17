@@ -20,10 +20,6 @@ def sdk_server():
         },
         flavor={
             'id': 'a96b2815-3525-4eea-9ab4-14ba58e17835',
-            'links': {
-                'href': 'http://test-server:13774/flavors/a96b2815-3525-4eea-9ab4-14ba58e17835',
-                'rel': 'bookmark',
-            },
         },
         id='uuid-test-server',
         security_groups=[
@@ -58,10 +54,6 @@ def server_refs():
             },
         },
         'id': 'uuid-test-server',
-        'security_groups': [
-            {'name': 'testing123'},
-            {'name': 'default'},
-        ],
         'name': 'test-server',
         'status': 'ACTIVE',
         'flavor_name': 'm1.small',
@@ -98,17 +90,7 @@ class TestServer(unittest.TestCase):
         self.assertEqual(info['id'], 'uuid-test-server')
         self.assertEqual(params['name'], 'test-server')
         self.assertEqual(info['status'], 'ACTIVE')
-        self.assertEqual(info['flavor'], {
-            'id': 'a96b2815-3525-4eea-9ab4-14ba58e17835',
-            'links': {
-                'href': 'http://test-server:13774/flavors/a96b2815-3525-4eea-9ab4-14ba58e17835',
-                'rel': 'bookmark',
-            },
-        })
-        self.assertEqual(info['security_groups'], [
-            {'name': 'testing123'},
-            {'name': 'default'},
-        ])
+        self.assertEqual(info['flavor_id'], 'a96b2815-3525-4eea-9ab4-14ba58e17835')
         self.assertEqual(params['flavor_name'], 'm1.small')
         self.assertEqual(params['security_group_names'], [
             'testing123',

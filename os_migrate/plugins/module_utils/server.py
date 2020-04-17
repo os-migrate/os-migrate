@@ -14,9 +14,8 @@ class Server(resource.Resource):
 
     info_from_sdk = [
         'addresses',
-        'flavor',
+        'flavor_id',
         'id',
-        'security_groups',
         'status',
     ]
     params_from_sdk = [
@@ -27,6 +26,12 @@ class Server(resource.Resource):
         'security_group_names',
     ]
 
+    @classmethod
+    def from_sdk(cls, conn, sdk_resource):
+        obj = super(Server, cls).from_sdk(conn, sdk_resource)
+        obj.info()['flavor_id'] = sdk_resource['flavor']['id']
+        return obj
+
     @staticmethod
     def _find_sdk_res(conn, name_or_id):
         return conn.compute.find_server(name_or_id)
@@ -34,7 +39,7 @@ class Server(resource.Resource):
     @staticmethod
     def _refs_from_sdk(conn, sdk_res):
         refs = {}
-        refs['flavor_name'] = reference.flavor_name(
+        refs['flavor_name'] = reference.server_flavor_name(
             conn, sdk_res['flavor']['id'])
         refs['security_group_names'] = [security_group['name'] for
                                         security_group in
