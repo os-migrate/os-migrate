@@ -259,7 +259,7 @@ def run_module():
     except subprocess.CalledProcessError as e:
         module.fail_json(msg='Unable to copy virt-v2v-wrapper parameters '
                          'file to destination conversion host! Error: ' + e,
-                         changed=False)
+                         changed=False, v2v_dir=v2v_dir)
 
     # Run virt-v2v-wrapper through its UCI container
     try:
@@ -282,9 +282,9 @@ def run_module():
                               stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError as e:
         msg = 'Failed to migrate {}! Error was: {}'
-        module.fail_json(msg=msg.format(params['name'], e), changed=True)
+        module.fail_json(msg=msg.format(params['name'], e), changed=True, v2v_dir=v2v_dir)
 
-    module.exit_json(changed=True)  # TODO: check actual wrapper state
+    module.exit_json(changed=True, v2v_dir=v2v_dir)  # TODO: check actual wrapper state
 
 
 def _ssh_preamble(address, key_path):
