@@ -14,7 +14,6 @@ class Server(resource.Resource):
 
     info_from_sdk = [
         'addresses',
-        'flavor_id',
         'id',
         'status',
     ]
