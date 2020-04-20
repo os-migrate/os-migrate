@@ -1,3 +1,4 @@
+
 .DEFAULT_GOAL := build
 SHELL := /bin/bash
 ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
@@ -45,7 +46,7 @@ test-setup-vagrant-devstack:
 		--config toolbox/vagrant/env/clouds.yaml \
 		--src devstack \
 		--dst devstack-alt \
-		> tests/func/auth.yml
+		> tests/auth.yml
 
 test: test-fast test-func
 
@@ -59,7 +60,22 @@ test-func: reinstall
 		-v \
 		-i $(ROOT_DIR)/os_migrate/localhost_inventory.yml \
 		-e os_migrate_data_dir=$(ROOT_DIR)/tests/func/tmpdata \
-		-e @$(ROOT_DIR)/tests/func/auth.yml \
+		-e @$(ROOT_DIR)/tests/auth.yml \
+		$(FUNC_TEST_ARGS) test_all.yml
+
+test-e2e: reinstall
+	set -euo pipefail; \
+	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
+		source /root/venv/bin/activate; \
+	fi; \
+	cd tests/e2e; \
+	ansible-playbook \
+		-v \
+		-i $(ROOT_DIR)/os_migrate/localhost_inventory.yml \
+		-e os_migrate_data_dir=$(ROOT_DIR)/tests/func/tmpdata \
+		-e os_migrate_src_validate_certs=False \
+		-e os_migrate_dst_validate_certs=False \
+		-e @$(ROOT_DIR)/tests/auth.yml \
 		$(FUNC_TEST_ARGS) test_all.yml
 
 test-fast: test-lint test-sanity test-unit

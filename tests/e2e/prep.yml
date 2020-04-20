@@ -1,0 +1,16 @@
+# make sure no artifacts from prevoius test persisted
+- name: delete os_migrate_data_dir
+  file:
+    path: "{{ os_migrate_data_dir }}"
+    state: absent
+  tags:
+    - always
+    - test_prep
+
+- name: create os_migrate_data_dir
+  file:
+    path: "{{ os_migrate_data_dir }}"
+    state: directory
+  tags:
+    - always
+    - test_prep

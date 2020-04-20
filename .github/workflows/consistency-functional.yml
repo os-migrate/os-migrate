@@ -196,13 +196,13 @@ jobs:
           openstack --os-cloud devstack-admin --os-region RegionOne router list
       - name: Connect functional tests to devstack
         run: |
-          cp /etc/openstack/clouds.yaml tests/func/clouds.yaml && \
+          cp /etc/openstack/clouds.yaml tests/clouds.yaml && \
           ./toolbox/run ./scripts/auth-from-clouds.sh \
-              --config tests/func/clouds.yaml \
+              --config tests/clouds.yaml \
               --src devstack \
               --dst devstack-alt \
-              > tests/func/auth.yml && \
-          rm tests/func/clouds.yaml
+              > tests/auth.yml && \
+          rm tests/clouds.yaml
       - name: Run functional tests
         run: |
           ./toolbox/run make test-func
