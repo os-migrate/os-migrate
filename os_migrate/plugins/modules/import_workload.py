@@ -264,7 +264,7 @@ def run_module():
     # Run virt-v2v-wrapper through its UCI container
     try:
         virt_v2v_wrapper = [
-            'sudo', 'podman', 'run', '--rm', '--privileged',
+            'sudo', 'podman', 'run', '--rm', '--privileged', '--net', 'host',
             '--volume', '/dev:/dev',
             '--volume', '/var/lock:/var/lock',
             '--volume', '/etc/pki/ca-trust:/etc/pki/ca-trust',
