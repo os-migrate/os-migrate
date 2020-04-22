@@ -1,0 +1,63 @@
+- name: validate loaded resources
+  os_migrate.os_migrate.validate_resource_files:
+    paths:
+      - "{{ os_migrate_data_dir }}/workloads.yml"
+  register: workloads_file_validation
+  when: import_workloads_validate_file
+
+- name: stop when errors found
+  fail:
+    msg: "{{ workloads_file_validation.errors|join(' ') }}"
+  when: not ( workloads_file_validation.ok | bool )
+
+- name: read workloads resource file
+  os_migrate.os_migrate.read_resources:
+    path: "{{ os_migrate_data_dir }}/workloads.yml"
+  register: read_workloads
+
+- name: get source conversion host address
+  os_migrate.os_migrate.os_conversion_host_info:
+    auth: "{{ os_migrate_src_auth }}"
+    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+    server: "{{ os_migrate_src_conversion_host }}"
+  register: os_src_conversion_host_info
+
+- name: check source conversion host status
+  fail:
+    msg: The source conversion host is not running!
+  when: os_src_conversion_host_info.openstack_conversion_host.status != "ACTIVE"
+
+- name: get destination conversion host address
+  os_migrate.os_migrate.os_conversion_host_info:
+    auth: "{{ os_migrate_dst_auth }}"
+    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+    server: "{{ os_migrate_dst_conversion_host }}"
+  register: os_dst_conversion_host_info
+
+- name: check destination conversion host status
+  fail:
+    msg: The destination conversion host is not running!
+  when: os_dst_conversion_host_info.openstack_conversion_host.status != "ACTIVE"
+
+- name: import workloads
+  os_migrate.os_migrate.import_workload:
+    auth: "{{ os_migrate_dst_auth }}"
+    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+    dst_conversion_host:
+      "{{ os_dst_conversion_host_info.openstack_conversion_host }}"
+    src_conversion_host:
+      "{{ os_src_conversion_host_info.openstack_conversion_host }}"
+    src_auth: "{{ os_migrate_src_auth }}"
+    src_auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+    src_region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+    src_validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+    ssh_key_path: "{{ os_migrate_conversion_host_key }}"
+    uci_container_image: "{{ os_uci_container_image|default(omit) }}"
+    data: "{{ item }}"
+  loop: "{{ read_workloads.resources }}"

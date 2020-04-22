@@ -18,9 +18,21 @@ def sdk_server():
                  'version': 4},
             ],
         },
+        flavor={
+            'id': 'a96b2815-3525-4eea-9ab4-14ba58e17835',
+        },
         id='uuid-test-server',
+        security_groups=[
+            dict(name='testing123'),
+            dict(name='default'),
+        ],
         name='test-server',
-        status='ACTIVE'
+        status='ACTIVE',
+        flavor_name='m1.small',
+        security_group_names=[
+            'testing123',
+            'default',
+        ],
     )
 
 
@@ -34,9 +46,21 @@ def server_refs():
                  'version': 4},
             ],
         },
+        'flavor': {
+            'id': 'a96b2815-3525-4eea-9ab4-14ba58e17835',
+            'links': {
+                'href': 'http://test-server:13774/flavors/a96b2815-3525-4eea-9ab4-14ba58e17835',
+                'rel': 'bookmark',
+            },
+        },
         'id': 'uuid-test-server',
         'name': 'test-server',
-        'status': 'ACTIVE'
+        'status': 'ACTIVE',
+        'flavor_name': 'm1.small',
+        'security_group_names': [
+            'testing123',
+            'default',
+        ],
     }
 
 
@@ -66,3 +90,9 @@ class TestServer(unittest.TestCase):
         self.assertEqual(info['id'], 'uuid-test-server')
         self.assertEqual(params['name'], 'test-server')
         self.assertEqual(info['status'], 'ACTIVE')
+        self.assertEqual(info['flavor_id'], 'a96b2815-3525-4eea-9ab4-14ba58e17835')
+        self.assertEqual(params['flavor_name'], 'm1.small')
+        self.assertEqual(params['security_group_names'], [
+            'testing123',
+            'default',
+        ])
