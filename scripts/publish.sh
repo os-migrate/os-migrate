@@ -23,6 +23,12 @@ while (( "$#" )); do
     esac
 done
 
+if [ ! -e /.os-migrate-toolbox ]; then
+    echo "Error: This script must be run from an os-migrate-toolbox container" >&2
+    echo "to ensure having all dependencies available and in expected versions." >&2
+    exit 1
+fi
+
 #
 # Initial variables
 #
