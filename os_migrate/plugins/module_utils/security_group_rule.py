@@ -46,6 +46,8 @@ class SecurityGroupRule(resource.Resource):
         obj = super(SecurityGroupRule, cls).from_sdk(conn, sdk_resource)
         return obj
 
+    # there is no API method for updating security group rules.  if you
+    # attempt to create a rule that exists, a ConflictException is raised.
     def create_or_update(self, conn):
         refs = self._refs_from_ser(conn)
         sdk_params = self._to_sdk_params(refs)
