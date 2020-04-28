@@ -69,6 +69,8 @@ class Resource():
     # completely.
     @classmethod
     def from_sdk(cls, conn, sdk_resource):
+        # Disable as per pylint bug, this should be OK.
+        # pylint: disable=isinstance-second-argument-not-valid-type
         """Returns: a new Resource instance intitalized from `sdk_resource`,
         using `conn` OpenStack SDK connection to fetch any additional
         information.

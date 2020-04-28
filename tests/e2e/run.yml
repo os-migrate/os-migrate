@@ -1,0 +1,210 @@
+# FIXME: Find a way we can test the whole playbook rather than just
+# the role. Either make sure we're not in a play here and use
+# import_playbook, or spawn an ansible-playbook subprocess? The latter
+# might be actually a more precise way to test the real end-user
+# experience.
+
+# Network tasks
+- name: Network tasks
+  block:
+    - include_role:
+        name: os_migrate.os_migrate.export_networks
+      vars:
+        export_networks_name_filter:
+          - regex: '^osm_'
+
+    - name: load exported data
+      set_fact:
+        resources: "{{ (lookup('file',
+                               os_migrate_data_dir +
+                               '/networks.yml') | from_yaml)
+                       ['resources'] }}"
+
+    - name: verify data contents
+      assert:
+        that:
+          - (resources |
+            json_query("[?params.name ==
+            'osm_net'].params.name")
+            == ['osm_net'])
+
+    - include_role:
+        name: os_migrate.os_migrate.import_networks
+  tags: always
+
+# Subnet tasks
+- name: Subnet tasks
+  block:
+    - include_role:
+        name: os_migrate.os_migrate.export_subnets
+      vars:
+        export_subnets_name_filter:
+          - regex: '^osm_'
+
+    - name: load exported data
+      set_fact:
+        subnet_resources: "{{ (lookup('file',
+                                      os_migrate_data_dir +
+                                      '/subnets.yml') | from_yaml)
+                       ['resources'] }}"
+
+    - name: verify data contents
+      assert:
+        that:
+          - (subnet_resources |
+            json_query("[?params.name ==
+            'osm_subnet'].params.cidr")
+            == ['192.168.20.0/24'])
+
+    - include_role:
+        name: os_migrate.os_migrate.import_subnets
+  tags: always
+
+# Security group tasks
+- name: Security group tasks
+  block:
+    - include_role:
+        name: os_migrate.os_migrate.export_security_groups
+      vars:
+        export_security_groups_name_filter:
+          - regex: '^osm_'
+
+    - name: load exported data
+      set_fact:
+        security_group_resources: "{{ (lookup('file',
+                                              os_migrate_data_dir +
+                                              '/security_groups.yml') |
+                                              from_yaml)
+                       ['resources'] }}"
+
+    - name: verify data contents
+      assert:
+        that:
+          - (security_group_resources |
+            json_query("[?params.name ==
+            'osm_security_group'].params.description")
+            == ['OSM security group'])
+
+    - include_role:
+        name: os_migrate.os_migrate.import_security_groups
+  tags: always
+
+# Security group rules tasks
+- name: Security group rules tasks
+  block:
+    - include_role:
+        name: os_migrate.os_migrate.export_security_group_rules
+      vars:
+        export_security_groups_name_filter:
+          - regex: '^osm_'
+
+    - name: load exported data
+      set_fact:
+        security_group_rule_resources: "{{ (lookup('file',
+                                               os_migrate_data_dir +
+                                               '/security_group_rules.yml') |
+                                               from_yaml)
+                       ['resources'] }}"
+
+    - name: verify data contents
+      assert:
+        that:
+          - (security_group_rule_resources |
+            json_query("[?params.security_group_name ==
+            'osm_security_group'].params.protocol")
+            == ['tcp'])
+
+    - include_role:
+        name: os_migrate.os_migrate.import_security_group_rules
+  tags: always
+
+# Router tasks
+- name: Router tasks
+  block:
+    - include_role:
+        name: os_migrate.os_migrate.export_routers
+      vars:
+        export_routers_name_filter:
+          - regex: '^osm_'
+
+    - name: load exported data
+      set_fact:
+        router_resources: "{{ (lookup('file',
+                                      os_migrate_data_dir +
+                                      '/routers.yml') | from_yaml)
+                              ['resources'] }}"
+
+    - name: verify data contents
+      assert:
+        that:
+          - "(router_resources |
+              json_query(\"[?params.name ==
+              'osm_router'].params.external_gateway_nameinfo.network_name\")) ==
+              [test_router_external_network | default('external_network')]"
+
+    - include_role:
+        name: os_migrate.os_migrate.import_routers
+  tags: always
+
+# Router interfaces tasks
+- name: Router interfaces tasks
+  block:
+    - include_role:
+        name: os_migrate.os_migrate.export_router_interfaces
+      vars:
+        export_routers_name_filter:
+          - regex: '^osm_'
+
+    - name: load exported data
+      set_fact:
+        router_interface_resources: "{{ (lookup('file',
+                                         os_migrate_data_dir +
+                                         '/router_interfaces.yml') | from_yaml)
+                                         ['resources'] }}"
+
+    - name: verify data contents
+      assert:
+        that:
+          - "(router_interface_resources |
+              json_query(\"[?params.device_name ==
+              'osm_router'].params.fixed_ips_names[].ip_address\")) | sort ==
+              ['192.168.10.10', '192.168.20.10']"
+          - "(router_interface_resources |
+              json_query(\"[?params.device_name ==
+              'osm_router'].params.fixed_ips_names[].subnet_name\")) | sort ==
+              ['osm_router_subnet', 'osm_subnet']"
+
+    # TODO: Check why the router interfaces are
+    # conflicting in the destination tenant
+    # - include_role:
+    #     name: os_migrate.os_migrate.import_router_interfaces
+  tags: always
+
+# Workloads tasks
+- name: Workloads tasks
+  block:
+    - include_role:
+        name: os_migrate.os_migrate.export_workloads
+      vars:
+        export_networks_name_filter:
+          - regex: '^osm_'
+
+    - name: load exported data
+      set_fact:
+        resources: "{{ (lookup('file',
+                               os_migrate_data_dir +
+                               '/workloads.yml') | from_yaml)
+                       ['resources'] }}"
+
+    - name: verify data contents
+      assert:
+        that:
+          - (resources |
+            json_query("[?params.name ==
+            'osm_server'].params.name")
+            == ['osm_server'])
+
+  # TODO: We need the conversion host to run the import
+  #   - include_role:
+  #       name: os_migrate.os_migrate.import_workloads
+  tags: always

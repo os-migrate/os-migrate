@@ -4,7 +4,11 @@
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_src_region_name|default(omit) }}"
     validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
   register: src_workloads_info
+
 - debug:
     msg: "{{ src_workloads_info.openstack_servers }}"
 
@@ -30,4 +34,7 @@
     path: "{{ os_migrate_data_dir }}/workloads.yml"
     name: "{{ item['id'] }}"
     validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
   loop: "{{ export_workloads_ids_names }}"

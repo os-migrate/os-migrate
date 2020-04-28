@@ -3,6 +3,10 @@
     auth: "{{ os_migrate_src_auth }}"
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
   register: src_routers_info
 
 - name: create id-name pairs of routers to export
@@ -26,4 +30,8 @@
     region_name: "{{ os_migrate_src_region_name|default(omit) }}"
     path: "{{ os_migrate_data_dir }}/routers.yml"
     name: "{{ item['id'] }}"
+    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
   loop: "{{ export_routers_ids_names }}"
