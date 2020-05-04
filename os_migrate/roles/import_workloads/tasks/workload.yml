@@ -1,0 +1,49 @@
+- block:
+  - name: preliminary setup for workload import
+    os_migrate.os_migrate.import_workload_prelim:
+      auth: "{{ os_migrate_dst_auth }}"
+      auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+      region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+      dst_conversion_host:
+        "{{ os_dst_conversion_host_info.openstack_conversion_host }}"
+      src_conversion_host:
+        "{{ os_src_conversion_host_info.openstack_conversion_host }}"
+      src_auth: "{{ os_migrate_src_auth }}"
+      src_auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+      src_region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+      src_validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+      # TODO:FIXME
+      # Currently the os_migrate.os_migrate.import_workload_prelim module
+      # does not support the following parameters, and for both
+      # source and destination cloud they should be present.
+      # src_ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+      # src_client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+      # src_client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+      ssh_key_path: "{{ os_migrate_conversion_host_key }}"
+      uci_container_image: "{{ os_uci_container_image|default(omit) }}"
+      data: "{{ item }}"
+    register: prelim
+
+  - debug:
+      msg:
+        - "{{ prelim.server_name }} remote log directory: {{ prelim.v2v_dir }}"
+        - "{{ prelim.server_name }} log file: {{ prelim.v2v_log }}"
+        - "{{ prelim.server_name }} progress state file: {{ prelim.v2v_state }}"
+    when: prelim.changed
+
+  - name: import one workload
+    os_migrate.os_migrate.import_workload:
+      dst_addr: "{{ prelim.dst_addr }}"
+      server_name: "{{ prelim.server_name }}"
+      ssh_key_path: "{{ os_migrate_conversion_host_key }}"
+      uci_container_image: "{{ os_uci_container_image|default(omit) }}"
+      v2v_dir: "{{ prelim.v2v_dir }}"
+    when: prelim.changed
+
+  rescue:
+    - debug:
+        msg: "Failed to import {{ prelim.server_name }}!"

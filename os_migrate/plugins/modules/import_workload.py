@@ -16,66 +16,27 @@ module: import_workload
 
 short_description: Import OpenStack instance
 
-extends_documentation_fragment: openstack
-
 version_added: "2.9"
 
 author: "OpenStack tenant migration tools (@os-migrate)"
 
 description:
   - "Import OpenStack instance from an OS-Migrate YAML structure"
+  - "This module connects to the destination conversion host and runs virt-v2v-wrapper."
+  - "Intended to run only from the output of import_workload_prelim."
+  - "This way, paths to debug logs and progress state can be provided before transferring any bulk data."
 
 options:
-  auth:
+  dst_addr:
     description:
-      - Dictionary with parameters for chosen auth type on the destination cloud.
-    required: true
-    type: dict
-  auth_type:
-    description:
-      - Auth type plugin for destination OpenStack cloud. Can be omitted if using password authentication.
-    required: false
+      - External IP address of destination conversion host.
+    required: True
     type: str
-  region_name:
+  server_name:
     description:
-      - Destination OpenStack region name. Can be omitted if using default region.
-    required: false
+      - Name of the OpenStack instance currently being migrated
+    required: True
     type: str
-  validate_certs:
-    description:
-      - Validate HTTPS certificates when logging in to OpenStack.
-    required: false
-    type: bool
-  dst_conversion_host:
-    description:
-      - Dictionary with information about the destination conversion host (address, status, name, id)
-    required: true
-    type: dict
-  src_conversion_host:
-    description:
-      - Dictionary with information about the source conversion host (address, status, name, id)
-    required: true
-    type: dict
-  src_auth:
-    description:
-      - Dictionary with parameters for chosen auth type on the source cloud.
-    required: true
-    type: dict
-  src_auth_type:
-    description:
-      - Auth type plugin for source OpenStack cloud. Can be omitted if using password authentication.
-    required: false
-    type: str
-  src_region_name:
-    description:
-      - Source OpenStack region name. Can be omitted if using default region.
-    required: false
-    type: str
-  src_validate_certs:
-    description:
-      - Validate HTTPS certificates when logging in to source OpenStack cloud.
-    required: false
-    type: bool
   ssh_key_path:
     description:
       - Path to an SSH private key authorized on both source and destination clouds.
@@ -87,24 +48,16 @@ options:
     required: false
     type: str
     default: v2v-conversion-host
-  data:
+  v2v_dir:
     description:
-      - Data structure with server parameters as loaded from OS-Migrate workloads YAML file.
+      - Working directory for the current instance migration, on the destination conversion host.
     required: true
-    type: dict
-  availability_zone:
-    description:
-      - Availability zone.
-    required: false
     type: str
-  cloud:
-    description:
-      - Ignored. Present for backwards compatibility.
-    required: false
-    type: raw
 '''
 
 EXAMPLES = '''
+main.yml:
+
 - name: validate loaded resources
   os_migrate.os_migrate.validate_resource_files:
     paths:
@@ -142,124 +95,84 @@ EXAMPLES = '''
   register: os_dst_conversion_host_info
 
 - name: import workloads
-  os_migrate.os_migrate.import_workload:
-    auth:
-        auth_url: https://dest-osp:13000/v3
-        username: migrate
-        password: migrate
-        project_domain_id: default
-        project_name: migration-destination
-        user_domain_id: default
-    dst_conversion_host: "{{ os_dst_conversion_host_info.openstack_conversion_host }}"
-    src_conversion_host: "{{ os_src_conversion_host_info.openstack_conversion_host }}"
-    src_auth:
-        auth_url: https://src-osp:13000/v3
-        username: migrate
-        password: migrate
-        project_domain_id: default
-        project_name: migration-source
-        user_domain_id: default
-    ssh_key_path: "{{ os_migrate_ssh_key }}"
-    data: "{{ item }}"
+  include_tasks: workload.yml
   loop: "{{ read_workloads.resources }}"
+
+
+
+workload.yml:
+
+- block:
+  - name: preliminary setup for workload import
+    os_migrate.os_migrate.import_workload_prelim:
+      auth:
+          auth_url: https://dest-osp:13000/v3
+          username: migrate
+          password: migrate
+          project_domain_id: default
+          project_name: migration-destination
+          user_domain_id: default
+      validate_certs: False
+      dst_conversion_host: "{{ os_dst_conversion_host_info.openstack_conversion_host }}"
+      src_conversion_host: "{{ os_src_conversion_host_info.openstack_conversion_host }}"
+      src_auth:
+          auth_url: https://src-osp:13000/v3
+          username: migrate
+          password: migrate
+          project_domain_id: default
+          project_name: migration-source
+          user_domain_id: default
+      src_validate_certs: False
+      ssh_key_path: "/path/to/migration.key"
+      data: "{{ item }}"
+    register: prelim
+
+  - debug:
+      msg:
+        - "{{ prelim.server_name }} remote log directory: {{ prelim.v2v_dir }}"
+        - "{{ prelim.server_name }} log file: {{ prelim.v2v_log }}"
+        - "{{ prelim.server_name }} progress state file: {{ prelim.v2v_state }}"
+    when: prelim.changed
+
+  - name: import one workload
+    os_migrate.os_migrate.import_workload:
+      dst_addr: "{{ prelim.dst_addr }}"
+      server_name: "{{ prelim.server_name }}"
+      ssh_key_path: "/path/to/migration.key"
+      v2v_dir: "{{ prelim.v2v_dir }}"
+    when: prelim.changed
+
+  rescue:
+    - debug:
+        msg: "Failed to import {{ prelim.server_name }}!"
 '''
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.openstack \
-    import openstack_full_argument_spec, openstack_cloud_from_module
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils import server
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils.workload_common \
+    import ssh_preamble
 
-import json
 import subprocess
 
 
 def run_module():
-    argument_spec = openstack_full_argument_spec(
-        dst_conversion_host=dict(type='dict', required=True),
-        src_conversion_host=dict(type='dict', required=True),
-        src_auth=dict(type='dict', required=True),
-        src_auth_type=dict(default=None),
-        src_region_name=dict(default=None),
-        src_validate_certs=dict(default=None, type='bool'),
-        data=dict(type='dict', required=True),
+    argument_spec = dict(
+        dst_addr=dict(type='str', required=True),
+        server_name=dict(type='str', required=True),
         ssh_key_path=dict(type='str', default=None),
         uci_container_image=dict(type='str', default='v2v-conversion-host'),
+        v2v_dir=dict(type='str', required=True),
     )
 
     module = AnsibleModule(
         argument_spec=argument_spec,
     )
 
-    sdk, conn = openstack_cloud_from_module(module)
-    src = server.Server.from_data(module.params['data'])
-    params, info = src.params_and_info()
-
-    # Do not convert source conversion host!
-    if info['id'] == module.params['src_conversion_host']['id']:
-        module.exit_json(skipped=True, skip_reason='Skipping conversion host.')
-
-    # Assume an existing VM with the same name means it was already migrated.
-    # Not necessarily true, but force the operator to delete it if needed.
-    if conn.search_servers(params['name']):
-        module.exit_json(changed=False, msg='VM already exists on destination!')
-
-    # Make sure source instance is shutdown before proceeding.
-    if info['status'] != 'SHUTOFF':
-        name = params['name']
-        msg = 'Skipping instance {} because it is not in state SHUTOFF!'
-        module.exit_json(skipped=True, skip_reason=msg.format(name))
-
-    dst_addr = module.params['dst_conversion_host']['address']
-    dst_auth = module.params['auth']
-    src_auth = module.params['src_auth']
+    dst_addr = module.params['dst_addr']
+    server_name = module.params['server_name']
     ssh_key_path = module.params['ssh_key_path']
-
-    # Copy the contents of the SSH key as a virt-v2v-wrapper parameter
-    with open(ssh_key_path, 'r') as ssh_key_file:
-        ssh_key = ssh_key_file.read()
-        if not ssh_key.endswith('\n'):
-            ssh_key += '\n'
-
-    # Create JSON input for virt-v2v-wrapper
-    wrapper_input = dict(
-        vm_name=params['name'],
-        transport_method='ssh',
-        insecure_connection=not module.params['validate_certs'],
-        osp_server_id=module.params['dst_conversion_host']['id'],
-        osp_source_conversion_vm_id=module.params['src_conversion_host']['id'],
-        osp_source_vm_id=info['id'],
-        osp_destination_project_id=conn.current_project_id,
-        osp_flavor_id=params['flavor_name'],
-        osp_security_groups_ids=params['security_group_names'],
-        uci_container_image=module.params['uci_container_image'],
-        ssh_key=ssh_key,
-        osp_environment={
-            'os_' + key: value for (key, value) in dst_auth.items()},
-        osp_source_environment={
-            'os_' + key: value for (key, value) in src_auth.items()
-        }
-    )
-
-    try:  # Create remote temporary directory
-        v2v_dir = _dst_ssh(dst_addr, ssh_key_path, ['mktemp -d -t v2v-XXXXXX'])
-        sub_dirs = v2v_dir + '/{input,log/uci,lib/uci,tmp}'
-        _dst_ssh(dst_addr, ssh_key_path, ['mkdir -p ' + sub_dirs])
-    except subprocess.CalledProcessError as e:
-        module.fail_json(msg='Unable to create temporary directory for '
-                         'virt-v2v-wrapper on destination conversion host! '
-                         'Error was: ' + e, changed=False)
-
-    # Write input JSON to /input/conversion.json on destination conversion host
-    command = _ssh_preamble(dst_addr, ssh_key_path)
-    command.extend(['-T', 'cat > ' + v2v_dir + '/input/conversion.json'])
-    try:
-        input_json = json.dumps(wrapper_input)
-        subprocess.run(command, text=True, input=input_json, check=True)
-    except subprocess.CalledProcessError as e:
-        module.fail_json(msg='Unable to copy virt-v2v-wrapper parameters '
-                         'file to destination conversion host! Error: ' + e,
-                         changed=False, v2v_dir=v2v_dir)
+    uci_container_image = module.params['uci_container_image']
+    v2v_dir = module.params['v2v_dir']
 
     # Run virt-v2v-wrapper through its UCI container
     try:
@@ -273,35 +186,18 @@ def run_module():
             '--volume', v2v_dir + '/log/uci:/var/log/uci',
             '--volume', v2v_dir + '/lib/uci:/var/lib/uci',
             '--volume', v2v_dir + '/tmp:/var/tmp',
-            module.params['uci_container_image'],
+            uci_container_image,
         ]
-        args = _ssh_preamble(dst_addr, ssh_key_path)
+        args = ssh_preamble(dst_addr, ssh_key_path)
         args.extend(virt_v2v_wrapper)
         # Suppress the tons of logging from virt-v2v-wrapper stdout/stderr
         subprocess.check_call(args, stdout=subprocess.DEVNULL,
                               stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError as e:
         msg = 'Failed to migrate {}! Error was: {}'
-        module.fail_json(msg=msg.format(params['name'], e), changed=True, v2v_dir=v2v_dir)
+        module.fail_json(msg=msg.format(server_name, e), changed=True, v2v_dir=v2v_dir)
 
-    module.exit_json(changed=True, v2v_dir=v2v_dir)  # TODO: check actual wrapper state
-
-
-def _ssh_preamble(address, key_path):
-    return [
-        'ssh',
-        '-i', key_path,
-        '-o', 'BatchMode=yes',
-        '-o', 'StrictHostKeyChecking=no',
-        '-o', 'ConnectTimeout=10',
-        'cloud-user@' + address
-    ]
-
-
-def _dst_ssh(address, key_path, command):
-    args = _ssh_preamble(address, key_path)
-    args.extend(command)
-    return subprocess.check_output(args).decode('utf-8').strip()
+    module.exit_json(changed=True, v2v_dir=v2v_dir)
 
 
 def main():

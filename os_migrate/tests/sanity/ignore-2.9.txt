@@ -17,4 +17,5 @@ plugins/modules/import_subnet.py validate-modules:missing-gplv3-license
 plugins/modules/os_security_groups_info.py validate-modules:missing-gplv3-license
 plugins/modules/export_workload.py validate-modules:missing-gplv3-license
 plugins/modules/import_workload.py validate-modules:missing-gplv3-license
+plugins/modules/import_workload_prelim.py validate-modules:missing-gplv3-license
 plugins/modules/os_conversion_host_info.py validate-modules:missing-gplv3-license
