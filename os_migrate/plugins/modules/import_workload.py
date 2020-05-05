@@ -42,6 +42,11 @@ options:
       - Path to an SSH private key authorized on both source and destination clouds.
     required: true
     type: str
+  transfer_log:
+    description:
+      - Path to a log file to store mixed stdout/stderr from running the UCI container.
+    required: false
+    type: str
   uci_container_image:
     description:
       - ID or name of the conversion host container image to run inside the UCI appliance.
@@ -137,6 +142,7 @@ workload.yml:
   - name: import one workload
     os_migrate.os_migrate.import_workload:
       dst_addr: "{{ prelim.dst_addr }}"
+      transfer_log: "/path/to/migrationdata/{{ prelim.server_name }}.log"
       server_name: "{{ prelim.server_name }}"
       ssh_key_path: "/path/to/migration.key"
       v2v_dir: "{{ prelim.v2v_dir }}"
@@ -160,6 +166,7 @@ def run_module():
         dst_addr=dict(type='str', required=True),
         server_name=dict(type='str', required=True),
         ssh_key_path=dict(type='str', default=None),
+        transfer_log=dict(type='str', default=None),
         uci_container_image=dict(type='str', default='v2v-conversion-host'),
         v2v_dir=dict(type='str', required=True),
     )
@@ -176,6 +183,13 @@ def run_module():
 
     # Run virt-v2v-wrapper through its UCI container
     try:
+        output_log = subprocess.DEVNULL
+        if module.params['transfer_log']:
+            try:
+                output_log = open(module.params['transfer_log'], 'a')
+            except OSError as e:
+                msg = 'Failed to open log file for {}! Error was: {}'
+                module.fail_json(changed=False, msg=msg.format(server_name, e))
         virt_v2v_wrapper = [
             'sudo', 'podman', 'run', '--rm', '--privileged', '--net', 'host',
             '--volume', '/dev:/dev',
@@ -191,11 +205,13 @@ def run_module():
         args = ssh_preamble(dst_addr, ssh_key_path)
         args.extend(virt_v2v_wrapper)
         # Suppress the tons of logging from virt-v2v-wrapper stdout/stderr
-        subprocess.check_call(args, stdout=subprocess.DEVNULL,
-                              stderr=subprocess.DEVNULL)
+        subprocess.check_call(args, stdout=output_log, stderr=output_log)
     except subprocess.CalledProcessError as e:
         msg = 'Failed to migrate {}! Error was: {}'
         module.fail_json(msg=msg.format(server_name, e), changed=True, v2v_dir=v2v_dir)
+    finally:
+        if output_log != subprocess.DEVNULL and not output_log.closed:
+            output_log.close()
 
     module.exit_json(changed=True, v2v_dir=v2v_dir)
 
