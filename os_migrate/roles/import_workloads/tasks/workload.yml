@@ -47,5 +47,5 @@
     when: prelim.changed
 
   rescue:
-    - debug:
+    - fail:
         msg: "Failed to import {{ item.params.name }}!"

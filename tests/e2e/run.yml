@@ -10,8 +10,12 @@
     - include_role:
         name: os_migrate.os_migrate.export_networks
       vars:
+        # This expression should export all osm_ workloads
+        # skipping the universal conversion host (osm_uch)
+        # which is used to move the VM's.
+        # We create it on in seed.yml but we dont export it.
         export_networks_name_filter:
-          - regex: '^osm_'
+          - regex: '^osm_(?!uch)'
 
     - name: load exported data
       set_fact:
@@ -38,8 +42,12 @@
     - include_role:
         name: os_migrate.os_migrate.export_subnets
       vars:
+        # This expression should export all osm_ workloads
+        # skipping the universal conversion host (osm_uch)
+        # which is used to move the VM's.
+        # We create it on in seed.yml but we dont export it.
         export_subnets_name_filter:
-          - regex: '^osm_'
+          - regex: '^osm_(?!uch)'
 
     - name: load exported data
       set_fact:
@@ -111,8 +119,8 @@
         that:
           - (security_group_rule_resources |
             json_query("[?params.security_group_name ==
-            'osm_security_group'].params.protocol")
-            == ['tcp'])
+            'osm_security_group'].params.remote_ip_prefix")
+            == ['0.0.0.0/0'])
 
     - include_role:
         name: os_migrate.os_migrate.import_security_group_rules
@@ -124,8 +132,12 @@
     - include_role:
         name: os_migrate.os_migrate.export_routers
       vars:
+        # This expression should export all osm_ workloads
+        # skipping the universal conversion host (osm_uch)
+        # which is used to move the VM's.
+        # We create it on in seed.yml but we dont export it.
         export_routers_name_filter:
-          - regex: '^osm_'
+          - regex: '^osm_(?!uch)'
 
     - name: load exported data
       set_fact:
@@ -140,44 +152,10 @@
           - "(router_resources |
               json_query(\"[?params.name ==
               'osm_router'].params.external_gateway_nameinfo.network_name\")) ==
-              [test_router_external_network | default('external_network')]"
+              [os_migrate_src_router_external_network | default('public')]"
 
     - include_role:
         name: os_migrate.os_migrate.import_routers
-  tags: always
-
-# Router interfaces tasks
-- name: Router interfaces tasks
-  block:
-    - include_role:
-        name: os_migrate.os_migrate.export_router_interfaces
-      vars:
-        export_routers_name_filter:
-          - regex: '^osm_'
-
-    - name: load exported data
-      set_fact:
-        router_interface_resources: "{{ (lookup('file',
-                                         os_migrate_data_dir +
-                                         '/router_interfaces.yml') | from_yaml)
-                                         ['resources'] }}"
-
-    - name: verify data contents
-      assert:
-        that:
-          - "(router_interface_resources |
-              json_query(\"[?params.device_name ==
-              'osm_router'].params.fixed_ips_names[].ip_address\")) | sort ==
-              ['192.168.10.10', '192.168.20.10']"
-          - "(router_interface_resources |
-              json_query(\"[?params.device_name ==
-              'osm_router'].params.fixed_ips_names[].subnet_name\")) | sort ==
-              ['osm_router_subnet', 'osm_subnet']"
-
-    # TODO: Check why the router interfaces are
-    # conflicting in the destination tenant
-    # - include_role:
-    #     name: os_migrate.os_migrate.import_router_interfaces
   tags: always
 
 # Workloads tasks
@@ -186,8 +164,12 @@
     - include_role:
         name: os_migrate.os_migrate.export_workloads
       vars:
-        export_networks_name_filter:
-          - regex: '^osm_'
+        # This expression should export all osm_ workloads
+        # skipping the universal conversion host (osm_uch)
+        # which is used to move the VM's.
+        # We create it on in seed.yml but we dont export it.
+        export_workloads_name_filter:
+          - regex: '^osm_(?!uch)'
 
     - name: load exported data
       set_fact:
@@ -204,7 +186,16 @@
             'osm_server'].params.name")
             == ['osm_server'])
 
-  # TODO: We need the conversion host to run the import
-  #   - include_role:
-  #       name: os_migrate.os_migrate.import_workloads
+    - include_role:
+        name: os_migrate.os_migrate.import_workloads
+
+  rescue:
+    - name: 1 hour to debug the environment
+      wait_for:
+        timeout: 3600
+
+    - name: mark the task as failed
+      fail:
+        msg: "Failed to run the workload migration"
+
   tags: always
