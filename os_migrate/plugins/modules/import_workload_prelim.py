@@ -306,6 +306,21 @@ def run_module():
         }
     )
 
+    # Create name-based network mapping
+    network_mappings = []
+    addresses = params['addresses']
+    for network_name, interfaces in addresses.items():
+        for interface in interfaces:
+            if interface['OS-EXT-IPS:type'] == 'fixed':
+                mapping = dict(
+                    source=network_name,
+                    destination=network_name,
+                    mac_address=interface['OS-EXT-IPS-MAC:mac_addr']
+                )
+                network_mappings.append(mapping)
+    if network_mappings:
+        wrapper_input['network_mappings'] = network_mappings
+
     try:  # Create remote temporary directory
         v2v_dir = dst_ssh(dst_addr, ssh_key_path, ['mktemp -d -t v2v-XXXXXX'])
         sub_dirs = v2v_dir + '/{input,log/uci,lib/uci,tmp}'

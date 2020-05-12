@@ -79,7 +79,7 @@ class TestServer(unittest.TestCase):
         params, info = srv.params_and_info()
 
         self.assertEqual(srv.type(), 'openstack.compute.Server')
-        self.assertEqual(info['addresses'], {
+        self.assertEqual(params['addresses'], {
             'external_network': [
                 {'OS-EXT-IPS-MAC:mac_addr': 'fa:16:3e:d7:ae:16',
                  'OS-EXT-IPS:type': 'fixed',
