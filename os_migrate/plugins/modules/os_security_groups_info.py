@@ -26,11 +26,6 @@ description:
   - "List security groups information"
 
 options:
-  name:
-    description:
-      - The name of the Security Group to get the info.
-    required: true
-    type: str
   filters:
     description:
       - Options for filtering the Security Group info.
@@ -79,8 +74,7 @@ from ansible.module_utils.openstack import openstack_full_argument_spec, \
 def main():
 
     argument_spec = openstack_full_argument_spec(
-        name=dict(required=False, default=None),
-        filters=dict(required=False, type='dict', default=None)
+        filters=dict(required=False, type='dict', default={}),
     )
     # TODO: check the del
     # del argument_spec['cloud']
@@ -88,7 +82,9 @@ def main():
     module = AnsibleModule(argument_spec)
     sdk, cloud = openstack_cloud_from_module(module)
     try:
-        security_groups = cloud.list_security_groups(module.params['name'])
+        security_groups = list(map(
+            lambda r: r.to_dict(),
+            cloud.network.security_groups(**module.params['filters'])))
         module.exit_json(changed=False,
                          openstack_security_groups=security_groups)
 

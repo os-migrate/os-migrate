@@ -26,6 +26,11 @@ description:
   - "List routers information"
 
 options:
+  filters:
+    description:
+      - Options for filtering the Routers info.
+    required: false
+    type: dict
   auth:
     description:
       - Dictionary with parameters for chosen auth type.
@@ -80,7 +85,9 @@ from ansible.module_utils.openstack \
 
 
 def main():
-    argument_spec = openstack_full_argument_spec()
+    argument_spec = openstack_full_argument_spec(
+        filters=dict(required=False, type='dict', default={}),
+    )
 
     module = AnsibleModule(
         argument_spec=argument_spec,
@@ -89,7 +96,9 @@ def main():
 
     try:
         sdk, conn = openstack_cloud_from_module(module)
-        routers = list(map(lambda r: r.to_dict(), conn.network.routers()))
+        routers = list(map(
+            lambda r: r.to_dict(),
+            conn.network.routers(**module.params['filters'])))
         module.exit_json(changed=False, openstack_routers=routers)
 
     except sdk.exceptions.OpenStackCloudException as e:

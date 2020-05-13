@@ -31,6 +31,11 @@ options:
       - Name or ID of server to inspect
     required: true
     type: str
+  filters:
+    description:
+      - Options for filtering the host, e.g. by project.
+    required: true
+    type: dict
   auth:
     description:
       - Dictionary with parameters for chosen auth type.
@@ -94,7 +99,8 @@ from ansible.module_utils.openstack \
 
 def main():
     argument_spec = openstack_full_argument_spec(
-        server=dict(type='str', required=True)
+        server=dict(type='str', required=True),
+        filters=dict(required=False, type='dict', default={}),
     )
 
     module = AnsibleModule(
@@ -102,11 +108,12 @@ def main():
     )
 
     srv = module.params['server']
+    filters = module.params['filters']
     conversion_host = {}
 
     try:
         sdk, conn = openstack_cloud_from_module(module)
-        server = conn.get_server(name_or_id=srv)
+        server = conn.get_server(name_or_id=srv, filters=filters)
         if not server:
             module.fail_json(msg='Conversion host ' + srv + ' not found!')
         conversion_host['address'] = server.accessIPv4
