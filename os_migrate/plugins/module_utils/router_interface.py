@@ -81,7 +81,6 @@ class RouterInterface(resource.Resource):
             conn.network.add_interface_to_router(
                 refs['device_id'], port_id=port['id'])
             changed = True
-
         return changed
 
     def _find_port_by_subnet_ips(self, conn, refs):
@@ -151,7 +150,7 @@ class RouterInterface(resource.Resource):
         for fixed_ip in params['fixed_ips_names']:
             refs['fixed_ips'].append({
                 'ip_address': fixed_ip['ip_address'],
-                'subnet_name': reference.subnet_id(conn, fixed_ip['subnet_name']),
+                'subnet_id': reference.subnet_id(conn, fixed_ip['subnet_name']),
             })
         refs['device_name'] = params['device_name']
         refs['device_id'] = reference.router_id(conn, params['device_name'])

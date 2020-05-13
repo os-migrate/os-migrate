@@ -36,3 +36,11 @@
       tags:
         - test_security_group_rule
   tags: always
+
+- name: Include router interface tasks
+  include_tasks: router_interface.yml
+  args:
+    apply:
+      tags:
+        - test_router_interface
+  tags: always
