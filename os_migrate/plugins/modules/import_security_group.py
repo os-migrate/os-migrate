@@ -46,6 +46,11 @@ options:
       - Data structure with security group parameters as loaded from OS-Migrate YAML file.
     required: true
     type: dict
+  filters:
+    description:
+      - Options for filtering existing resources to be looked up, e.g. by project.
+    required: true
+    type: dict
   availability_zone:
     description:
       - Availability zone.
@@ -81,6 +86,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import secur
 def run_module():
     argument_spec = openstack_full_argument_spec(
         data=dict(type='dict', required=True),
+        filters=dict(type='dict', required=False, default={}),
     )
     # TODO: check the del
     # del argument_spec['cloud']
@@ -98,7 +104,7 @@ def run_module():
 
     sdk, conn = openstack_cloud_from_module(module)
     ser_sec = security_group.SecurityGroup.from_data(module.params['data'])
-    result['changed'] = ser_sec.create_or_update(conn)
+    result['changed'] = ser_sec.create_or_update(conn, module.params['filters'])
 
     module.exit_json(**result)
 

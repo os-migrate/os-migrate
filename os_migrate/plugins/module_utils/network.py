@@ -59,8 +59,8 @@ class Network(resource.Resource):
         return conn.network.create_network(**sdk_params)
 
     @staticmethod
-    def _find_sdk_res(conn, name_or_id):
-        return conn.network.find_network(name_or_id)
+    def _find_sdk_res(conn, name_or_id, filters=None):
+        return conn.network.find_network(name_or_id, **(filters or {}))
 
     @staticmethod
     def _refs_from_sdk(conn, sdk_res):
@@ -70,11 +70,11 @@ class Network(resource.Resource):
             conn, sdk_res['qos_policy_id'])
         return refs
 
-    def _refs_from_ser(self, conn):
+    def _refs_from_ser(self, conn, filters=None):
         refs = {}
         refs['qos_policy_name'] = self.params()['qos_policy_name']
         refs['qos_policy_id'] = reference.qos_policy_id(
-            conn, self.params()['qos_policy_name'])
+            conn, self.params()['qos_policy_name'], filters=filters)
         return refs
 
     @staticmethod

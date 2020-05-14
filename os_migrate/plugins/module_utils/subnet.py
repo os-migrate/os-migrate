@@ -67,8 +67,8 @@ class Subnet(resource.Resource):
         return conn.network.create_subnet(**sdk_params)
 
     @staticmethod
-    def _find_sdk_res(conn, name_or_id):
-        return conn.network.find_subnet(name_or_id)
+    def _find_sdk_res(conn, name_or_id, filters=None):
+        return conn.network.find_subnet(name_or_id, **(filters or {}))
 
     @staticmethod
     def _update_sdk_res(conn, name_or_id, sdk_params):
@@ -88,15 +88,15 @@ class Subnet(resource.Resource):
             conn, sdk_res['subnet_pool_id'])
         return refs
 
-    def _refs_from_ser(self, conn):
+    def _refs_from_ser(self, conn, filters=None):
         refs = {}
         refs['network_name'] = self.params()['network_name']
         refs['network_id'] = reference.network_id(
-            conn, self.params()['network_name'])
+            conn, self.params()['network_name'], filters=filters)
         refs['segment_name'] = self.params()['segment_name']
         refs['segment_id'] = reference.segment_id(
-            conn, self.params()['segment_name'])
+            conn, self.params()['segment_name'], filters=filters)
         refs['subnet_pool_name'] = self.params()['subnet_pool_name']
         refs['subnet_pool_id'] = reference.subnet_pool_id(
-            conn, self.params()['subnet_pool_name'])
+            conn, self.params()['subnet_pool_name'], filters=filters)
         return refs

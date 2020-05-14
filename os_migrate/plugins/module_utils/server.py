@@ -32,8 +32,8 @@ class Server(resource.Resource):
         return obj
 
     @staticmethod
-    def _find_sdk_res(conn, name_or_id):
-        return conn.compute.find_server(name_or_id)
+    def _find_sdk_res(conn, name_or_id, filters=None):
+        return conn.compute.find_server(name_or_id, **(filters or {}))
 
     @staticmethod
     def _refs_from_sdk(conn, sdk_res):

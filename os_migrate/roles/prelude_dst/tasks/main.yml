@@ -1,0 +1,20 @@
+- name: set os_migrate_dst_project unless it was set explicitly
+  when:
+    - os_migrate_dst_filter_current_project|default(true)|bool
+  block:
+    - name: fetch information about currently authenticated user/project
+      os_migrate.os_migrate.auth_info:
+        auth: "{{ os_migrate_dst_auth }}"
+        auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+        region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+        validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+      register: _auth_info
+
+    - name: set os_migrate_dst_project_id and os_migrate_dst_filters
+      set_fact:
+        os_migrate_dst_project_id: "{{ _auth_info.auth_info.project_id }}"
+        os_migrate_dst_filters:
+          project_id: "{{ _auth_info.auth_info.project_id }}"

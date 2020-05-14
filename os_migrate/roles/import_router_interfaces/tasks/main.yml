@@ -15,18 +15,13 @@
     path: "{{ os_migrate_data_dir }}/router_interfaces.yml"
   register: read_router_interfaces
 
-# TODO:FIXME
-# We should check that the networks are not shared between
-# tenants with RBAC rules, otherwise we will have conflicts
-# when importing the router interfaces as the ports
-# will be already in use.
-# https://docs.openstack.org/newton/networking-guide/config-rbac.html
 - name: import router interfaces
   os_migrate.os_migrate.import_router_interface:
     auth: "{{ os_migrate_dst_auth }}"
     auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
     data: "{{ item }}"
+    filters: "{{ os_migrate_dst_filters }}"
     validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
     ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
