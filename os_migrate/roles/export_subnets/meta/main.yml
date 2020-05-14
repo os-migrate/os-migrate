@@ -11,4 +11,4 @@ galaxy_info:
         - 30
   galaxy_tags: ["os-migrate"]
 dependencies:
-  - role: os_migrate.os_migrate.export_prelude
+  - role: os_migrate.os_migrate.prelude_src
