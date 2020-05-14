@@ -21,6 +21,7 @@
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_src_region_name|default(omit) }}"
     server: "{{ os_migrate_src_conversion_host }}"
+    filters: "{{ os_migrate_src_filters }}"
     validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
@@ -38,6 +39,7 @@
     auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
     server: "{{ os_migrate_dst_conversion_host }}"
+    # FIXME: add filters
     validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
     ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"

@@ -12,9 +12,9 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = '''
 ---
-module: os_routers_info
+module: auth_info
 
-short_description: Get routers info
+short_description: Fetch information about authenticated user/project
 
 extends_documentation_fragment: openstack
 
@@ -23,14 +23,9 @@ version_added: "2.9"
 author: "OpenStack tenant migration tools (@os-migrate)"
 
 description:
-  - "List routers information"
+  - "Fetch information about authenticated user/project"
 
 options:
-  filters:
-    description:
-      - Options for filtering the Routers info.
-    required: false
-    type: dict
   auth:
     description:
       - Dictionary with parameters for chosen auth type.
@@ -59,22 +54,23 @@ options:
 '''
 
 EXAMPLES = '''
-- os_routers_info:
-    cloud: srccloud
+- name: Fetch info about currently authenticated user/project
+  os_migrate.os_migrate.auth_info:
+  register: _auth_info
 '''
 
 RETURN = '''
 openstack_routers:
-    description: information about the routers
-    returned: always, but can be empty
+    description: information about current authenticated user/project
+    returned: always
     type: complex
     contains:
-        id:
-            description: Unique UUID.
+        project_id:
+            description: Currently authenticated project ID.
             returned: success
             type: str
-        name:
-            description: Router name.
+        user_id:
+            description: Currently authenticated user ID.
             returned: success
             type: str
 '''
@@ -84,9 +80,13 @@ from ansible.module_utils.openstack \
     import openstack_full_argument_spec, openstack_cloud_from_module
 
 
-def main():
-    argument_spec = openstack_full_argument_spec(
-        filters=dict(required=False, type='dict', default={}),
+def run_module():
+    argument_spec = openstack_full_argument_spec()
+    # TODO: check the del
+    # del argument_spec['cloud']
+
+    result = dict(
+        changed=False,
     )
 
     module = AnsibleModule(
@@ -94,15 +94,17 @@ def main():
         supports_check_mode=True,
     )
 
-    try:
-        sdk, conn = openstack_cloud_from_module(module)
-        routers = list(map(
-            lambda r: r.to_dict(),
-            conn.network.routers(**module.params['filters'])))
-        module.exit_json(changed=False, openstack_routers=routers)
+    sdk, conn = openstack_cloud_from_module(module)
+    result['auth_info'] = {
+        'project_id': conn.current_project_id,
+        'user_id': conn.current_user_id,
+    }
 
-    except sdk.exceptions.OpenStackCloudException as e:
-        module.fail_json(msg=str(e))
+    module.exit_json(**result)
+
+
+def main():
+    run_module()
 
 
 if __name__ == '__main__':

@@ -1,5 +1,6 @@
 - name: scan available security groups
   os_migrate.os_migrate.os_security_groups_info:
+    filters: "{{ os_migrate_src_filters }}"
     auth: "{{ os_migrate_src_auth }}"
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_src_region_name|default(omit) }}"
