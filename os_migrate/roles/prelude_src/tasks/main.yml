@@ -1,6 +1,6 @@
 - name: set os_migrate_src_project unless it was set explicitly
   when:
-    - export_filter_current_project|default(true)|bool
+    - os_migrate_src_filter_current_project|default(true)|bool
   block:
     - name: fetch information about currently authenticated user/project
       os_migrate.os_migrate.auth_info:
