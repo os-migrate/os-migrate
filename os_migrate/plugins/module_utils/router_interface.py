@@ -51,13 +51,13 @@ class RouterInterface(resource.Resource):
     # 2. Ensure the port is attached to the router by `router_name`. There is a
     #    specific Neutron REST API endpoint for this operation, so it is separate
     #    from the port creation.
-    def create_or_update(self, conn):
+    def create_or_update(self, conn, filters=None):
         changed = False
         refs = self._refs_from_ser(conn)
 
         # 1. ensure a port exists with the required `fixed_ips`
         sdk_params = self._to_sdk_params(refs)
-        port = self._find_port_by_subnet_ips(conn, refs)
+        port = self._find_port_by_subnet_ips(conn, refs, filters)
 
         if port:
             # port exists but is assigned to something else => fail
@@ -84,8 +84,8 @@ class RouterInterface(resource.Resource):
 
         return changed
 
-    def _find_port_by_subnet_ips(self, conn, refs):
-        net_ports = conn.network.ports(network_id=refs['network_id'])
+    def _find_port_by_subnet_ips(self, conn, refs, filters=None):
+        net_ports = conn.network.ports(network_id=refs['network_id'], **(filters or {}))
         matching_ports = []
         for port in net_ports:
             for fixed_ip in port['fixed_ips']:
@@ -142,7 +142,7 @@ class RouterInterface(resource.Resource):
 
         return refs
 
-    def _refs_from_ser(self, conn):
+    def _refs_from_ser(self, conn, filters=None):
         refs = {}
         params = self.params()
 
@@ -151,11 +151,11 @@ class RouterInterface(resource.Resource):
         for fixed_ip in params['fixed_ips_names']:
             refs['fixed_ips'].append({
                 'ip_address': fixed_ip['ip_address'],
-                'subnet_name': reference.subnet_id(conn, fixed_ip['subnet_name']),
+                'subnet_name': reference.subnet_id(conn, fixed_ip['subnet_name'], filters=filters),
             })
         refs['device_name'] = params['device_name']
-        refs['device_id'] = reference.router_id(conn, params['device_name'])
+        refs['device_id'] = reference.router_id(conn, params['device_name'], filters=filters)
         refs['network_name'] = params['network_name']
-        refs['network_id'] = reference.network_id(conn, params['network_name'])
+        refs['network_id'] = reference.network_id(conn, params['network_name'], filters=filters)
 
         return refs
