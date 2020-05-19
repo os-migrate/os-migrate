@@ -52,6 +52,11 @@ options:
       - Dictionary with information about the destination conversion host (address, status, name, id)
     required: true
     type: dict
+  dst_filters:
+    description:
+      - Options for filtering the migration idempotence lookup, e.g. by project.
+    required: true
+    type: dict
   src_conversion_host:
     description:
       - Dictionary with information about the source conversion host (address, status, name, id)
@@ -235,6 +240,7 @@ import subprocess
 def run_module():
     argument_spec = openstack_full_argument_spec(
         dst_conversion_host=dict(type='dict', required=True),
+        dst_filters=dict(type='dict', required=False, default={}),
         src_conversion_host=dict(type='dict', required=True),
         src_auth=dict(type='dict', required=True),
         src_auth_type=dict(default=None),
@@ -268,7 +274,7 @@ def run_module():
 
     # Assume an existing VM with the same name means it was already migrated.
     # Not necessarily true, but force the operator to delete it if needed.
-    if conn.search_servers(server_name):
+    if len(list(conn.compute.servers(server_name, **module.params['dst_filters']))) > 0:
         module.exit_json(msg='VM already exists on destination!', **result)
 
     # Make sure source instance is shutdown before proceeding.
