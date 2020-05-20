@@ -53,8 +53,8 @@ class Router(resource.Resource):
         return conn.network.create_router(**sdk_params)
 
     @staticmethod
-    def _find_sdk_res(conn, name_or_id):
-        return conn.network.find_router(name_or_id)
+    def _find_sdk_res(conn, name_or_id, filters=None):
+        return conn.network.find_router(name_or_id, **(filters or {}))
 
     @staticmethod
     def _refs_from_sdk(conn, sdk_res):
@@ -82,7 +82,7 @@ class Router(resource.Resource):
 
         return refs
 
-    def _refs_from_ser(self, conn):
+    def _refs_from_ser(self, conn, filters=None):
         refs = {}
         params = self.params()
         refs['external_gateway_nameinfo'] = params['external_gateway_nameinfo']
@@ -99,7 +99,7 @@ class Router(resource.Resource):
         refs['external_gateway_info'] = _external_gateway_info(
             conn, params['external_gateway_nameinfo'])
         refs['flavor_id'] = reference.network_flavor_id(
-            conn, params['flavor_name'])
+            conn, params['flavor_name'], filters=filters)
 
         return refs
 

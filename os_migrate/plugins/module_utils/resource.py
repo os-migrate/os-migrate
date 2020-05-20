@@ -103,7 +103,7 @@ class Resource():
     # Must be overriden in child class if `create_or_update` isn't
     # overriden.
     @classmethod
-    def _find_sdk_res(cls, conn, name_or_id):
+    def _find_sdk_res(cls, conn, name_or_id, filters=None):
         """Find the OpenStack resource of given `name_or_id` which matches a
         Resource subclass.
 
@@ -180,16 +180,18 @@ class Resource():
 
     # Meant to be reused in child classes, but can be overriden
     # completely.
-    def create_or_update(self, conn):
+    def create_or_update(self, conn, filters=None):
         """Create the resource `self` in the target OpenStack cloud connection
         `conn`, or update it if it already exists but needs to be
-        updated, or do nothing if it already matches desired state.
+        updated, or do nothing if it already matches desired
+        state. Existing resources to be looked up for idempotence
+        purposes will be filtered by `filters`.
 
         Returns: True if any change was made, False otherwise
         """
-        refs = self._refs_from_ser(conn)
+        refs = self._refs_from_ser(conn, filters)
         sdk_params = self._to_sdk_params(refs)
-        existing = self._find_sdk_res(conn, sdk_params['name'])
+        existing = self._find_sdk_res(conn, sdk_params['name'], filters)
         if existing:
             if self._needs_update(self.from_sdk(conn, existing)):
                 self._remove_readonly_params(sdk_params)
@@ -262,10 +264,11 @@ class Resource():
 
     # Used when creating params for SDK calls, should be overriden in
     # majority of child classes.
-    def _refs_from_ser(self, conn):
+    def _refs_from_ser(self, conn, filters=None):
         """Create a dictionary of references of `self` using OpenStack SDK
         connection `conn` to fetch any necessary info. Get names from
-        `self` and fetch IDs from `conn`.
+        `self` and fetch IDs from `conn`. Project-scoped resources to
+        be looked up will be filtered by `filters`.
 
         Returns: dict with names and ids
         """

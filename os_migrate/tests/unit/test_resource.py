@@ -26,10 +26,10 @@ class FakeResource(resource.Resource):
         return valid_fakeresource_sdk()
 
     @staticmethod
-    def _find_sdk_res(conn, name_or_id):
+    def _find_sdk_res(conn, name_or_id, filters=None):
         return valid_fakeresource_sdk()
 
-    def _refs_from_ser(self, conn):
+    def _refs_from_ser(self, conn, filters=None):
         return {
             'param3name': 'param3nameval',
             'param4name': 'param4nameval',
