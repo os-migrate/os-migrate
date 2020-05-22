@@ -10,6 +10,7 @@
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
       dst_conversion_host:
         "{{ os_dst_conversion_host_info.openstack_conversion_host }}"
+      dst_filters: "{{ os_migrate_dst_filters }}"
       src_conversion_host:
         "{{ os_src_conversion_host_info.openstack_conversion_host }}"
       src_auth: "{{ os_migrate_src_auth }}"
