@@ -13,11 +13,11 @@ class Server(resource.Resource):
     sdk_class = openstack.compute.v2.server.Server
 
     info_from_sdk = [
-        'addresses',
         'id',
         'status',
     ]
     params_from_sdk = [
+        'addresses',
         'name',
     ]
     params_from_refs = [
