@@ -1,7 +1,134 @@
+- name: Remove osm_key keypair
+  os_keypair:
+    auth: "{{ item.auth }}"
+    state: absent
+    name: osm_key
+    validate_certs: "{{ item.validate_certs }}"
+    ca_cert: "{{ item.ca_cert }}"
+    client_cert: "{{ item.client_cert }}"
+    client_key: "{{ item.client_key }}"
+  loop:
+    - auth: "{{ os_migrate_src_auth }}"
+      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    - auth: "{{ os_migrate_dst_auth }}"
+      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+  tags:
+    - always
+
 - name: remove osm_server
   os_server:
     auth: "{{ item.auth }}"
     name: osm_server
+    state: absent
+    delete_fip: yes
+    validate_certs: "{{ item.validate_certs }}"
+    ca_cert: "{{ item.ca_cert }}"
+    client_cert: "{{ item.client_cert }}"
+    client_key: "{{ item.client_key }}"
+    wait: yes
+  loop:
+    - auth: "{{ os_migrate_src_auth }}"
+      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    - auth: "{{ os_migrate_dst_auth }}"
+      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+  tags:
+    - always
+
+- name: remove osm_uch server
+  os_server:
+    auth: "{{ item.auth }}"
+    name: "{{ item.name }}"
+    state: absent
+    delete_fip: yes
+    validate_certs: "{{ item.validate_certs }}"
+    ca_cert: "{{ item.ca_cert }}"
+    client_cert: "{{ item.client_cert }}"
+    client_key: "{{ item.client_key }}"
+    wait: yes
+  loop:
+    - auth: "{{ os_migrate_src_auth }}"
+      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+      name: "{{ os_migrate_src_conversion_host_name|default(omit) }}"
+    - auth: "{{ os_migrate_dst_auth }}"
+      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+      name: "{{ os_migrate_dst_conversion_host_name|default(omit) }}"
+  tags:
+    - always
+
+- name: remove osm_router
+  os_router:
+    auth: "{{ item.auth }}"
+    name: osm_router
+    state: absent
+    validate_certs: "{{ item.validate_certs }}"
+    ca_cert: "{{ item.ca_cert }}"
+    client_cert: "{{ item.client_cert }}"
+    client_key: "{{ item.client_key }}"
+    wait: yes
+  loop:
+    - auth: "{{ os_migrate_src_auth }}"
+      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    - auth: "{{ os_migrate_dst_auth }}"
+      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+  tags:
+    - always
+
+- name: remove osm_uch_router
+  os_router:
+    auth: "{{ item.auth }}"
+    name: "{{ item.name }}_router"
+    state: absent
+    validate_certs: "{{ item.validate_certs }}"
+    ca_cert: "{{ item.ca_cert }}"
+    client_cert: "{{ item.client_cert }}"
+    client_key: "{{ item.client_key }}"
+    wait: yes
+  loop:
+    - auth: "{{ os_migrate_src_auth }}"
+      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+      name: "{{ os_migrate_src_conversion_host_name|default(omit) }}"
+    - auth: "{{ os_migrate_dst_auth }}"
+      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+      name: "{{ os_migrate_dst_conversion_host_name|default(omit) }}"
+  tags:
+    - always
+
+
+- name: remove osm_server_port
+  os_port:
+    auth: "{{ item.auth }}"
+    name: osm_server_port_0
+    network: osm_net
     state: absent
     validate_certs: "{{ item.validate_certs }}"
     ca_cert: "{{ item.ca_cert }}"
@@ -21,28 +148,6 @@
   tags:
     - always
 
-- name: remove osm_router
-  os_router:
-    auth: "{{ item.auth }}"
-    name: osm_router
-    state: absent
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
-  loop:
-    - auth: "{{ os_migrate_src_auth }}"
-      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-    - auth: "{{ os_migrate_dst_auth }}"
-      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-  tags:
-    - always
 
 - name: remove osm_subnet
   os_subnet:
@@ -67,10 +172,10 @@
   tags:
     - always
 
-- name: remove osm_subnet_external
+- name: remove osm_uch_subnet
   os_subnet:
     auth: "{{ item.auth }}"
-    name: osm_subnet_external
+    name: "{{ item.name }}_subnet"
     state: absent
     validate_certs: "{{ item.validate_certs }}"
     ca_cert: "{{ item.ca_cert }}"
@@ -82,34 +187,13 @@
       ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
       client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+      name: "{{ os_migrate_src_conversion_host_name|default(omit) }}"
     - auth: "{{ os_migrate_dst_auth }}"
       validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
       ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
       client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-  tags:
-    - always
-
-- name: remove osm_router_subnet
-  os_subnet:
-    auth: "{{ item.auth }}"
-    name: osm_router_subnet
-    state: absent
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
-  loop:
-    - auth: "{{ os_migrate_src_auth }}"
-      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-    - auth: "{{ os_migrate_dst_auth }}"
-      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+      name: "{{ os_migrate_dst_conversion_host_name|default(omit) }}"
   tags:
     - always
 
@@ -136,10 +220,10 @@
   tags:
     - always
 
-- name: remove osm_net_external
+- name: remove osm_uch_net
   os_network:
     auth: "{{ item.auth }}"
-    name: osm_net_external
+    name: "{{ item.name }}_net"
     state: absent
     validate_certs: "{{ item.validate_certs }}"
     ca_cert: "{{ item.ca_cert }}"
@@ -151,11 +235,13 @@
       ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
       client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+      name: "{{ os_migrate_src_conversion_host_name|default(omit) }}"
     - auth: "{{ os_migrate_dst_auth }}"
       validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
       ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
       client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+      name: "{{ os_migrate_dst_conversion_host_name|default(omit) }}"
   tags:
     - always
 
@@ -187,6 +273,29 @@
     auth: "{{ item.auth }}"
     security_group: osm_security_group
     state: absent
+    validate_certs: "{{ item.validate_certs }}"
+    ca_cert: "{{ item.ca_cert }}"
+    client_cert: "{{ item.client_cert }}"
+    client_key: "{{ item.client_key }}"
+  loop:
+    - auth: "{{ os_migrate_src_auth }}"
+      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    - auth: "{{ os_migrate_dst_auth }}"
+      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+  tags:
+    - always
+
+- name: Remove volumes
+  os_volume:
+    auth: "{{ item.auth }}"
+    state: absent
+    display_name: rhosp-migration-root-osm_server
     validate_certs: "{{ item.validate_certs }}"
     ca_cert: "{{ item.ca_cert }}"
     client_cert: "{{ item.client_cert }}"

@@ -116,7 +116,16 @@ def main():
         server = conn.get_server(name_or_id=srv, filters=filters)
         if not server:
             module.fail_json(msg='Conversion host ' + srv + ' not found!')
-        conversion_host['address'] = server.accessIPv4
+
+        # There are two possible attributes for the server's IPv4 floating IP
+        # value, accessIPv4 and public_v4 which might not be consistent across
+        # vendors, so we check both.
+        if hasattr(server, 'accessIPv4') and server.accessIPv4 != "":
+            conversion_host['address'] = server.accessIPv4
+        elif hasattr(server, 'public_v4') and server.public_v4 != "":
+            conversion_host['address'] = server.public_v4
+        else:
+            module.fail_json(msg='Conversion host address cant be empty \n' + str(server))
         conversion_host['status'] = server.status
         conversion_host['name'] = server.name
         conversion_host['id'] = server.id

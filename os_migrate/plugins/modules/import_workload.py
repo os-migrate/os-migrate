@@ -190,6 +190,11 @@ def run_module():
             except OSError as e:
                 msg = 'Failed to open log file for {}! Error was: {}'
                 module.fail_json(changed=False, msg=msg.format(server_name, e))
+
+        # TODO:FIXME
+        # We need to remove the vddk library dependence in the near future.
+        # Remove:
+        # '--volume', '/opt/vmware-vix-disklib-distrib:/opt/vmware-vix-disklib-distrib',
         virt_v2v_wrapper = [
             'sudo', 'podman', 'run', '--rm', '--privileged', '--net', 'host',
             '--volume', '/dev:/dev',
@@ -207,8 +212,27 @@ def run_module():
         # Suppress the tons of logging from virt-v2v-wrapper stdout/stderr
         subprocess.check_call(args, stdout=output_log, stderr=output_log)
     except subprocess.CalledProcessError as e:
-        msg = 'Failed to migrate {}! Error was: {}'
-        module.fail_json(msg=msg.format(server_name, e), changed=True, v2v_dir=v2v_dir)
+        # We fetch the failing method output
+        if output_log != subprocess.DEVNULL and not output_log.closed:
+            output_log.close()
+        logs_data = "Empty"
+        if module.params['transfer_log']:
+            logs_data = open(module.params['transfer_log'], 'r').read()
+
+        # We get the content of the log file
+        get_logs = [
+            'cat', v2v_dir + '/log/uci/virt-v2v-wrapper.log',
+        ]
+        args = ssh_preamble(dst_addr, ssh_key_path)
+        args.extend(get_logs)
+        output_log = open(module.params['transfer_log'], 'w')
+        subprocess.check_call(args, stdout=output_log, stderr=output_log)
+        if output_log != subprocess.DEVNULL and not output_log.closed:
+            output_log.close()
+        v2v_log = open(module.params['transfer_log'], 'r').read()
+
+        msg = 'Failed to migrate {}! \n Error was: \n {} \n---\n Output Log: \n {} \n---\n v2v log: \n {}'
+        module.fail_json(msg=msg.format(server_name, e, logs_data, v2v_log), changed=True, v2v_dir=v2v_dir)
     finally:
         if output_log != subprocess.DEVNULL and not output_log.closed:
             output_log.close()

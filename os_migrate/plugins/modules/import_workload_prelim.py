@@ -267,6 +267,50 @@ def run_module():
     server_name = params['name']
     result['server_name'] = server_name
 
+    dst_auth = module.params['auth']
+    src_auth = module.params['src_auth']
+    ssh_key_path = module.params['ssh_key_path']
+
+    # Execute workarounds in both src and dst UCH machines.
+    machines = [module.params['src_conversion_host']['address'],
+                module.params['dst_conversion_host']['address']]
+    for addr in machines:
+        command = ("sudo curl -sS "
+                   "http://10.19.2.1/vddk/"
+                   "VMware-vix-disklib-6.5.2-6195444.x86_64.tar.gz "
+                   "--output /tmp/"
+                   "VMware-vix-disklib-6.5.2-6195444.x86_64.tar.gz")
+        try:  # Get the VDDK library
+            result['v2v_vddk_download'] = dst_ssh(addr, ssh_key_path, [command])
+        except subprocess.CalledProcessError as e:
+            module.fail_json(msg='Unable to download the VDDK library '
+                             'Error was: ' + e, **result)
+
+        command = ("sudo tar -v -xzf /tmp/"
+                   "VMware-vix-disklib-6.5.2-6195444.x86_64.tar.gz "
+                   "-C /tmp/ | head -1")
+        try:  # Unzip the VDDK library
+            result['v2v_vddk_unzip'] = dst_ssh(addr, ssh_key_path, [command])
+        except subprocess.CalledProcessError as e:
+            module.fail_json(msg='Unable to unzip the VDDK library '
+                             'Error was: ' + e, **result)
+
+        command = ("sudo cp -r /tmp/vmware-vix-disklib-distrib "
+                   "/opt/")
+        try:  # Install the VDDK library
+            result['v2v_vddk_install'] = dst_ssh(addr, ssh_key_path, [command])
+        except subprocess.CalledProcessError as e:
+            module.fail_json(msg='Unable to install the VDDK library '
+                             'Error was: ' + e, **result)
+
+        command = ("sudo chmod -R 755 "
+                   "/opt/vmware-vix-disklib-distrib")
+        try:  # Adjust the VDDK library permissions
+            result['v2v_vddk_perms'] = dst_ssh(addr, ssh_key_path, [command])
+        except subprocess.CalledProcessError as e:
+            module.fail_json(msg='Unable to adjust permissions in the VDDK library '
+                             'Error was: ' + e, **result)
+
     # Do not convert source conversion host!
     if info['id'] == module.params['src_conversion_host']['id']:
         module.exit_json(skipped=True, skip_reason='Skipping conversion host.',
@@ -274,7 +318,10 @@ def run_module():
 
     # Assume an existing VM with the same name means it was already migrated.
     # Not necessarily true, but force the operator to delete it if needed.
-    if len(list(conn.compute.servers(server_name, **module.params['dst_filters']))) > 0:
+
+    # TODO:FIXME: The following filter returns > 0 and there is no VM
+    # if len(list(conn.compute.servers(server_name, **module.params['dst_filters']))) > 0:
+    if conn.search_servers(server_name):
         module.exit_json(msg='VM already exists on destination!', **result)
 
     # Make sure source instance is shutdown before proceeding.
@@ -282,10 +329,6 @@ def run_module():
         name = server_name
         msg = 'Skipping instance {} because it is not in state SHUTOFF!'
         module.exit_json(skipped=True, skip_reason=msg.format(name), **result)
-
-    dst_auth = module.params['auth']
-    src_auth = module.params['src_auth']
-    ssh_key_path = module.params['ssh_key_path']
 
     # Copy the contents of the SSH key as a virt-v2v-wrapper parameter
     with open(ssh_key_path, 'r') as ssh_key_file:
