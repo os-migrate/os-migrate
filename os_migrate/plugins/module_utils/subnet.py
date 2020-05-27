@@ -41,9 +41,9 @@ class Subnet(resource.Resource):
     ]
 
     params_from_refs = [
-        'network_name',
-        'segment_name',
-        'subnet_pool_name'
+        'network_ref',
+        'segment_ref',
+        'subnet_pool_ref'
     ]
 
     sdk_params_from_refs = [
@@ -78,25 +78,25 @@ class Subnet(resource.Resource):
     def _refs_from_sdk(conn, sdk_res):
         refs = {}
         refs['network_id'] = sdk_res['network_id']
-        refs['network_name'] = reference.network_name(
+        refs['network_ref'] = reference.network_ref(
             conn, sdk_res['network_id'])
         refs['segment_id'] = sdk_res['segment_id']
-        refs['segment_name'] = reference.segment_name(
+        refs['segment_ref'] = reference.segment_ref(
             conn, sdk_res['segment_id'])
         refs['subnet_pool_id'] = sdk_res['subnet_pool_id']
-        refs['subnet_pool_name'] = reference.subnet_pool_name(
+        refs['subnet_pool_ref'] = reference.subnet_pool_ref(
             conn, sdk_res['subnet_pool_id'])
         return refs
 
     def _refs_from_ser(self, conn, filters=None):
         refs = {}
-        refs['network_name'] = self.params()['network_name']
+        refs['network_ref'] = self.params()['network_ref']
         refs['network_id'] = reference.network_id(
-            conn, self.params()['network_name'], filters=filters)
-        refs['segment_name'] = self.params()['segment_name']
+            conn, self.params()['network_ref'])
+        refs['segment_ref'] = self.params()['segment_ref']
         refs['segment_id'] = reference.segment_id(
-            conn, self.params()['segment_name'], filters=filters)
-        refs['subnet_pool_name'] = self.params()['subnet_pool_name']
+            conn, self.params()['segment_ref'])
+        refs['subnet_pool_ref'] = self.params()['subnet_pool_ref']
         refs['subnet_pool_id'] = reference.subnet_pool_id(
-            conn, self.params()['subnet_pool_name'], filters=filters)
+            conn, self.params()['subnet_pool_ref'])
         return refs

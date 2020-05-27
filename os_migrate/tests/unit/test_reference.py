@@ -18,13 +18,13 @@ class TestReference(unittest.TestCase):
             None,
         )
 
-    def test_fetch_id(self):
+    def test_fetch_id_simple(self):
         self.assertEqual(
-            reference._fetch_id(_mock_get_method, 'somename'),
+            reference._fetch_id_simple(_mock_get_method, 'somename'),
             'id-of-somename',
         )
         self.assertEqual(
-            reference._fetch_id(_mock_get_method, None),
+            reference._fetch_id_simple(_mock_get_method, None),
             None,
         )
 

@@ -93,7 +93,7 @@ class Router(resource.Resource):
                 return None
 
             egi = {}
-            egi['network_id'] = reference.network_id(conn, egni['network_name'])
+            egi['network_id'] = reference.network_id_simple(conn, egni['network_name'])
             return egi
 
         refs['external_gateway_info'] = _external_gateway_info(

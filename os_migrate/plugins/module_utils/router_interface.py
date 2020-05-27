@@ -155,6 +155,7 @@ class RouterInterface(resource.Resource):
         refs['device_name'] = params['device_name']
         refs['device_id'] = reference.router_id(conn, params['device_name'], filters=filters)
         refs['network_name'] = params['network_name']
-        refs['network_id'] = reference.network_id(conn, params['network_name'], filters=filters)
+        refs['network_id'] = reference.network_id_simple(
+            conn, params['network_name'], filters=filters)
 
         return refs

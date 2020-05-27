@@ -51,10 +51,22 @@ def serialized_subnet():
             'ipv6_ra_mode': None,
             'is_dhcp_enabled': True,
             'name': 'test-subnet1',
-            'network_name': 'test-net',
-            'segment_name': 'test-segment',
+            'network_ref': {
+                'name': 'test-net',
+                'project_name': 'test-project',
+                'domain_name': 'Default',
+            },
+            'segment_ref': {
+                'name': 'test-segment',
+                'project_name': 'test-project',
+                'domain_name': 'Default',
+            },
             'service_types': None,
-            'subnet_pool_name': 'test-subnet-pool',
+            'subnet_pool_ref': {
+                'name': 'test-subnet-pool',
+                'project_name': 'test-project',
+                'domain_name': 'Default',
+            },
             'tags': [],
             'use_default_subnet_pool': None,
         },
@@ -76,11 +88,23 @@ def serialized_subnet():
 def subnet_refs():
     return {
         'network_id': 'uuid-test-net',
-        'network_name': 'test-net',
+        'network_ref': {
+            'name': 'test-net',
+            'project_name': 'test-project',
+            'domain_name': 'Default',
+        },
         'segment_id': 'uuid-test-segment',
-        'segment_name': 'test-segment',
+        'segment_ref': {
+            'name': 'test-segment',
+            'project_name': 'test-project',
+            'domain_name': 'Default',
+        },
         'subnet_pool_id': 'uuid-test-subnet-pool',
-        'subnet_pool_name': 'test-subnet-pool',
+        'subnet_pool_ref': {
+            'name': 'test-subnet-pool',
+            'project_name': 'test-project',
+            'domain_name': 'Default',
+        },
     }
 
 
@@ -117,10 +141,16 @@ class TestSubnet(unittest.TestCase):
         self.assertEqual(params['ipv6_ra_mode'], None)
         self.assertEqual(params['is_dhcp_enabled'], True)
         self.assertEqual(params['name'], 'test-subnet1')
-        self.assertEqual(params['network_name'], 'test-net')
-        self.assertEqual(params['segment_name'], 'test-segment')
+        self.assertEqual(params['network_ref']['name'], 'test-net')
+        self.assertEqual(params['network_ref']['project_name'], 'test-project')
+        self.assertEqual(params['network_ref']['domain_name'], 'Default')
+        self.assertEqual(params['segment_ref']['name'], 'test-segment')
+        self.assertEqual(params['segment_ref']['project_name'], 'test-project')
+        self.assertEqual(params['segment_ref']['domain_name'], 'Default')
         self.assertEqual(params['service_types'], None)
-        self.assertEqual(params['subnet_pool_name'], 'test-subnet-pool')
+        self.assertEqual(params['subnet_pool_ref']['name'], 'test-subnet-pool')
+        self.assertEqual(params['subnet_pool_ref']['project_name'], 'test-project')
+        self.assertEqual(params['subnet_pool_ref']['domain_name'], 'Default')
         self.assertEqual(params['use_default_subnet_pool'], None)
 
         self.assertEqual(info['created_at'], '2020-02-21T17:34:54Z')
