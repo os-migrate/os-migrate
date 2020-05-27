@@ -319,9 +319,7 @@ def run_module():
     # Assume an existing VM with the same name means it was already migrated.
     # Not necessarily true, but force the operator to delete it if needed.
 
-    # TODO:FIXME: The following filter returns > 0 and there is no VM
-    # if len(list(conn.compute.servers(server_name, **module.params['dst_filters']))) > 0:
-    if conn.search_servers(server_name):
+    if len(list(conn.compute.servers(details=False, name=server_name, **module.params['dst_filters']))) > 0:
         module.exit_json(msg='VM already exists on destination!', **result)
 
     # Make sure source instance is shutdown before proceeding.
