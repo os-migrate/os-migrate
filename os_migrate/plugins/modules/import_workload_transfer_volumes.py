@@ -230,6 +230,18 @@ workload.yml:
 '''
 
 RETURN = '''
+boot_volume_id:
+  description: The ID of the intended boot volume on the destination instance.
+  returned: Only after successfully transferring volumes from the source cloud.
+  type: str
+  example: 059635b7-451f-4a64-978a-7c2e9e4c15ff
+block_device_mapping:
+  description:
+    - A block_device_mapping_v2 structure for use in OpenStack's create_server().
+    - Used to attach destination volumes to the new instance in the right order.
+  returned: Only after successfully transferring volumes from the source cloud.
+  type: dict
+  sample: [{'device_name': 'vdb', 'uuid': 'fa45e86f-e22e-4128-9b01-da63ed11b33d', 'source_type': 'volume'}]
 volume_map:
   description:
     - Updated mapping of source volume devices to NBD export URLs.
@@ -538,7 +550,20 @@ def run_module():
         log_file=log_file
     )
     destination_host.transfer_exports()
+
+    block_device_mapping = []
+    boot_volume_id = destination_host.volume_map['/dev/vda']['dest_id']
+    for path in sorted(destination_host.volume_map.keys()):
+        if path == '/dev/vda':
+            continue
+        name = path.split('/')[-1]
+        uuid = destination_host.volume_map[path]['dest_id']
+        entry = dict(uuid=uuid, device_name=name, source_type='volume')
+        block_device_mapping.append(entry)
+
     result['volume_map'] = destination_host.volume_map
+    result['block_device_mapping'] = block_device_mapping
+    result['boot_volume_id'] = boot_volume_id
 
     module.exit_json(**result)
 

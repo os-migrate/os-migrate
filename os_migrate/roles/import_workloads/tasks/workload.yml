@@ -58,7 +58,22 @@
       volume_map: "{{ exports.volume_map }}"
       state_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.state"
       log_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.log"
-    register: volume_map
+    register: transfer
+    when: prelim.changed
+
+  - name: create destination instance
+    os_migrate.os_migrate.import_workload_create_instance:
+      auth: "{{ os_migrate_dst_auth }}"
+      auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+      region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+      data: "{{ item }}"
+      block_device_mapping: "{{ transfer.block_device_mapping }}"
+      boot_volume_id: "{{ transfer.boot_volume_id }}"
+    register: os_migrate_destination_instance
     when: prelim.changed
 
   rescue:
