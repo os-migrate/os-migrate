@@ -36,6 +36,28 @@
       log_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.log"
       state_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.state"
       ssh_key_path: "{{ os_migrate_conversion_host_key }}"
+    register: exports
+    when: prelim.changed
+
+  - name: transfer volumes to destination
+    os_migrate.os_migrate.import_workload_transfer_volumes:
+      auth: "{{ os_migrate_dst_auth }}"
+      auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+      region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+      data: "{{ item }}"
+      conversion_host:
+        "{{ os_dst_conversion_host_info.openstack_conversion_host }}"
+      ssh_key_path: "{{ os_migrate_conversion_host_key }}"
+      transfer_uuid: "{{ exports.transfer_uuid }}"
+      src_conversion_host_address:
+        "{{ os_src_conversion_host_info.openstack_conversion_host.address }}"
+      volume_map: "{{ exports.volume_map }}"
+      state_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.state"
+      log_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.log"
     register: volume_map
     when: prelim.changed
 
