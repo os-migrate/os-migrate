@@ -13,3 +13,6 @@ OS-Migrate Developer Documentation
 
 * [Design doc](design.md) - Explanation of high-level design goals and
   choices.
+
+* [Releasing](releasing.md) - Procedure to release a new version of OS
+  Migrate to Ansible Galaxy.
