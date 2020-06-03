@@ -265,9 +265,9 @@ class OpenStackSourceHost(OpenStackHostBase):
         # Build up a list of VolumeMappings keyed by the original device path
         # provided by the OpenStack API. Details:
         #   source_dev:  Device path (like /dev/vdb) on source conversion host
-        #   source_id:   Volume ID on source conversion host
+        #   source_id:   Volume ID on source cloud
         #   dest_dev:    Device path on destination conversion host
-        #   dest_id:     Volume ID on destination conversion host
+        #   dest_id:     Volume ID on destination cloud
         #   snap_id:     Root volumes need snapshot+new volume
         #   image_id:    Direct-from-image VMs create temporary snapshot image
         #   name:        Save volume name to set on destination
@@ -424,12 +424,12 @@ class OpenStackSourceHost(OpenStackHostBase):
             #        '127.0.0.1', '--port', str(port), 'file', disk]
             # Fall back to qemu-nbd for now
             cmd = ['sudo', 'qemu-nbd', '-p', str(port), '-b', '127.0.0.1',
-                   '--verbose', '--read-only', '--persistent', '-x',
+                   '--fork', '--verbose', '--read-only', '--persistent', '-x',
                    self.transfer_uuid, disk]
             self.log.info('Exporting %s over NBD, port %s', disk, str(port))
-            self.shell.cmd_sub(cmd, stdin=subprocess.PIPE,
-                               stderr=subprocess.PIPE,
-                               stdout=subprocess.PIPE)
+            result = self.shell.cmd_out(cmd)
+            if result:
+                self.log.debug('Result from qemu-nbd: %s', result)
 
             # Check qemu-img info on this disk to make sure it is ready
             self.log.info('Waiting for valid qemu-img info on all exports...')

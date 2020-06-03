@@ -76,6 +76,25 @@
     register: os_migrate_destination_instance
     when: prelim.changed
 
+  - name: clean up after migration
+    os_migrate.os_migrate.import_workload_cleanup:
+      auth: "{{ os_migrate_src_auth }}"
+      auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+      region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+      data: "{{ item }}"
+      conversion_host:
+        "{{ os_src_conversion_host_info.openstack_conversion_host }}"
+      ssh_key_path: "{{ os_migrate_conversion_host_key }}"
+      transfer_uuid: "{{ exports.transfer_uuid }}"
+      volume_map: "{{ exports.volume_map }}"
+      state_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.state"
+      log_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.log"
+    when: prelim.changed
+
   rescue:
     - fail:
         msg: "Failed to import {{ item.params.name }}!"

@@ -314,13 +314,18 @@ class OpenStackDestinationHost(OpenStackHostBase):
 
         # SSH tunnel process
         self.forwarding_process = None
+        self.forwarding_process_command = None
 
     def transfer_exports(self):
-        self._create_forwarding_process()
-        self._create_destination_volumes()
-        self._attach_destination_volumes()
-        self._convert_destination_volumes()
-        self._detach_destination_volumes()
+        try:
+            self._create_forwarding_process()
+            self._create_destination_volumes()
+            self._attach_destination_volumes()
+            self._convert_destination_volumes()
+            self._detach_destination_volumes()
+        finally:
+            self._stop_forwarding_process()
+            self._release_ports()
 
     def _create_forwarding_process(self):
         """
@@ -341,13 +346,8 @@ class OpenStackDestinationHost(OpenStackHostBase):
         command = source_shell.ssh_preamble()
         command.extend(forward_ports)
         self.log.debug('SSH forwarding command: %s', ' '.join(command))
-        self.forwarding_process = self.shell.cmd_sub(command,
-                                                     stdout=subprocess.PIPE,
-                                                     stderr=subprocess.PIPE)
-
-        flags = fcntl.fcntl(self.forwarding_process.stdout, fcntl.F_GETFL)
-        flags |= os.O_NONBLOCK
-        fcntl.fcntl(self.forwarding_process.stdout, fcntl.F_SETFL, flags)
+        self.forwarding_process = self.shell.cmd_sub(command)
+        self.forwarding_process_command = ' '.join(command)
 
         # Check qemu-img info on all the disks to make sure everything is ready
         self.log.info('Waiting for valid qemu-img info on all exports...')
@@ -370,6 +370,28 @@ class OpenStackDestinationHost(OpenStackHostBase):
                 break
         else:
             raise RuntimeError('Timed out starting nbdkit exports!')
+
+    def _stop_forwarding_process(self):
+        self.log.info('Stopping export forwarding on source conversion host...')
+        self.log.debug('(PID was %s)', self.forwarding_process.pid)
+        if self.forwarding_process:
+            self.forwarding_process.terminate()
+
+        if self.forwarding_process_command:
+            self.log.info('Stopping forwarding from source conversion host...')
+            try:
+                pattern = 'pgrep -f "' + self.forwarding_process_command + '"'
+                pids = self.shell.cmd_out([pattern]).split('\n')
+                for pid in pids:
+                    try:
+                        out = self.shell.cmd_out(['sudo', 'kill', pid])
+                        self.log.debug('Stopped forwarding PID (%s). %s',
+                                       pid, out)
+                    except subprocess.CalledProcessError as err:
+                        self.log.debug('Unable to stop PID %s! %s',
+                                       pid, str(err))
+            except subprocess.CalledProcessError as err:
+                self.log.debug('Unable to get forwarding PID! %s', str(err))
 
     def _create_destination_volumes(self):
         """

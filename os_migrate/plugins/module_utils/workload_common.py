@@ -18,8 +18,8 @@ ATTACH_LOCK_FILE_DESTINATION = '/var/lock/v2v-destination-volume-lock'
 # File containing ports used by all the nbdkit processes running on the source
 # conversion host. There is a check to see if the port is available, but this
 # should speed things up.
-PORT_MAP_FILE = '/var/run/v2v-wrapper-ports'
-PORT_LOCK_FILE = '/var/lock/v2v-wrapper-lock'  # Lock for the port map
+PORT_MAP_FILE = '/var/run/v2v-migration-ports'
+PORT_LOCK_FILE = '/var/lock/v2v-migration-lock'  # Lock for the port map
 
 try:
     from subprocess import DEVNULL
@@ -104,6 +104,9 @@ class OpenStackHostBase():
 
         self.shell = RemoteShell(self._converter_address(), ssh_key_path)
         self.shell.test_ssh_connection()
+
+        # Ports chosen for NBD export
+        self.claimed_ports = []
 
     def _converter(self):
         """ Refresh server object to pick up any changes. """
@@ -205,17 +208,18 @@ class OpenStackHostBase():
             time.sleep(1)
         raise RuntimeError('Timed out waiting for volume device path!')
 
-    @use_lock(PORT_LOCK_FILE)
-    def _find_free_port(self):
-        # Reserve ports on the current conversion host. Lock a file containing
-        # the used ports, select some ports from the range that is unused, and
-        # check that the port is available on the conversion host. Add this to
-        # the locked file and unlock it for the next conversion.
+    def __read_used_ports(self):
+        """
+        Should only be called from functions locking the port list file, e.g.
+        _find_free_port and _release_ports. Returns a set containing the ports
+        currently used by all the migrations running on this conversion host.
+        """
         try:
             cmd = ['sudo', 'bash', '-c',
                    '"test -e {0} || echo [] > {0}"'.format(PORT_MAP_FILE)]
             result = self.shell.cmd_out(cmd)
-            self.log.debug('Port write test: %s', result)
+            if result:
+                self.log.debug('Port write result: %s', result)
         except subprocess.CalledProcessError as err:
             raise RuntimeError('Unable to initialize port map file! ' + str(err))
 
@@ -230,23 +234,15 @@ class OpenStackHostBase():
         except subprocess.CalledProcessError as err:
             self.log.debug('Unable to get port map! %s', str(err))
 
-        self.log.info('Currently used ports: %s', str(used_ports))
+        self.log.info('Currently used ports: %s', str(list(used_ports)))
+        return used_ports
 
-        # Choose ports from the available possibilities, and try to bind
-        ephemeral_ports = set(range(49152, 65535))
-        available_ports = ephemeral_ports - used_ports
-
-        try:
-            port = available_ports.pop()
-            while not self._test_port_available(port):
-                self.log.info('Port %d not available, trying another.', port)
-                used_ports.add(port)  # Mark used to avoid trying again
-                port = available_ports.pop()
-        except KeyError:
-            raise RuntimeError('No free ports on conversion host!')
-        used_ports.add(port)
-        self.log.info('Allocated port %d, all used: %s', port, used_ports)
-
+    def __write_used_ports(self, used_ports):
+        """
+        Should only be called from functions locking the port list file, e.g.
+        _find_free_port and _release_ports. Writes out the given port list to
+        the port list file on the current conversion host.
+        """
         try:  # Write out port map to destination conversion host
             cmd = ['-T', 'sudo', 'bash', '-c', '"cat > ' + PORT_MAP_FILE + '"']
             input_json = json.dumps(list(used_ports))
@@ -263,7 +259,47 @@ class OpenStackHostBase():
             self.log.debug('Unable to write port map to conversion host! '
                            'Error was: %s', str(err))
 
+    @use_lock(PORT_LOCK_FILE)
+    def _find_free_port(self):
+        """
+        Reserve ports on the current conversion host. Lock a file containing
+        the used ports, select some ports from the range that is unused, and
+        check that the port is available on the conversion host. Add this to
+        the locked file and unlock it for the next conversion.
+        """
+        used_ports = self.__read_used_ports()
+
+        # Choose ports from the available possibilities, and try to bind
+        ephemeral_ports = set(range(49152, 65535))
+        available_ports = ephemeral_ports - used_ports
+
+        try:
+            port = available_ports.pop()
+            while not self._test_port_available(port):
+                self.log.info('Port %d not available, trying another.', port)
+                used_ports.add(port)  # Mark used to avoid trying again
+                port = available_ports.pop()
+        except KeyError:
+            raise RuntimeError('No free ports on conversion host!')
+        used_ports.add(port)
+        self.__write_used_ports(used_ports)
+        self.log.info('Allocated port %d, all used: %s', port, used_ports)
+
+        self.claimed_ports.append(port)
         return port
+
+    @use_lock(PORT_LOCK_FILE)
+    def _release_ports(self):
+        used_ports = self.__read_used_ports()
+
+        for port in self.claimed_ports:
+            try:
+                used_ports.remove(port)
+            except KeyError:
+                self.log.debug('Port already released? %d', port)
+
+        self.log.info('Cleaning used ports: %s', used_ports)
+        self.__write_used_ports(used_ports)
 
     def _test_port_available(self, port):
         """
