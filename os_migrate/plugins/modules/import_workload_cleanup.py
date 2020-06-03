@@ -306,14 +306,14 @@ class OpenStackSourceHostCleanup(OpenStackHostBase):
         """
         self.log.info('Stopping exports from source conversion host...')
         try:
-            pattern = "'qemu-nbd.*" + self.transfer_uuid + "'"
+            pattern = "'" + self.transfer_uuid + "'"
             pids = self.shell.cmd_out(['pgrep', '-f', pattern]).split('\n')
-            for pid in pids:
+            if len(pids) > 0:
+                self.log.debug('Stopping NBD export PIDs (%s)', str(pids))
                 try:
-                    out = self.shell.cmd_out(['sudo', 'kill', pid])
-                    self.log.debug('Stopped NBD export PID (%s). %s', pid, out)
+                    self.shell.cmd_out(['sudo', 'pkill', '-f', pattern])
                 except subprocess.CalledProcessError as err:
-                    self.log.debug('Unable to stop PID %s! %s', pid, str(err))
+                    self.log.debug('Error stopping exports! %s', str(err))
         except subprocess.CalledProcessError as err:
             self.log.debug('Unable to get remote NBD PID! %s', str(err))
 

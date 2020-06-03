@@ -419,17 +419,34 @@ class OpenStackSourceHost(OpenStackHostBase):
             disk = mapping['source_dev']
             self.log.info('Exporting %s from volume %s', disk, volume_id)
 
-            # TODO! Get nbdkit file plugin installed on conversion appliance!
-            # cmd = ['nbdkit', '--exportname', self.transfer_uuid, '--ipaddr',
-            #        '127.0.0.1', '--port', str(port), 'file', disk]
-            # Fall back to qemu-nbd for now
-            cmd = ['sudo', 'qemu-nbd', '-p', str(port), '-b', '127.0.0.1',
-                   '--fork', '--verbose', '--read-only', '--persistent', '-x',
-                   self.transfer_uuid, disk]
+            # Fall back to qemu-nbd if nbdkit is not present
+            qemu_nbd_present = (self.shell.cmd_val(['which', 'qemu-nbd']) == 0)
+            nbdkit_present = (self.shell.cmd_val(['which', 'nbdkit']) == 0)
+            if nbdkit_present:
+                dump_plugin = ['nbdkit', '--dump-plugin', 'file']
+                file_plugin_present = (self.shell.cmd_val(dump_plugin) == 0)
+                if not file_plugin_present:
+                    self.log.info('Found nbdkit, but without file plugin.')
+            else:
+                file_plugin_present = False
+
+            if nbdkit_present and file_plugin_present:
+                cmd = ['sudo', 'nbdkit', '--exportname', self.transfer_uuid,
+                       '--ipaddr', '127.0.0.1', '--port', str(port), 'file',
+                       'file=' + disk]
+                self.log.info('Using nbdkit for export command: %s', cmd)
+            elif qemu_nbd_present:
+                cmd = ['sudo', 'qemu-nbd', '-p', str(port), '-b', '127.0.0.1',
+                       '--fork', '--verbose', '--read-only', '--persistent',
+                       '-x', self.transfer_uuid, disk]
+                self.log.info('Using qemu-nbd for export command: %s', cmd)
+            else:
+                raise RuntimeError('No supported NBD export tool available!')
+
             self.log.info('Exporting %s over NBD, port %s', disk, str(port))
             result = self.shell.cmd_out(cmd)
             if result:
-                self.log.debug('Result from qemu-nbd: %s', result)
+                self.log.debug('Result from NBD exporter: %s', result)
 
             # Check qemu-img info on this disk to make sure it is ready
             self.log.info('Waiting for valid qemu-img info on all exports...')

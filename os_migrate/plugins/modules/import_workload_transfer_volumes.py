@@ -382,7 +382,7 @@ class OpenStackDestinationHost(OpenStackHostBase):
             try:
                 pattern = 'pgrep -f "' + self.forwarding_process_command + '"'
                 pids = self.shell.cmd_out([pattern]).split('\n')
-                for pid in pids:
+                for pid in pids:  # There should really only be one of these
                     try:
                         out = self.shell.cmd_out(['sudo', 'kill', pid])
                         self.log.debug('Stopped forwarding PID (%s). %s',
