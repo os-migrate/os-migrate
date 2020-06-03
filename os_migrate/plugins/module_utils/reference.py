@@ -239,4 +239,5 @@ def _fetch_id(get_method, name, required=True, filters=None):
     Raises: openstack's ResourceNotFound when `required` but not found
     """
     if name is not None:
-        return get_method(name, ignore_missing=not required, **(filters or {}))['id']
+        # return get_method(name, ignore_missing=not required, **(filters or {}))['id']
+        return get_method(name, ignore_missing=not required)['id']

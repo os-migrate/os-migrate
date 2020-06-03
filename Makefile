@@ -8,6 +8,7 @@ FUNC_TEST_ARGS ?=
 
 # ANSIBLE COLLECTION
 
+
 build: unlink-latest os_migrate-os_migrate-latest.tar.gz
 
 install: os_migrate-os_migrate-latest.tar.gz
@@ -76,7 +77,7 @@ test-e2e: reinstall
 		-e os_migrate_src_osm_server_flavor=m1.xtiny \
 		-e os_migrate_src_osm_server_image=cirros-0.4.0-x86_64-disk.img \
 		-e os_migrate_src_router_external_network=public \
-		-e os_migrate_dst_router_external_network=public \
+		-e os_migrate_dst_router_external_network=external_network \
 		-e os_migrate_src_validate_certs=False \
 		-e os_migrate_dst_validate_certs=False \
 		-e os_migrate_src_conversion_host_name=osm_uch_src \

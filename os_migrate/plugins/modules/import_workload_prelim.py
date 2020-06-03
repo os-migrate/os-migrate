@@ -286,25 +286,23 @@ def run_module():
             module.fail_json(msg='Unable to download the VDDK library '
                              'Error was: ' + e, **result)
 
-        command = ("sudo tar -v -xzf /tmp/"
+        command = ("sudo tar -xzf /tmp/"
                    "VMware-vix-disklib-6.5.2-6195444.x86_64.tar.gz "
-                   "-C /tmp/ | head -1")
+                   "-C /tmp/")
         try:  # Unzip the VDDK library
             result['v2v_vddk_unzip'] = dst_ssh(addr, ssh_key_path, [command])
         except subprocess.CalledProcessError as e:
             module.fail_json(msg='Unable to unzip the VDDK library '
                              'Error was: ' + e, **result)
 
-        command = ("sudo cp -r /tmp/vmware-vix-disklib-distrib "
-                   "/opt/")
+        command = ("sudo cp -r /tmp/vmware-vix-disklib-distrib /opt/")
         try:  # Install the VDDK library
             result['v2v_vddk_install'] = dst_ssh(addr, ssh_key_path, [command])
         except subprocess.CalledProcessError as e:
             module.fail_json(msg='Unable to install the VDDK library '
                              'Error was: ' + e, **result)
 
-        command = ("sudo chmod -R 755 "
-                   "/opt/vmware-vix-disklib-distrib")
+        command = ("sudo chmod -R 755 /opt/vmware-vix-disklib-distrib")
         try:  # Adjust the VDDK library permissions
             result['v2v_vddk_perms'] = dst_ssh(addr, ssh_key_path, [command])
         except subprocess.CalledProcessError as e:

@@ -113,7 +113,8 @@ def main():
 
     try:
         sdk, conn = openstack_cloud_from_module(module)
-        server = conn.get_server(name_or_id=srv, filters=filters)
+        # server = conn.get_server(name_or_id=srv, filters=filters)
+        server = conn.get_server(name_or_id=srv)
         if not server:
             module.fail_json(msg='Conversion host ' + srv + ' not found!')
 

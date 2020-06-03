@@ -35,7 +35,8 @@ class SecurityGroup(resource.Resource):
 
     @staticmethod
     def _find_sdk_res(conn, name_or_id, filters=None):
-        return conn.network.find_security_group(name_or_id, **(filters or {}))
+        # return conn.network.find_security_group(name_or_id, **(filters or {}))
+        return conn.network.find_security_group(name_or_id)
 
     @staticmethod
     def _update_sdk_res(conn, name_or_id, sdk_params):

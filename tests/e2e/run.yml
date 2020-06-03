@@ -154,6 +154,25 @@
               'osm_router'].params.external_gateway_nameinfo.network_name\")) ==
               [os_migrate_src_router_external_network | default('public')]"
 
+    - name: Show exported router
+      debug:
+        var: router_resources
+
+    # We do some updates in the serialized data
+    - name: Change the public network name on dst
+      replace:
+        dest: "{{ os_migrate_data_dir }}/routers.yml"
+        regexp: 'network_name: {{ os_migrate_src_router_external_network }}'
+        replace: 'network_name: {{ os_migrate_dst_router_external_network }}'
+      when: os_migrate_src_router_external_network != os_migrate_dst_router_external_network
+
+    # There is no availability_zone_hints in 16
+    #- name: remove availability_zone_hints
+    #  lineinfile:
+    #    dest: "{{ os_migrate_data_dir }}/routers.yml"
+    #    regexp: 'availability_zone_hints'
+    #    state: absent
+
     - include_role:
         name: os_migrate.os_migrate.import_routers
   tags: always
