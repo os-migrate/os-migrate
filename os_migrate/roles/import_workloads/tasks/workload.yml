@@ -8,42 +8,35 @@
       ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
       client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-      dst_conversion_host:
-        "{{ os_dst_conversion_host_info.openstack_conversion_host }}"
       dst_filters: "{{ os_migrate_dst_filters }}"
       src_conversion_host:
         "{{ os_src_conversion_host_info.openstack_conversion_host }}"
-      src_auth: "{{ os_migrate_src_auth }}"
-      src_auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
-      src_region_name: "{{ os_migrate_src_region_name|default(omit) }}"
-      src_validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-      # TODO:FIXME
-      # Currently the os_migrate.os_migrate.import_workload_prelim module
-      # does not support the following parameters, and for both
-      # source and destination cloud they should be present.
-      # src_ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-      # src_client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-      # src_client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-      ssh_key_path: "{{ os_migrate_conversion_host_key }}"
+      data_dir: "{{ os_migrate_data_dir }}"
       data: "{{ item }}"
     register: prelim
 
   - debug:
       msg:
-        - "{{ prelim.server_name }} local stdin/stderr: \
-           {{ os_migrate_data_dir }}/{{ prelim.server_name }}.log"
-        - "{{ prelim.server_name }} log file: {{ prelim.v2v_log }}"
-        - "{{ prelim.server_name }} progress state file: {{ prelim.v2v_state }}"
+        - "{{ prelim.server_name }} log file: {{ prelim.log_file }}"
+        - "{{ prelim.server_name }} progress file: {{ prelim.state_file }}"
     when: prelim.changed
 
-  - name: import one workload
-    os_migrate.os_migrate.import_workload:
-      dst_addr: "{{ prelim.dst_addr }}"
-      server_name: "{{ prelim.server_name }}"
+  - name: expose source volumes
+    os_migrate.os_migrate.import_workload_export_volumes:
+      auth: "{{ os_migrate_src_auth }}"
+      auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+      region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+      conversion_host:
+        "{{ os_src_conversion_host_info.openstack_conversion_host }}"
+      data: "{{ item }}"
+      log_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.log"
+      state_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.state"
       ssh_key_path: "{{ os_migrate_conversion_host_key }}"
-      transfer_log: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.log"
-      uci_container_image: "{{ os_uci_container_image|default(omit) }}"
-      v2v_dir: "{{ prelim.v2v_dir }}"
+    register: volume_map
     when: prelim.changed
 
   rescue:

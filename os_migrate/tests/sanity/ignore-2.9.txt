@@ -12,8 +12,8 @@ plugins/modules/import_router_interface.py validate-modules:missing-gplv3-licens
 plugins/modules/import_security_group.py validate-modules:missing-gplv3-license
 plugins/modules/import_security_group_rule.py validate-modules:missing-gplv3-license
 plugins/modules/import_subnet.py validate-modules:missing-gplv3-license
-plugins/modules/import_workload.py validate-modules:missing-gplv3-license
 plugins/modules/import_workload_prelim.py validate-modules:missing-gplv3-license
+plugins/modules/import_workload_export_volumes.py validate-modules:missing-gplv3-license
 plugins/modules/os_conversion_host_info.py validate-modules:missing-gplv3-license
 plugins/modules/os_routers_info.py validate-modules:missing-gplv3-license
 plugins/modules/os_security_groups_info.py validate-modules:missing-gplv3-license
