@@ -197,7 +197,8 @@
 
 - name: Create the key folder
   file:
-    path: "{{ '~' | expanduser }}/.ssh"
+    path: "{{ '~' | expanduser }}/ssh-ci"
+    mode: 0700
     state: directory
   tags: always
 
@@ -205,7 +206,7 @@
   # This will not regenerate the key if
   # it already exists
   openssh_keypair:
-    path: "{{ '~' | expanduser }}/.ssh/id_rsa"
+    path: "{{ '~' | expanduser }}/ssh-ci/id_rsa"
   tags: always
 
 - name: Create new keypair as osm_key
@@ -213,7 +214,7 @@
     auth: "{{ item.auth }}"
     state: present
     name: osm_key
-    public_key_file: "{{ '~' | expanduser }}/.ssh/id_rsa.pub"
+    public_key_file: "{{ '~' | expanduser }}/ssh-ci/id_rsa.pub"
     validate_certs: "{{ item.validate_certs }}"
     ca_cert: "{{ item.ca_cert }}"
     client_cert: "{{ item.client_cert }}"
@@ -291,6 +292,53 @@
       flavor: "{{ os_migrate_dst_conversion_host_flavor|default(omit) }}"
   tags:
     - always
+
+# This is just to unblock CI. Inserting the main private ssh key into
+# the migration host itself is undesirable for end user envs. Once we
+# switch to a proper playbook which deploys conversion hosts, this
+# should be solved better, by generating another key and authorizing
+# dst conv host to ssh into src conv host.
+- name: Hack to insert ssh key to dst host
+  block:
+    - name: Fetch dst conv host info
+      os_server_info:
+        filters:
+          name: "{{ os_migrate_dst_conversion_host_name }}"
+        auth: "{{ os_migrate_dst_auth }}"
+        validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+      register: _dst_conv_host
+
+    - name: Set dst conv host ip fact
+      set_fact:
+        _dst_conv_ip: "{{ _dst_conv_host.openstack_servers[0].accessIPv4 }}"
+
+    - name: Wait until the dst conversion host is reachable
+      wait_for:
+        port: 22
+        host: '{{ _dst_conv_ip }}'
+        search_regex: OpenSSH
+        delay: 10
+        timeout: 600
+
+    - name: Inject ssh key to dst host
+      shell: |
+        ssh -o StrictHostKeyChecking=no \
+            -i {{ '~' | expanduser }}/ssh-ci/id_rsa \
+            cloud-user@{{ _dst_conv_ip }} mkdir -p .ssh
+        cat "{{ '~' | expanduser }}/ssh-ci/id_rsa" \
+            | ssh -o StrictHostKeyChecking=no \
+                -i {{ '~' | expanduser }}/ssh-ci/id_rsa \
+                cloud-user@{{ _dst_conv_ip }} "cat > .ssh/id_rsa"
+        ssh -o StrictHostKeyChecking=no \
+            -i {{ '~' | expanduser }}/ssh-ci/id_rsa \
+            cloud-user@{{ _dst_conv_ip }} chmod 0700 .ssh
+        ssh -o StrictHostKeyChecking=no \
+            -i {{ '~' | expanduser }}/ssh-ci/id_rsa \
+            cloud-user@{{ _dst_conv_ip }} chmod 0600 .ssh/id_rsa
+
 
 # In order to be able to migrate the VMS they must be turned off
 - name: Shutdown osm_server

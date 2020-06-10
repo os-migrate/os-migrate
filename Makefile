@@ -87,9 +87,9 @@ test-e2e: reinstall
 		-e os_migrate_dst_conversion_host_name=osm_uch_dst \
 		-e os_migrate_src_conversion_host_flavor=m1.medium \
 		-e os_migrate_dst_conversion_host_flavor=m1.medium \
-		-e os_migrate_src_client_key=~/.ssh/id_rsa.pub \
-		-e os_migrate_dst_client_key=~/.ssh/id_rsa.pub \
-		-e os_migrate_conversion_host_key=~/.ssh/id_rsa \
+		-e os_migrate_src_client_key=~/ssh-ci/id_rsa.pub \
+		-e os_migrate_dst_client_key=~/ssh-ci/id_rsa.pub \
+		-e os_migrate_conversion_host_key=~/ssh-ci/id_rsa \
 		-e os_migrate_conversion_host_image=rhel-osp-migration-conversion-host.qcow2 \
 		-e @$(ROOT_DIR)/tests/auth.yml \
 		$(FUNC_TEST_ARGS) test_all.yml
