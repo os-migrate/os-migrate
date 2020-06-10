@@ -19,7 +19,7 @@ def sdk_server():
             ],
         },
         flavor={
-            'id': 'a96b2815-3525-4eea-9ab4-14ba58e17835',
+            'original_name': 'm1.small',
         },
         id='uuid-test-server',
         security_groups=[
@@ -28,7 +28,6 @@ def sdk_server():
         ],
         name='test-server',
         status='ACTIVE',
-        flavor_name='m1.small',
         security_group_names=[
             'testing123',
             'default',
@@ -90,7 +89,6 @@ class TestServer(unittest.TestCase):
         self.assertEqual(info['id'], 'uuid-test-server')
         self.assertEqual(params['name'], 'test-server')
         self.assertEqual(info['status'], 'ACTIVE')
-        self.assertEqual(info['flavor_id'], 'a96b2815-3525-4eea-9ab4-14ba58e17835')
         self.assertEqual(params['flavor_name'], 'm1.small')
         self.assertEqual(params['security_group_names'], [
             'testing123',
