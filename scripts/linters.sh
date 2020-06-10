@@ -34,7 +34,14 @@ find ./ \
      -not -wholename ".tox/*" \
      -and -not -wholename "./tests/func/tmpdata/*" \
      -and -name "*.yml" -print0 \
-    | xargs -0 -I {} yamllint -d '{extends: default, rules: {truthy: disable, document-start: disable}}' {}
+    | xargs -0 -I {} yamllint -d '{
+        extends: default,
+        rules: {
+            truthy: disable,
+            document-start: disable,
+            line-length: { max: 100 },
+        }
+    }' {}
 
 # Ansible lint
 find ./ \
