@@ -1,0 +1,24 @@
+# Required vars:
+# os_migrate_conversion_external_net_name
+# os_migrate_conversion_flavor_name
+
+os_migrate_conversion_net_name: os_migrate_conv
+os_migrate_conversion_net_mtu: 1400
+
+os_migrate_conversion_subnet_name: os_migrate_conv
+os_migrate_conversion_subnet_cidr: 192.168.10.0/24
+os_migrate_conversion_subnet_alloc_start: 192.168.10.10
+os_migrate_conversion_subnet_alloc_end: 192.168.10.99
+os_migrate_conversion_subnet_dns_nameservers: []
+
+os_migrate_conversion_router_name: os_migrate_conv
+os_migrate_conversion_router_ip: 192.168.10.1
+
+os_migrate_conversion_secgroup_name: os_migrate_conv
+
+os_migrate_conversion_keypair_generate: true
+os_migrate_conversion_keypair_name: os_migrate_conv
+os_migrate_conversion_keypair_private_path: "{{ os_migrate_data_dir }}/conversion/ssh.key"
+
+os_migrate_conversion_host_name: os_migrate_conv
+os_migrate_conversion_image_name: os_migrate_conv
