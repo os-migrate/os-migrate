@@ -1,6 +1,7 @@
 /releases/*
 
 /.venv
+/local
 /tests/func/auth.yml
 /tests/func/tmpdata
 /toolbox/vagrant/.vagrant
