@@ -1,0 +1,116 @@
+- name: generate os_migrate conversion keypair
+  include_tasks: generate_keypair.yml
+  when: os_migrate_conversion_keypair_generate
+
+- name: create os_migrate conversion net
+  os_network:
+    name: "{{ os_migrate_conversion_net_name }}"
+    auth: "{{ os_migrate_conversion_auth }}"
+    auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_conversion_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
+
+- name: create os_migrate conversion subnet
+  os_subnet:
+    name: "{{ os_migrate_conversion_subnet_name }}"
+    network_name: "{{ os_migrate_conversion_net_name }}"
+    dns_nameservers: "{{ os_migrate_conversion_subnet_dns_nameservers }}"
+    cidr: "{{ os_migrate_conversion_subnet_cidr }}"
+    allocation_pool_start: "{{ os_migrate_conversion_subnet_alloc_start }}"
+    allocation_pool_end: "{{ os_migrate_conversion_subnet_alloc_end }}"
+    auth: "{{ os_migrate_conversion_auth }}"
+    auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_conversion_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
+
+- name: create os_migrate conversion router
+  os_router:
+    name: "{{ os_migrate_conversion_router_name }}"
+    network: "{{ os_migrate_conversion_external_net_name }}"
+    interfaces:
+      - net: "{{ os_migrate_conversion_net_name }}"
+        subnet: "{{ os_migrate_conversion_subnet_name }}"
+        portip: "{{ os_migrate_conversion_router_ip }}"
+    auth: "{{ os_migrate_conversion_auth }}"
+    auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_conversion_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
+
+- name: create os_migrate conversion security group
+  os_security_group:
+    name: "{{ os_migrate_conversion_secgroup_name }}"
+    auth: "{{ os_migrate_conversion_auth }}"
+    auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_conversion_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
+
+- name: allow ssh in os_migrate conversion security group
+  os_security_group_rule:
+    security_group: "{{ os_migrate_conversion_secgroup_name }}"
+    remote_ip_prefix: 0.0.0.0/0
+    protocol: tcp
+    port_range_min: 22
+    port_range_max: 22
+    auth: "{{ os_migrate_conversion_auth }}"
+    auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_conversion_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
+
+- name: allow icmp in os_migrate conversion security group
+  os_security_group_rule:
+    security_group: "{{ os_migrate_conversion_secgroup_name }}"
+    remote_ip_prefix: 0.0.0.0/0
+    protocol: icmp
+    auth: "{{ os_migrate_conversion_auth }}"
+    auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_conversion_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
+
+- name: create os_migrate conversion keypair
+  os_keypair:
+    name: "{{ os_migrate_conversion_keypair_name }}"
+    public_key_file: "{{ os_migrate_conversion_keypair_private_path }}.pub"
+    auth: "{{ os_migrate_conversion_auth }}"
+    auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_conversion_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
+
+- name: create os_migrate conversion host
+  os_server:
+    name: "{{ os_migrate_conversion_host_name }}"
+    flavor: "{{ os_migrate_conversion_flavor_name }}"
+    image: "{{ os_migrate_conversion_image_name }}"
+    key_name: "{{ os_migrate_conversion_keypair_name }}"
+    network: "{{ os_migrate_conversion_net_name }}"
+    security_groups:
+      - "{{ os_migrate_conversion_secgroup_name }}"
+    auto_ip: yes
+    wait: yes
+    auth: "{{ os_migrate_conversion_auth }}"
+    auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_conversion_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
