@@ -110,7 +110,8 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    sdk_server = conn.compute.find_server(module.params['name'], ignore_missing=False)
+    sdk_server_nodetails = conn.compute.find_server(module.params['name'], ignore_missing=False)
+    sdk_server = conn.compute.get_server(sdk_server_nodetails['id'])
     srv = server.Server.from_sdk(conn, sdk_server)
 
     result['changed'] = filesystem.write_or_replace_resource(

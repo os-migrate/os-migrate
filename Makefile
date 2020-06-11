@@ -11,7 +11,8 @@ FUNC_TEST_ARGS ?=
 build: unlink-latest os_migrate-os_migrate-latest.tar.gz
 
 install: os_migrate-os_migrate-latest.tar.gz
-	if [ -n "${VIRTUAL_ENV:-}" ]; then \
+	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
+		echo "Sourcing venv."; \
 		source /root/venv/bin/activate; \
 	fi; \
 	cd releases; \
@@ -37,6 +38,7 @@ os_migrate-os_migrate-latest.tar.gz:
 test-lint: reinstall
 	set -euo pipefail; \
 	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
+		echo "Sourcing venv."; \
 		source /root/venv/bin/activate; \
 	fi; \
 	./scripts/linters.sh
@@ -53,6 +55,7 @@ test: test-fast test-func
 test-func: reinstall
 	set -euo pipefail; \
 	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
+		echo "Sourcing venv."; \
 		source /root/venv/bin/activate; \
 	fi; \
 	cd tests/func; \
@@ -66,6 +69,7 @@ test-func: reinstall
 test-e2e: reinstall
 	set -euo pipefail; \
 	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
+		echo "Sourcing venv."; \
 		source /root/venv/bin/activate; \
 	fi; \
 	cd tests/e2e; \
@@ -83,9 +87,9 @@ test-e2e: reinstall
 		-e os_migrate_dst_conversion_host_name=osm_uch_dst \
 		-e os_migrate_src_conversion_host_flavor=m1.medium \
 		-e os_migrate_dst_conversion_host_flavor=m1.medium \
-		-e os_migrate_src_client_key=~/.ssh/id_rsa.pub \
-		-e os_migrate_dst_client_key=~/.ssh/id_rsa.pub \
-		-e os_migrate_conversion_host_key=~/.ssh/id_rsa \
+		-e os_migrate_src_client_key=~/ssh-ci/id_rsa.pub \
+		-e os_migrate_dst_client_key=~/ssh-ci/id_rsa.pub \
+		-e os_migrate_conversion_host_key=~/ssh-ci/id_rsa \
 		-e os_migrate_conversion_host_image=rhel-osp-migration-conversion-host.qcow2 \
 		-e @$(ROOT_DIR)/tests/auth.yml \
 		$(FUNC_TEST_ARGS) test_all.yml
@@ -95,6 +99,7 @@ test-fast: test-lint test-sanity test-unit
 test-sanity: reinstall
 	set -euo pipefail; \
 	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
+		echo "Sourcing venv."; \
 		source /root/venv/bin/activate; \
 	fi; \
 	cd /root/.ansible/collections/ansible_collections/os_migrate/os_migrate; \
@@ -103,6 +108,7 @@ test-sanity: reinstall
 test-unit: reinstall
 	set -euo pipefail; \
 	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
+		echo "Sourcing venv."; \
 		source /root/venv/bin/activate; \
 	fi; \
 	cd /root/.ansible/collections/ansible_collections/os_migrate/os_migrate; \

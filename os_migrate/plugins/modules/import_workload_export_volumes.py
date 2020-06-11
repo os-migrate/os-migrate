@@ -359,13 +359,11 @@ class OpenStackSourceHost(OpenStackHostBase):
             self.log.info('Image-based instance, creating snapshot...')
             image = self.conn.compute.create_server_image(
                 name='rhosp-migration-root-{0}'.format(sourcevm.name),
-                server=sourcevm.id)
-            for second in range(DEFAULT_TIMEOUT):
-                refreshed_image = self.conn.get_image_by_id(image.id)
-                if refreshed_image.status == 'active':
-                    break
-                time.sleep(1)
-            else:
+                server=sourcevm.id,
+                wait=True,
+                timeout=DEFAULT_TIMEOUT)
+            image = self.conn.get_image_by_id(image.id)  # refresh
+            if image.status != 'active':
                 raise RuntimeError(
                     'Could not create new image of image-based instance!')
             volume = self.conn.create_volume(
