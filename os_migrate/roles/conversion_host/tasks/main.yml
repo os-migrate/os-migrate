@@ -5,6 +5,7 @@
 - name: create os_migrate conversion net
   os_network:
     name: "{{ os_migrate_conversion_net_name }}"
+    mtu: "{{ os_migrate_conversion_net_mtu }}"
     auth: "{{ os_migrate_conversion_auth }}"
     auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_conversion_region_name|default(omit) }}"
