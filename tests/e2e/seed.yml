@@ -83,7 +83,7 @@
     auth: "{{ item.auth }}"
     name: osm_router
     state: present
-    network: "{{ os_migrate_src_router_external_network|default('public') }}"
+    network: "{{ os_migrate_src_osm_router_external_network|default(omit) }}"
     interfaces:
       - net: osm_net
         subnet: osm_subnet

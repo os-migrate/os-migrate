@@ -152,7 +152,15 @@
           - "(router_resources |
               json_query(\"[?params.name ==
               'osm_router'].params.external_gateway_nameinfo.network_name\")) ==
-              [os_migrate_src_router_external_network | default('public')]"
+              [os_migrate_src_osm_router_external_network | default('public')]"
+
+    # There is no availability_zone_hints in 16
+    - name: remove availability_zone_hints
+      lineinfile:
+        dest: "{{ os_migrate_data_dir }}/routers.yml"
+        regexp: 'availability_zone_hints'
+        state: absent
+      when: os_migrate_dst_version == 16
 
     - include_role:
         name: os_migrate.os_migrate.import_routers

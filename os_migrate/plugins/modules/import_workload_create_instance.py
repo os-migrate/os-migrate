@@ -164,7 +164,7 @@ workload.yml:
       data: "{{ item }}"
       log_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.log"
       state_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.state"
-      ssh_key_path: "{{ os_migrate_conversion_host_key }}"
+      ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
     register: exports
     when: prelim.changed
 
@@ -180,7 +180,7 @@ workload.yml:
       data: "{{ item }}"
       conversion_host:
         "{{ os_dst_conversion_host_info.openstack_conversion_host }}"
-      ssh_key_path: "{{ os_migrate_conversion_host_key }}"
+      ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
       transfer_uuid: "{{ exports.transfer_uuid }}"
       src_conversion_host_address:
         "{{ os_src_conversion_host_info.openstack_conversion_host.address }}"

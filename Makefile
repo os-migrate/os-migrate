@@ -80,15 +80,8 @@ test-e2e: reinstall
 		-v \
 		-i $(OS_MIGRATE)/localhost_inventory.yml \
 		-e os_migrate_data_dir=$(ROOT_DIR)/tests/func/tmpdata \
-		-e os_migrate_src_osm_server_flavor=m1.xtiny \
-		-e os_migrate_src_osm_server_image=cirros-0.4.0-x86_64-disk.img \
-		-e os_migrate_src_router_external_network=public \
-		-e os_migrate_dst_router_external_network=public \
-		-e os_migrate_conversion_external_net_name=public \
-		-e os_migrate_conversion_flavor_name=m1.medium \
-		-e os_migrate_src_conversion_host_name=os_migrate_conv \
-		-e os_migrate_dst_conversion_host_name=os_migrate_conv \
 		-e os_migrate_conversion_host_key=$(ROOT_DIR)/tests/func/tmpdata/conversion/ssh.key \
+                -e @$(ROOT_DIR)/tests/e2e/scenario_variables.yml \
 		-e @$(ROOT_DIR)/tests/auth.yml \
 		$(FUNC_TEST_ARGS) test_all.yml
 
