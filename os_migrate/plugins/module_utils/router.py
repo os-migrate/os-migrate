@@ -104,5 +104,5 @@ class Router(resource.Resource):
         return refs
 
     @staticmethod
-    def _update_sdk_res(conn, name_or_id, sdk_params):
-        return conn.network.update_router(name_or_id, **sdk_params)
+    def _update_sdk_res(conn, sdk_res, sdk_params):
+        return conn.network.update_router(sdk_res, **sdk_params)

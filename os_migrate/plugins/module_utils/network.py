@@ -78,5 +78,5 @@ class Network(resource.Resource):
         return refs
 
     @staticmethod
-    def _update_sdk_res(conn, name_or_id, sdk_params):
-        return conn.network.update_network(name_or_id, **sdk_params)
+    def _update_sdk_res(conn, sdk_res, sdk_params):
+        return conn.network.update_network(sdk_res, **sdk_params)

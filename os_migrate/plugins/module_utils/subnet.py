@@ -71,8 +71,8 @@ class Subnet(resource.Resource):
         return conn.network.find_subnet(name_or_id, **(filters or {}))
 
     @staticmethod
-    def _update_sdk_res(conn, name_or_id, sdk_params):
-        return conn.network.update_subnet(name_or_id, **sdk_params)
+    def _update_sdk_res(conn, sdk_res, sdk_params):
+        return conn.network.update_subnet(sdk_res, **sdk_params)
 
     @staticmethod
     def _refs_from_sdk(conn, sdk_res):
