@@ -17,6 +17,7 @@
     - import_tasks: seed/all.yml
     - import_tasks: run/all.yml
     - import_tasks: idempotence/all.yml
+    - import_tasks: update/all.yml
     - include_tasks: clean/all.yml
       args:
         apply:
