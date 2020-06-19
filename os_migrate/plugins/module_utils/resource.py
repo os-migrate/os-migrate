@@ -195,7 +195,7 @@ class Resource():
         if existing:
             if self._needs_update(self.from_sdk(conn, existing)):
                 self._remove_readonly_params(sdk_params)
-                self._update_sdk_res(conn, sdk_params['name'], sdk_params)
+                self._update_sdk_res(conn, existing, sdk_params)
                 return True
         else:
             self._create_sdk_res(conn, sdk_params)
