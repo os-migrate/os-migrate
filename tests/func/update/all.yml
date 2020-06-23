@@ -1,0 +1,7 @@
+- name: Include router tasks
+  include_tasks: router.yml
+  args:
+    apply:
+      tags:
+        - test_router
+  tags: always
