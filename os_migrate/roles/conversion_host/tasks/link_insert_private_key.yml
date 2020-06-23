@@ -1,0 +1,11 @@
+- name: ensure .ssh exists
+  file:
+    path: "{{ ansible_env['HOME'] }}/.ssh"
+    state: directory
+    mode: 0700
+
+- name: upload conversion link private ssh key
+  copy:
+    dest: "{{ ansible_env['HOME'] }}/.ssh/id_rsa"
+    src: "{{ os_migrate_conversion_link_keypair_private_path }}"
+    mode: 0600

@@ -23,3 +23,22 @@
         os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
         os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
       when: os_migrate_deploy_dst_conversion_host|default(true)|bool
+
+    - include_role:
+        name: os_migrate.os_migrate.conversion_host
+        tasks_from: link_prepare.yml
+      when: os_migrate_link_conversion_hosts|default(true)|bool
+
+- hosts: os_migrate_conv_src
+  tasks:
+    - include_role:
+        name: os_migrate.os_migrate.conversion_host
+        tasks_from: link_insert_authorized_key.yml
+      when: os_migrate_link_conversion_hosts|default(true)|bool
+
+- hosts: os_migrate_conv_dst
+  tasks:
+    - include_role:
+        name: os_migrate.os_migrate.conversion_host
+        tasks_from: link_insert_private_key.yml
+      when: os_migrate_link_conversion_hosts|default(true)|bool

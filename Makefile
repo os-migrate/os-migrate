@@ -1,7 +1,8 @@
-
 .DEFAULT_GOAL := build
 SHELL := /bin/bash
 ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+OS_MIGRATE := $(HOME)/.ansible/collections/ansible_collections/os_migrate/os_migrate
+export OS_MIGRATE
 
 FUNC_TEST_ARGS ?=
 
@@ -66,6 +67,8 @@ test-func: reinstall
 		-e @$(ROOT_DIR)/tests/auth.yml \
 		$(FUNC_TEST_ARGS) test_all.yml
 
+# FIXME: remove the parameters from here, put them in a file (like we
+# already have auth.yml).
 test-e2e: reinstall
 	set -euo pipefail; \
 	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
@@ -75,22 +78,17 @@ test-e2e: reinstall
 	cd tests/e2e; \
 	ansible-playbook \
 		-v \
-		-i $(ROOT_DIR)/os_migrate/localhost_inventory.yml \
+		-i $(OS_MIGRATE)/localhost_inventory.yml \
 		-e os_migrate_data_dir=$(ROOT_DIR)/tests/func/tmpdata \
 		-e os_migrate_src_osm_server_flavor=m1.xtiny \
 		-e os_migrate_src_osm_server_image=cirros-0.4.0-x86_64-disk.img \
 		-e os_migrate_src_router_external_network=public \
 		-e os_migrate_dst_router_external_network=public \
-		-e os_migrate_src_validate_certs=False \
-		-e os_migrate_dst_validate_certs=False \
-		-e os_migrate_src_conversion_host_name=osm_uch_src \
-		-e os_migrate_dst_conversion_host_name=osm_uch_dst \
-		-e os_migrate_src_conversion_host_flavor=m1.medium \
-		-e os_migrate_dst_conversion_host_flavor=m1.medium \
-		-e os_migrate_src_client_key=~/ssh-ci/id_rsa.pub \
-		-e os_migrate_dst_client_key=~/ssh-ci/id_rsa.pub \
-		-e os_migrate_conversion_host_key=~/ssh-ci/id_rsa \
-		-e os_migrate_conversion_host_image=rhel-osp-migration-conversion-host.qcow2 \
+		-e os_migrate_conversion_external_net_name=public \
+		-e os_migrate_conversion_flavor_name=m1.medium \
+		-e os_migrate_src_conversion_host_name=os_migrate_conv \
+		-e os_migrate_dst_conversion_host_name=os_migrate_conv \
+		-e os_migrate_conversion_host_key=$(ROOT_DIR)/tests/func/tmpdata/conversion/ssh.key \
 		-e @$(ROOT_DIR)/tests/auth.yml \
 		$(FUNC_TEST_ARGS) test_all.yml
 
