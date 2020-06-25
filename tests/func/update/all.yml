@@ -5,3 +5,11 @@
       tags:
         - test_router
   tags: always
+
+- name: Include network tasks
+  include_tasks: network.yml
+  args:
+    apply:
+      tags:
+        - test_network
+  tags: always
