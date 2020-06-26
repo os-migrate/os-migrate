@@ -1,11 +1,9 @@
 - name: change item in file for update test
-  lineinfile:
-    dest: "{{ os_migrate_data_dir }}/security_groups.yml"
-    regexp: "description: OSM security group"
-    line: "    description: 'OSM security group updated'"
-    state: present
+  replace:
+    path: "{{ os_migrate_data_dir }}/security_groups.yml"
+    regexp: "    description: OSM security group"
+    replace: "    description: 'OSM security group updated'"
     backup: yes
-    backrefs: yes
 
 - name: scan available security_groups after before test
   os_migrate.os_migrate.os_security_groups_info:

@@ -1,11 +1,9 @@
 - name: change item in file for update test
-  lineinfile:
-    dest: "{{ os_migrate_data_dir }}/routers.yml"
-    regexp: "description: ''"
-    line: "    description: 'osm_router_updated'"
-    state: present
+  replace:
+    path: "{{ os_migrate_data_dir }}/routers.yml"
+    regexp: "    description: ''"
+    replace: "    description: 'osm_router_updated'"
     backup: yes
-    backrefs: yes
 
 - name: scan available routers after before test
   os_migrate.os_migrate.os_routers_info:

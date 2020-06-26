@@ -1,11 +1,9 @@
 - name: change item in file for update test
-  lineinfile:
-    dest: "{{ os_migrate_data_dir }}/subnets.yml"
+  replace:
+    path: "{{ os_migrate_data_dir }}/subnets.yml"
     regexp: "    description: ''"
-    line: "    description: 'osm_subnet_updated'"
-    state: present
+    replace: "    description: 'osm_subnet_updated'"
     backup: yes
-    backrefs: yes
 
 - name: scan available subnets after before test
   os_subnets_info:
