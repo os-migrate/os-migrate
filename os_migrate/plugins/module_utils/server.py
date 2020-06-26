@@ -4,7 +4,7 @@ __metaclass__ = type
 import openstack
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
-    import const, resource
+    import const, reference, resource
 
 
 class Server(resource.Resource):
@@ -37,7 +37,14 @@ class Server(resource.Resource):
     @staticmethod
     def _refs_from_sdk(conn, sdk_res):
         refs = {}
-        refs['flavor_name'] = sdk_res['flavor']['original_name']
+        if 'original_name' in sdk_res['flavor']:
+            refs['flavor_name'] = sdk_res['flavor']['original_name']
+        elif 'name' in sdk_res['flavor']:
+            refs['flavor_name'] = sdk_res['flavor']['name']
+        else:
+            refs['flavor_name'] = reference.server_flavor_name(
+                conn, sdk_res['flavor']['id'])
+
         refs['security_group_names'] = [security_group['name'] for
                                         security_group in
                                         sdk_res['security_groups']]
