@@ -180,7 +180,7 @@ workload.yml:
       data: "{{ item }}"
       log_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.log"
       state_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.state"
-      ssh_key_path: "{{ os_migrate_conversion_host_key }}"
+      ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
     register: volume_map
     when: prelim.changed
 

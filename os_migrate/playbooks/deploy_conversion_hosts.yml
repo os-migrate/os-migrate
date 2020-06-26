@@ -10,6 +10,11 @@
         os_migrate_conversion_ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
         os_migrate_conversion_client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
         os_migrate_conversion_client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+        os_migrate_conversion_flavor_name:
+          "{{ os_migrate_src_conversion_flavor_name|default(omit) }}"
+        os_migrate_conversion_image_name: "{{ os_migrate_src_conversion_image_name|default(omit) }}"
+        os_migrate_conversion_external_net_name:
+          "{{ os_migrate_src_conversion_external_network_name }}"
       when: os_migrate_deploy_src_conversion_host|default(true)|bool
 
     - include_role:
@@ -22,6 +27,11 @@
         os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
         os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
         os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+        os_migrate_conversion_flavor_name:
+          "{{ os_migrate_dst_conversion_flavor_name|default(omit) }}"
+        os_migrate_conversion_image_name: "{{ os_migrate_dst_conversion_image_name|default(omit) }}"
+        os_migrate_conversion_external_net_name:
+          "{{ os_migrate_dst_conversion_external_network_name }}"
       when: os_migrate_deploy_dst_conversion_host|default(true)|bool
 
     - include_role:
