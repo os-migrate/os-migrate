@@ -1,11 +1,9 @@
 - name: change item in file for update test
-  lineinfile:
-    dest: "{{ os_migrate_data_dir }}/networks.yml"
-    regexp: "description: ''"
-    line: "    description: 'osm_net_updated'"
-    state: present
+  replace:
+    path: "{{ os_migrate_data_dir }}/networks.yml"
+    regexp: "    description: ''"
+    replace: "    description: 'osm_net_updated'"
     backup: yes
-    backrefs: yes
 
 - name: scan available networks after before test
   os_networks_info:
