@@ -1,5 +1,5 @@
 # Required vars:
-# os_migrate_conversion_external_net_name
+# os_migrate_conversion_external_network_name
 # os_migrate_conversion_flavor_name
 
 os_migrate_conversion_net_name: os_migrate_conv
