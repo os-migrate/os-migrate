@@ -6,7 +6,8 @@
     # though OpenStack supports it.
     # description: osm_net test network
     state: present
-    mtu: 1400
+    # Wont work in Ocata
+    # mtu: 1400
     validate_certs: "{{ item.validate_certs }}"
     ca_cert: "{{ item.ca_cert }}"
     client_cert: "{{ item.client_cert }}"
@@ -18,6 +19,7 @@
       client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_src_client_key|default(omit) }}"
   tags: always
+
 
 - name: Create osm subnet
   os_subnet:

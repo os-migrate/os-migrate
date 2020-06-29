@@ -32,6 +32,14 @@
             'osm_net'].params.name")
             == ['osm_net'])
 
+    # We do some updates in the serialized data
+    - name: Change the MTU to 1400
+      replace:
+        dest: "{{ os_migrate_data_dir }}/networks.yml"
+        regexp: 'mtu: 1450'
+        replace: 'mtu: 1400'
+      when: os_migrate_src_version == 'ocata'
+
     - include_role:
         name: os_migrate.os_migrate.import_networks
   tags: always
@@ -161,6 +169,16 @@
         regexp: 'availability_zone_hints'
         state: absent
       when: os_migrate_dst_version == 16
+
+    # I think this is a bug
+    # We do some updates in the serialized data
+    # openstack.exceptions.ResourceNotFound: No Network found for 38.145.32.0/22
+    - name: Update the net name
+      replace:
+        dest: "{{ os_migrate_data_dir }}/routers.yml"
+        regexp: '38.145.32.0/22'
+        replace: 'external_network'
+      when: os_migrate_src_version == 'ocata'
 
     - include_role:
         name: os_migrate.os_migrate.import_routers
