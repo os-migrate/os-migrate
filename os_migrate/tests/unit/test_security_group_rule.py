@@ -10,8 +10,18 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
 
 def security_group_rule_refs():
     return {
-        'security_group_name': 'default',
-        'remote_group_name': 'default',
+        'security_group_id': 'uuid-test-default-secgroup',
+        'security_group_ref': {
+            'name': 'test-default-secgroup',
+            'project_name': 'test-project',
+            'domain_name': 'Default',
+        },
+        'remote_group_id': 'uuid-test-remote-secgroup',
+        'remote_group_ref': {
+            'name': 'test-remote-secgroup',
+            'project_name': 'test-project',
+            'domain_name': 'Default',
+        },
     }
 
 
@@ -45,16 +55,26 @@ def serialized_security_group_rule():
             'port_range_max': '100',
             'port_range_min': '10',
             'protocol': 'null',
+            'remote_group_ref': {
+                'name': 'test-remote-secgroup',
+                'project_name': 'test-project',
+                'domain_name': 'Default',
+            },
             'remote_ip_prefix': 'null',
+            'security_group_ref': {
+                'name': 'test-default-secgroup',
+                'project_name': 'test-project',
+                'domain_name': 'Default',
+            },
         },
         const.RES_INFO: {
             'id': 'uuid',
-            'security_group_id': 'uuid-sec-group',
-            'remote_group_id': 'uuid-group',
             'project_id': 'uuid-project',
             'created_at': '2020-01-30T14:49:06Z',
             'updated_at': '2020-01-30T14:49:06Z',
+            'remote_group_id': 'uuid-test-remote-secgroup',
             'revision_number': '0',
+            'security_group_id': 'uuid-test-default-secgroup',
         },
         const.RES_TYPE: 'openstack.network.SecurityGroupRule',
     }
@@ -80,8 +100,8 @@ class TestSecurityGroupRule(unittest.TestCase):
         params, info = serialized.params_and_info()
 
         self.assertEqual(serialized.type(), 'openstack.network.SecurityGroupRule')
-        self.assertEqual(params['security_group_name'], 'default')
-        self.assertEqual(params['remote_group_name'], 'default')
+        self.assertEqual(params['security_group_ref']['name'], 'test-default-secgroup')
+        self.assertEqual(params['remote_group_ref']['name'], 'test-remote-secgroup')
         self.assertEqual(params['description'], 'null')
         self.assertEqual(params['direction'], 'ingress')
         self.assertEqual(params['ether_type'], 'IPv4')

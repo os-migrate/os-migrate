@@ -101,28 +101,28 @@ def router_id(conn, ref, required=True):
     return _fetch_id(conn, conn.network.find_router, ref, required)
 
 
-def security_group_name(conn, id_, required=True):
-    """Fetch name of the Security Group identified by ID `id_`. Use OpenStack SDK
-    connection `conn` to fetch the info. If `required`, ensure the
-    fetch is successful.
+def security_group_ref(conn, id_, required=True):
+    """Fetch reference dict of SecurityGroup identified by ID `id_`. Use
+    OpenStack SDK connection `conn` to fetch the info. If `required`,
+    ensure the fetch is successful.
 
-    Returns: the name, or None if not found and not `required`
+    Returns: the ref dict, or None if not found and not `required`
 
     Raises: openstack's ResourceNotFound when `required` but not found
     """
-    return _fetch_name(conn.network.find_security_group, id_, required)
+    return _fetch_ref(conn, conn.network.find_security_group, id_, required)
 
 
-def security_group_id(conn, name, required=True, filters=None):
-    """Fetch ID of Security group identified by name `name`. Use OpenStack SDK
-    connection `conn` to fetch the info. If `required`, ensure the
-    fetch is successful.
+def security_group_id(conn, ref, required=True):
+    """Fetch ID of SecurityGroup identified by reference dict `ref`. Use
+    OpenStack SDK connection `conn` to fetch the info. If `required`,
+    ensure the fetch is successful.
 
     Returns: the ID, or None if not found and not `required`
 
     Raises: openstack's ResourceNotFound when `required` but not found
     """
-    return _fetch_id_simple(conn.network.find_security_group, name, required, filters)
+    return _fetch_id(conn, conn.network.find_security_group, ref, required)
 
 
 def subnet_ref(conn, id_, required=True):
