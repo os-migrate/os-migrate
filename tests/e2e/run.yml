@@ -151,7 +151,7 @@
         that:
           - "(router_resources |
               json_query(\"[?params.name ==
-              'osm_router'].params.external_gateway_nameinfo.network_name\")) ==
+              'osm_router'].params.external_gateway_refinfo.network_ref.name\")) ==
               [os_migrate_src_osm_router_external_network | default('public')]"
 
     # There is no availability_zone_hints in 16

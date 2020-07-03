@@ -45,13 +45,29 @@ def sdk_router():
 
 def router_refs():
     return {
-        'external_gateway_nameinfo': {
-            'network_name': 'test-external-net',
+        'external_gateway_refinfo': {
+            'network_ref': {
+                'name': 'test-external-net',
+                'project_name': 'test-project',
+                'domain_name': 'Default',
+            },
             'external_fixed_ips': [
-                {'subnet_name': 'test-external-subnet',
-                 'ip_address': '172.24.4.79'},
-                {'subnet_name': 'test-external-subnet-ipv6',
-                 'ip_address': '2001:db8::1'}
+                {
+                    'subnet_ref': {
+                        'name': 'test-external-subnet',
+                        'project_name': 'test-project',
+                        'domain_name': 'Default',
+                    },
+                    'ip_address': '172.24.4.79',
+                },
+                {
+                    'subnet_ref': {
+                        'name': 'test-external-subnet-ipv6',
+                        'project_name': 'test-project',
+                        'domain_name': 'Default',
+                    },
+                    'ip_address': '2001:db8::1',
+                },
             ],
             'enable_snat': True,
         },
@@ -65,7 +81,11 @@ def router_refs():
             ],
             'enable_snat': True,
         },
-        'flavor_name': 'test-network-flavor',
+        'flavor_ref': {
+            'name': 'test-network-flavor',
+            'project_name': 'test-project',
+            'domain_name': 'Default',
+        },
         'flavor_id': 'uuid-test-network-flavor',
     }
 
@@ -95,17 +115,33 @@ class TestRouter(unittest.TestCase):
         self.assertEqual(params['is_distributed'], True)
         self.assertEqual(params['is_ha'], True)
         self.assertEqual(params['name'], 'test-router')
-        self.assertEqual(params['external_gateway_nameinfo'], {
-            'network_name': 'test-external-net',
+        self.assertEqual(params['external_gateway_refinfo'], {
+            'network_ref': {
+                'name': 'test-external-net',
+                'project_name': 'test-project',
+                'domain_name': 'Default',
+            },
             'external_fixed_ips': [
-                {'subnet_name': 'test-external-subnet',
-                 'ip_address': '172.24.4.79'},
-                {'subnet_name': 'test-external-subnet-ipv6',
-                 'ip_address': '2001:db8::1'}
+                {
+                    'subnet_ref': {
+                        'name': 'test-external-subnet',
+                        'project_name': 'test-project',
+                        'domain_name': 'Default',
+                    },
+                    'ip_address': '172.24.4.79',
+                },
+                {
+                    'subnet_ref': {
+                        'name': 'test-external-subnet-ipv6',
+                        'project_name': 'test-project',
+                        'domain_name': 'Default',
+                    },
+                    'ip_address': '2001:db8::1',
+                },
             ],
             'enable_snat': True,
         })
-        self.assertEqual(params['flavor_name'], 'test-network-flavor')
+        self.assertEqual(params['flavor_ref']['name'], 'test-network-flavor')
 
         self.assertEqual(info['availability_zones'], ['nova', 'zone3'])
         self.assertEqual(info['created_at'], '2020-02-26T15:50:55Z')

@@ -4,32 +4,6 @@ __metaclass__ = type
 from openstack.exceptions import HttpException
 
 
-# FIXME: remove when unused
-def network_name(conn, id_, required=True):
-    """Fetch name of Network identified by ID `id_`. Use OpenStack
-    SDK connection `conn` to fetch the info. If `required`, ensure the
-    fetch is successful.
-
-    Returns: the name, or None if not found and not `required`
-
-    Raises: openstack's ResourceNotFound when `required` but not found
-    """
-    return _fetch_name(conn.network.find_network, id_, required)
-
-
-# FIXME: remove when unused
-def network_id_simple(conn, name, required=True, filters=None):
-    """Fetch ID of Network identified by name `name`. Use OpenStack
-    SDK connection `conn` to fetch the info. If `required`, ensure the
-    fetch is successful.
-
-    Returns: the ID, or None if not found and not `required`
-
-    Raises: openstack's ResourceNotFound when `required` but not found
-    """
-    return _fetch_id_simple(conn.network.find_network, name, required, filters)
-
-
 def network_id(conn, ref, required=True):
     """Fetch ID of Network identified by reference dict `ref`. Use
     OpenStack SDK connection `conn` to fetch the info. If `required`,
@@ -47,35 +21,36 @@ def network_ref(conn, id_, required=True):
     OpenStack SDK connection `conn` to fetch the info. If `required`,
     ensure the fetch is successful.
 
-    Returns: the name, or None if not found and not `required`
+    Returns: the ref dict, or None if not found and not `required`
 
     Raises: openstack's ResourceNotFound when `required` but not found
     """
     return _fetch_ref(conn, conn.network.find_network, id_, required)
 
 
-def network_flavor_name(conn, id_, required=True):
-    """Fetch name of Network Flavor identified by ID `id_`. Use OpenStack
-    SDK connection `conn` to fetch the info. If `required`, ensure the
-    fetch is successful.
+def network_flavor_ref(conn, id_, required=True):
+    """Fetch reference dict for Network Flavor identified by ID `id_`. Use
+    OpenStack SDK connection `conn` to fetch the info. If `required`,
+    ensure the fetch is successful.
 
-    Returns: the name, or None if not found and not `required`
+    Returns: the ref dict, or None if not found and not `required`
 
     Raises: openstack's ResourceNotFound when `required` but not found
     """
-    return _fetch_name(conn.network.find_flavor, id_, required)
+    return _fetch_ref(conn, conn.network.find_flavor, id_, required)
 
 
-def network_flavor_id(conn, name, required=True, filters=None):
-    """Fetch ID of Network Flavor identified by name `name`. Use OpenStack
-    SDK connection `conn` to fetch the info. If `required`, ensure the
-    fetch is successful.
+def network_flavor_id(conn, ref, required=True):
+    """Fetch ID of Network Flavor identified by reference dict `ref`. Use
+    OpenStack SDK connection `conn` to fetch the info. If `required`,
+    ensure the fetch is successful.
 
     Returns: the ID, or None if not found and not `required`
 
     Raises: openstack's ResourceNotFound when `required` but not found
+
     """
-    return _fetch_id_simple(conn.network.find_flavor, name, required, filters)
+    return _fetch_id(conn, conn.network.find_flavor, ref, required)
 
 
 def qos_policy_name(conn, id_, required=True):
@@ -102,28 +77,28 @@ def qos_policy_id(conn, name, required=True, filters=None):
     return _fetch_id_simple(conn.network.find_qos_policy, name, required, filters)
 
 
-def router_name(conn, id_, required=True):
-    """Fetch name of Router identified by ID `id_`. Use OpenStack
-    SDK connection `conn` to fetch the info. If `required`, ensure the
-    fetch is successful.
+def router_ref(conn, id_, required=True):
+    """Fetch reference dict of Router identified by ID `id_`. Use
+    OpenStack SDK connection `conn` to fetch the info. If `required`,
+    ensure the fetch is successful.
 
-    Returns: the name, or None if not found and not `required`
+    Returns: the ref dict, or None if not found and not `required`
 
     Raises: openstack's ResourceNotFound when `required` but not found
     """
-    return _fetch_name(conn.network.find_router, id_, required)
+    return _fetch_ref(conn, conn.network.find_router, id_, required)
 
 
-def router_id(conn, name, required=True, filters=None):
-    """Fetch ID of Router identified by name `name`. Use OpenStack
-    SDK connection `conn` to fetch the info. If `required`, ensure the
-    fetch is successful.
+def router_id(conn, ref, required=True):
+    """Fetch ID of Router identified by reference dict `ref`. Use
+    OpenStack SDK connection `conn` to fetch the info. If `required`,
+    ensure the fetch is successful.
 
     Returns: the ID, or None if not found and not `required`
 
     Raises: openstack's ResourceNotFound when `required` but not found
     """
-    return _fetch_id_simple(conn.network.find_router, name, required, filters)
+    return _fetch_id(conn, conn.network.find_router, ref, required)
 
 
 def security_group_name(conn, id_, required=True):
@@ -150,28 +125,28 @@ def security_group_id(conn, name, required=True, filters=None):
     return _fetch_id_simple(conn.network.find_security_group, name, required, filters)
 
 
-def subnet_name(conn, id_, required=True):
-    """Fetch name of Subnet identified by ID `id_`. Use OpenStack
-    SDK connection `conn` to fetch the info. If `required`, ensure the
-    fetch is successful.
+def subnet_ref(conn, id_, required=True):
+    """Fetch reference dict of Subnet identified by ID `id_`. Use
+    OpenStack SDK connection `conn` to fetch the info. If `required`,
+    ensure the fetch is successful.
 
-    Returns: the name, or None if not found and not `required`
+    Returns: the ref dict, or None if not found and not `required`
 
     Raises: openstack's ResourceNotFound when `required` but not found
     """
-    return _fetch_name(conn.network.find_subnet, id_, required)
+    return _fetch_ref(conn, conn.network.find_subnet, id_, required)
 
 
-def subnet_id(conn, name, required=True, filters=None):
-    """Fetch ID of Subnet identified by name `name`. Use OpenStack
-    SDK connection `conn` to fetch the info. If `required`, ensure the
-    fetch is successful.
+def subnet_id(conn, ref, required=True):
+    """Fetch ID of Subnet identified by reference dict `ref`. Use
+    OpenStack SDK connection `conn` to fetch the info. If `required`,
+    ensure the fetch is successful.
 
     Returns: the ID, or None if not found and not `required`
 
     Raises: openstack's ResourceNotFound when `required` but not found
     """
-    return _fetch_id_simple(conn.network.find_subnet, name, required, filters)
+    return _fetch_id(conn, conn.network.find_subnet, ref, required)
 
 
 def segment_id(conn, ref, required=True):

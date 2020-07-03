@@ -28,9 +28,9 @@ class RouterInterface(resource.Resource):
         'device_owner',
     ]
     params_from_refs = [
-        'device_name',
-        'fixed_ips_names',
-        'network_name',
+        'device_ref',
+        'fixed_ips_refs',
+        'network_ref',
     ]
     sdk_params_from_params = []
     sdk_params_from_refs = [
@@ -103,16 +103,16 @@ class RouterInterface(resource.Resource):
                 "When creating a port for router '{0}', multiple "
                 "existing ports were found owning addresses that should "
                 "belong to a single port on the router. The ports are: {1}"
-                .format(refs['device_name'], matching_ports)
+                .format(refs['device_ref']['name'], matching_ports)
             )
 
     def _port_needs_update(self, other):
         self_trimmed = self._data_without_info()
         other_trimmed = other._data_without_info()
         del self_trimmed['params']['device_owner']
-        del self_trimmed['params']['device_name']
+        del self_trimmed['params']['device_ref']
         del other_trimmed['params']['device_owner']
-        del other_trimmed['params']['device_name']
+        del other_trimmed['params']['device_ref']
         return self_trimmed != other_trimmed
 
     @staticmethod
@@ -128,16 +128,16 @@ class RouterInterface(resource.Resource):
         refs = {}
 
         refs['fixed_ips'] = sdk_res['fixed_ips']
-        refs['fixed_ips_names'] = []
+        refs['fixed_ips_refs'] = []
         for fixed_ip in sdk_res['fixed_ips']:
-            refs['fixed_ips_names'].append({
+            refs['fixed_ips_refs'].append({
                 'ip_address': fixed_ip['ip_address'],
-                'subnet_name': reference.subnet_name(conn, fixed_ip['subnet_id']),
+                'subnet_ref': reference.subnet_ref(conn, fixed_ip['subnet_id']),
             })
         refs['device_id'] = sdk_res['device_id']
-        refs['device_name'] = reference.router_name(conn, sdk_res['device_id'])
+        refs['device_ref'] = reference.router_ref(conn, sdk_res['device_id'])
         refs['network_id'] = sdk_res['network_id']
-        refs['network_name'] = reference.network_name(conn, sdk_res['network_id'])
+        refs['network_ref'] = reference.network_ref(conn, sdk_res['network_id'])
 
         return refs
 
@@ -145,17 +145,16 @@ class RouterInterface(resource.Resource):
         refs = {}
         params = self.params()
 
-        refs['fixed_ips_names'] = params['fixed_ips_names']
+        refs['fixed_ips_refs'] = params['fixed_ips_refs']
         refs['fixed_ips'] = []
-        for fixed_ip in params['fixed_ips_names']:
+        for fixed_ip in params['fixed_ips_refs']:
             refs['fixed_ips'].append({
                 'ip_address': fixed_ip['ip_address'],
-                'subnet_id': reference.subnet_id(conn, fixed_ip['subnet_name'], filters=filters),
+                'subnet_id': reference.subnet_id(conn, fixed_ip['subnet_ref']),
             })
-        refs['device_name'] = params['device_name']
-        refs['device_id'] = reference.router_id(conn, params['device_name'], filters=filters)
-        refs['network_name'] = params['network_name']
-        refs['network_id'] = reference.network_id_simple(
-            conn, params['network_name'], filters=filters)
+        refs['device_ref'] = params['device_ref']
+        refs['device_id'] = reference.router_id(conn, params['device_ref'])
+        refs['network_ref'] = params['network_ref']
+        refs['network_id'] = reference.network_id(conn, params['network_ref'])
 
         return refs

@@ -20,12 +20,12 @@
   assert:
     that:
       - "(router_interface_resources |
-          json_query(\"[?params.device_name ==
-          'osm_router'].params.fixed_ips_names[].ip_address\")) | sort ==
+          json_query(\"[?params.device_ref.name ==
+          'osm_router'].params.fixed_ips_refs[].ip_address\")) | sort ==
           ['192.168.0.10', '192.168.10.10']"
       - "(router_interface_resources |
-          json_query(\"[?params.device_name ==
-          'osm_router'].params.fixed_ips_names[].subnet_name\")) | sort ==
+          json_query(\"[?params.device_ref.name ==
+          'osm_router'].params.fixed_ips_refs[].subnet_ref.name\")) | sort ==
           ['osm_router_subnet', 'osm_subnet']"
 
 - include_role:

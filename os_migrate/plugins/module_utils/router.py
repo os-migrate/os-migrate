@@ -33,8 +33,8 @@ class Router(resource.Resource):
         'name',
     ]
     params_from_refs = [
-        'external_gateway_nameinfo',
-        'flavor_name',
+        'external_gateway_refinfo',
+        'flavor_ref',
     ]
     sdk_params_from_refs = [
         'external_gateway_info',
@@ -62,12 +62,12 @@ class Router(resource.Resource):
         refs['external_gateway_info'] = sdk_res['external_gateway_info']
         refs['flavor_id'] = sdk_res['flavor_id']
 
-        def _external_gateway_nameinfo(conn, egi):
+        def _external_gateway_refinfo(conn, egi):
             if egi is None:
                 return None
 
             egni = {}
-            egni['network_name'] = reference.network_name(conn, egi['network_id'])
+            egni['network_ref'] = reference.network_ref(conn, egi['network_id'])
             # We currently do not put external_fixed_ips into params:
             # * As a tenant we cannot fetch subnet_name for a subnet in a public
             #   net, so we do not request a particular public IP for the router
@@ -75,9 +75,9 @@ class Router(resource.Resource):
             #   to try and preserve the IPs.
             return egni
 
-        refs['external_gateway_nameinfo'] = _external_gateway_nameinfo(
+        refs['external_gateway_refinfo'] = _external_gateway_refinfo(
             conn, sdk_res['external_gateway_info'])
-        refs['flavor_name'] = reference.network_flavor_name(
+        refs['flavor_ref'] = reference.network_flavor_ref(
             conn, sdk_res['flavor_id'])
 
         return refs
@@ -85,21 +85,21 @@ class Router(resource.Resource):
     def _refs_from_ser(self, conn, filters=None):
         refs = {}
         params = self.params()
-        refs['external_gateway_nameinfo'] = params['external_gateway_nameinfo']
-        refs['flavor_name'] = params['flavor_name']
+        refs['external_gateway_refinfo'] = params['external_gateway_refinfo']
+        refs['flavor_ref'] = params['flavor_ref']
 
         def _external_gateway_info(conn, egni):
             if egni is None:
                 return None
 
             egi = {}
-            egi['network_id'] = reference.network_id_simple(conn, egni['network_name'])
+            egi['network_id'] = reference.network_id(conn, egni['network_ref'])
             return egi
 
         refs['external_gateway_info'] = _external_gateway_info(
-            conn, params['external_gateway_nameinfo'])
+            conn, params['external_gateway_refinfo'])
         refs['flavor_id'] = reference.network_flavor_id(
-            conn, params['flavor_name'], filters=filters)
+            conn, params['flavor_ref'])
 
         return refs
 
