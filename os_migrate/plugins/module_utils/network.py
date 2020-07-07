@@ -41,7 +41,7 @@ class Network(resource.Resource):
         'segments',
     ]
     params_from_refs = [
-        'qos_policy_name',
+        'qos_policy_ref',
     ]
     sdk_params_from_refs = [
         'qos_policy_id',
@@ -66,15 +66,15 @@ class Network(resource.Resource):
     def _refs_from_sdk(conn, sdk_res):
         refs = {}
         refs['qos_policy_id'] = sdk_res['qos_policy_id']
-        refs['qos_policy_name'] = reference.qos_policy_name(
+        refs['qos_policy_ref'] = reference.qos_policy_ref(
             conn, sdk_res['qos_policy_id'])
         return refs
 
     def _refs_from_ser(self, conn, filters=None):
         refs = {}
-        refs['qos_policy_name'] = self.params()['qos_policy_name']
+        refs['qos_policy_ref'] = self.params()['qos_policy_ref']
         refs['qos_policy_id'] = reference.qos_policy_id(
-            conn, self.params()['qos_policy_name'], filters=filters)
+            conn, self.params()['qos_policy_ref'])
         return refs
 
     @staticmethod
