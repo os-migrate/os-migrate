@@ -115,3 +115,11 @@ ansible-playbook \
 
 This should create the desired networks in the cloud identified by
 `os_migrate_dst_auth`.
+
+Configuring conversion host variables
+-------------------------------------
+
+If a user needs to use os-migrate to migrate instances,
+it will need to [configure](configuring-variables.md)
+properly the variables related to how to deploy and connect
+correctly the conversion host guest.
