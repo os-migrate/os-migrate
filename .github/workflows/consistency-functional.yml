@@ -37,6 +37,10 @@ jobs:
       - name: Print podman version
         run: |
           podman -v
+      - name: Configure podman to use cgroupfs as cgroup manager
+        run: |
+          mkdir -p ~/.config/containers
+          echo 'cgroup_manager = "cgroupfs"' > ~/.config/containers/libpod.conf
       - name: Make the container image to launch the tests
         run: |
           NO_VAGRANT=1 make toolbox-build
@@ -141,6 +145,10 @@ jobs:
           sudo systemctl start mysql.service
           sudo systemctl restart mysql.service
           sudo systemctl status mysql.service
+      - name: Configure podman to use cgroupfs as cgroup manager
+        run: |
+          mkdir -p ~/.config/containers
+          echo 'cgroup_manager = "cgroupfs"' > ~/.config/containers/libpod.conf
       - name: Make the container image to launch the tests
         run: |
           NO_VAGRANT=1 make toolbox-build
