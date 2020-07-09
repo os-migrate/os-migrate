@@ -21,7 +21,7 @@
     that:
       - "(router_resources |
           json_query(\"[?params.name ==
-          'osm_router'].params.external_gateway_nameinfo.network_name\")) ==
+          'osm_router'].params.external_gateway_refinfo.network_ref.name\")) ==
           [test_router_external_network | default('public')]"
 
 - include_role:

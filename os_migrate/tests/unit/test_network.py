@@ -57,7 +57,11 @@ def serialized_network():
             'provider_network_type': 'vxlan',
             'provider_physical_network': 'physnet',
             'provider_segmentation_id': '456',
-            'qos_policy_name': 'test-qos-policy',
+            'qos_policy_ref': {
+                'name': 'test-qos-policy',
+                'project_name': 'test-project',
+                'domain_name': 'Default',
+            },
             'segments': [],
         },
         const.RES_INFO: {
@@ -76,12 +80,12 @@ def serialized_network():
 
 def network_refs():
     return {
-        'project_id': 'uuid-test-project',
-        'project_name': 'test-project',
         'qos_policy_id': 'uuid-test-qos-policy',
-        'qos_policy_name': 'test-qos-policy',
-        'subnet_ids': ['uuid-test-subnet1', 'uuid-test-subnet2'],
-        'subnet_names': ['test-subnet1', 'test-subnet2'],
+        'qos_policy_ref': {
+            'name': 'test-qos-policy',
+            'project_name': 'test-project',
+            'domain_name': 'Default',
+        },
     }
 
 
@@ -119,7 +123,7 @@ class TestNetwork(unittest.TestCase):
         self.assertEqual(params['provider_network_type'], 'vxlan')
         self.assertEqual(params['provider_physical_network'], 'physnet')
         self.assertEqual(params['provider_segmentation_id'], '456')
-        self.assertEqual(params['qos_policy_name'], 'test-qos-policy')
+        self.assertEqual(params['qos_policy_ref']['name'], 'test-qos-policy')
         self.assertEqual(params['segments'], [])
 
         self.assertEqual(info['availability_zones'], ['nova', 'zone3'])

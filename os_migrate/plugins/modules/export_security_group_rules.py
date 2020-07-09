@@ -107,20 +107,14 @@ def run_module():
 
     sdk, conn = openstack_cloud_from_module(module)
     sdk_sec = conn.network.find_security_group(module.params['name'], ignore_missing=False)
+    sdk_rules = conn.network.security_group_rules(security_group_id=sdk_sec['id'])
 
     result['changed'] = False
 
-    for rule in sdk_sec['security_group_rules']:
-        # In this particular case we are creating a SecurityGroupRule
-        # object parsed from the rule dictionary.
-        # We check that serialize_security_group_rule receives
-        # an openstack.network.v2.security_group_rule.SecurityGroupRule
-        sec_rule_obj = sdk.network.v2.security_group_rule.SecurityGroupRule(**rule)
-        # sec_refs = security_group_rule.security_group_rule_refs_from_sdk(conn, sec_rule_obj)
-        # ser_sec = security_group_rule.serialize_security_group_rule(sec_rule_obj, sec_refs)
-        ser_sec = security_group_rule.SecurityGroupRule.from_sdk(conn, sec_rule_obj)
+    for sdk_rule in sdk_rules:
+        ser_rule = security_group_rule.SecurityGroupRule.from_sdk(conn, sdk_rule)
 
-        rchanged = filesystem.write_or_replace_resource(module.params['path'], ser_sec)
+        rchanged = filesystem.write_or_replace_resource(module.params['path'], ser_rule)
         if rchanged:
             result['changed'] = True
 

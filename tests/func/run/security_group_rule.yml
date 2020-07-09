@@ -21,7 +21,7 @@
   assert:
     that:
       - (security_group_rule_resources |
-        json_query("[?params.security_group_name ==
+        json_query("[?params.security_group_ref.name ==
         'osm_security_group'].params.protocol")
         == ['tcp'])
 

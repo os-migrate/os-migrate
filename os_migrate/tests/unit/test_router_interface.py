@@ -54,21 +54,33 @@ def sdk_router_interface():
 def router_interface_refs():
     return {
         'device_id': 'uuid-test-router',
-        'device_name': 'test-router',
+        'device_ref': {
+            'name': 'test-router',
+            'project_name': 'test-project',
+            'domain_name': 'Default',
+        },
         'fixed_ips': [
             {
                 'subnet_id': 'uuid-test-subnet',
                 'ip_address': '192.168.0.10',
             },
         ],
-        'fixed_ips_names': [
+        'fixed_ips_refs': [
             {
-                'subnet_id': 'test-subnet',
+                'subnet_ref': {
+                    'name': 'test-subnet',
+                    'project_name': 'test-project',
+                    'domain_name': 'Default',
+                },
                 'ip_address': '192.168.0.10',
             },
         ],
         'network_id': 'uuid-test-net',
-        'network_name': 'test-net',
+        'network_ref': {
+            'name': 'test-net',
+            'project_name': 'test-project',
+            'domain_name': 'Default',
+        },
     }
 
 
@@ -91,14 +103,18 @@ class TestRouterInterface(unittest.TestCase):
         params, info = rtr.params_and_info()
 
         self.assertEqual(rtr.type(), 'openstack.network.RouterInterface')
-        self.assertEqual(params['device_name'], 'test-router')
+        self.assertEqual(params['device_ref']['name'], 'test-router')
         self.assertEqual(params['device_owner'], 'network:router_interface')
-        self.assertEqual(params['fixed_ips_names'], [
+        self.assertEqual(params['fixed_ips_refs'], [
             {
-                'subnet_id': 'test-subnet',
+                'subnet_ref': {
+                    'name': 'test-subnet',
+                    'project_name': 'test-project',
+                    'domain_name': 'Default',
+                },
                 'ip_address': '192.168.0.10',
             },
         ])
-        self.assertEqual(params['network_name'], 'test-net')
+        self.assertEqual(params['network_ref']['name'], 'test-net')
 
         self.assertEqual(info['id'], 'uuid-test-router-interface')
