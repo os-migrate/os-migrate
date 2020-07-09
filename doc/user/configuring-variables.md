@@ -24,8 +24,8 @@ conversion hosts.
 
 The parameters to be configured are:
 
-* os_migrate_src_conversion_external_network_name
-* os_migrate_dst_conversion_external_network_name
+* `os_migrate_src_conversion_external_network_name`
+* `os_migrate_dst_conversion_external_network_name`
 
 Usually, these parameters can be configured to 'public' or
 'external_network' but it depends on how they were configured
@@ -39,8 +39,8 @@ to have at least a volume with 20GB.
 
 The parameters to be configured are:
 
-* os_migrate_src_conversion_flavor_name
-* os_migrate_dst_conversion_flavor_name
+* `os_migrate_src_conversion_flavor_name`
+* `os_migrate_dst_conversion_flavor_name`
 
 Usually, 'm1.medium' will suffice this requirement, but again,
 it can be different between deployments.
@@ -52,8 +52,8 @@ instances migrations.
 
 The parameters to be configured are:
 
-* os_migrate_src_conversion_image_name
-* os_migrate_dst_conversion_image_name
+* `os_migrate_src_conversion_image_name`
+* `os_migrate_dst_conversion_image_name`
 
 This image must be pre-uploaded to both tenants/projects prior to
 executing the os-migrate playbooks.
