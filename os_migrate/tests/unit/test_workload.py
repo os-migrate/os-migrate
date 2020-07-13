@@ -37,28 +37,27 @@ def sdk_server():
 
 def server_refs():
     return {
-        'addresses': {
-            'external_network': [
-                {'OS-EXT-IPS-MAC:mac_addr': 'fa:16:3e:d7:ae:16',
-                 'OS-EXT-IPS:type': 'fixed',
-                 'addr': '10.19.2.50',
-                 'version': 4},
-            ],
+        'flavor_id': 'uuid-flavor-m1.small',
+        'flavor_ref': {
+            'name': 'm1.small',
+            'project_name': 'test-project',
+            'domain_name': 'Default',
         },
-        'flavor': {
-            'id': 'a96b2815-3525-4eea-9ab4-14ba58e17835',
-            'links': {
-                'href': 'http://test-server:13774/flavors/a96b2815-3525-4eea-9ab4-14ba58e17835',
-                'rel': 'bookmark',
+        'security_group_ids': [
+            'uuid-secgroup-default',
+            'uuid-secgroup-testing123',
+        ],
+        'security_group_refs': [
+            {
+                'name': 'default',
+                'project_name': 'test-project',
+                'domain_name': 'Default',
             },
-        },
-        'id': 'uuid-test-server',
-        'name': 'test-server',
-        'status': 'ACTIVE',
-        'flavor_name': 'm1.small',
-        'security_group_names': [
-            'testing123',
-            'default',
+            {
+                'name': 'testing123',
+                'project_name': 'test-project',
+                'domain_name': 'Default',
+            },
         ],
     }
 
@@ -89,8 +88,6 @@ class TestServer(unittest.TestCase):
         self.assertEqual(info['id'], 'uuid-test-server')
         self.assertEqual(params['name'], 'test-server')
         self.assertEqual(info['status'], 'ACTIVE')
-        self.assertEqual(params['flavor_name'], 'm1.small')
-        self.assertEqual(params['security_group_names'], [
-            'testing123',
-            'default',
-        ])
+        self.assertEqual(params['flavor_ref']['name'], 'm1.small')
+        self.assertEqual(params['security_group_refs'][0]['name'], 'default')
+        self.assertEqual(params['security_group_refs'][1]['name'], 'testing123')

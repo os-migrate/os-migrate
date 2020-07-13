@@ -175,28 +175,30 @@ def segment_ref(conn, id_, required=True):
     return _fetch_ref(conn, conn.network.find_segment, id_, required)
 
 
-def server_flavor_name(conn, id_, required=True):
-    """Fetch name of server flavor identified by ID `id_`. Use OpenStack
-    SDK connection `conn` to fetch the info. If `required`, ensure the
-    fetch is successful.
-
-    Returns: the name, or None if not found and not `required`
-
-    Raises: openstack's ResourceNotFound when `required` but not found
-    """
-    return _fetch_name(conn.compute.find_flavor, id_, required)
-
-
-def server_flavor_id(conn, name, required=True, filters=None):
-    """Fetch ID of server flavor identified by name `name`. Use OpenStack
-    SDK connection `conn` to fetch the info. If `required`, ensure the
-    fetch is successful.
+def flavor_id(conn, ref, required=True):
+    """Fetch ID of Flavor identified by reference dict `ref`. Use
+    OpenStack SDK connection `conn` to fetch the info. If `required`,
+    ensure the fetch is successful.
 
     Returns: the ID, or None if not found and not `required`
 
     Raises: openstack's ResourceNotFound when `required` but not found
     """
-    return _fetch_id_simple(conn.compute.find_flavor, name, required, filters)
+    return _fetch_id(conn, conn.compute.find_flavor, ref, required)
+
+
+def flavor_ref(conn, id_, required=True):
+    """Create reference dict for Flavor identified by ID `id_`. Use
+    OpenStack SDK connection `conn` to fetch the info. If `required`,
+    ensure the fetch is successful.
+
+    Returns: the ref dict, or None if not found and not `required`
+
+    Raises: openstack's ResourceNotFound when `required` but not found
+    """
+    # Flavor objects don't have project_id and domain_id on them
+    return _fetch_ref(
+        conn, conn.compute.find_flavor, id_, required, get_project_info=False)
 
 
 def subnet_pool_id(conn, ref, required=True):
@@ -223,31 +225,7 @@ def subnet_pool_ref(conn, id_, required=True):
     return _fetch_ref(conn, conn.network.find_subnet_pool, id_, required)
 
 
-def _fetch_name(get_method, id_, required=True):
-    """Use `get_method` to fetch an OpenStack SDK resource by `id_` and
-    return its name. If `required`, ensure the fetch is successful.
-
-    Returns: the ID, or None if not found and not `required`
-
-    Raises: openstack's ResourceNotFound when `required` but not found
-    """
-    if id_ is not None:
-        return get_method(id_, ignore_missing=not required)['name']
-
-
-def _fetch_id_simple(get_method, name, required=True, filters=None):
-    """Use `get_method` to fetch an OpenStack SDK resource by `name` and
-    return its ID. If `required`, ensure the fetch is successful.
-
-    Returns: the ID, or None if not found and not `required`
-
-    Raises: openstack's ResourceNotFound when `required` but not found
-    """
-    if name is not None:
-        return get_method(name, ignore_missing=not required, **(filters or {}))['id']
-
-
-def _fetch_ref(conn, get_method, id_, required=True):
+def _fetch_ref(conn, get_method, id_, required=True, get_project_info=True):
     if id_ is None:
         return None
 
@@ -255,7 +233,10 @@ def _fetch_ref(conn, get_method, id_, required=True):
     if resource is None:
         return None
 
-    project_name, domain_name = _fetch_project_name_and_domain_name(conn, resource.project_id)
+    if get_project_info:
+        project_name, domain_name = _fetch_project_name_and_domain_name(conn, resource.project_id)
+    else:
+        project_name, domain_name = None, None
     return {
         'name': resource['name'],
         'project_name': project_name,

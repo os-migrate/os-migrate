@@ -245,20 +245,20 @@ def run_module():
     boot_volume_id = module.params['boot_volume_id']
 
     src = server.Server.from_data(module.params['data'])
-    params, info = src.params_and_info()
+    sdk_params = src.sdk_params(conn)
 
     networks = []
-    addresses = params['addresses']
+    addresses = sdk_params['addresses']
     for network, portlist in addresses.items():
         count = len(portlist)  # Match network count without MAC addresses
         networks.extend(count * [network])
 
     srv = conn.create_server(
-        name=params['name'],
-        flavor=params['flavor_name'],
+        name=sdk_params['name'],
+        flavor=sdk_params['flavor_id'],
         boot_volume=boot_volume_id,
         block_device_mapping_v2=block_device_mapping,
-        security_groups=params['security_group_names'],
+        security_groups=sdk_params['security_group_ids'],
         network=networks
     )
 
