@@ -1,0 +1,11 @@
+- name: noop
+  debug: msg="we might need to do some RHSM stuff here"
+
+- name: install content
+  yum:
+    name:
+      - nbdkit
+      - nbdkit-basic-plugins
+      - qemu-img
+      - libguestfs-tools
+    state: present

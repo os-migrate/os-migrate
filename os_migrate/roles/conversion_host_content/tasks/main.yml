@@ -1,0 +1,18 @@
+- name: display host os
+  debug: msg="Conversion Host OS is {{ ansible_distribution }}."
+
+- name: install epel release for CentOS
+  yum:
+    name: epel-release
+    state: present
+  when: ansible_distribution in ['CentOS']
+
+- name: install content
+  yum:
+    name:
+      - nbdkit
+      - nbdkit-basic-plugins
+      - qemu-img
+      - libguestfs-tools
+    state: present
+  when: ansible_distribution in ['CentOS', 'RedHat']
