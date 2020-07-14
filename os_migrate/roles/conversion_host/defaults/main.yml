@@ -25,3 +25,5 @@ os_migrate_conversion_host_name: os_migrate_conv
 os_migrate_conversion_image_name: os_migrate_conv
 
 os_migrate_conversion_ssh_user: cloud-user
+
+os_migrate_conversion_host_content_install: true
