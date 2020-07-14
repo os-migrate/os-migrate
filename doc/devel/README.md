@@ -16,3 +16,6 @@ OS-Migrate Developer Documentation
 
 * [Releasing](releasing.md) - Procedure to release a new version of OS
   Migrate to Ansible Galaxy.
+
+* [Contributing](contributing.md) - Guide for developers to contribute code or
+  documentation to the project.
