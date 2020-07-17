@@ -313,7 +313,7 @@ class OpenStackHostBase():
 
 
 class RemoteShell():
-    def __init__(self, address, key_path=None, username='cloud-user'):
+    def __init__(self, address, key_path=None, username='centos'):
         self.address = address
         self.key_path = key_path
         self.username = username
