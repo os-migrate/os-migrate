@@ -52,3 +52,21 @@
         name: os_migrate.os_migrate.conversion_host
         tasks_from: link_insert_private_key.yml
       when: os_migrate_link_conversion_hosts|default(true)|bool
+
+- hosts: os_migrate_conv_src
+  tasks:
+    - include_role:
+        name: os_migrate.os_migrate.conversion_host_content
+      when: os_migrate_conversion_host_content_install|default(true)|bool
+  vars:
+    ansible_become_user: root
+    ansible_become: true
+
+- hosts: os_migrate_conv_dst
+  tasks:
+    - include_role:
+        name: os_migrate.os_migrate.conversion_host_content
+      when: os_migrate_conversion_host_content_install|default(true)|bool
+  vars:
+    ansible_become_user: root
+    ansible_become: true
