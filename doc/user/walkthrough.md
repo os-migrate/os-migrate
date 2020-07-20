@@ -20,7 +20,7 @@ performed without a hardware refresh, but extra hardware resources are needed to
 bootstrap the new cluster. As hardware resources free up in the original
 cluster, they can be gradually added to the new cluster.
 
-![OSP-OSP Migration Overview](https://raw.githubusercontent.com/os-migrate/os-migrate/master/media/walkthrough/2020-06-24-osp-migrate-fig1.png?sanitize=true)
+![OSP-OSP Migration Overview](https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig1.png?sanitize=true)
 
 [OS-Migrate](https://github.com/os-migrate/os-migrate) is an open source project that provides a framework for exporting and
 importing resources between two clouds. It’s a collection of Ansible playbooks
@@ -97,9 +97,9 @@ import the networks from this file into the destination cloud.
 You can repeat this process for routers, router interfaces, security groups,
 security group rules, and subnets.
 
-![Pre-workload Migration (data flow)](https://raw.githubusercontent.com/os-migrate/os-migrate/master/media/walkthrough/2020-06-24-osp-migrate-fig2.png?raw=true)
+![Pre-workload Migration (data flow)](https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig2.png?raw=true)
 
-![Pre-workload Migration (workflow)](https://raw.githubusercontent.com/os-migrate/os-migrate/master/media/walkthrough/2020-06-24-osp-migrate-fig3.png?raw=true)
+![Pre-workload Migration (workflow)](https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig3.png?raw=true)
 
 [![Watch the video](https://img.youtube.com/vi/e7KXy5Hq4CM/maxresdefault.jpg)](https://youtu.be/e7KXy5Hq4CMA)
 
@@ -145,7 +145,7 @@ Process Summary
 This flowchart illustrates the high-level migration workflow, from a user’s
 point of view:
 
-![alt text](https://raw.githubusercontent.com/os-migrate/os-migrate/master/media/walkthrough/2020-06-24-osp-migrate-fig4.png?raw=true)
+![alt text](https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig4.png?raw=true)
 
 The process involves the deployment of a "Universal Conversion Host" on source
 and destination clouds. A UCH is an OpenStack instance booted from the
@@ -158,7 +158,7 @@ appliance has not been finalized, but the final process will work the same way.
 The following diagram helps explain the need for a conversion host VM:
 
 
-![Workload migration (data flow)](https://raw.githubusercontent.com/os-migrate/os-migrate/master/media/walkthrough/2020-06-24-osp-migrate-fig5.png?raw=true)
+![Workload migration (data flow)](https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig5.png?raw=true)
 
 This shows that volumes on the source and destination clouds are removed from
 their original VMs and attached to their respective UCH, and then transferred
