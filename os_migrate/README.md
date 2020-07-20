@@ -1,7 +1,7 @@
 <h1 align="center">
   <br>
   <a href="http://github.com/os-migrate/os-migrate">
-    <img src="https://raw.githubusercontent.com/os-migrate/os-migrate/master/media/logo.svg?sanitize=true" alt="OS migrate" width="200">
+    <img src="https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/logo.svg?sanitize=true" alt="OS migrate" width="200">
   </a>
   <br>
   OS migrate
@@ -40,8 +40,8 @@ the same command.
 
 ## Usage
 
-Refer to [user docs](https://github.com/os-migrate/os-migrate/blob/master/doc/user/README.md).
+Refer to [user docs](https://github.com/os-migrate/os-migrate/blob/main/doc/user/README.md).
 
 ## Development
 
-Refer to [developer docs](https://github.com/os-migrate/os-migrate/blob/master/doc/devel/README.md).
+Refer to [developer docs](https://github.com/os-migrate/os-migrate/blob/main/doc/devel/README.md).
