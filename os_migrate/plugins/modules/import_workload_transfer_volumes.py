@@ -82,6 +82,12 @@ options:
       - Path to an SSH private key authorized on the destination cloud.
     required: true
     type: str
+  ssh_user:
+    description:
+      - The SSH user to connect to the conversion hosts.
+      - Provided by the import_workloads_export_volumes module.
+    required: true
+    type: str
   state_file:
     description:
       - Path to store a transfer progress file for this conversion process.
@@ -215,6 +221,7 @@ workload.yml:
       conversion_host:
         "{{ os_dst_conversion_host_info.openstack_conversion_host }}"
       ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
+      ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
       transfer_uuid: "{{ exports.transfer_uuid }}"
       src_conversion_host_address:
         "{{ os_src_conversion_host_info.openstack_conversion_host.address }}"
@@ -288,7 +295,7 @@ import time
 
 class OpenStackDestinationHost(OpenStackHostBase):
     def __init__(self, openstack_connection, destination_conversion_host_id,
-                 ssh_key_path, transfer_uuid, source_conversion_host_address,
+                 ssh_key_path, ssh_user, transfer_uuid, source_conversion_host_address,
                  volume_map, destination_conversion_host_address=None,
                  state_file=None, log_file=None):
 
@@ -296,6 +303,7 @@ class OpenStackDestinationHost(OpenStackHostBase):
             openstack_connection,
             destination_conversion_host_id,
             ssh_key_path,
+            ssh_user,
             transfer_uuid,
             conversion_host_address=destination_conversion_host_address,
             state_file=state_file,
@@ -335,7 +343,7 @@ class OpenStackDestinationHost(OpenStackHostBase):
         # It is expected that key authorization has already been set up from
         # the destination conversion host to the source conversion host!
         source_shell = RemoteShell(self.source_conversion_host_address,
-                                   username=self.shell.username)
+                                   ssh_user=self.shell.ssh_user)
         forward_ports = ['-N', '-T']
         for path, mapping in self.volume_map.items():
             port = self._find_free_port()
@@ -526,6 +534,7 @@ def run_module():
         data=dict(type='dict', required=True),
         conversion_host=dict(type='dict', required=True),
         ssh_key_path=dict(type='str', required=True),
+        ssh_user=dict(type='str', required=True),
         transfer_uuid=dict(type='str', required=True),
         src_conversion_host_address=dict(type='str', required=True),
         volume_map=dict(type='dict', required=True),
@@ -549,6 +558,7 @@ def run_module():
     # Required parameters
     destination_conversion_host_id = module.params['conversion_host']['id']
     ssh_key_path = module.params['ssh_key_path']
+    ssh_user = module.params['ssh_user']
     transfer_uuid = module.params['transfer_uuid']
     source_conversion_host_address = \
         module.params['src_conversion_host_address']
@@ -564,6 +574,7 @@ def run_module():
         conn,
         destination_conversion_host_id,
         ssh_key_path,
+        ssh_user,
         transfer_uuid,
         source_conversion_host_address,
         volume_map,

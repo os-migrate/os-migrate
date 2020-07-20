@@ -66,16 +66,18 @@ def use_lock(lock_file):
 
 class OpenStackHostBase():
     def __init__(self, openstack_connection, conversion_host_id, ssh_key_path,
-                 transfer_uuid, conversion_host_address=None, state_file=None,
-                 log_file=None):
+                 ssh_user, transfer_uuid, conversion_host_address=None,
+                 state_file=None, log_file=None):
         # Required common parameters:
         # openstack_connection: OpenStack connection object
         # conversion_host_id: ID of conversion host instance
         # ssh_key_path: Path to SSH key authorized on conversion host
+        # ssh_user: Username to create the SSH connection
         # transfer_uuid: UUID to mark processes on conversion hosts
         self.conn = openstack_connection
         self.conversion_host_id = conversion_host_id
         self.ssh_key_path = ssh_key_path
+        self.ssh_user = ssh_user
         self.transfer_uuid = transfer_uuid
 
         # Optional parameters:
@@ -102,7 +104,7 @@ class OpenStackHostBase():
             raise RuntimeError('Cannot find instance {0}'.format(
                                self.conversion_host_id))
 
-        self.shell = RemoteShell(self._converter_address(), ssh_key_path)
+        self.shell = RemoteShell(self._converter_address(), ssh_user, ssh_key_path)
         self.shell.test_ssh_connection()
 
         # Ports chosen for NBD export
@@ -313,10 +315,10 @@ class OpenStackHostBase():
 
 
 class RemoteShell():
-    def __init__(self, address, key_path=None, username='centos'):
+    def __init__(self, address, ssh_user, key_path=None):
         self.address = address
+        self.ssh_user = ssh_user
         self.key_path = key_path
-        self.username = username
 
     def _default_options(self):
         options = [
@@ -332,7 +334,7 @@ class RemoteShell():
         """ Common options to SSH into a conversion host. """
         preamble = ['ssh']
         preamble.extend(self._default_options())
-        preamble.extend([self.username + '@' + self.address])
+        preamble.extend([self.ssh_user + '@' + self.address])
         return preamble
 
     def cmd_out(self, command, **kwargs):
@@ -357,7 +359,7 @@ class RemoteShell():
         """ Copy a file to the target conversion host. """
         command = ['scp']
         command.extend(self._default_options())
-        remote_path = self.username + '@' + self.address + ':' + destination
+        remote_path = self.ssh_user + '@' + self.address + ':' + destination
         command.extend([source, remote_path])
         return subprocess.call(command)
 
@@ -367,7 +369,7 @@ class RemoteShell():
         command.extend(self._default_options())
         if recursive:
             command.extend(['-r'])
-        remote_path = self.username + '@' + self.address + ':' + source
+        remote_path = self.ssh_user + '@' + self.address + ':' + source
         command.extend([remote_path, destination])
         return subprocess.call(command)
 

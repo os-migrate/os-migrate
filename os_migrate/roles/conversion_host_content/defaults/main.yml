@@ -1,0 +1,3 @@
+os_migrate_conversion_host_content_install: true
+#os_migrate_conversion_host_content_rhsm_user: username
+#os_migrate_conversion_host_content_rhsm_password: password
