@@ -87,6 +87,11 @@ options:
       - Path to an SSH private key authorized on the source cloud.
     required: true
     type: str
+  ssh_user:
+    description:
+      - The SSH user to connect to the conversion hosts.
+    required: true
+    type: str
   transfer_uuid:
     description:
       - A UUID used to keep track of this tranfer's resources on the conversion hosts.
@@ -231,6 +236,7 @@ workload.yml:
       conversion_host:
         "{{ os_src_conversion_host_info.openstack_conversion_host }}"
       ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
+      ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
       transfer_uuid: "{{ exports.transfer_uuid }}"
       volume_map: "{{ exports.volume_map }}"
       state_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.state"
@@ -262,14 +268,15 @@ class OpenStackSourceHostCleanup(OpenStackHostBase):
     """ Removes temporary migration volumes and snapshots from source cloud. """
 
     def __init__(self, openstack_connection, source_conversion_host_id,
-                 ssh_key_path, source_instance_id, transfer_uuid, volume_map,
-                 source_conversion_host_address=None, state_file=None,
+                 ssh_key_path, ssh_user, source_instance_id, transfer_uuid,
+                 volume_map, source_conversion_host_address=None, state_file=None,
                  log_file=None):
 
         super(OpenStackSourceHostCleanup, self).__init__(
             openstack_connection,
             source_conversion_host_id,
             ssh_key_path,
+            ssh_user,
             transfer_uuid,
             conversion_host_address=source_conversion_host_address,
             state_file=state_file,
@@ -394,6 +401,7 @@ def run_module():
         data=dict(type='dict', required=True),
         conversion_host=dict(type='dict', required=True),
         ssh_key_path=dict(type='str', required=True),
+        ssh_user=dict(type='str', required=True),
         transfer_uuid=dict(type='str', required=True),
         volume_map=dict(type='dict', required=True),
         src_conversion_host_address=dict(type='str', default=None),
@@ -416,6 +424,7 @@ def run_module():
     # Required parameters
     source_conversion_host_id = module.params['conversion_host']['id']
     ssh_key_path = module.params['ssh_key_path']
+    ssh_user = module.params['ssh_user']
     source_instance_id = info['id']
     transfer_uuid = module.params['transfer_uuid']
     volume_map = module.params['volume_map']
@@ -430,6 +439,7 @@ def run_module():
         conn,
         source_conversion_host_id,
         ssh_key_path,
+        ssh_user,
         source_instance_id,
         transfer_uuid,
         volume_map,

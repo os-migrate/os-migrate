@@ -87,6 +87,11 @@ options:
       - Path to an SSH private key authorized on the source cloud.
     required: true
     type: str
+  ssh_user:
+    description:
+      - The SSH user to connect to the conversion hosts.
+    required: true
+    type: str
 '''
 
 EXAMPLES = '''
@@ -181,6 +186,7 @@ workload.yml:
       log_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.log"
       state_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.state"
       ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
+      ssh_user: "{{ os_migrate_conversion_host_ssh_user  }}"
     register: volume_map
     when: prelim.changed
 
@@ -239,7 +245,7 @@ class OpenStackSourceHost(OpenStackHostBase):
     """ Export volumes from an OpenStack instance over NBD. """
 
     def __init__(self, openstack_connection, source_conversion_host_id,
-                 ssh_key_path, source_instance_id, state_file=None,
+                 ssh_key_path, ssh_user, source_instance_id, state_file=None,
                  log_file=None, source_conversion_host_address=None):
         # UUID marker for child processes on conversion hosts.
         transfer_uuid = str(uuid.uuid4())
@@ -248,6 +254,7 @@ class OpenStackSourceHost(OpenStackHostBase):
             openstack_connection,
             source_conversion_host_id,
             ssh_key_path,
+            ssh_user,
             transfer_uuid,
             conversion_host_address=source_conversion_host_address,
             state_file=state_file,
@@ -473,6 +480,7 @@ def run_module():
         data=dict(type='dict', required=True),
         conversion_host=dict(type='dict', required=True),
         ssh_key_path=dict(type='str', required=True),
+        ssh_user=dict(type='str', required=True),
         src_conversion_host_address=dict(type='str', default=None),
         state_file=dict(type='str', default=None),
         log_file=dict(type='str', default=None),
@@ -493,6 +501,7 @@ def run_module():
     # Required parameters
     source_conversion_host_id = module.params['conversion_host']['id']
     ssh_key_path = module.params['ssh_key_path']
+    ssh_user = module.params['ssh_user']
     source_instance_id = info['id']
 
     # Optional parameters
@@ -505,6 +514,7 @@ def run_module():
         conn,
         source_conversion_host_id,
         ssh_key_path,
+        ssh_user,
         source_instance_id,
         source_conversion_host_address=source_conversion_host_address,
         state_file=state_file,
