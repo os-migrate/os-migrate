@@ -6,7 +6,9 @@
     # though OpenStack supports it.
     # description: osm_net test network
     state: present
-    mtu: 1400
+    mtu: "{{
+      omit if os_migrate_src_release == 10
+      else 1400 }}"
     validate_certs: "{{ item.validate_certs }}"
     ca_cert: "{{ item.ca_cert }}"
     client_cert: "{{ item.client_cert }}"

@@ -3,7 +3,13 @@
 # os_migrate_conversion_flavor_name
 
 os_migrate_conversion_net_name: os_migrate_conv
-os_migrate_conversion_net_mtu: 1400
+
+os_migrate_src_conversion_net_mtu: "{{
+  1400 if os_migrate_src_release > 10
+  else omit }}"
+os_migrate_dst_conversion_net_mtu: "{{
+  1400 if os_migrate_dst_release > 10
+  else omit }}"
 
 os_migrate_conversion_subnet_name: os_migrate_conv
 os_migrate_conversion_subnet_cidr: 192.168.10.0/24
