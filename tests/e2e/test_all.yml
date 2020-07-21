@@ -5,27 +5,3 @@
 
 - name: Make sure conversion hosts are cleaned up
   import_playbook: "{{ lookup('env', 'OS_MIGRATE') }}/playbooks/delete_conversion_hosts.yml"
-
-- name: Deploy conversion hosts
-  import_playbook: "{{ lookup('env', 'OS_MIGRATE') }}/playbooks/deploy_conversion_hosts.yml"
-
-- name: Migration tests
-  hosts: migrator
-  tasks:
-    - include_tasks: clean.yml
-      args:
-        apply:
-          tags: test_clean_before
-      tags: always
-    - import_tasks: seed.yml
-    - import_tasks: run.yml
-    - include_tasks: clean.yml
-      args:
-        apply:
-          tags: test_clean_after
-      tags: always
-  tags:
-    - test_migration
-
-- name: Delete conversion hosts
-  import_playbook: "{{ lookup('env', 'OS_MIGRATE') }}/playbooks/delete_conversion_hosts.yml"
