@@ -273,6 +273,34 @@ VMware-vix-disklib-6.5.2-6195444.x86_64.tar.gz                                  
 - [[1] Universal Conversion Image](https://releases.manageiq.org/v2v-conversion-host-appliance-devel.qc2)
 - [[2] VMware vSphere Virtual Disk Development Kit](https://my.vmware.com/web/vmware/details?downloadGroup=VDDK652&productId=614)
 
+Authentication
+--------------
+
+Users are encouraged to use os-migrate using specific credentials for
+each project/tenant, this means not using the admin user to execute the
+resources migration.
+In the case that a user is required to use the admin credentials
+this `admin` user needs to have access to the tenant resources, otherwise
+you will hit an error similar to the following:
+
+```bash
+keystoneauth1.exceptions.http.Unauthorized: The request you have made requires authentication. (HTTP 401)
+```
+
+To pass this error there are some options.
+
+* Add the `admin` user as a `_member_` of each project.
+
+Depending on how many projects need to be migrated this approach
+seems to be suboptimal as there are involved several configuration
+updates in the projects that will need to be reverted after the
+migration completes.
+
+* Create a group including the admin user and add the group to each project as member.
+
+The difference with this approach is that once the migration is completed, by
+removing the group, all the references in all the projects will be removed automatically.
+
 Migration
 ---------
 
@@ -301,11 +329,38 @@ os_migrate_dst_auth:
         username: migration-destination-user
         password: migrate
         project_domain_id: default
-        Project_name: migration-destination-project
+        project_name: migration-destination-project
         user_domain_id: default
 os_migrate_dst_validate_certs: False
 os_migrate_dst_conversion_host: destination-conversion-host
 ```
+
+As depicted in content of the previously defined `os-migrate-vars.yml` file.
+The parameters `os_migrate_src_auth` and `os_migrate_dst_auth` refer to the
+usage of Keystone v3. In the case of a user needing to execute a migration
+between tenants not supporting Keystone v3 the following error will raise.
+
+```bash
+keystoneauth1.exceptions.discovery.DiscoveryFailure: Cannot use v2 authentication with domain scope
+```
+
+To fix this issue, the user must adjust their clouds.yaml file before executing the
+`auth-from-clouds.sh` script to something similar to the following auth code.
+
+```yaml
+clouds:
+  src10:
+    auth:
+      auth_url: http://192.168.55.53:5000/v2.0
+      password: migrate
+      project_name: src
+      username: migration-source-user
+    region_name: regionOne
+    verify: False
+```
+
+Notice that the parameters `project_domain_id` and `user_domain_id` do not
+exist and the `auth_url` parameter points to the Keystone v2 endpoint.
 
 If not already exported, export workload information with the export_workloads
 playbook. Each instance listed in the resulting workloads.yml will be migrated,
