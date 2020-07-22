@@ -160,7 +160,7 @@
         dest: "{{ os_migrate_data_dir }}/routers.yml"
         regexp: 'availability_zone_hints'
         state: absent
-      when: os_migrate_dst_version == 16
+      when: os_migrate_dst_release == 16
 
     - include_role:
         name: os_migrate.os_migrate.import_routers
