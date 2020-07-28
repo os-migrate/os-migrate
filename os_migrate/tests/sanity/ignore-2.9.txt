@@ -24,3 +24,5 @@ plugins/modules/os_routers_info.py validate-modules:missing-gplv3-license
 plugins/modules/os_security_groups_info.py validate-modules:missing-gplv3-license
 plugins/modules/read_resources.py validate-modules:missing-gplv3-license
 plugins/modules/validate_resource_files.py validate-modules:missing-gplv3-license
+plugins/modules/export_flavor.py validate-modules:missing-gplv3-license
+plugins/modules/import_flavor.py validate-modules:missing-gplv3-license
