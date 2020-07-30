@@ -1,0 +1,18 @@
+- include_role:
+    name: os_migrate.os_migrate.export_keypairs
+
+- name: load exported data
+  set_fact:
+    keypair_resources: "{{ (lookup('file',
+                                  os_migrate_data_dir +
+                                  '/keypairs.yml') | from_yaml)
+                   ['resources'] }}"
+
+- name: verify data contents
+  assert:
+    that:
+      - (keypair_resources | json_query("[?params.name ==
+                            'osm_keypair']._info.type") == ['ssh'])
+
+- include_role:
+    name: os_migrate.os_migrate.import_keypairs

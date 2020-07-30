@@ -45,3 +45,11 @@
       tags:
         - test_image
   tags: always
+
+- name: Include keypair tasks
+  include_tasks: keypair.yml
+  args:
+    apply:
+      tags:
+        - test_keypair
+  tags: always
