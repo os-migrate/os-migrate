@@ -225,6 +225,29 @@ def subnet_pool_ref(conn, id_, required=True):
     return _fetch_ref(conn, conn.network.find_subnet_pool, id_, required)
 
 
+def user_id(conn, ref, required=True):
+    """Fetch ID of Network identified by reference dict `ref`. Use
+    OpenStack SDK connection `conn` to fetch the info. If `required`,
+    ensure the fetch is successful.
+
+    Returns: the ID, or None if not found and not `required`
+
+    Raises: openstack's ResourceNotFound when `required` but not found
+    """
+    return _fetch_id(conn, conn.compute.find_network, ref, required)
+
+
+def user_ref(conn, id_, required=True):
+    """Create reference dict for Network identified by ID `id_`. Use
+    OpenStack SDK connection `conn` to fetch the info. If `required`,
+    ensure the fetch is successful.
+
+    Returns: the ref dict, or None if not found and not `required`
+
+    Raises: openstack's ResourceNotFound when `required` but not found
+    """
+    return _fetch_ref(conn, conn.network.find_network, id_, required)
+
 def _fetch_ref(conn, get_method, id_, required=True, get_project_info=True):
     if id_ is None:
         return None
