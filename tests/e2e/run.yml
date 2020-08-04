@@ -4,7 +4,6 @@
 # might be actually a more precise way to test the real end-user
 # experience.
 
-# Network tasks
 - name: Network tasks
   block:
     - include_role:
@@ -36,7 +35,6 @@
         name: os_migrate.os_migrate.import_networks
   tags: always
 
-# Subnet tasks
 - name: Subnet tasks
   block:
     - include_role:
@@ -68,7 +66,6 @@
         name: os_migrate.os_migrate.import_subnets
   tags: always
 
-# Security group tasks
 - name: Security group tasks
   block:
     - include_role:
@@ -97,7 +94,6 @@
         name: os_migrate.os_migrate.import_security_groups
   tags: always
 
-# Security group rules tasks
 - name: Security group rules tasks
   block:
     - include_role:
@@ -126,7 +122,6 @@
         name: os_migrate.os_migrate.import_security_group_rules
   tags: always
 
-# Router tasks
 - name: Router tasks
   block:
     - include_role:
@@ -166,7 +161,33 @@
         name: os_migrate.os_migrate.import_routers
   tags: always
 
-# Workloads tasks
+- name: Image tasks
+  block:
+    - include_role:
+        name: os_migrate.os_migrate.export_images
+      vars:
+        export_images_name_filter:
+          - regex: '^osm_'
+
+    - name: load exported data
+      set_fact:
+        resources: "{{ (lookup('file',
+                               os_migrate_data_dir +
+                               '/images.yml') | from_yaml)
+                       ['resources'] }}"
+
+    - name: verify data contents
+      assert:
+        that:
+          - (resources |
+            json_query("[?params.name ==
+            'osm_image'].params.min_ram")
+            == [128])
+
+    # - include_role:
+    #     name: os_migrate.os_migrate.import_images
+  tags: always
+
 - name: Workloads tasks
   block:
     - include_role:

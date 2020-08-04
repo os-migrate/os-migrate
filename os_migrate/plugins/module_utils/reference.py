@@ -4,6 +4,30 @@ __metaclass__ = type
 from openstack.exceptions import HttpException
 
 
+def image_id(conn, ref, required=True):
+    """Fetch ID of Image identified by reference dict `ref`. Use
+    OpenStack SDK connection `conn` to fetch the info. If `required`,
+    ensure the fetch is successful.
+
+    Returns: the ID, or None if not found and not `required`
+
+    Raises: openstack's ResourceNotFound when `required` but not found
+    """
+    return _fetch_id(conn, conn.image.find_image, ref, required)
+
+
+def image_ref(conn, id_, required=True):
+    """Create reference dict for Image identified by ID `id_`. Use
+    OpenStack SDK connection `conn` to fetch the info. If `required`,
+    ensure the fetch is successful.
+
+    Returns: the ref dict, or None if not found and not `required`
+
+    Raises: openstack's ResourceNotFound when `required` but not found
+    """
+    return _fetch_ref(conn, conn.image.find_image, id_, required)
+
+
 def network_id(conn, ref, required=True):
     """Fetch ID of Network identified by reference dict `ref`. Use
     OpenStack SDK connection `conn` to fetch the info. If `required`,

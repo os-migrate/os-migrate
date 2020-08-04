@@ -37,3 +37,11 @@
       tags:
         - test_router
   tags: always
+
+- name: Include image tasks
+  include_tasks: image.yml
+  args:
+    apply:
+      tags:
+        - test_image
+  tags: always

@@ -183,7 +183,7 @@ jobs:
           # Pre-requisite
           ENABLED_SERVICES=mysql,key
           # Neutron
-          ENABLED_SERVICES+=,q-svc,q-dhcp,q-meta,q-l3,q-agt
+          ENABLED_SERVICES+=,q-svc,q-dhcp,q-meta,q-l3,q-agt,g-api
           EOF
           cat local.conf
           sudo ./tools/create-stack-user.sh

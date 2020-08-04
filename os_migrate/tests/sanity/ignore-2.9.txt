@@ -1,4 +1,6 @@
 plugins/modules/auth_info.py validate-modules:missing-gplv3-license
+plugins/modules/export_image_blob.py validate-modules:missing-gplv3-license
+plugins/modules/export_image_meta.py validate-modules:missing-gplv3-license
 plugins/modules/export_network.py validate-modules:missing-gplv3-license
 plugins/modules/export_router.py validate-modules:missing-gplv3-license
 plugins/modules/export_router_interfaces.py validate-modules:missing-gplv3-license

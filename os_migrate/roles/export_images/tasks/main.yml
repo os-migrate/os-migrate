@@ -1,0 +1,60 @@
+- name: scan available images
+  os_image_info:
+    auth: "{{ os_migrate_src_auth }}"
+    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+  register: src_images_info
+
+# FIXME: os_image_info doesn't support os_migrate_src_filters, so
+# apply the filter somehow differently?
+
+- name: create id-name pairs of images to export
+  set_fact:
+    export_images_ids_names: "{{ (
+      src_images_info.openstack_image
+        | json_query('[*].{name: name, id: id}')
+        | sort(attribute='id') ) }}"
+
+- name: filter names of images to export
+  set_fact:
+    export_images_ids_names: "{{ (
+      export_images_ids_names
+        | os_migrate.os_migrate.stringfilter(export_images_name_filter,
+                                             attribute='name') ) }}"
+
+- name: export image metadata
+  os_migrate.os_migrate.export_image_meta:
+    auth: "{{ os_migrate_src_auth }}"
+    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+    path: "{{ os_migrate_data_dir }}/images.yml"
+    name: "{{ item['id'] }}"
+    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+  loop: "{{ export_images_ids_names }}"
+
+- name: make sure image blob dir exists
+  file:
+    path: "{{ os_migrate_image_blobs_dir }}"
+    state: directory
+  when: export_images_blobs
+
+- name: export image blobs
+  os_migrate.os_migrate.export_image_blob:
+    auth: "{{ os_migrate_src_auth }}"
+    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+    path: "{{ os_migrate_image_blobs_dir }}/{{ item['id'] }}-{{ item['name'] }}"
+    name: "{{ item['id'] }}"
+    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+  loop: "{{ export_images_ids_names }}"
+  when: export_images_blobs

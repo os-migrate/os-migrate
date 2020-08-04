@@ -7,6 +7,14 @@
     - always
     - test_prep
 
+- name: create os_migrate_tests_tmp_dir
+  file:
+    path: "{{ os_migrate_tests_tmp_dir }}"
+    state: directory
+  tags:
+    - always
+    - test_prep
+
 - name: create os_migrate_data_dir
   file:
     path: "{{ os_migrate_data_dir }}"

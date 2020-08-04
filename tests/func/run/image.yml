@@ -4,25 +4,25 @@
 # might be actually a more precise way to test the real end-user
 # experience.
 - include_role:
-    name: os_migrate.os_migrate.export_networks
+    name: os_migrate.os_migrate.export_images
   vars:
-    export_networks_name_filter:
+    export_images_name_filter:
       - regex: '^osm_'
 
 - name: load exported data
   set_fact:
-    network_resources: "{{ (lookup('file',
+    image_resources: "{{ (lookup('file',
                            os_migrate_data_dir +
-                           '/networks.yml') | from_yaml)
+                           '/images.yml') | from_yaml)
                    ['resources'] }}"
 
 - name: verify data contents
   assert:
     that:
-      - (network_resources |
+      - (image_resources |
         json_query("[?params.name ==
-        'osm_net'].params.name")
-        == ['osm_net'])
+        'osm_image'].params.min_ram")
+        == [128])
 
-- include_role:
-    name: os_migrate.os_migrate.import_networks
+# - include_role:
+#     name: os_migrate.os_migrate.import_images

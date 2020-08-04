@@ -63,12 +63,11 @@ test-func: reinstall
 	ansible-playbook \
 		-v \
 		-i $(ROOT_DIR)/os_migrate/localhost_inventory.yml \
-		-e os_migrate_data_dir=$(ROOT_DIR)/tests/func/tmpdata \
+		-e os_migrate_tests_tmp_dir=$(ROOT_DIR)/tests/func/tmp \
+		-e os_migrate_data_dir=$(ROOT_DIR)/tests/func/tmp/data \
 		-e @$(ROOT_DIR)/tests/auth.yml \
 		$(FUNC_TEST_ARGS) test_all.yml
 
-# FIXME: remove the parameters from here, put them in a file (like we
-# already have auth.yml).
 test-e2e: reinstall
 	set -euo pipefail; \
 	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
@@ -79,7 +78,8 @@ test-e2e: reinstall
 	ansible-playbook \
 		-v \
 		-i $(OS_MIGRATE)/localhost_inventory.yml \
-		-e os_migrate_data_dir=$(ROOT_DIR)/tests/func/tmpdata \
+		-e os_migrate_tests_tmp_dir=$(ROOT_DIR)/tests/func/tmp \
+		-e os_migrate_data_dir=$(ROOT_DIR)/tests/func/tmp/data \
 		-e os_migrate_conversion_host_key=$(ROOT_DIR)/tests/func/tmpdata/conversion/ssh.key \
                 -e @$(ROOT_DIR)/tests/e2e/scenario_variables.yml \
 		-e @$(ROOT_DIR)/tests/auth.yml \
