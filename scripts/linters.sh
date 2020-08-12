@@ -25,6 +25,7 @@ flake8 \
 # Bash hate
 find ./ \
      -not -wholename ".tox/*" \
+     -and -not -wholename "./local/*" \
      -and -not -wholename "*.test/*" \
      -and -name "*.sh" -print0 \
     | xargs -0 bashate -v --ignore E006
@@ -32,7 +33,8 @@ find ./ \
 #Yaml lint
 find ./ \
      -not -wholename ".tox/*" \
-     -and -not -wholename "./tests/func/tmpdata/*" \
+     -and -not -wholename "./local/*" \
+     -and -not -wholename "./tests/func/tmp/*" \
      -and -name "*.yml" -print0 \
     | xargs -0 -I {} yamllint -d '{
         extends: default,
@@ -46,6 +48,7 @@ find ./ \
 # Ansible lint
 find ./ \
      -not -wholename ".tox/*" \
-     -and -not -wholename "./tests/func/tmpdata/*" \
+     -and -not -wholename "./local/*" \
+     -and -not -wholename "./tests/func/tmp/*" \
      -and -name "*.yml" -print0 \
     | xargs -0 ansible-lint

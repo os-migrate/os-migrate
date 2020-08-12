@@ -6,9 +6,9 @@
     export_networks_name_filter:
       - regex: '^osm_'
 
-- name: re-load resources for idempotency test
+- name: re-load network_resources for idempotency test
   set_fact:
-    resources_idem: "{{ (lookup('file',
+    network_resources_idem: "{{ (lookup('file',
                                 os_migrate_data_dir +
                                 '/networks.yml') | from_yaml)
                         ['resources'] }}"
@@ -16,12 +16,12 @@
 - name: verify that export file did not change
   assert:
     that:
-      - resources_idem == resources
+      - network_resources_idem == network_resources
     fail_msg: |
-      resources_idem:
-      {{ resources_idem | to_nice_yaml }}
-      resources:
-      {{ resources | to_nice_yaml }}
+      network_resources_idem:
+      {{ network_resources_idem | to_nice_yaml }}
+      network_resources:
+      {{ network_resources | to_nice_yaml }}
 
 ### IMPORT IDEMPOTENCE ###
 

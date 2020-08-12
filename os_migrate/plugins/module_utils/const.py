@@ -6,6 +6,7 @@ RES_TYPE = 'type'
 RES_INFO = '_info'
 
 # Supported resource types
+RES_TYPE_IMAGE = 'openstack.image.Image'
 RES_TYPE_NETWORK = 'openstack.network.Network'
 RES_TYPE_ROUTER = 'openstack.network.Router'
 RES_TYPE_ROUTER_INTERFACE = 'openstack.network.RouterInterface'

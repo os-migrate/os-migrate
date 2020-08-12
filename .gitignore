@@ -3,6 +3,6 @@
 /.venv
 /local
 /tests/func/auth.yml
-/tests/func/tmpdata
+/tests/func/tmp
 /toolbox/vagrant/.vagrant
 /toolbox/vagrant/env
