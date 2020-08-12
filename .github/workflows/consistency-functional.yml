@@ -145,6 +145,28 @@ jobs:
           sudo systemctl start mysql.service
           sudo systemctl restart mysql.service
           sudo systemctl status mysql.service
+      # there is a script inside devstack that checks to ensure rabbit is
+      # enabled.  because we're using rabbit in a container and devstack cannot
+      # manage it, we mock a service so it won't fail.
+      - name: Create a dummy rabbit service to trick devstack/lib/rpc_backend
+        run: |
+          sudo tee /usr/mock.sh > /dev/null <<'EOF'
+          sleep 3600;
+          EOF
+          sudo chmod u+x /usr/mock.sh
+          sudo tee /lib/systemd/system/rabbit.service > /dev/null <<'EOF'
+          [Unit]
+          Description=rabbit mock service
+          [Service]
+          Type=simple
+          ExecStart=/bin/bash /usr/mock.sh
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+          sudo systemctl enable rabbit.service
+          sudo systemctl start rabbit.service
+          sudo systemctl restart rabbit.service
+          sudo systemctl status rabbit.service
       - name: Configure podman to use cgroupfs as cgroup manager
         run: |
           mkdir -p ~/.config/containers
@@ -180,10 +202,34 @@ jobs:
           RABBIT_HOST=127.0.0.1
           RABBIT_USERID=guest
           RABBIT_PASSWORD=guest
+          VIRT_DRIVER=fake
+          CELLSV2_SETUP="singleconductor"
+          OS_PLACEMENT_CONFIG_DIR=/etc/nova
           # Pre-requisite
           ENABLED_SERVICES=mysql,key
           # Neutron
-          ENABLED_SERVICES+=,q-svc,q-dhcp,q-meta,q-l3,q-agt,g-api
+          ENABLED_SERVICES+=,q-svc,q-dhcp,q-meta,q-l3,q-agt
+          # Nova
+          ENABLED_SERVICES+=,n-sproxy,n-api,n-cond
+          # Placement
+          ENABLED_SERVICES+=,placement,placement-api,placement-client
+          # Glance
+          ENABLED_SERVICES+=,g-api
+          [[post-config|/etc/nova/nova.conf]]
+          [placement]
+          auth_type = password
+          auth_url = http://127.0.0.1/identity
+          password = devstack
+          project_domain_name = Default
+          project_name = service
+          user_domain_name = Default
+          username = nova
+          [compute]
+          live_migration_wait_for_vif_plug=True
+          [libvirt]
+          live_migration_uri = qemu+ssh://root@%s/system
+          cpu_mode = host-passthrough
+          virt_type = qemu
           EOF
           cat local.conf
           sudo ./tools/create-stack-user.sh
@@ -195,13 +241,25 @@ jobs:
       - name: Get debug data
         if: failure()
         run: |
-            echo ">>> Journal logs"
-            sudo journalctl --no-pager
+          echo ">>> Journal logs"
+          sudo journalctl --no-pager
+      - name: See "systemctl status placement-api.service" for details.
+        if: failure()
+        run: |
+          sudo systemctl status placement-api.service
+      - name: See "journalctl -xe" for details.
+        if: failure()
+        run: |
+          sudo journalctl -xe
       - name: Run sanity checks
         run: |
           echo "- Get network and routers list"
           openstack --os-cloud devstack-admin --os-region RegionOne network list
           openstack --os-cloud devstack-admin --os-region RegionOne router list
+      - name: Check keystone
+        run: |
+          echo "- Get endpoints"
+          openstack --os-cloud devstack-admin --os-region RegionOne endpoint list
       - name: Connect functional tests to devstack
         run: |
           cp /etc/openstack/clouds.yaml tests/clouds.yaml && \
