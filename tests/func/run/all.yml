@@ -52,6 +52,7 @@
     apply:
       tags:
         - test_image
+  tags: always
 
 - name: Include flavor tasks
   include_tasks: flavor.yml

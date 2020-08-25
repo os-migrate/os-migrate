@@ -184,8 +184,8 @@
             'osm_image'].params.min_ram")
             == [128])
 
-    # - include_role:
-    #     name: os_migrate.os_migrate.import_images
+    - include_role:
+        name: os_migrate.os_migrate.import_images
   tags: always
 
 - name: Workloads tasks
