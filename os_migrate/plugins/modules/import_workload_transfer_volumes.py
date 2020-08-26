@@ -299,7 +299,7 @@ class OpenStackDestinationHost(OpenStackHostBase):
                  volume_map, destination_conversion_host_address=None,
                  state_file=None, log_file=None):
 
-        super(OpenStackDestinationHost, self).__init__(
+        super().__init__(
             openstack_connection,
             destination_conversion_host_id,
             ssh_key_path,
