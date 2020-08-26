@@ -272,7 +272,7 @@ class OpenStackSourceHostCleanup(OpenStackHostBase):
                  volume_map, source_conversion_host_address=None, state_file=None,
                  log_file=None):
 
-        super(OpenStackSourceHostCleanup, self).__init__(
+        super().__init__(
             openstack_connection,
             source_conversion_host_id,
             ssh_key_path,

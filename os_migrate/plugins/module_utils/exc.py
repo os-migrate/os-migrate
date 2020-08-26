@@ -11,7 +11,7 @@ class DataVersionMismatch(Exception):
 
     def __init__(self, got_version):
         message = self.msg_format.format(const.OS_MIGRATE_VERSION, got_version)
-        super(DataVersionMismatch, self).__init__(message)
+        super().__init__(message)
 
 
 class UnexpectedResourceType(Exception):
@@ -21,7 +21,7 @@ class UnexpectedResourceType(Exception):
 
     def __init__(self, expected_type, got_type):
         message = self.msg_format.format(expected_type, got_type)
-        super(UnexpectedResourceType, self).__init__(message)
+        super().__init__(message)
 
 
 class CannotConverge(Exception):
@@ -30,7 +30,7 @@ class CannotConverge(Exception):
     """
 
     def __init__(self, message):
-        super(CannotConverge, self).__init__(message)
+        super().__init__(message)
 
 
 class UnexpectedValue(Exception):
@@ -40,4 +40,4 @@ class UnexpectedValue(Exception):
 
     def __init__(self, var, expected, got):
         message = self.msg_format.format(var, expected, got)
-        super(UnexpectedValue, self).__init__(message)
+        super().__init__(message)

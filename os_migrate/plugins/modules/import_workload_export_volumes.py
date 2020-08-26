@@ -250,7 +250,7 @@ class OpenStackSourceHost(OpenStackHostBase):
         # UUID marker for child processes on conversion hosts.
         transfer_uuid = str(uuid.uuid4())
 
-        super(OpenStackSourceHost, self).__init__(
+        super().__init__(
             openstack_connection,
             source_conversion_host_id,
             ssh_key_path,

@@ -223,7 +223,7 @@ class OpenStackHostBase():
             if result:
                 self.log.debug('Port write result: %s', result)
         except subprocess.CalledProcessError as err:
-            raise RuntimeError('Unable to initialize port map file! ' + str(err))
+            raise RuntimeError('Unable to initialize port map file!') from err
 
         try:  # Try to read in the set of used ports
             cmd = ['sudo', 'cat', PORT_MAP_FILE]
@@ -281,8 +281,8 @@ class OpenStackHostBase():
                 self.log.info('Port %d not available, trying another.', port)
                 used_ports.add(port)  # Mark used to avoid trying again
                 port = available_ports.pop()
-        except KeyError:
-            raise RuntimeError('No free ports on conversion host!')
+        except KeyError as err:
+            raise RuntimeError('No free ports on conversion host!') from err
         used_ports.add(port)
         self.__write_used_ports(used_ports)
         self.log.info('Allocated port %d, all used: %s', port, used_ports)

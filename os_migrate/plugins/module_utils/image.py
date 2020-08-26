@@ -91,7 +91,7 @@ class Image(resource.Resource):
 
     @classmethod
     def from_sdk(cls, conn, sdk_resource):
-        obj = super(Image, cls).from_sdk(conn, sdk_resource)
+        obj = super().from_sdk(conn, sdk_resource)
         params = obj.params()
         # We need to remove 'self' from properties as it would break
         # idempotency check and it's not really a property anyway.
@@ -130,7 +130,7 @@ class Image(resource.Resource):
         return conn.image.update_image(sdk_res, **sdk_params)
 
     def _to_sdk_params(self, refs):
-        sdk_params = super(Image, self)._to_sdk_params(refs)
+        sdk_params = super()._to_sdk_params(refs)
         # Special Glance thing - properties should be specified as
         # kwargs.
         for key, val in (sdk_params.get('properties') or {}).items():
