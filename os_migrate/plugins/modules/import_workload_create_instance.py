@@ -247,11 +247,13 @@ def run_module():
     src = server.Server.from_data(module.params['data'])
     sdk_params = src.sdk_params(conn)
 
-    networks = []
+    nics = []
     addresses = sdk_params['addresses']
     for network, portlist in addresses.items():
-        count = len(portlist)  # Match network count without MAC addresses
-        networks.extend(count * [network])
+        for port in portlist:
+            if port['OS-EXT-IPS:type'] == 'fixed':
+                nics.append({"net-name": network,
+                             "v4-fixed-ip": port['addr']})
 
     srv = conn.create_server(
         name=sdk_params['name'],
@@ -259,7 +261,8 @@ def run_module():
         boot_volume=boot_volume_id,
         block_device_mapping_v2=block_device_mapping,
         security_groups=sdk_params['security_group_ids'],
-        network=networks
+        # This option is not documented upstream
+        nics=nics
     )
 
     if srv:
