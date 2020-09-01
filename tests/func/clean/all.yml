@@ -56,3 +56,13 @@
         - test_clean
   tags:
     - always
+
+- name: Include keypair tasks
+  include_tasks: keypair.yml
+  args:
+    apply:
+      tags:
+        - test_keypair
+        - test_clean
+  tags:
+    - always
