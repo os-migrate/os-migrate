@@ -8,6 +8,7 @@ plugins/modules/export_security_group.py validate-modules:missing-gplv3-license
 plugins/modules/export_security_group_rules.py validate-modules:missing-gplv3-license
 plugins/modules/export_subnet.py validate-modules:missing-gplv3-license
 plugins/modules/export_workload.py validate-modules:missing-gplv3-license
+plugins/modules/import_image.py validate-modules:missing-gplv3-license
 plugins/modules/import_network.py validate-modules:missing-gplv3-license
 plugins/modules/import_router.py validate-modules:missing-gplv3-license
 plugins/modules/import_router_interface.py validate-modules:missing-gplv3-license

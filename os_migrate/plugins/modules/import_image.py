@@ -12,9 +12,9 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = '''
 ---
-module: export_image_blob
+module: import_image
 
-short_description: Export OpenStack image
+short_description: Import OpenStack image
 
 extends_documentation_fragment: openstack
 
@@ -23,7 +23,7 @@ version_added: "2.9"
 author: "OpenStack tenant migration tools (@os-migrate)"
 
 description:
-  - "Export OpenStack image definition into an OS-Migrate YAML"
+  - "Import OpenStack image from an OS-Migrate YAML structure"
 
 options:
   auth:
@@ -41,16 +41,21 @@ options:
       - OpenStack region name. Can be omitted if using default region.
     required: false
     type: str
+  data:
+    description:
+      - Data structure with image parameters as loaded from OS-Migrate YAML file.
+    required: true
+    type: dict
+  filters:
+    description:
+      - Options for filtering existing resources to be looked up, e.g. by project.
+    required: true
+    type: dict
   blob_path:
     description:
       - Path where the image blob content will be saved.
       - In case the file already exists, it is assumed that the export was
         already performed and the module doesn't overwrite it.
-    required: true
-    type: str
-  name:
-    description:
-      - Name (or ID) of a Image to export.
     required: true
     type: str
   availability_zone:
@@ -66,10 +71,14 @@ options:
 '''
 
 EXAMPLES = '''
-- name: Export myimage into /opt/os-migrate/images.yml
-  os_migrate.os_migrate.export_image_blob:
-    path: /opt/os-migrate/image_blobs/myimage
-    name: myimage
+- name: Import myimage into /opt/os-migrate/images.yml
+  os_migrate.os_migrate.import_image:
+    auth: {}
+    data:
+      - type: openstack.image.Image
+        params:
+          name: my_image
+    blob_path: /path/to/image_blob
 '''
 
 RETURN = '''
@@ -84,8 +93,9 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import image
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
+        data=dict(type='dict', required=True),
         blob_path=dict(type='str', required=True),
-        name=dict(type='str', required=True),
+        filters=dict(type='dict', required=False, default={}),
     )
     # TODO: check the del
     # del argument_spec['cloud']
@@ -102,8 +112,9 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    sdk_image = conn.image.find_image(module.params['name'], ignore_missing=False)
-    result['changed'] = image.export_blob(conn, sdk_image, module.params['blob_path'])
+    ser_img = image.Image.from_data(module.params['data'])
+    result['changed'] = ser_img.create_or_update(
+        conn, module.params['blob_path'], module.params['filters'])
 
     module.exit_json(**result)
 

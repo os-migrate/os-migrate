@@ -31,6 +31,7 @@ class Image(resource.Resource):
         'status',
         'updated_at',
         'url',
+        'virtual_size',
     ]
     params_from_sdk = [
         'architecture',
@@ -74,7 +75,6 @@ class Image(resource.Resource):
         'os_version',
         'properties',
         'store',
-        'virtual_size',
         'visibility',
         'vm_mode',
         'vmware_adaptertype',
@@ -99,13 +99,51 @@ class Image(resource.Resource):
             del params['properties']['self']
         return obj
 
-    @staticmethod
-    def _create_sdk_res(conn, sdk_params):
-        return conn.image.create_image(**sdk_params)
+    def create_or_update(self, conn, blob_path, filters=None):
+        refs = self._refs_from_ser(conn, filters)
+        sdk_params = self._to_sdk_params(refs)
+        sdk_params['filename'] = blob_path
+        existing = self._find_sdk_res(conn, sdk_params['name'], filters)
+        if existing:
+            if self._needs_update(self.from_sdk(conn, existing)):
+                self._remove_readonly_params(sdk_params)
+                self._update_sdk_res(conn, existing, sdk_params)
+                return True
+        else:
+            self._create_sdk_res(conn, sdk_params)
+            return True
+        return False  # no change done
+
+    @classmethod
+    def _create_sdk_res(cls, conn, sdk_params):
+        # Some params are missing from Glance's automatic type
+        # conversion (typically booleans) and just passing
+        # e.g. is_protected as kwarg will fail. It seems that it's
+        # just better to feed whatever we can via meta.
+        meta_keys = set(cls.params_from_sdk)
+        meta_keys.remove('name')
+        meta = {}
+        for key in meta_keys:
+            if key in sdk_params:
+                meta[key] = sdk_params.pop(key)
+
+        return conn.image.create_image(**sdk_params, meta=meta)
 
     @staticmethod
     def _find_sdk_res(conn, name_or_id, filters=None):
-        return conn.image.find_image(name_or_id, **(filters or {}))
+        # Glance requires owner_id instead of project_id.
+        glance_filters = dict(filters or {})
+        if 'project_id' in glance_filters:
+            glance_filters['owner'] = glance_filters.pop('project_id')
+
+        # Unlike other find methods, find_image doesn't support
+        # filters, our best option is probably to do a filtered list
+        # and then match on name or id.
+        images = conn.image.images(**glance_filters)
+        for image in images:
+            if image['id'] == name_or_id or image['name'] == name_or_id:
+                return image
+        return None
 
     @staticmethod
     def _refs_from_sdk(conn, sdk_res):

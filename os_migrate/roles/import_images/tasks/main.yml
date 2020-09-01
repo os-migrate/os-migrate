@@ -1,0 +1,31 @@
+- name: validate loaded resources
+  os_migrate.os_migrate.validate_resource_files:
+    paths:
+      - "{{ os_migrate_data_dir }}/images.yml"
+  register: images_file_validation
+  when: import_images_validate_file
+
+- name: stop when errors found
+  fail:
+    msg: "{{ images_file_validation.errors|join(' ') }}"
+  when: not ( images_file_validation.ok | bool )
+
+- name: read images resource file
+  os_migrate.os_migrate.read_resources:
+    path: "{{ os_migrate_data_dir }}/images.yml"
+  register: read_images
+
+- name: import images
+  os_migrate.os_migrate.import_image:
+    auth: "{{ os_migrate_dst_auth }}"
+    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+    data: "{{ item }}"
+    blob_path: >-
+      {{ os_migrate_image_blobs_dir }}/{{ item['_info']['id'] }}-{{ item['params']['name'] }}
+    filters: "{{ os_migrate_dst_filters }}"
+    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+  loop: "{{ read_images.resources }}"

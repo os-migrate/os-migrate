@@ -129,7 +129,6 @@ def serialized_image():
                 'domain_name': 'Default',
             },
             'store': None,
-            'virtual_size': None,
             'visibility': 'public',
             'vm_mode': None,
             'vmware_adaptertype': None,
@@ -152,6 +151,7 @@ def serialized_image():
             'status': 'active',
             'updated_at': '2020-06-26T13:55:52Z',
             'url': None,
+            'virtual_size': None,
         },
         const.RES_TYPE: 'openstack.image.Image',
     }
