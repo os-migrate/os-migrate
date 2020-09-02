@@ -160,6 +160,10 @@
     min_disk: 1
     min_ram: 128
     state: present
+    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
 
 - name: create osm_server
   os_server:
