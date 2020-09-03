@@ -1,3 +1,5 @@
+# NOTE: os_image_info doesn't support os_migrate_src_filters, we apply
+# the filters manually below.
 - name: scan available images
   os_image_info:
     auth: "{{ os_migrate_src_auth }}"
@@ -9,15 +11,22 @@
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
   register: src_images_info
 
-# FIXME: os_image_info doesn't support os_migrate_src_filters, so
-# apply the filter somehow differently?
-
 - name: create id-name pairs of images to export
   set_fact:
     export_images_ids_names: "{{ (
       src_images_info.openstack_image
-        | json_query('[*].{name: name, id: id}')
+        | json_query('[*].{name: name, id: id, owner: owner}')
         | sort(attribute='id') ) }}"
+
+- name: filter images to export by project
+  set_fact:
+    export_images_ids_names: "{{ (
+      export_images_ids_names
+        | json_query(\"[?owner=='\" + os_migrate_src_filters['project_id'] + \"']\")
+        | sort(attribute='id') ) }}"
+  when:
+    - os_migrate_src_filters is defined
+    - os_migrate_src_filters['project_id'] is defined
 
 - name: filter names of images to export
   set_fact:
