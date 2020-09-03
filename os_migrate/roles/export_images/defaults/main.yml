@@ -1,4 +1,0 @@
-export_images_blobs: true
-export_images_name_filter:
-  - regex: .*
-os_migrate_image_blobs_dir: "{{ os_migrate_data_dir }}/image_blobs"

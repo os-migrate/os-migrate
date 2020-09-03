@@ -1,3 +1,0 @@
-# It is currently not supported to export/import for multiple projects.
-os_migrate_dst_filter_current_project: true
-os_migrate_dst_filters: {}

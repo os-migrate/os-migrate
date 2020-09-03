@@ -1,2 +1,0 @@
-export_flavors_name_filter:
-  - regex: .*

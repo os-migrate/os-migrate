@@ -1,2 +1,0 @@
-import_images_validate_file: true
-os_migrate_image_blobs_dir: "{{ os_migrate_data_dir }}/image_blobs"

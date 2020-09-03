@@ -1,8 +1,0 @@
-- name: remove osm_router
-  os_router:
-    auth: "{{ item }}"
-    name: osm_router
-    state: absent
-  loop:
-    - "{{ os_migrate_src_auth }}"
-    - "{{ os_migrate_dst_auth }}"

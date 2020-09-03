@@ -1,2 +1,0 @@
-export_workloads_name_filter:
-  - regex: .*

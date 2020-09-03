@@ -1,2 +1,0 @@
-export_keypairs_name_filter:
-  - regex: .*

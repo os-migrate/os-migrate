@@ -1,3 +1,0 @@
-- hosts: migrator
-  roles:
-    - os_migrate.os_migrate.export_images

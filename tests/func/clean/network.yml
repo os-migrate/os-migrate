@@ -1,8 +1,0 @@
-- name: remove osm_net
-  os_network:
-    auth: "{{ item }}"
-    name: osm_net
-    state: absent
-  loop:
-    - "{{ os_migrate_src_auth }}"
-    - "{{ os_migrate_dst_auth }}"

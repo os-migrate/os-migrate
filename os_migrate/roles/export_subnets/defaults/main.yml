@@ -1,2 +1,0 @@
-export_subnets_name_filter:
-  - regex: .*
