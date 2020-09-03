@@ -1,0 +1,35 @@
+---
+name: docs_build_pr
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ammaraskar/sphinx-action@master
+        with:
+          pre-build-command: |
+            apt-get update -y && \
+            apt install build-essential -y && \
+            apt install gcc -y && \
+            touch /tmp/sphinx-log && \
+            pip3 install --upgrade pip && \
+            pip3 install --upgrade virtualenv && \
+            pip3 install --upgrade setuptools && \
+            pip3 install -r toolbox/build/venv-requirements.txt && \
+            pip3 install --upgrade ruamel.yaml && \
+            pip3 install --upgrade sphinx-rtd-theme && \
+            ansible-galaxy collection build os_migrate -v --force --output-path . && \
+            LATEST=$(ls os_migrate-os_migrate*.tar.gz | grep -v latest | sort -V | tail -n1) && \
+            ln -sf $LATEST os_migrate-os_migrate-latest.tar.gz && \
+            ansible-galaxy collection install --force os_migrate-os_migrate-latest.tar.gz
+          docs-folder: "docs/src/"
+      - uses: actions/upload-artifact@v1
+        with:
+          name: DocumentationHTML
+          path: docs/src/_build/html/
