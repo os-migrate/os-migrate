@@ -1,0 +1,257 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Installing Vagrant directly on host &mdash; os-migrate  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="High-level development goals" href="design.html" />
+    <link rel="prev" title="OS-Migrate - Development Environment Setup" href="dev-env-setup.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> os-migrate
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="README.html">OS-Migrate Developer Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dev-env-setup.html">OS-Migrate - Development Environment Setup</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Installing Vagrant directly on host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design.html">High-level development goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design.html#challenges-of-the-problem-domain">Challenges of the problem domain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design.html#basic-ansible-workflow-design">Basic Ansible workflow design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design.html#misc">Misc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releasing.html">Releasing the OS Migrate collection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html">Become a Contributor</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../user/README.html">OS-Migrate User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../roles.html">Documented roles in os-migrate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Documented modules in os-migrate</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">os-migrate</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="README.html">OS-Migrate Developer Documentation</a> &raquo;</li>
+        
+      <li>Installing Vagrant directly on host</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/devel/dev-env-vagrant-non-containerized.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="installing-vagrant-directly-on-host">
+<h1>Installing Vagrant directly on host<a class="headerlink" href="#installing-vagrant-directly-on-host" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">yum</span> <span class="n">install</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">releases</span><span class="o">.</span><span class="n">hashicorp</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">vagrant</span><span class="o">/</span><span class="mf">2.2</span><span class="o">.</span><span class="mi">6</span><span class="o">/</span><span class="n">vagrant_2</span><span class="o">.</span><span class="mf">2.6</span><span class="n">_x86_64</span><span class="o">.</span><span class="n">rpm</span> <span class="o">-</span><span class="n">y</span>
+<span class="n">vagrant</span> <span class="o">--</span><span class="n">version</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">virsh</span> <span class="n">pool</span><span class="o">-</span><span class="n">define</span><span class="o">-</span><span class="k">as</span> <span class="n">vagrant</span> <span class="nb">dir</span> <span class="o">-</span> <span class="o">-</span> <span class="o">-</span> <span class="o">-</span> <span class="s2">&quot;/var/lib/libvirt/images/vagrant&quot;</span>
+<span class="n">virsh</span> <span class="n">pool</span><span class="o">-</span><span class="nb">list</span> <span class="o">--</span><span class="nb">all</span>
+<span class="n">virsh</span> <span class="n">pool</span><span class="o">-</span><span class="n">build</span> <span class="n">vagrant</span>
+<span class="n">virsh</span> <span class="n">pool</span><span class="o">-</span><span class="n">start</span> <span class="n">vagrant</span>
+<span class="n">virsh</span> <span class="n">pool</span><span class="o">-</span><span class="n">autostart</span> <span class="n">vagrant</span>
+<span class="n">virsh</span> <span class="n">pool</span><span class="o">-</span><span class="n">info</span> <span class="n">vagrant</span>
+</pre></div>
+</div>
+<p>We need to install the libvirt provider</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">yum</span> <span class="n">groupinstall</span> <span class="s2">&quot;Virtualization Host&quot;</span> <span class="o">-</span><span class="n">y</span>
+<span class="n">yum</span> <span class="n">install</span> <span class="n">libvirt</span><span class="o">-</span><span class="n">devel</span> <span class="o">-</span><span class="n">y</span>
+<span class="n">vagrant</span> <span class="n">plugin</span> <span class="n">install</span> <span class="n">vagrant</span><span class="o">-</span><span class="n">libvirt</span>
+<span class="n">systemctl</span> <span class="n">restart</span> <span class="n">libvirtd</span>
+</pre></div>
+</div>
+<p>Go to the toolbox/vagrant folder</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">toolbox</span><span class="o">/</span><span class="n">vagrant</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vagrant</span> <span class="n">box</span> <span class="n">add</span> <span class="o">--</span><span class="n">name</span> <span class="n">fedora29</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">download</span><span class="o">.</span><span class="n">fedoraproject</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">pub</span><span class="o">/</span><span class="n">fedora</span><span class="o">/</span><span class="n">linux</span><span class="o">/</span><span class="n">releases</span><span class="o">/</span><span class="mi">29</span><span class="o">/</span><span class="n">Cloud</span><span class="o">/</span><span class="n">x86_64</span><span class="o">/</span><span class="n">images</span><span class="o">/</span><span class="n">Fedora</span><span class="o">-</span><span class="n">Cloud</span><span class="o">-</span><span class="n">Base</span><span class="o">-</span><span class="n">Vagrant</span><span class="o">-</span><span class="mi">29</span><span class="o">-</span><span class="mf">1.2</span><span class="o">.</span><span class="n">x86_64</span><span class="o">.</span><span class="n">vagrant</span><span class="o">-</span><span class="n">libvirt</span><span class="o">.</span><span class="n">box</span>
+</pre></div>
+</div>
+<p>Start the environment using the libvirt provider</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vagrant</span> <span class="n">up</span> <span class="o">--</span><span class="n">provider</span> <span class="n">libvirt</span>
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="design.html" class="btn btn-neutral float-right" title="High-level development goals" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="dev-env-setup.html" class="btn btn-neutral float-left" title="OS-Migrate - Development Environment Setup" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, os-migrate
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

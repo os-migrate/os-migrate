@@ -1,0 +1,362 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>OS-Migrate - Development Environment Setup &mdash; os-migrate  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Installing Vagrant directly on host" href="dev-env-vagrant-non-containerized.html" />
+    <link rel="prev" title="OS-Migrate Developer Documentation" href="README.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> os-migrate
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="README.html">OS-Migrate Developer Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">OS-Migrate - Development Environment Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#development-environment">Development environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sanity-and-unit-tests">Sanity and unit tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vagrant-for-functional-tests">Vagrant for functional tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-functional-tests">Running functional tests</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dev-env-vagrant-non-containerized.html">Installing Vagrant directly on host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design.html">High-level development goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design.html#challenges-of-the-problem-domain">Challenges of the problem domain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design.html#basic-ansible-workflow-design">Basic Ansible workflow design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design.html#misc">Misc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releasing.html">Releasing the OS Migrate collection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html">Become a Contributor</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../user/README.html">OS-Migrate User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../roles.html">Documented roles in os-migrate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Documented modules in os-migrate</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">os-migrate</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="README.html">OS-Migrate Developer Documentation</a> &raquo;</li>
+        
+      <li>OS-Migrate - Development Environment Setup</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/devel/dev-env-setup.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="os-migrate-development-environment-setup">
+<h1>OS-Migrate - Development Environment Setup<a class="headerlink" href="#os-migrate-development-environment-setup" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Podman and Buildah for running rootless development environment
+containers.</p></li>
+</ul>
+</div>
+<div class="section" id="development-environment">
+<h2>Development environment<a class="headerlink" href="#development-environment" title="Permalink to this headline">¶</a></h2>
+<p>Build a container image with tools to be used for building and testing
+the project:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">toolbox</span><span class="o">-</span><span class="n">build</span>
+</pre></div>
+</div>
+<p>All further <code class="docutils literal notranslate"><span class="pre">make</span></code> commands etc. should be run from a container using
+this image. You can start a shell within the development container like
+so:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">shell</span>
+</pre></div>
+</div>
+<p>Alternatively, you can run each development-related command in an
+ephemeral container using the provided wrapper:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">echo</span> <span class="s2">&quot;Hello from os-migrate toolbox.&quot;</span>
+</pre></div>
+</div>
+<p>Note: the <code class="docutils literal notranslate"><span class="pre">./toolbox/&lt;cmd&gt;</span></code> commands are alternatives to each other.
+They shouldn’t be nested, e.g. running <code class="docutils literal notranslate"><span class="pre">./toolbox/run</span></code> from
+<code class="docutils literal notranslate"><span class="pre">./toolbox/shell</span></code> will deliberately fail.</p>
+</div>
+<div class="section" id="sanity-and-unit-tests">
+<h2>Sanity and unit tests<a class="headerlink" href="#sanity-and-unit-tests" title="Permalink to this headline">¶</a></h2>
+<p>You can run sanity tests this way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span><span class="o">-</span><span class="n">sanity</span>
+</pre></div>
+</div>
+<p>And unit tests this way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span><span class="o">-</span><span class="n">unit</span>
+</pre></div>
+</div>
+<p>To run sanity tests and then unit tests together, a shorthand target
+“test-fast” can be used:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span><span class="o">-</span><span class="n">fast</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="vagrant-for-functional-tests">
+<h2>Vagrant for functional tests<a class="headerlink" href="#vagrant-for-functional-tests" title="Permalink to this headline">¶</a></h2>
+<p>To run functional tests, you’ll need to connect to OpenStack cloud(s)
+where tenant resources can be managed. As a developer, the easiest way
+is to run a local virtualized all-in-one OpenStack cloud. OS-Migrate has
+Vagrant+Devstack setup for this purpose.</p>
+<p>If you have Vagrant-libvirt installed on your machine, you can use it
+directly, but OS-Migrate tooling does not assume that, the customary way
+is to run it via the OS-Migrate toolbox container. Special
+<code class="docutils literal notranslate"><span class="pre">vagrant-shell</span></code> and <code class="docutils literal notranslate"><span class="pre">vagrant-run</span></code> wrapper scripts are provided for
+this purpose. Note that this container does not run in rootless mode
+since it talks to libvirt.</p>
+<p>Launch the Vagrant-capable containerized shell:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">vagrant</span><span class="o">-</span><span class="n">shell</span>
+</pre></div>
+</div>
+<p>Within that shell, run the script which brings up Vagrant+Devstack:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># we are already in toolbox/vagrant dir when we launch vagrant-shell</span>
+<span class="o">./</span><span class="n">vagrant</span><span class="o">-</span><span class="n">up</span>
+</pre></div>
+</div>
+<p>Assuming the creation succeeded, it is now recommended to take a
+snapshot of the environment so you can revert it back into a known-good
+state later:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">vagrant</span><span class="o">-</span><span class="n">snapshot</span><span class="o">-</span><span class="n">create</span>
+</pre></div>
+</div>
+<p><strong>Important:</strong> the life of the Vagrant VM is tied to the life of the
+container started by <code class="docutils literal notranslate"><span class="pre">./toolbox/vagrant-shell</span></code>. That means you should
+keep the <code class="docutils literal notranslate"><span class="pre">vagrant-shell</span></code> open, and run functional tests via
+<code class="docutils literal notranslate"><span class="pre">./toolbox/run</span> <span class="pre">make</span> <span class="pre">test-func</span></code> from a different terminal. If you close
+the <code class="docutils literal notranslate"><span class="pre">vagrant-shell</span></code>, the Vagrant VM will get killed. If that happens,
+you can start it again and use <code class="docutils literal notranslate"><span class="pre">./vagrant-snapshot-revert</span></code> to revive
+the VM.</p>
+<p>If you need to revert the VM at any time, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">vagrant</span><span class="o">-</span><span class="n">snapshot</span><span class="o">-</span><span class="n">revert</span>
+</pre></div>
+</div>
+<p>When you’re done developing, halt Vagrant and close <code class="docutils literal notranslate"><span class="pre">vagrant-shell</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">vagrant</span><span class="o">-</span><span class="n">halt</span>
+<span class="n">exit</span>
+</pre></div>
+</div>
+<p>When you want to develop again, you will be able to reuse the
+snapshotted Vagrant environment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">vagrant</span><span class="o">-</span><span class="n">shell</span>
+<span class="o">./</span><span class="n">vagrant</span><span class="o">-</span><span class="n">snapshot</span><span class="o">-</span><span class="n">revert</span>
+</pre></div>
+</div>
+<p>To destroy the Vagrant VM, e.g. when you want to recreate it from
+scratch later, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">vagrant</span><span class="o">-</span><span class="n">destroy</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="running-functional-tests">
+<h2>Running functional tests<a class="headerlink" href="#running-functional-tests" title="Permalink to this headline">¶</a></h2>
+<p>Functional tests expect <code class="docutils literal notranslate"><span class="pre">tests/func/auth.yml</span></code> file to exist and
+contain <code class="docutils literal notranslate"><span class="pre">os_migrate_src_auth</span></code> and <code class="docutils literal notranslate"><span class="pre">os_migrate_dst_auth</span></code> variables
+with credentials for connecting to OpenStack cloud(s). The tests will
+connect to wherever these auth parameters point and create/delete
+resources there.</p>
+<p>Run a make target which will set up the aforementioned
+<code class="docutils literal notranslate"><span class="pre">tests/func/auth.yml</span></code> file to connect to your Vagrant+Devstack
+instance:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span><span class="o">-</span><span class="n">setup</span><span class="o">-</span><span class="n">vagrant</span><span class="o">-</span><span class="n">devstack</span>
+</pre></div>
+</div>
+<p>Finally, run the functional tests:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span><span class="o">-</span><span class="n">func</span>
+</pre></div>
+</div>
+<p>To run functional tests for just the resource you’re working on, run
+e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;FUNC_TEST_ARGS=&#39;--tags test_network,test_subnet&#39; make test-func&quot;</span>
+</pre></div>
+</div>
+<p>To explore imported resoruces, skip the after-test cleanup of resources,
+e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;FUNC_TEST_ARGS=&#39;--tags test_network --skip_tags test_clean_after&#39; make test-func&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="dev-env-vagrant-non-containerized.html" class="btn btn-neutral float-right" title="Installing Vagrant directly on host" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="README.html" class="btn btn-neutral float-left" title="OS-Migrate Developer Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, os-migrate
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

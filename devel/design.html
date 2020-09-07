@@ -1,0 +1,393 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>High-level development goals &mdash; os-migrate  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Releasing the OS Migrate collection" href="releasing.html" />
+    <link rel="prev" title="Installing Vagrant directly on host" href="dev-env-vagrant-non-containerized.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> os-migrate
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="README.html">OS-Migrate Developer Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dev-env-setup.html">OS-Migrate - Development Environment Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev-env-vagrant-non-containerized.html">Installing Vagrant directly on host</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">High-level development goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#challenges-of-the-problem-domain">Challenges of the problem domain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-ansible-workflow-design">Basic Ansible workflow design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#misc">Misc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releasing.html">Releasing the OS Migrate collection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html">Become a Contributor</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../user/README.html">OS-Migrate User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../roles.html">Documented roles in os-migrate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Documented modules in os-migrate</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">os-migrate</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="README.html">OS-Migrate Developer Documentation</a> &raquo;</li>
+        
+      <li>High-level development goals</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/devel/design.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="high-level-development-goals">
+<h1>High-level development goals<a class="headerlink" href="#high-level-development-goals" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>I/O-based. Fetch metadata and/or content from source cloud -&gt; write
+them as outputs -&gt; read them as inputs -&gt; push it to the destination
+cloud. This allows other tools to enter the phase between the “write
+output” and “read input”.</p>
+<ul>
+<li><p>E.g. arbitrary/custom yaml-parsing tools can be used as a smart
+filter to analyze the exported contents from source cloud and
+choose what (not) to import into the destination cloud.</p></li>
+</ul>
+</li>
+<li><p>Logging. When contributing code, don’t forget about logging and how
+will information be presented to the user. Try to think about what
+can potentially fail and what kind of log output might help figuring
+out what went wrong, and on the contrary, what kind of log output
+would add clutter without much information value.</p></li>
+<li><p>Testing. Unit-test semantics of small parts wherever possible.
+Emphasize automated functional tests (end-to-end, talking to a real
+OpenStack backend). Functional tests are closest to the real use
+cases and provide at least basic level of comfort that the software
+does what it should.</p></li>
+<li><p>Always talking to OpenStack via API. The tool must be able to be
+deployed externally to both source and destination clouds. No looking
+at DBs or other hacks. If we hit a hurdle due to no-hacks approach,
+it could mean that OpenStack’s capabilities for tenant-to-tenant
+content migration are lacking, and an RFE for OpenStack might be
+required.</p></li>
+<li><p>Idempotency where possible. When a command fails, it should be
+possible to retry with the same command.</p></li>
+<li><p>Whenever simplicity / understandability / clarity gets into conflict
+with convenience / ease-of-use, we prefer simplicity /
+understandability / clarity. Prefer running 20 CLI commands to do
+something where each CLI command is simple and human can enter the
+process by amending inputs/outputs e.g. with additional tools or a
+text editor, rather than one magical command which aims to satisfy
+all use cases and eventually turns out to satisfy very few, and tends
+to fail in mysterious ways with partial completion and limited
+re-runnability.</p></li>
+<li><p>OS-Migrate is intended to be a building block for tenant migrations
+rather than a push-button solution. The assumption is that to cover
+needs of a particular tenant migration, a knowledgeable human is
+running OS-Migrate manually and/or has tweaked it to their needs.</p></li>
+</ul>
+</div>
+<div class="section" id="challenges-of-the-problem-domain">
+<h1>Challenges of the problem domain<a class="headerlink" href="#challenges-of-the-problem-domain" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Generally, admins can view resources of all projects, but cannot
+create resources in those projects (unless they have a role in the
+project). To create a resource under a project, either credentials of
+the target non-admin user have to be used for importing, or the admin
+user has to be added into the project for the duration of the import.</p>
+<ul>
+<li><p>This is not true for <em>some</em> resources. As of January 2020,
+e.g. networking resources can be created under arbitrary
+domain/project by admin using Networking API v2, but it’s not the
+case for e.g. volumes, servers, keypairs. At least initially, we
+will assume the general scenario that we’re running the migration
+as the tenant who owns the resources on both src/dst sides.</p></li>
+</ul>
+</li>
+<li><p>OpenStack doesn’t have strict requirements on resource naming
+(doesn’t require non-empty, unique names). The migration tool will
+enforce names which are non-empty, and unique per resource type. This
+is to allow idempotent imports, which is necessary for retrying
+imports on failure. The tool should allow to export/serialize
+resources that are not properly named, but the exported data should
+fail validation and be refused when fed into the import command.</p>
+<ul>
+<li><p>In the future, if we implement running all migrations as admin
+(might need OpenStack RFEs) instead of the tenant, we’d perhaps
+require uniqueness per resource type per tenant, rather than just
+per resource type.</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="basic-ansible-workflow-design">
+<h1>Basic Ansible workflow design<a class="headerlink" href="#basic-ansible-workflow-design" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>The challenge and a goal here is to give meaningful Ansible log
+output for debugging. This means, for example, that we shouldn’t have
+a single Ansible task (one module call) to export/import the whole
+tenant, and we should also consider not having a single task to
+export/import all resources of some type. Ideally, each resource
+export/import would have its own module call (own task in Ansible
+playbook), so if the export or import fails, we can easily tell which
+resource was the one that caused a failure.</p>
+<ul>
+<li><p>We have a YAML file per resource type. Export modules are able to
+add a resource (idempotently) to an existing YAML file without
+affecting the rest. There is reusable code for this idempotence.</p></li>
+</ul>
+</li>
+<li><p>Example workflow: export networks. Provided playbook.</p>
+<ul>
+<li><p>Ansible task, provided: fetch metadata (at least name and ID, but
+perhaps the more the better for advanced filtering) of all
+networks that are visible for the tenant, register a list
+variable.</p></li>
+<li><p>Ansible task(s) optionally added by user into our playbook on
+per-environment basis: filter the metadata according to custom
+needs, re-register the list var.</p>
+<ul>
+<li><p>Eventually we may want to provide some hooks here, but
+initially we’d be fine with users simply editing the provided
+playbook.</p></li>
+</ul>
+</li>
+<li><p>Ansible task, provided: filter networks by names, either via exact
+matches or via regexes.</p></li>
+<li><p>Anisble task, provided, calling our custom module: Iterate
+(<code class="docutils literal notranslate"><span class="pre">loop</span></code>) over the list of metadata, and call our module which
+will fetch the data and write a YAML with our defined format for
+Network resources. If necessary, do any data mangling here to
+satisfy the format requirements.</p></li>
+</ul>
+</li>
+<li><p>Example workflow: transform networks.</p>
+<ul>
+<li><p>Initially we will not provide any tooling here, but at this point
+the user should have a YAML file (or a bunch of them) with the
+serialized resources. They can use any automation (Ansible, yq,
+sed, …) to go through them and edit as they please before
+importing.</p></li>
+</ul>
+</li>
+<li><p>Example workflow: import networks. Provided playbook.</p>
+<ul>
+<li><p>Ansible task, provided: read the serialized YAML networks into
+memory, register a list variable.</p></li>
+<li><p>Anisble task, provided: Iterate (<code class="docutils literal notranslate"><span class="pre">loop</span></code>) over the list of
+networks, and call an Ansible module to create each network. We’ll
+want to create our own module here to deal with our file format
+specifics, but underneath we may be calling the community
+OpenStack Ansible module if that proves helpful.</p></li>
+</ul>
+</li>
+<li><p>Example workflow: import/export tenant. Provided playbook.</p>
+<ul>
+<li><p>Just <code class="docutils literal notranslate"><span class="pre">import_playbook</span></code> for individual resource type playbooks.</p></li>
+</ul>
+</li>
+<li><p>We may want to consider using <code class="docutils literal notranslate"><span class="pre">tags</span></code> on our tasks to allow some
+sub-executions. However, it may be that chunking up the code and
+using <code class="docutils literal notranslate"><span class="pre">import_playbook</span></code> might be more clear and safe to use than
+<code class="docutils literal notranslate"><span class="pre">tags</span></code> in many cases. If we do happen to add <code class="docutils literal notranslate"><span class="pre">tags</span></code>, they
+shouldn’t be added wildly, use cases should be thought throught and
+documented for both users and developers. Tags need clarity and
+disciplined use in order to be helpful.</p></li>
+</ul>
+</div>
+<div class="section" id="misc">
+<h1>Misc<a class="headerlink" href="#misc" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Naming conventions - <a class="reference external" href="https://github.com/ansible/galaxy/issues/1128#issuecomment-454519526">underscores over hyphens in
+Ansible</a>.</p>
+<ul>
+<li><p>Github does not support underscores in organization URLs though.
+So we have repo named os-migrate/os-migrate, and inside we have
+os_migrate Ansible collection.</p></li>
+</ul>
+</li>
+<li><p>Distribution - the preference is to distribute os-migrate via Ansible
+Galaxy.</p></li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="releasing.html" class="btn btn-neutral float-right" title="Releasing the OS Migrate collection" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="dev-env-vagrant-non-containerized.html" class="btn btn-neutral float-left" title="Installing Vagrant directly on host" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, os-migrate
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

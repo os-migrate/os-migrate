@@ -1,0 +1,317 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Module - export_security_group &mdash; os-migrate  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Module - export_security_group_rules" href="module-export_security_group_rules.html" />
+    <link rel="prev" title="Module - export_router_interfaces" href="module-export_router_interfaces.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> os-migrate
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../devel/README.html">OS-Migrate Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/README.html">OS-Migrate User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../roles.html">Documented roles in os-migrate</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../modules.html">Documented modules in os-migrate</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="module-auth_info.html">Module - auth_info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-export_flavor.html">Module - export_flavor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-export_image_blob.html">Module - export_image_blob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-export_image_meta.html">Module - export_image_meta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-export_keypair.html">Module - export_keypair</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-export_network.html">Module - export_network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-export_router.html">Module - export_router</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-export_router_interfaces.html">Module - export_router_interfaces</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Module - export_security_group</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#m-o-d-u-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">Module Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#o-p-t-i-o-n-s">Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#a-u-t-h-o-r-s">Authors</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#e-x-a-m-p-l-e-t-a-s-k-s">Example Tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="module-export_security_group_rules.html">Module - export_security_group_rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-export_subnet.html">Module - export_subnet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-export_workload.html">Module - export_workload</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-import_flavor.html">Module - import_flavor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-import_image.html">Module - import_image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-import_keypair.html">Module - import_keypair</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-import_network.html">Module - import_network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-import_router.html">Module - import_router</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-import_router_interface.html">Module - import_router_interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-import_security_group.html">Module - import_security_group</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-import_security_group_rule.html">Module - import_security_group_rule</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-import_subnet.html">Module - import_subnet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-import_workload_cleanup.html">Module - import_workload_cleanup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-import_workload_create_instance.html">Module - import_workload_create_instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-import_workload_create_instance.py.html">Module - import_workload_create_instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-import_workload_export_volumes.html">Module - import_workload_export_volumes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-import_workload_prelim.html">Module - import_workload_prelim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-import_workload_transfer_volumes.html">Module - import_workload_transfer_volumes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-os_conversion_host_info.html">Module - os_conversion_host_info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-os_keypairs_info.html">Module - os_keypairs_info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-os_routers_info.html">Module - os_routers_info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-os_security_groups_info.html">Module - os_security_groups_info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-read_resources.html">Module - read_resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-validate_resource_files.html">Module - validate_resource_files</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">os-migrate</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../modules.html">Documented modules in os-migrate</a> &raquo;</li>
+        
+      <li>Module - export_security_group</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/modules/module-export_security_group.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-export-security-group">
+<h1>Module - export_security_group<a class="headerlink" href="#module-export-security-group" title="Permalink to this headline">¶</a></h1>
+<p>This module provides for the following ansible plugin:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>export_security_group</p></li>
+</ul>
+</div></blockquote>
+<div class="section" id="m-o-d-u-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">
+<h2>Module Documentation<a class="headerlink" href="#m-o-d-u-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n" title="Permalink to this headline">¶</a></h2>
+<p><p>Export an OpenStack security group definition into an OS-Migrate YAML</p>
+</p>
+<div class="section" id="o-p-t-i-o-n-s">
+<h3>Options<a class="headerlink" href="#o-p-t-i-o-n-s" title="Permalink to this headline">¶</a></h3>
+<dl class="field-list">
+<dt class="field-odd">auth</dt>
+<dd class="field-odd"><p>Dictionary with parameters for chosen auth type.</p>
+</dd>
+<dt class="field-even">auth_type</dt>
+<dd class="field-even"><p>Auth type plugin for OpenStack. Can be omitted if using password authentication.</p>
+</dd>
+<dt class="field-odd">region_name</dt>
+<dd class="field-odd"><p>OpenStack region name. Can be omitted if using default region.</p>
+</dd>
+<dt class="field-even">path</dt>
+<dd class="field-even"><p>Resources YAML file to where security groups will be serialized.</p>
+<p>In case the resource file already exists, it must match the os-migrate version.</p>
+<p>In case the resource of same type and name exists in the file, it will be replaced.</p>
+</dd>
+<dt class="field-odd">name</dt>
+<dd class="field-odd"><p>Name of the security group. OS-Migrate requires unique resource names.</p>
+</dd>
+<dt class="field-even">availability_zone</dt>
+<dd class="field-even"><p>Availability zone.</p>
+</dd>
+<dt class="field-odd">cloud</dt>
+<dd class="field-odd"><p>Ignored. Present for backwards compatibility.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="a-u-t-h-o-r-s">
+<h3>Authors<a class="headerlink" href="#a-u-t-h-o-r-s" title="Permalink to this headline">¶</a></h3>
+<dl class="field-list">
+<dt class="field-odd"></dt>
+<dd class="field-odd"><p>OpenStack tenant migration tools (&#64;os-migrate)</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="e-x-a-m-p-l-e-t-a-s-k-s">
+<h2>Example Tasks<a class="headerlink" href="#e-x-a-m-p-l-e-t-a-s-k-s" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Export security groups into /opt/os-migrate/security_groups.yml</span>
+  <span class="nt">os_migrate.os_migrate.export_security_groups</span><span class="p">:</span>
+    <span class="nt">cloud</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">source_cloud</span>
+    <span class="nt">path</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/opt/os-migrate/security_groups.yml</span>
+    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">mysecgroup</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="module-export_security_group_rules.html" class="btn btn-neutral float-right" title="Module - export_security_group_rules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="module-export_router_interfaces.html" class="btn btn-neutral float-left" title="Module - export_router_interfaces" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, os-migrate
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

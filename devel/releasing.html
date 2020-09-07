@@ -1,0 +1,262 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Releasing the OS Migrate collection &mdash; os-migrate  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Become a Contributor" href="contributing.html" />
+    <link rel="prev" title="High-level development goals" href="design.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> os-migrate
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="README.html">OS-Migrate Developer Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dev-env-setup.html">OS-Migrate - Development Environment Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev-env-vagrant-non-containerized.html">Installing Vagrant directly on host</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design.html">High-level development goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design.html#challenges-of-the-problem-domain">Challenges of the problem domain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design.html#basic-ansible-workflow-design">Basic Ansible workflow design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design.html#misc">Misc</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Releasing the OS Migrate collection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html">Become a Contributor</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../user/README.html">OS-Migrate User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../roles.html">Documented roles in os-migrate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Documented modules in os-migrate</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">os-migrate</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="README.html">OS-Migrate Developer Documentation</a> &raquo;</li>
+        
+      <li>Releasing the OS Migrate collection</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/devel/releasing.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="releasing-the-os-migrate-collection">
+<h1>Releasing the OS Migrate collection<a class="headerlink" href="#releasing-the-os-migrate-collection" title="Permalink to this headline">¶</a></h1>
+<p>Set env vars with old and new versions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">OLD_VERSION</span><span class="o">=</span><span class="mf">0.0</span><span class="o">.</span><span class="mi">2</span>
+<span class="n">NEW_VERSION</span><span class="o">=</span><span class="mf">0.3</span><span class="o">.</span><span class="mi">0</span>
+</pre></div>
+</div>
+<p>Edit the version in galaxy.yml and any hardcoded values in functional
+tests:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sed -i -e <span class="s2">&quot;s/^version: </span><span class="nv">$OLD_VERSION</span><span class="s2">/version: </span><span class="nv">$NEW_VERSION</span><span class="s2">/&quot;</span> ./os_migrate/galaxy.yml
+grep -lr <span class="s2">&quot;os_migrate_version: </span><span class="nv">$OLD_VERSION</span><span class="s2">&quot;</span> ./tests <span class="p">|</span> xargs sed -i -e <span class="s2">&quot;s/^os_migrate_version: </span><span class="nv">$OLD_VERSION</span><span class="s2">/os_migrate_version: </span><span class="nv">$NEW_VERSION</span><span class="s2">/&quot;</span>
+</pre></div>
+</div>
+<p>Test that the changes didn’t break tests:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span>
+</pre></div>
+</div>
+<p>Create a pull request with these changes. Once it’s merged, check out
+the merge commit and release to galaxy:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>git checkout $MERGED_COMMIT
+./toolbox/run ./scripts/publish.sh -k &lt;YOUR_GALAXY_TOKEN&gt;
+</pre></div>
+</div>
+<p>After a successful release, create a tag on the commit you built the
+release from, and push the tag to the upstream repo:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">tag</span> <span class="o">-</span><span class="n">m</span> <span class="s2">&quot;$NEW_VERSION&quot;</span> <span class="s2">&quot;$NEW_VERSION&quot;</span>
+<span class="c1"># assuming the os-migrate upstream repo is named &#39;upstream&#39; in your repo clone</span>
+<span class="n">git</span> <span class="n">push</span> <span class="n">upstream</span> <span class="o">--</span><span class="n">tags</span>
+</pre></div>
+</div>
+<p>If you’ve incremented “X” or “Y” in “X.Y.Z” version scheme, create also
+a stable branch to allow us to create “.Z” releases:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>STABLE_VERSION=$(awk -F. &#39;{ print $1 &quot;.&quot; $2; }&#39; &lt;&lt;&lt;&quot;$NEW_VERSION&quot;)
+git checkout -b stable/$STABLE_VERSION
+git push upstream stable/$STABLE_VERSION
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Become a Contributor" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="design.html" class="btn btn-neutral float-left" title="High-level development goals" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, os-migrate
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

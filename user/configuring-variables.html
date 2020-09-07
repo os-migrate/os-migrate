@@ -1,0 +1,284 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Configuring variables in os-migrate &mdash; os-migrate  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Documented roles in os-migrate" href="../roles.html" />
+    <link rel="prev" title="OS Migrate Walkthrough" href="walkthrough.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> os-migrate
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../devel/README.html">OS-Migrate Developer Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="README.html">OS-Migrate User Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="install-from-source.html">Installation from source</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install-from-galaxy.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="walkthrough.html">OS Migrate Walkthrough</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Configuring variables in os-migrate</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#conversion-host-parameters">Conversion host parameters</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#conversion-host-external-network">Conversion host external network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conversion-host-flavor-name">Conversion host flavor name</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conversion-host-image-name">Conversion host image name</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="README.html#general-usage-notes">General usage notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../roles.html">Documented roles in os-migrate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Documented modules in os-migrate</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">os-migrate</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="README.html">OS-Migrate User Documentation</a> &raquo;</li>
+        
+      <li>Configuring variables in os-migrate</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/user/configuring-variables.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="configuring-variables-in-os-migrate">
+<h1>Configuring variables in os-migrate<a class="headerlink" href="#configuring-variables-in-os-migrate" title="Permalink to this headline">¶</a></h1>
+<p>The goal of this document is to guide users to correctly configure the
+variables requires to migrate resources from one tenant/project to
+another. Depending on the environment, parameters like the flavor that
+will be used to deploy the conversion host must be configured prior to a
+migration, these parameters can vary as they depend on how each tenant
+was configured. All these parameters are centered over the conversion
+host configuration.</p>
+<div class="section" id="conversion-host-parameters">
+<h2>Conversion host parameters<a class="headerlink" href="#conversion-host-parameters" title="Permalink to this headline">¶</a></h2>
+<p>The following parameters are those that need to be configured prior to
+running os_migrate.</p>
+<div class="section" id="conversion-host-external-network">
+<h3>Conversion host external network<a class="headerlink" href="#conversion-host-external-network" title="Permalink to this headline">¶</a></h3>
+<p>The external network configuration allows the connection of the
+conversion host router for external access, this external network must
+be able to allocate floating IPs reachable between both conversion
+hosts.</p>
+<p>The parameters to be configured are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">os_migrate_src_conversion_external_network_name</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">os_migrate_dst_conversion_external_network_name</span></code></p></li>
+</ul>
+<p>Usually, these parameters can be configured to ‘public’ or
+‘external_network’ but it depends on how they were configured by the
+administrators of the system.</p>
+</div>
+<div class="section" id="conversion-host-flavor-name">
+<h3>Conversion host flavor name<a class="headerlink" href="#conversion-host-flavor-name" title="Permalink to this headline">¶</a></h3>
+<p>The conversion host flavor defines the compute, memory, and storage
+capacity that will be allocated in this guest. It needs to have at least
+a volume with 20GB.</p>
+<p>The parameters to be configured are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">os_migrate_src_conversion_flavor_name</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">os_migrate_dst_conversion_flavor_name</span></code></p></li>
+</ul>
+<p>Usually, ‘m1.medium’ will suffice this requirement, but again, it can be
+different between deployments.</p>
+</div>
+<div class="section" id="conversion-host-image-name">
+<h3>Conversion host image name<a class="headerlink" href="#conversion-host-image-name" title="Permalink to this headline">¶</a></h3>
+<p>The conversion host image is the guest configure to execute the
+instances migrations.</p>
+<p>The parameters to be configured are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">os_migrate_src_conversion_image_name</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">os_migrate_dst_conversion_image_name</span></code></p></li>
+</ul>
+<p>This image must be pre-uploaded to both tenants/projects prior to
+executing the os-migrate playbooks.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../roles.html" class="btn btn-neutral float-right" title="Documented roles in os-migrate" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="walkthrough.html" class="btn btn-neutral float-left" title="OS Migrate Walkthrough" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, os-migrate
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
