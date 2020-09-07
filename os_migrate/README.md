@@ -38,10 +38,9 @@ database access or other methods to export or import data.  The Ansible playbook
 contained in OS-Migrate are idempotent.  If a command fails, you can retry with 
 the same command.
 
-## Usage
+## Documentation
 
-Refer to [user docs](https://github.com/os-migrate/os-migrate/blob/main/doc/user/README.md).
-
-## Development
-
-Refer to [developer docs](https://github.com/os-migrate/os-migrate/blob/main/doc/devel/README.md).
+Refer to the official [documentation website](https://os-migrate.github.io/os-migrate/)
+for both
+[usage](https://os-migrate.github.io/os-migrate/user/README.html) and
+[developer](https://os-migrate.github.io/os-migrate/devel/README.html) documentation.
