@@ -1,5 +1,6 @@
 /releases/*
 
+/docs/src/_build/*
 /.venv
 /local
 /tests/func/auth.yml
