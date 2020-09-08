@@ -3,7 +3,7 @@
 - include_role:
     name: os_migrate.os_migrate.export_images
   vars:
-    export_images_name_filter:
+    os_migrate_images_filter:
       - regex: '^osm_'
 
 - name: re-load image_resources for idempotency test

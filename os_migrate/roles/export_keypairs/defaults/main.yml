@@ -1,2 +1,2 @@
-export_keypairs_name_filter:
+os_migrate_keypairs_filter:
   - regex: .*
