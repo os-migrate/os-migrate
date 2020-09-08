@@ -11,12 +11,14 @@ os_migrate_dst_conversion_net_mtu: "{{
   1400 if os_migrate_dst_release > 10
   else omit }}"
 
+# If we install packages we need a DNS server working
+os_migrate_src_conversion_subnet_dns_nameservers: ['8.8.8.8']
+os_migrate_dst_conversion_subnet_dns_nameservers: ['8.8.8.8']
+
 os_migrate_conversion_subnet_name: os_migrate_conv
 os_migrate_conversion_subnet_cidr: 192.168.10.0/24
 os_migrate_conversion_subnet_alloc_start: 192.168.10.10
 os_migrate_conversion_subnet_alloc_end: 192.168.10.99
-# If we install packages we need a DNS server working
-os_migrate_conversion_subnet_dns_nameservers: ['8.8.8.8']
 
 os_migrate_conversion_router_name: os_migrate_conv
 os_migrate_conversion_router_ip: 192.168.10.1
