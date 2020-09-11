@@ -49,7 +49,7 @@ test-setup-vagrant-devstack:
 		--config toolbox/vagrant/env/clouds.yaml \
 		--src devstack \
 		--dst devstack-alt \
-		> tests/auth.yml
+		> tests/auth_tenant.yml
 
 test: test-fast test-func
 
@@ -65,10 +65,12 @@ test-func: reinstall
 		-i $(ROOT_DIR)/os_migrate/localhost_inventory.yml \
 		-e os_migrate_tests_tmp_dir=$(ROOT_DIR)/tests/func/tmp \
 		-e os_migrate_data_dir=$(ROOT_DIR)/tests/func/tmp/data \
-		-e @$(ROOT_DIR)/tests/auth.yml \
+		-e @$(ROOT_DIR)/tests/auth_tenant.yml \
 		$(FUNC_TEST_ARGS) test_all.yml
 
-test-e2e: reinstall
+test-e2e: test-e2e-tenant
+
+test-e2e-tenant: reinstall
 	set -euo pipefail; \
 	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
 		echo "Sourcing venv."; \
@@ -81,9 +83,9 @@ test-e2e: reinstall
 		-e os_migrate_tests_tmp_dir=$(ROOT_DIR)/tests/func/tmp \
 		-e os_migrate_data_dir=$(ROOT_DIR)/tests/func/tmp/data \
 		-e os_migrate_conversion_host_key=$(ROOT_DIR)/tests/func/tmpdata/conversion/ssh.key \
-                -e @$(ROOT_DIR)/tests/e2e/scenario_variables.yml \
-		-e @$(ROOT_DIR)/tests/auth.yml \
-		$(FUNC_TEST_ARGS) test_all.yml
+                -e @$(ROOT_DIR)/tests/e2e/tenant/scenario_variables.yml \
+		-e @$(ROOT_DIR)/tests/auth_tenant.yml \
+		$(FUNC_TEST_ARGS) test_as_tenant.yml
 
 test-fast: test-lint test-sanity test-unit
 

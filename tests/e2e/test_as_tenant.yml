@@ -1,7 +1,7 @@
 - name: Test preparation
   hosts: migrator
   tasks:
-    - import_tasks: prep.yml
+    - import_tasks: common/prep.yml
 
 - name: Make sure conversion hosts are cleaned up
   import_playbook: "{{ lookup('env', 'OS_MIGRATE') }}/playbooks/delete_conversion_hosts.yml"
@@ -12,14 +12,14 @@
 - name: Migration tests
   hosts: migrator
   tasks:
-    - include_tasks: clean.yml
+    - include_tasks: tenant/clean.yml
       args:
         apply:
           tags: test_clean_before
       tags: always
-    - import_tasks: seed.yml
-    - import_tasks: run.yml
-    - include_tasks: clean.yml
+    - import_tasks: tenant/seed.yml
+    - import_tasks: tenant/run.yml
+    - include_tasks: tenant/clean.yml
       args:
         apply:
           tags: test_clean_after

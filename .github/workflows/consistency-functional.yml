@@ -267,7 +267,7 @@ jobs:
               --config tests/clouds.yaml \
               --src devstack \
               --dst devstack-alt \
-              > tests/auth.yml && \
+              > tests/auth_tenant.yml && \
           rm tests/clouds.yaml
       - name: Run functional tests
         run: |

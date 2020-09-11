@@ -3,7 +3,7 @@
 /docs/src/_build/*
 /.venv
 /local
-/tests/func/auth.yml
+/tests/auth_tenant.yml
 /tests/func/tmp
 /toolbox/vagrant/.vagrant
 /toolbox/vagrant/env
