@@ -80,12 +80,12 @@ test-e2e-tenant: reinstall
 	ansible-playbook \
 		-v \
 		-i $(OS_MIGRATE)/localhost_inventory.yml \
-		-e os_migrate_tests_tmp_dir=$(ROOT_DIR)/tests/func/tmp \
-		-e os_migrate_data_dir=$(ROOT_DIR)/tests/func/tmp/data \
-		-e os_migrate_conversion_host_key=$(ROOT_DIR)/tests/func/tmpdata/conversion/ssh.key \
+		-e os_migrate_tests_tmp_dir=$(ROOT_DIR)/tests/e2e/tmp \
+		-e os_migrate_data_dir=$(ROOT_DIR)/tests/e2e/tmp/data \
+		-e os_migrate_conversion_host_key=$(ROOT_DIR)/tests/e2e/tmpdata/conversion/ssh.key \
                 -e @$(ROOT_DIR)/tests/e2e/tenant/scenario_variables.yml \
 		-e @$(ROOT_DIR)/tests/auth_tenant.yml \
-		$(FUNC_TEST_ARGS) test_as_tenant.yml
+		$(E2E_TEST_ARGS) test_as_tenant.yml
 
 test-fast: test-lint test-sanity test-unit
 
