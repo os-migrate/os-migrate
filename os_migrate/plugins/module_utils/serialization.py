@@ -61,6 +61,12 @@ def is_same_resource(res1, res2):
     # We can add special cases if something else than ['type'] &&
     # ['_info']['id'] should be the deciding factors for sameness,
     # but it's not necessary for now.
+    # special cases
+    # projects
+    if res1.get(const.RES_TYPE, '__undefined1__') == const.RES_TYPE_PROJECT:
+        return (res1.get(const.RES_PARAMS, {}).get('name', '__undefined1__') ==
+                res2.get(const.RES_PARAMS, {}).get('name', '__undefined2__'))
+
     return (res1.get(const.RES_INFO, {}).get('id', '__undefined1__') ==
             res2.get(const.RES_INFO, {}).get('id', '__undefined2__'))
 

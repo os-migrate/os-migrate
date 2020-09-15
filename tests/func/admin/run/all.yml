@@ -21,3 +21,12 @@
       tags:
         - test_user
   tags: always
+
+- name: Include project tasks
+  include_tasks: project.yml
+  args:
+    apply:
+      tags:
+        - test_project
+  tags:
+    - always
