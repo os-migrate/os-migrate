@@ -68,7 +68,7 @@ test-func: reinstall
 		-e @$(ROOT_DIR)/tests/auth_tenant.yml \
 		$(FUNC_TEST_ARGS) test_all.yml
 
-test-e2e: test-e2e-tenant
+test-e2e: test-e2e-tenant test-e2e-admin
 
 test-e2e-tenant: reinstall
 	set -euo pipefail; \
@@ -86,6 +86,23 @@ test-e2e-tenant: reinstall
                 -e @$(ROOT_DIR)/tests/e2e/tenant/scenario_variables.yml \
 		-e @$(ROOT_DIR)/tests/auth_tenant.yml \
 		$(E2E_TEST_ARGS) test_as_tenant.yml
+
+test-e2e-admin: reinstall
+	set -euo pipefail; \
+	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
+		echo "Sourcing venv."; \
+		source /root/venv/bin/activate; \
+	fi; \
+	cd tests/e2e; \
+	ansible-playbook \
+		-v \
+		-i $(OS_MIGRATE)/localhost_inventory.yml \
+		-e os_migrate_tests_tmp_dir=$(ROOT_DIR)/tests/e2e/tmp \
+		-e os_migrate_data_dir=$(ROOT_DIR)/tests/e2e/tmp/data \
+		-e os_migrate_conversion_host_key=$(ROOT_DIR)/tests/e2e/tmpdata/conversion/ssh.key \
+                -e @$(ROOT_DIR)/tests/e2e/admin/scenario_variables.yml \
+		-e @$(ROOT_DIR)/tests/auth_admin.yml \
+		$(E2E_TEST_ARGS) test_as_admin.yml
 
 test-fast: test-lint test-sanity test-unit
 
