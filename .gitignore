@@ -4,6 +4,7 @@
 /.venv
 /local
 /tests/auth_tenant.yml
+/tests/e2e/tmp
 /tests/func/tmp
 /toolbox/vagrant/.vagrant
 /toolbox/vagrant/env
