@@ -52,3 +52,29 @@ find ./ \
      -and -not -wholename "./tests/func/tmp/*" \
      -and -name "*.yml" -print0 \
     | xargs -0 ansible-lint
+
+# Match both docs and modules/roles
+
+roles_docs_number=`ls docs/src/roles | wc -l`
+roles_number=`ls os_migrate/roles/ | wc -l`
+
+modules_docs_number=`ls docs/src/modules | wc -l`
+modules_number=`ls os_migrate/plugins/modules/ | wc -l`
+
+echo "Roles in docs: $roles_docs_number"
+echo "Roles: $roles_number"
+
+echo "Modules in docs: $modules_docs_number"
+echo "Modules: $modules_number"
+
+if [ "$roles_docs_number" -ne "$roles_number" ];then
+    echo "Links in the roles docs section";
+    echo "do not match with the number of existing roles";
+    exit 1;
+fi
+
+if [ "$modules_docs_number" -ne "$modules_number" ];then
+    echo "Links in the modules docs section";
+    echo "do not match with the number of existing modules";
+    exit 1;
+fi
