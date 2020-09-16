@@ -13,3 +13,11 @@
       tags:
         - test_keypair
   tags: always
+
+- name: Include user tasks
+  include_tasks: user.yml
+  args:
+    apply:
+      tags:
+        - test_user
+  tags: always
