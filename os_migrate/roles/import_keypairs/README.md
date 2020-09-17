@@ -1,2 +1,2 @@
 Please refer to
-[OS Migrate user docs](https://github.com/os-migrate/os-migrate/blob/main/doc/user/README.md).
+[OS Migrate user docs](https://os-migrate.github.io/os-migrate/user/README.html).
