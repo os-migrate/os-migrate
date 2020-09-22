@@ -63,6 +63,7 @@ class Resource():
         # rely on these existing rather than calling dict.get().
         obj.data.setdefault(const.RES_PARAMS, {})
         obj.data.setdefault(const.RES_INFO, {})
+        obj.data.setdefault(const.RES_MIGRATION, {})
         return obj
 
     # Meant to be extended in child classes, but can be overriden
@@ -205,6 +206,9 @@ class Resource():
     def info(self):
         return self.data[const.RES_INFO]
 
+    def migration(self):
+        return self.data[const.RES_MIGRATION]
+
     def params(self):
         return self.data[const.RES_PARAMS]
 
@@ -229,6 +233,7 @@ class Resource():
             const.RES_TYPE: None,
             const.RES_PARAMS: {},
             const.RES_INFO: {},
+            const.RES_MIGRATION: {},
         }
 
     # Not meant to be overriden in majority of subclasses.
@@ -317,17 +322,17 @@ class Resource():
 
     # Not meant to be overriden in majority of subclasses.
     def _data_without_info(self):
-        """Returns: serialized `self.data` with all the '_info' keys removed,
-        even from nested resources. The original `self.data` structure
-        is untouched, but the returned structure does reuse data
-        contents to save memory (it is not a deep copy). Only lists
-        and dicts are fresh instances.
+        """Returns: serialized `self.data` with all the '_info' and
+        '_migration' keys removed, even from nested resources. The
+        original `self.data` structure is untouched, but the returned
+        structure does reuse data contents to save memory (it is not a
+        deep copy). Only lists and dicts are fresh instances.
         """
         def _recursive_trim(obj):
             if isinstance(obj, dict):
                 result_dict = {}
                 for k, v in obj.items():
-                    if k == const.RES_INFO:
+                    if k == const.RES_INFO or k == const.RES_MIGRATION:
                         continue
                     result_dict[k] = _recursive_trim(v)
                 return result_dict

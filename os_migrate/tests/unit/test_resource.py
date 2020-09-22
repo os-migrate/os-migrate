@@ -83,6 +83,7 @@ def valid_fakeresource_data():
             'param3name': 'param3nameval',
             'param4name': 'param4nameval',
         },
+        '_migration': {},
         '_info': {
             'info1': 'info1val',
             'info2': 'info2val',

@@ -4,6 +4,7 @@ OS_MIGRATE_VERSION = '0.4.0'  # updated by build.sh
 RES_PARAMS = 'params'
 RES_TYPE = 'type'
 RES_INFO = '_info'
+RES_MIGRATION = '_migration'
 
 # Supported resource types
 RES_TYPE_IMAGE = 'openstack.image.Image'
