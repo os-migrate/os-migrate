@@ -13,8 +13,12 @@ class Server(resource.Resource):
     sdk_class = openstack.compute.v2.server.Server
 
     info_from_sdk = [
+        'created_at',
+        # strangely, create_server doesn't seem to suppor
+        'description',
         'id',
         'status',
+        'updated_at',
     ]
     info_from_refs = [
         'flavor_id',
@@ -38,9 +42,27 @@ class Server(resource.Resource):
         obj = super(Server, cls).from_sdk(conn, sdk_resource)
         return obj
 
+    def create(self, conn, block_device_mapping, boot_volume_id):
+        sdk_params = self.sdk_params(conn)
+        sdk_params['block_device_mapping_v2'] = block_device_mapping
+        sdk_params['boot_volume'] = boot_volume_id
+        return conn.create_server(**sdk_params)
+
     def sdk_params(self, conn):
         refs = self._refs_from_ser(conn)
-        return self._to_sdk_params(refs)
+        sdk_params = self._to_sdk_params(refs)
+        sdk_params['security_groups'] = sdk_params.pop('security_group_ids')
+        sdk_params['flavor'] = sdk_params.pop('flavor_id')
+
+        sdk_params['nics'] = []
+        addresses = sdk_params.pop('addresses')
+        for network, portlist in addresses.items():
+            for port in portlist:
+                if port['OS-EXT-IPS:type'] == 'fixed':
+                    sdk_params['nics'].append({"net-name": network,
+                                               "v4-fixed-ip": port['addr']})
+
+        return sdk_params
 
     @staticmethod
     def _find_sdk_res(conn, name_or_id, filters=None):
