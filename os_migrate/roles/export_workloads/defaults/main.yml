@@ -1,2 +1,4 @@
 os_migrate_workloads_filter:
   - regex: .*
+# TODO: Default this to false when rebuildable instances are supported.
+os_migrate_workload_boot_disk_copy: true

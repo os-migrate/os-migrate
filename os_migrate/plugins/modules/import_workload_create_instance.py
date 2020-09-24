@@ -244,29 +244,11 @@ def run_module():
     block_device_mapping = module.params['block_device_mapping']
     boot_volume_id = module.params['boot_volume_id']
 
-    src = server.Server.from_data(module.params['data'])
-    sdk_params = src.sdk_params(conn)
+    ser_server = server.Server.from_data(module.params['data'])
+    sdk_server = ser_server.create(conn, block_device_mapping, boot_volume_id)
 
-    nics = []
-    addresses = sdk_params['addresses']
-    for network, portlist in addresses.items():
-        for port in portlist:
-            if port['OS-EXT-IPS:type'] == 'fixed':
-                nics.append({"net-name": network,
-                             "v4-fixed-ip": port['addr']})
-
-    srv = conn.create_server(
-        name=sdk_params['name'],
-        flavor=sdk_params['flavor_id'],
-        boot_volume=boot_volume_id,
-        block_device_mapping_v2=block_device_mapping,
-        security_groups=sdk_params['security_group_ids'],
-        # This option is not documented upstream
-        nics=nics
-    )
-
-    if srv:
-        result['server_id'] = srv.id
+    if sdk_server:
+        result['server_id'] = sdk_server.id
         result['changed'] = True
 
     module.exit_json(**result)

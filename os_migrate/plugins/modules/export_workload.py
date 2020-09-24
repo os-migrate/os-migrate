@@ -60,6 +60,11 @@ options:
       - Name (or ID) of an instance to export.
     required: true
     type: str
+  migration_params:
+    description:
+      - Dictionary with parameters for the migration procedure.
+    required: false
+    type: dict
   availability_zone:
     description:
       - Availability zone.
@@ -94,6 +99,7 @@ def run_module():
     argument_spec = openstack_full_argument_spec(
         path=dict(type='str', required=True),
         name=dict(type='str', required=True),
+        migration_params=dict(type='dict', required=False, default={}),
     )
     # TODO: check the del
     # del argument_spec['cloud']
@@ -113,6 +119,7 @@ def run_module():
     sdk_server_nodetails = conn.compute.find_server(module.params['name'], ignore_missing=False)
     sdk_server = conn.compute.get_server(sdk_server_nodetails['id'])
     srv = server.Server.from_sdk(conn, sdk_server)
+    srv.update_migration_params(module.params['migration_params'])
 
     result['changed'] = filesystem.write_or_replace_resource(
         module.params['path'], srv)

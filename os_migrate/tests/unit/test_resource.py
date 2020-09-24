@@ -83,6 +83,7 @@ def valid_fakeresource_data():
             'param3name': 'param3nameval',
             'param4name': 'param4nameval',
         },
+        '_migration_params': {},
         '_info': {
             'info1': 'info1val',
             'info2': 'info2val',
@@ -117,6 +118,12 @@ class TestResource(unittest.TestCase):
         refs = res._refs_from_ser(None)
         sdk_params = res._to_sdk_params(refs)
         self.assertEqual(sdk_params, valid_fakeresource_sdk_creation_params())
+
+    def test_update_migration_params(self):
+        res = FakeResource.from_data(valid_fakeresource_data())
+        res.update_migration_params({'migparam1': 'val1'})
+        res.update_migration_params({'migparam2': 'val2'})
+        self.assertEqual(res.migration_params(), {'migparam1': 'val1', 'migparam2': 'val2'})
 
     def test_needs_update(self):
         res1 = FakeResource.from_data(valid_fakeresource_data())
