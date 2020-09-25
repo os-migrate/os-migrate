@@ -19,7 +19,6 @@
       ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
       client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  tags: always
 
 - name: Create osm subnet
   os_subnet:
@@ -43,7 +42,6 @@
       ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
       client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  tags: always
 
 - name: Create security group
   os_security_group:
@@ -61,7 +59,6 @@
       ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
       client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  tags: always
 
 - name: Create security group rule
   os_security_group_rule:
@@ -78,7 +75,6 @@
       ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
       client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  tags: always
 
 - name: create osm_router
   os_router:
@@ -100,21 +96,18 @@
       ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
       client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  tags: always
 
 - name: Create the key folder
   file:
     path: "{{ '~' | expanduser }}/ssh-ci"
     mode: 0700
     state: directory
-  tags: always
 
 - name: Generate a keypair for the migration
   # This will not regenerate the key if
   # it already exists
   openssh_keypair:
     path: "{{ '~' | expanduser }}/ssh-ci/id_rsa"
-  tags: always
 
 - name: Create new keypair as osm_key
   os_keypair:
@@ -137,8 +130,6 @@
       ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
       client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-  tags:
-    - always
 
 - name: make sure test_inputs dir exists
   file:
@@ -164,38 +155,3 @@
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-
-- name: create osm_server
-  os_server:
-    auth: "{{ os_migrate_src_auth }}"
-    name: osm_server
-    state: present
-    # TODO: We don't have flavors or images
-    flavor: "{{ os_migrate_src_osm_server_flavor|default(m1.small) }}"
-    key_name: osm_key
-    image: "{{ os_migrate_src_osm_server_image|default(omit) }}"
-    network: osm_net
-    security_groups: osm_security_group
-    # We get a floating IP
-    # for the workload VM
-    auto_ip: yes
-    # Wait for the instance to be created
-    wait: yes
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  tags: always
-
-# In order to be able to migrate the VMS they must be turned off
-- name: Shutdown osm_server
-  os_server_action:
-    auth: "{{ os_migrate_src_auth }}"
-    server: osm_server
-    action: stop
-    wait: yes
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  tags: always
