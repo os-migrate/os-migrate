@@ -222,6 +222,7 @@ def run_module():
     if len(list(conn.compute.servers(details=False, name=server_name, **module.params['dst_filters']))) > 0:
         module.exit_json(msg='VM already exists on destination!', **result)
 
+    # FIXME: let's check this in realtime, not based on what's in the data files.
     # Make sure source instance is shutdown before proceeding.
     if info['status'] != 'SHUTOFF':
         name = server_name

@@ -33,7 +33,6 @@
 
     - include_role:
         name: os_migrate.os_migrate.import_networks
-  tags: always
 
 - name: Subnet tasks
   block:
@@ -64,7 +63,6 @@
 
     - include_role:
         name: os_migrate.os_migrate.import_subnets
-  tags: always
 
 - name: Security group tasks
   block:
@@ -92,7 +90,6 @@
 
     - include_role:
         name: os_migrate.os_migrate.import_security_groups
-  tags: always
 
 - name: Security group rules tasks
   block:
@@ -120,7 +117,6 @@
 
     - include_role:
         name: os_migrate.os_migrate.import_security_group_rules
-  tags: always
 
 - name: Router tasks
   block:
@@ -159,7 +155,6 @@
 
     - include_role:
         name: os_migrate.os_migrate.import_routers
-  tags: always
 
 - name: Image tasks
   block:
@@ -186,45 +181,3 @@
 
     - include_role:
         name: os_migrate.os_migrate.import_images
-  tags: always
-
-- name: Workloads tasks
-  block:
-    - include_role:
-        name: os_migrate.os_migrate.export_workloads
-      vars:
-        # This expression should export all osm_ workloads
-        # skipping the universal conversion host (osm_uch)
-        # which is used to move the VM's.
-        # We create it on in seed.yml but we dont export it.
-        os_migrate_workloads_filter:
-          - regex: '^osm_(?!uch)'
-
-    - name: load exported data
-      set_fact:
-        resources: "{{ (lookup('file',
-                               os_migrate_data_dir +
-                               '/workloads.yml') | from_yaml)
-                       ['resources'] }}"
-
-    - name: verify data contents
-      assert:
-        that:
-          - (resources |
-            json_query("[?params.name ==
-            'osm_server'].params.name")
-            == ['osm_server'])
-
-    - include_role:
-        name: os_migrate.os_migrate.import_workloads
-
-  rescue:
-    - name: 1 hour to debug the environment
-      wait_for:
-        timeout: 3600
-
-    - name: mark the task as failed
-      fail:
-        msg: "Failed to run the workload migration"
-
-  tags: always

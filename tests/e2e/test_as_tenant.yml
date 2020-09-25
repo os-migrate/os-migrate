@@ -12,20 +12,60 @@
 - name: Migration tests
   hosts: migrator
   tasks:
-    - include_tasks: tenant/clean.yml
+    - include_tasks: tenant/clean_workload.yml
       args:
         apply:
-          tags: test_clean_before
+          tags:
+            - test_clean_before
+            - test_workload
       tags: always
-    - import_tasks: tenant/seed.yml
-    - import_tasks: tenant/run.yml
-    - include_tasks: tenant/clean.yml
+    - include_tasks: tenant/clean_pre_workload.yml
       args:
         apply:
-          tags: test_clean_after
+          tags:
+            - test_clean_before
+            - test_pre_workload
+      tags: always
+
+    - include_tasks: tenant/seed_pre_workload.yml
+      args:
+        apply:
+          tags: test_pre_workload
+      tags: always
+    - include_tasks: tenant/seed_workload.yml
+      args:
+        apply:
+          tags: test_workload
+      tags: always
+
+    - include_tasks: tenant/run_pre_workload.yml
+      args:
+        apply:
+          tags: test_pre_workload
+      tags: always
+    - include_tasks: tenant/run_workload.yml
+      args:
+        apply:
+          tags: test_workload
+      tags: always
+
+    - include_tasks: tenant/clean_workload.yml
+      args:
+        apply:
+          tags:
+            - test_clean_after
+            - test_workload
+      tags: always
+    - include_tasks: tenant/clean_pre_workload.yml
+      args:
+        apply:
+          tags:
+            - test_clean_after
+            - test_pre_workload
       tags: always
   tags:
     - test_migration
 
 - name: Delete conversion hosts
   import_playbook: "{{ lookup('env', 'OS_MIGRATE') }}/playbooks/delete_conversion_hosts.yml"
+  when: test_clean_conversion_hosts_after|default(true)|bool
