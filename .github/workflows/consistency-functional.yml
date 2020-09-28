@@ -268,6 +268,11 @@ jobs:
               --src devstack \
               --dst devstack-alt \
               > tests/auth_tenant.yml && \
+          ./toolbox/run ./scripts/auth-from-clouds.sh \
+              --config tests/clouds.yaml \
+              --src devstack-admin \
+              --dst devstack-admin \
+              > tests/auth_admin.yml && \
           rm tests/clouds.yaml
       - name: Run functional tests
         run: |

@@ -22,7 +22,7 @@
         - test_security_group
   tags: always
 
-- name: Include security group rule tasks
+- name: Include security group rules tasks
   include_tasks: security_group_rule.yml
   args:
     apply:
@@ -38,18 +38,18 @@
         - test_router
   tags: always
 
+- name: Include router interface tasks
+  include_tasks: router_interface.yml
+  args:
+    apply:
+      tags:
+        - test_router
+  tags: always
+
 - name: Include image tasks
   include_tasks: image.yml
   args:
     apply:
       tags:
         - test_image
-  tags: always
-
-- name: Include keypair tasks
-  include_tasks: keypair.yml
-  args:
-    apply:
-      tags:
-        - test_keypair
   tags: always

@@ -22,13 +22,6 @@
         - test_security_group
   tags: always
 
-- name: Include router tasks
-  include_tasks: router.yml
-  args:
-    apply:
-      tags:
-        - test_router
-
 - name: Include security group rule tasks
   include_tasks: security_group_rule.yml
   args:
@@ -37,12 +30,12 @@
         - test_security_group_rule
   tags: always
 
-- name: Include router interface tasks
-  include_tasks: router_interface.yml
+- name: Include router tasks
+  include_tasks: router.yml
   args:
     apply:
       tags:
-        - test_router_interface
+        - test_router
   tags: always
 
 - name: Include image tasks
@@ -51,20 +44,4 @@
     apply:
       tags:
         - test_image
-  tags: always
-
-- name: Include flavor tasks
-  include_tasks: flavor.yml
-  args:
-    apply:
-      tags:
-        - test_flavor
-  tags: always
-
-- name: Include keypair tasks
-  include_tasks: keypair.yml
-  args:
-    apply:
-      tags:
-        - test_keypair
   tags: always
