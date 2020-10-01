@@ -1,7 +1,7 @@
 - name: Independent tests
   hosts: migrator
   tasks:
-    - import_tasks: independent/all.yml
+    - import_tasks: tenant/independent/all.yml
   tags:
     - test_independent
 
@@ -9,16 +9,16 @@
   hosts: migrator
   tasks:
     - import_tasks: global/prep.yml
-    - include_tasks: clean/all.yml
+    - include_tasks: tenant/clean/all.yml
       args:
         apply:
           tags: test_clean_before
       tags: always
-    - import_tasks: seed/all.yml
-    - import_tasks: run/all.yml
-    - import_tasks: idempotence/all.yml
-    - import_tasks: update/all.yml
-    - include_tasks: clean/all.yml
+    - import_tasks: tenant/seed/all.yml
+    - import_tasks: tenant/run/all.yml
+    - import_tasks: tenant/idempotence/all.yml
+    - import_tasks: tenant/update/all.yml
+    - include_tasks: tenant/clean/all.yml
       args:
         apply:
           tags: test_clean_after

@@ -51,9 +51,18 @@ test-setup-vagrant-devstack:
 		--dst devstack-alt \
 		> tests/auth_tenant.yml
 
+test-setup-vagrant-devstack-admin:
+	./scripts/auth-from-clouds.sh \
+		--config toolbox/vagrant/env/clouds.yaml \
+		--src devstack-admin \
+		--dst devstack-admin \
+		> tests/auth_admin.yml
+
 test: test-fast test-func
 
-test-func: reinstall
+test-func: test-func-tenant test-func-admin
+
+test-func-tenant: reinstall
 	set -euo pipefail; \
 	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
 		echo "Sourcing venv."; \
@@ -66,7 +75,22 @@ test-func: reinstall
 		-e os_migrate_tests_tmp_dir=$(ROOT_DIR)/tests/func/tmp \
 		-e os_migrate_data_dir=$(ROOT_DIR)/tests/func/tmp/data \
 		-e @$(ROOT_DIR)/tests/auth_tenant.yml \
-		$(FUNC_TEST_ARGS) test_all.yml
+		$(FUNC_TEST_ARGS) test_as_tenant.yml
+
+test-func-admin: reinstall
+	set -euo pipefail; \
+	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
+		echo "Sourcing venv."; \
+		source /root/venv/bin/activate; \
+	fi; \
+	cd tests/func; \
+	ansible-playbook \
+		-v \
+		-i $(ROOT_DIR)/os_migrate/localhost_inventory.yml \
+		-e os_migrate_tests_tmp_dir=$(ROOT_DIR)/tests/func/tmp \
+		-e os_migrate_data_dir=$(ROOT_DIR)/tests/func/tmp/data \
+		-e @$(ROOT_DIR)/tests/auth_admin.yml \
+		$(FUNC_TEST_ARGS) test_as_admin.yml
 
 test-e2e: test-e2e-tenant test-e2e-admin
 
