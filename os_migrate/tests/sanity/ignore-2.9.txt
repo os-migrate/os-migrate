@@ -30,3 +30,5 @@ plugins/modules/import_flavor.py validate-modules:missing-gplv3-license
 plugins/modules/export_keypair.py validate-modules:missing-gplv3-license
 plugins/modules/import_keypair.py validate-modules:missing-gplv3-license
 plugins/modules/os_keypairs_info.py validate-modules:missing-gplv3-license
+plugins/modules/export_user.py validate-modules:missing-gplv3-license
+plugins/modules/import_user.py validate-modules:missing-gplv3-license

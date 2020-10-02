@@ -5,5 +5,13 @@
       tags:
         - test_keypair
         - test_clean
+
+- name: Include user tasks
+  include_tasks: user.yml
+  args:
+    apply:
+      tags:
+        - test_user
+        - test_clean
   tags:
     - always
