@@ -1,6 +1,7 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
+from copy import deepcopy
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import const, exc
 
@@ -36,6 +37,10 @@ class Resource():
     # updating it.  This list of parameter names is purged from the parameter
     # list before calling update.
     readonly_sdk_params = []
+    # Defaults for migration parameters. They are deep-copied into the
+    # resource serialization when the resource is being instantiated
+    # from_sdk.
+    migration_param_defaults = {}
 
     # ===== PUBLIC CLASS/STATIC METHODS (alphabetic sort) =====
 
@@ -84,6 +89,8 @@ class Resource():
         obj._data_from_sdk_and_refs(
             sdk_resource, cls._refs_from_sdk(conn, sdk_resource))
         obj.data['type'] = cls.resource_type
+        for k, v in cls.migration_param_defaults.items():
+            obj.data[const.RES_MIGRATION_PARAMS][k] = deepcopy(v)
         return obj
 
     # === PRIVATE CLASS/STATIC METHODS (alphabetic sort) ===

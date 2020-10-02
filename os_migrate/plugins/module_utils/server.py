@@ -35,6 +35,10 @@ class Server(resource.Resource):
         'flavor_id',
     ]
 
+    migration_param_defaults = {
+        'boot_disk_copy': True,
+    }
+
     @classmethod
     def from_sdk(cls, conn, sdk_resource):
         obj = super(Server, cls).from_sdk(conn, sdk_resource)
