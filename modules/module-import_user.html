@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Module - import_security_group_rule &mdash; os-migrate  documentation</title>
+  <title>Module - import_user &mdash; os-migrate  documentation</title>
   
 
   
@@ -36,8 +36,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Module - import_subnet" href="module-import_subnet.html" />
-    <link rel="prev" title="Module - import_security_group" href="module-import_security_group.html" /> 
+    <link rel="next" title="Module - import_workload_cleanup" href="module-import_workload_cleanup.html" />
+    <link rel="prev" title="Module - import_subnet" href="module-import_subnet.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -107,7 +107,9 @@
 <li class="toctree-l2"><a class="reference internal" href="module-import_router.html">Module - import_router</a></li>
 <li class="toctree-l2"><a class="reference internal" href="module-import_router_interface.html">Module - import_router_interface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="module-import_security_group.html">Module - import_security_group</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Module - import_security_group_rule</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module-import_security_group_rule.html">Module - import_security_group_rule</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-import_subnet.html">Module - import_subnet</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Module - import_user</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#m-o-d-u-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">Module Documentation</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#o-p-t-i-o-n-s">Options</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#a-u-t-h-o-r-s">Authors</a></li>
@@ -116,8 +118,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#e-x-a-m-p-l-e-t-a-s-k-s">Example Tasks</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="module-import_subnet.html">Module - import_subnet</a></li>
-<li class="toctree-l2"><a class="reference internal" href="module-import_user.html">Module - import_user</a></li>
 <li class="toctree-l2"><a class="reference internal" href="module-import_workload_cleanup.html">Module - import_workload_cleanup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="module-import_workload_create_instance.html">Module - import_workload_create_instance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="module-import_workload_export_volumes.html">Module - import_workload_export_volumes</a></li>
@@ -179,13 +179,13 @@
         
           <li><a href="../modules.html">Documented modules in os-migrate</a> &raquo;</li>
         
-      <li>Module - import_security_group_rule</li>
+      <li>Module - import_user</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/modules/module-import_security_group_rule.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/modules/module-import_user.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -198,17 +198,17 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-import-security-group-rule">
-<h1>Module - import_security_group_rule<a class="headerlink" href="#module-import-security-group-rule" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-import-user">
+<h1>Module - import_user<a class="headerlink" href="#module-import-user" title="Permalink to this headline">¶</a></h1>
 <p>This module provides for the following ansible plugin:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>import_security_group_rule</p></li>
+<li><p>import_user</p></li>
 </ul>
 </div></blockquote>
 <div class="section" id="m-o-d-u-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">
 <h2>Module Documentation<a class="headerlink" href="#m-o-d-u-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n" title="Permalink to this headline">¶</a></h2>
-<p><p>Import OpenStack security group from an OS-Migrate YAML structure</p>
+<p><p>Import OpenStack Identity User from an OS-Migrate YAML structure</p>
 </p>
 <div class="section" id="o-p-t-i-o-n-s">
 <h3>Options<a class="headerlink" href="#o-p-t-i-o-n-s" title="Permalink to this headline">¶</a></h3>
@@ -223,10 +223,10 @@
 <dd class="field-odd"><p>OpenStack region name. Can be omitted if using default region.</p>
 </dd>
 <dt class="field-even">data</dt>
-<dd class="field-even"><p>Data structure with the security group rule parameters as loaded from OS-Migrate YAML file.</p>
+<dd class="field-even"><p>Data structure with the user parameters as loaded from OS-Migrate YAML file.</p>
 </dd>
 <dt class="field-odd">filters</dt>
-<dd class="field-odd"><p>Options for filtering existing resources to be looked up, e.g. by project.</p>
+<dd class="field-odd"><p>Options for filtering existing resources to be looked up, e.g. by user.</p>
 </dd>
 <dt class="field-even">availability_zone</dt>
 <dd class="field-even"><p>Availability zone.</p>
@@ -247,13 +247,13 @@
 </div>
 <div class="section" id="e-x-a-m-p-l-e-t-a-s-k-s">
 <h2>Example Tasks<a class="headerlink" href="#e-x-a-m-p-l-e-t-a-s-k-s" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Import mysecgrouprule into /opt/os-migrate/security_group_rule.yml</span>
-  <span class="nt">os_migrate.os_migrate.import_security_group_rule</span><span class="p">:</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Import osm_user from /opt/os-migrate/users.yml</span>
+  <span class="nt">os_migrate.os_migrate.import_user</span><span class="p">:</span>
     <span class="nt">cloud</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">source_cloud</span>
     <span class="nt">data</span><span class="p">:</span>
-    <span class="p p-Indicator">-</span> <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">openstack.security_group_rule</span>
+    <span class="p p-Indicator">-</span> <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">openstack.user</span>
       <span class="nt">params</span><span class="p">:</span>
-        <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">my_secgrouprule</span>
+        <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">osm_user</span>
 </pre></div>
 </div>
 </div>
@@ -267,10 +267,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="module-import_subnet.html" class="btn btn-neutral float-right" title="Module - import_subnet" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="module-import_workload_cleanup.html" class="btn btn-neutral float-right" title="Module - import_workload_cleanup" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="module-import_security_group.html" class="btn btn-neutral float-left" title="Module - import_security_group" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="module-import_subnet.html" class="btn btn-neutral float-left" title="Module - import_subnet" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
