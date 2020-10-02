@@ -19,6 +19,12 @@
   <a href="https://github.com/os-migrate/os-migrate/actions?workflow=consistency-functional">
     <img src="https://github.com/os-migrate/os-migrate/workflows/consistency-functional/badge.svg?event=push">
   </a>
+  <a href="https://github.com/os-migrate/os-migrate/actions?workflow=container-image-build">
+    <img src="https://github.com/os-migrate/os-migrate/workflows/container-image-build/badge.svg?event=push">
+  </a>
+  <a href="https://github.com/os-migrate/os-migrate/actions?workflow=docs-build">
+    <img src="https://github.com/os-migrate/os-migrate/workflows/docs-build/badge.svg?event=push">
+  </a>
 </p>
 
 Parallel cloud migration is a way to modernize an OpenStack deployment. Instead 
