@@ -591,7 +591,14 @@ def run_module():
             continue
         name = path.split('/')[-1]
         uuid = destination_host.volume_map[path]['dest_id']
-        entry = dict(uuid=uuid, device_name=name, source_type='volume')
+        entry = {
+            'uuid': uuid,
+            'device_name': name,
+            'source_type': 'volume',
+            'destination_type': 'volume',
+            'boot_index': '-1',
+            'delete_on_termination': False,
+        }
         block_device_mapping.append(entry)
 
     result['volume_map'] = destination_host.volume_map
