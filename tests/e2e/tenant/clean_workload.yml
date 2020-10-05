@@ -7,12 +7,36 @@
     - osm_server.state
     - workloads.yml
 
+- name: Detach osm_volume
+  os_server_volume:
+    server: osm_server
+    volume: osm_volume
+    state: absent
+    auth: "{{ item.auth }}"
+    validate_certs: "{{ item.validate_certs }}"
+    ca_cert: "{{ item.ca_cert }}"
+    client_cert: "{{ item.client_cert }}"
+    client_key: "{{ item.client_key }}"
+  loop:
+    - auth: "{{ os_migrate_src_auth }}"
+      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    - auth: "{{ os_migrate_dst_auth }}"
+      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+  # The module will fail if server or volume don't exist.
+  failed_when: false
+
 - name: Remove osm_server
   os_server:
-    auth: "{{ item.auth }}"
     name: osm_server
     state: absent
     delete_fip: yes
+    auth: "{{ item.auth }}"
     validate_certs: "{{ item.validate_certs }}"
     ca_cert: "{{ item.ca_cert }}"
     client_cert: "{{ item.client_cert }}"
@@ -30,11 +54,32 @@
       client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
-- name: Remove volumes
+- name: Remove osm_server boot volume
   os_volume:
-    auth: "{{ item.auth }}"
-    state: absent
     display_name: rhosp-migration-root-osm_server
+    state: absent
+    auth: "{{ item.auth }}"
+    validate_certs: "{{ item.validate_certs }}"
+    ca_cert: "{{ item.ca_cert }}"
+    client_cert: "{{ item.client_cert }}"
+    client_key: "{{ item.client_key }}"
+  loop:
+    - auth: "{{ os_migrate_src_auth }}"
+      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    - auth: "{{ os_migrate_dst_auth }}"
+      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+
+- name: Remove osm_volume
+  os_volume:
+    display_name: osm_volume
+    state: absent
+    auth: "{{ item.auth }}"
     validate_certs: "{{ item.validate_certs }}"
     ca_cert: "{{ item.ca_cert }}"
     client_cert: "{{ item.client_cert }}"
