@@ -465,6 +465,7 @@ class OpenStackDestinationHost(OpenStackHostBase):
                     except (IOError, OSError) as err:
                         if err.errno != errno.EAGAIN:
                             raise
+                        time.sleep(1)
                         continue
                     if buf:
                         try:
