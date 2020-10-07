@@ -10,6 +10,7 @@
     - import_tasks: admin/seed/all.yml
     - import_tasks: admin/run/all.yml
     - import_tasks: admin/idempotence/all.yml
+    - import_tasks: admin/update/all.yml
     - include_tasks: admin/clean/all.yml
       args:
         apply:
