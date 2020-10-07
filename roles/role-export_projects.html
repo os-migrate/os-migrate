@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Role - validate_data_dir &mdash; os-migrate  documentation</title>
+  <title>Role - export_projects &mdash; os-migrate  documentation</title>
   
 
   
@@ -36,8 +36,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Documented modules in os-migrate" href="../modules.html" />
-    <link rel="prev" title="Role - prelude_src" href="role-prelude_src.html" /> 
+    <link rel="next" title="Role - export_router_interfaces" href="role-export_router_interfaces.html" />
+    <link rel="prev" title="Role - export_networks" href="role-export_networks.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -92,7 +92,13 @@
 <li class="toctree-l2"><a class="reference internal" href="role-export_images.html">Role - export_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-export_keypairs.html">Role - export_keypairs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-export_networks.html">Role - export_networks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="role-export_projects.html">Role - export_projects</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Role - export_projects</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#r-o-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">Role Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#r-o-l-e-d-e-f-a-u-l-t-s">Role Defaults</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="role-export_router_interfaces.html">Role - export_router_interfaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-export_routers.html">Role - export_routers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-export_security_group_rules.html">Role - export_security_group_rules</a></li>
@@ -114,10 +120,7 @@
 <li class="toctree-l2"><a class="reference internal" href="role-import_workloads.html">Role - import_workloads</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-prelude_dst.html">Role - prelude_dst</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-prelude_src.html">Role - prelude_src</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Role - validate_data_dir</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#r-o-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">Role Documentation</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="role-validate_data_dir.html">Role - validate_data_dir</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../modules.html">Documented modules in os-migrate</a></li>
@@ -169,13 +172,13 @@
         
           <li><a href="../roles.html">Documented roles in os-migrate</a> &raquo;</li>
         
-      <li>Role - validate_data_dir</li>
+      <li>Role - export_projects</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/roles/role-validate_data_dir.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/roles/role-export_projects.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -188,12 +191,21 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="role-validate-data-dir">
-<h1>Role - validate_data_dir<a class="headerlink" href="#role-validate-data-dir" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="role-export-projects">
+<h1>Role - export_projects<a class="headerlink" href="#role-export-projects" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="r-o-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">
 <h2>Role Documentation<a class="headerlink" href="#r-o-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n" title="Permalink to this headline">¶</a></h2>
-<dd><p>Welcome to the “validate_data_dir” role documentation.</p>
+<dd><p>Welcome to the “export_projects” role documentation.</p>
 </dd>
+<div class="section" id="r-o-l-e-d-e-f-a-u-l-t-s">
+<h3>Role Defaults<a class="headerlink" href="#r-o-l-e-d-e-f-a-u-l-t-s" title="Permalink to this headline">¶</a></h3>
+<dd><p>This section highlights all of the defaults and variables set within the “export_projects” role.</p>
+</dd>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_projects_filter</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 
@@ -205,10 +217,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../modules.html" class="btn btn-neutral float-right" title="Documented modules in os-migrate" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="role-export_router_interfaces.html" class="btn btn-neutral float-right" title="Role - export_router_interfaces" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="role-prelude_src.html" class="btn btn-neutral float-left" title="Role - prelude_src" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="role-export_networks.html" class="btn btn-neutral float-left" title="Role - export_networks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
