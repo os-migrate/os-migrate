@@ -237,11 +237,6 @@ workload.yml:
 '''
 
 RETURN = '''
-boot_volume_id:
-  description: The ID of the intended boot volume on the destination instance.
-  returned: Only after successfully transferring volumes from the source cloud.
-  type: str
-  example: 059635b7-451f-4a64-978a-7c2e9e4c15ff
 block_device_mapping:
   description:
     - A block_device_mapping_v2 structure for use in OpenStack's create_server().
@@ -586,25 +581,32 @@ def run_module():
     destination_host.transfer_exports()
 
     block_device_mapping = []
-    boot_volume_id = destination_host.volume_map['/dev/vda']['dest_id']
     for path in sorted(destination_host.volume_map.keys()):
-        if path == '/dev/vda':
-            continue
         name = path.split('/')[-1]
         uuid = destination_host.volume_map[path]['dest_id']
-        entry = {
-            'uuid': uuid,
-            'device_name': name,
-            'source_type': 'volume',
-            'destination_type': 'volume',
-            'boot_index': '-1',
-            'delete_on_termination': False,
-        }
+
+        if path == '/dev/vda':
+            entry = {
+                'uuid': uuid,
+                'device_name': name,
+                'source_type': 'volume',
+                'destination_type': 'volume',
+                'boot_index': '0',
+                'delete_on_termination': True,
+            }
+        else:
+            entry = {
+                'uuid': uuid,
+                'device_name': name,
+                'source_type': 'volume',
+                'destination_type': 'volume',
+                'boot_index': '-1',
+                'delete_on_termination': False,
+            }
         block_device_mapping.append(entry)
 
     result['volume_map'] = destination_host.volume_map
     result['block_device_mapping'] = block_device_mapping
-    result['boot_volume_id'] = boot_volume_id
 
     module.exit_json(**result)
 

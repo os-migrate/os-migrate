@@ -74,7 +74,6 @@
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
       data: "{{ item }}"
       block_device_mapping: "{{ transfer.block_device_mapping }}"
-      boot_volume_id: "{{ transfer.boot_volume_id }}"
     register: os_migrate_destination_instance
     when: prelim.changed
 

@@ -67,10 +67,6 @@ options:
       - Used to attach destination volumes to the new instance in the right order.
     required: true
     type: list
-  boot_volume_id:
-    description: ID of the intended boot volume on the destination cloud.
-    required: true
-    type: str
 '''
 
 EXAMPLES = '''
@@ -201,7 +197,6 @@ workload.yml:
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
       data: "{{ item }}"
       block_device_mapping: "{{ transfer.block_device_mapping }}"
-      boot_volume_id: "{{ transfer.boot_volume_id }}"
     register: os_migrate_destination_instance
     when: prelim.changed
 
@@ -229,7 +224,6 @@ def run_module():
     argument_spec = openstack_full_argument_spec(
         data=dict(type='dict', required=True),
         block_device_mapping=dict(type='list', required=True),
-        boot_volume_id=dict(type='str', required=True),
     )
 
     result = dict(
@@ -242,10 +236,9 @@ def run_module():
 
     sdk, conn = openstack_cloud_from_module(module)
     block_device_mapping = module.params['block_device_mapping']
-    boot_volume_id = module.params['boot_volume_id']
 
     ser_server = server.Server.from_data(module.params['data'])
-    sdk_server = ser_server.create(conn, block_device_mapping, boot_volume_id)
+    sdk_server = ser_server.create(conn, block_device_mapping)
 
     if sdk_server:
         result['server_id'] = sdk_server.id
