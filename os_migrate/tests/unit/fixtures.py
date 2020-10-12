@@ -3,7 +3,7 @@ __metaclass__ = type
 
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
-    import const
+    import const, resource
 
 
 def minimal_resource():
@@ -24,6 +24,42 @@ def minimal_resource_file_struct():
     return {
         'os_migrate_version': const.OS_MIGRATE_VERSION,
         'resources': [minimal_resource()],
+    }
+
+
+class MinimalResource(resource.Resource):
+
+    resource_type = 'openstack.Minimal'
+    sdk_class = dict
+
+    info_from_sdk = ['id', 'detail']
+    params_from_sdk = ['name', 'description']
+
+    @staticmethod
+    def _create_sdk_res(conn, sdk_params):
+        return valid_minimalresource_data()
+
+    @staticmethod
+    def _find_sdk_res(conn, name_or_id, filters=None):
+        return valid_minimalresource_data()
+
+    @staticmethod
+    def _update_sdk_res(conn, name_or_id, sdk_params):
+        return valid_minimalresource_data()
+
+
+def valid_minimalresource_data():
+    return {
+        'type': 'openstack.Minimal',
+        'params': {
+            'name': 'minimal',
+            'description': 'minimal resource',
+        },
+        '_migration_params': {},
+        '_info': {
+            'id': 'id-minimal',
+            'detail': 'not important for import and idempotence',
+        },
     }
 
 
