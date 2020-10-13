@@ -18,6 +18,7 @@ def sdk_server():
                  'version': 4},
             ],
         },
+        description='test server',
         flavor={
             'original_name': 'm1.small',
         },
@@ -37,6 +38,22 @@ def sdk_server():
 
 def server_refs():
     return {
+        'addresses_ids': {
+            'uuid-external-network': [
+                {'OS-EXT-IPS-MAC:mac_addr': 'fa:16:3e:d7:ae:16',
+                 'OS-EXT-IPS:type': 'fixed',
+                 'addr': '10.19.2.50',
+                 'version': 4},
+            ],
+        },
+        'addresses_refs': {
+            'external_network': [
+                {'OS-EXT-IPS-MAC:mac_addr': 'fa:16:3e:d7:ae:16',
+                 'OS-EXT-IPS:type': 'fixed',
+                 'addr': '10.19.2.50',
+                 'version': 4},
+            ],
+        },
         'flavor_id': 'uuid-flavor-m1.small',
         'flavor_ref': {
             'name': 'm1.small',
@@ -77,7 +94,7 @@ class TestServer(unittest.TestCase):
         params, info = srv.params_and_info()
 
         self.assertEqual(srv.type(), 'openstack.compute.Server')
-        self.assertEqual(params['addresses'], {
+        self.assertEqual(params['addresses_refs'], {
             'external_network': [
                 {'OS-EXT-IPS-MAC:mac_addr': 'fa:16:3e:d7:ae:16',
                  'OS-EXT-IPS:type': 'fixed',
@@ -87,6 +104,7 @@ class TestServer(unittest.TestCase):
         })
         self.assertEqual(info['id'], 'uuid-test-server')
         self.assertEqual(params['name'], 'test-server')
+        self.assertEqual(params['description'], 'test server')
         self.assertEqual(info['status'], 'ACTIVE')
         self.assertEqual(params['flavor_ref']['name'], 'm1.small')
         self.assertEqual(params['security_group_refs'][0]['name'], 'default')

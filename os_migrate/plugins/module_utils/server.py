@@ -14,8 +14,6 @@ class Server(resource.Resource):
 
     info_from_sdk = [
         'created_at',
-        # strangely, create_server doesn't seem to suppor
-        'description',
         'id',
         'status',
         'updated_at',
@@ -25,16 +23,16 @@ class Server(resource.Resource):
         'security_group_ids',
     ]
     params_from_sdk = [
-        'addresses',
+        'description',
         'name',
     ]
     params_from_refs = [
+        'addresses_refs',
         'flavor_ref',
         'security_group_refs',
     ]
     sdk_params_from_refs = [
         'flavor_id',
-        'security_group_ids',
     ]
 
     @classmethod
@@ -42,25 +40,30 @@ class Server(resource.Resource):
         obj = super(Server, cls).from_sdk(conn, sdk_resource)
         return obj
 
-    def create(self, conn, block_device_mapping, boot_volume_id):
+    def create(self, conn, block_device_mapping):
         sdk_params = self.sdk_params(conn)
-        sdk_params['block_device_mapping_v2'] = block_device_mapping
-        sdk_params['boot_volume'] = boot_volume_id
-        return conn.create_server(**sdk_params)
+        sdk_params['block_device_mapping'] = block_device_mapping
+        return conn.compute.create_server(**sdk_params)
 
     def sdk_params(self, conn):
         refs = self._refs_from_ser(conn)
         sdk_params = self._to_sdk_params(refs)
-        sdk_params['security_groups'] = sdk_params.pop('security_group_ids')
-        sdk_params['flavor'] = sdk_params.pop('flavor_id')
 
-        sdk_params['nics'] = []
-        addresses = sdk_params.pop('addresses')
-        for network, portlist in addresses.items():
-            for port in portlist:
+        # Nova requires security groups by name
+        sdk_params['security_groups'] = list(map(
+            lambda ref: {'name': ref['name']},
+            refs['security_group_refs'],
+        ))
+
+        sdk_params['networks'] = []
+        addresses = refs['addresses_ids']
+        for net_id, net_ports in addresses.items():
+            for port in net_ports:
                 if port['OS-EXT-IPS:type'] == 'fixed':
-                    sdk_params['nics'].append({"net-name": network,
-                                               "v4-fixed-ip": port['addr']})
+                    sdk_params['networks'].append({
+                        "uuid": net_id,
+                        "fixed_ip": port['addr'],
+                    })
 
         return sdk_params
 
@@ -71,6 +74,20 @@ class Server(resource.Resource):
     @staticmethod
     def _refs_from_sdk(conn, sdk_res):
         refs = {}
+
+        # Nova only returns network names in response, not IDs. This
+        # can be insufficient in edge cases. We have to hope that
+        # private/public network names don't collide, and do a lookup
+        # without project scope.
+        refs['addresses_refs'] = sdk_res['addresses']
+        refs['addresses_ids'] = {}
+        for net_name, net_addrs in sdk_res['addresses'].items():
+            net_id = reference.network_id(conn, {
+                'name': net_name,
+                'project_name': None,
+                'domain_name': None,
+            })
+            refs['addresses_ids'][net_id] = net_addrs
 
         # There are multiple representations of server in SDK, some of
         # them don't have flavor ID info.
@@ -94,6 +111,21 @@ class Server(resource.Resource):
 
     def _refs_from_ser(self, conn, filters=None):
         refs = {}
+
+        # Nova only returns network names in response, not IDs. This
+        # can be insufficient in edge cases. We have to hope that
+        # private/public network names don't collide, and do a lookup
+        # without project scope.
+        refs['addresses_refs'] = self.params()['addresses_refs']
+        refs['addresses_ids'] = {}
+        for net_name, net_addrs in refs['addresses_refs'].items():
+            net_id = reference.network_id(conn, {
+                'name': net_name,
+                'project_name': None,
+                'domain_name': None,
+            })
+            refs['addresses_ids'][net_id] = net_addrs
+
         refs['flavor_id'] = reference.flavor_id(
             conn, self.params()['flavor_ref'])
         refs['flavor_ref'] = self.params()['flavor_ref']
