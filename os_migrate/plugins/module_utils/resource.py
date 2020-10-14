@@ -227,7 +227,9 @@ class Resource():
 
     def update_migration_params(self, params_dict):
         for k, v in params_dict.items():
-            self.data[const.RES_MIGRATION_PARAMS][k] = v
+            # None means we leave the resource class defaults
+            if v is not None:
+                self.data[const.RES_MIGRATION_PARAMS][k] = v
 
     # TODO add validation
     # def is_data_valid(self):

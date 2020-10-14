@@ -41,3 +41,13 @@ class UnexpectedValue(Exception):
     def __init__(self, var, expected, got):
         message = self.msg_format.format(var, expected, got)
         super().__init__(message)
+
+
+class InconsistentState(Exception):
+    """Inconsistent state in data."""
+
+    msg_format = "Inconsistent state: '{}'."
+
+    def __init__(self, msg):
+        message = self.msg_format.format(msg)
+        super().__init__(message)

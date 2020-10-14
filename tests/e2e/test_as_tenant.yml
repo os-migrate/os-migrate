@@ -18,6 +18,8 @@
           tags:
             - test_clean_before
             - test_workload
+            - test_image_workload_boot_copy
+            - test_image_workload_boot_nocopy
       tags: always
     - include_tasks: tenant/clean_pre_workload.yml
       args:
@@ -27,35 +29,70 @@
             - test_pre_workload
       tags: always
 
+    # pre-workload seed & migrate
     - include_tasks: tenant/seed_pre_workload.yml
       args:
         apply:
           tags: test_pre_workload
       tags: always
-    - include_tasks: tenant/seed_workload.yml
-      args:
-        apply:
-          tags: test_workload
-      tags: always
-
     - include_tasks: tenant/run_pre_workload.yml
       args:
         apply:
           tags: test_pre_workload
       tags: always
+
+    # server from image with attached volume
+    # migration w/o boot volume copy
+    - include_tasks: tenant/seed_workload.yml
+      args:
+        apply:
+          tags:
+            - test_workload
+            - test_image_workload_boot_nocopy
+      tags: always
     - include_tasks: tenant/run_workload.yml
       args:
         apply:
-          tags: test_workload
+          tags:
+            - test_workload
+            - test_image_workload_boot_nocopy
+      tags: always
+    - include_tasks: tenant/clean_workload.yml
+      args:
+        apply:
+          tags:
+            - test_workload
+            - test_image_workload_boot_nocopy
       tags: always
 
+    # server from image with attached volume
+    # migration with boot volume copy
+    - include_tasks: tenant/seed_workload.yml
+      args:
+        apply:
+          tags:
+            - test_workload
+            - test_image_workload_boot_copy
+      tags: always
+    - include_tasks: tenant/run_workload.yml
+      args:
+        apply:
+          tags:
+            - test_workload
+            - test_image_workload_boot_copy
+      tags: always
+      vars:
+        set_boot_volume_copy: true
     - include_tasks: tenant/clean_workload.yml
       args:
         apply:
           tags:
             - test_clean_after
             - test_workload
+            - test_image_workload_boot_copy
       tags: always
+
+    # pre-workload cleanup
     - include_tasks: tenant/clean_pre_workload.yml
       args:
         apply:

@@ -1,6 +1,7 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
+import openstack
 from openstack.exceptions import HttpException
 
 
@@ -279,7 +280,12 @@ def _fetch_ref(conn, get_method, id_, required=True, get_project_info=True):
         return None
 
     if get_project_info:
-        project_name, domain_name = _fetch_project_name_and_domain_name(conn, resource.project_id)
+        if isinstance(resource, openstack.image.v2.image.Image):
+            project_name, domain_name = _fetch_project_name_and_domain_name(
+                conn, resource.owner)
+        else:
+            project_name, domain_name = _fetch_project_name_and_domain_name(
+                conn, resource.project_id)
     else:
         project_name, domain_name = None, None
     return {

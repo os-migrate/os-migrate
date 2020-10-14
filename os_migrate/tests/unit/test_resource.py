@@ -129,6 +129,9 @@ class TestResource(unittest.TestCase):
         res.update_migration_params({'migparam1': 'val1'})
         res.update_migration_params({'migparam2': 'val2'})
         self.assertEqual(res.migration_params(), {'migparam1': 'val1', 'migparam2': 'val2'})
+        res.update_migration_params({'migparam3': None, 'migparam4': 'val4'})
+        self.assertEqual(res.migration_params(),
+                         {'migparam1': 'val1', 'migparam2': 'val2', 'migparam4': 'val4'})
 
     def test_needs_update(self):
         res1 = FakeResource.from_data(valid_fakeresource_data())

@@ -587,21 +587,21 @@ def run_module():
 
         if path == '/dev/vda':
             entry = {
-                'uuid': uuid,
+                'boot_index': 0,
+                'delete_on_termination': True,
+                'destination_type': 'volume',
                 'device_name': name,
                 'source_type': 'volume',
-                'destination_type': 'volume',
-                'boot_index': '0',
-                'delete_on_termination': True,
+                'uuid': uuid,
             }
         else:
             entry = {
-                'uuid': uuid,
+                'boot_index': -1,
+                'delete_on_termination': False,
+                'destination_type': 'volume',
                 'device_name': name,
                 'source_type': 'volume',
-                'destination_type': 'volume',
-                'boot_index': '-1',
-                'delete_on_termination': False,
+                'uuid': uuid,
             }
         block_device_mapping.append(entry)
 

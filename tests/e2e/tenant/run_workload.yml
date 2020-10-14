@@ -16,6 +16,13 @@
         os_migrate_workloads_filter:
           - regex: '^osm_(?!uch)'
 
+    - name: set boot disk copy
+      replace:
+        path: "{{ os_migrate_data_dir }}/workloads.yml"
+        regexp: "boot_disk_copy: false"
+        replace: "boot_disk_copy: true"
+      when: set_boot_volume_copy|default(false)|bool
+
     - name: load exported data
       set_fact:
         resources: "{{ (lookup('file',
@@ -33,12 +40,3 @@
 
     - include_role:
         name: os_migrate.os_migrate.import_workloads
-
-  rescue:
-    - name: 1 hour to debug the environment
-      wait_for:
-        timeout: 3600
-
-    - name: mark the task as failed
-      fail:
-        msg: "Failed to run the workload migration"
