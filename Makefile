@@ -151,9 +151,18 @@ test-unit: reinstall
 # TOOLBOX
 
 toolbox-build:
-	cd toolbox && \
-	podman build --format docker --build-arg NO_VAGRANT=$(NO_VAGRANT) -t localhost/os_migrate_toolbox:latest . && \
-	podman tag localhost/os_migrate_toolbox:latest localhost/os_migrate_toolbox:$$(date "+%Y_%m_%d")
+	if [[ -z "$REUSE_TOOLBOX" || $(REUSE_TOOLBOX) -eq "0" ]]; then \
+		echo "Building the toolbox container image"; \
+		cd toolbox && \
+		podman build --format docker --build-arg NO_VAGRANT=$(NO_VAGRANT) -t localhost/os_migrate_toolbox:latest . && \
+		podman tag localhost/os_migrate_toolbox:latest localhost/os_migrate_toolbox:$$(date "+%Y_%m_%d"); \
+	else \
+		echo "Reusing the toolbox container image"; \
+		podman pull docker.pkg.github.com/os-migrate/os-migrate/os_migrate_toolbox:main; \
+		podman image tag docker.pkg.github.com/os-migrate/os-migrate/os_migrate_toolbox:main localhost/os_migrate_toolbox:latest; \
+		podman image tag localhost/os_migrate_toolbox:latest localhost/os_migrate_toolbox:$$(date "+%Y_%m_%d"); \
+		podman image list -a; \
+	fi; \
 
 toolbox-clean:
 	podman rmi localhost/os_migrate_toolbox:latest

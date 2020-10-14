@@ -11,7 +11,6 @@ class Router(resource.Resource):
 
     resource_type = const.RES_TYPE_ROUTER
     sdk_class = openstack.network.v2.router.Router
-
     info_from_sdk = [
         'availability_zones',
         'created_at',
