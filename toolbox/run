@@ -9,7 +9,9 @@ if [ -e /.os-migrate-toolbox ]; then
 fi
 
 DIR=$(dirname $(realpath $0))
+
 OS_MIGRATE_DIR=$(realpath "$DIR/..")
+
 if [ -t 1 ]; then
     CONTAINER_TTY="${CONTAINER_TTY:--ti}"
 else
@@ -23,10 +25,10 @@ if ! podman images | grep -q '^localhost/os_migrate_toolbox \+latest '; then
 fi
 
 IDX=0
+
 while podman inspect os_migrate_$IDX &> /dev/null; do
     ((IDX++))
 done || true
-
 podman run \
        --name os_migrate_$IDX \
        --detach-keys='ctrl-^' \
