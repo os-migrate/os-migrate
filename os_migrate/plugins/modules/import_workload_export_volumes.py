@@ -286,14 +286,14 @@ class OpenStackSourceHost(OpenStackHostBase):
         #   description: Volume description to pass through to destination
         self.volume_map = {}
 
-    def prepare_exports(self):
+    def prepare_exports(self, ser_srv):
         """
         Attach the source VM's volumes to the source conversion host, and start
         waiting for NBD connections.
         """
         self._test_source_vm_shutdown()
         self._get_root_and_data_volumes()
-        self._detach_data_volumes_from_source()
+        self._detach_data_volumes_from_source(ser_srv)
         self._attach_volumes_to_converter()
         self._export_volumes_from_converter()
 
@@ -331,7 +331,7 @@ class OpenStackSourceHost(OpenStackHostBase):
                 bootable=volume.bootable, description=volume.description)
             self._update_progress(dev_path, 0.0)
 
-    def _detach_data_volumes_from_source(self):
+    def _detach_data_volumes_from_source(self, ser_srv):
         """
         Detach data volumes from source VM, and pretend to "detach" the boot
         volume by creating a new volume from a snapshot of the VM. If the VM is
@@ -346,14 +346,14 @@ class OpenStackSourceHost(OpenStackHostBase):
             volume_id = mapping['source_id']
 
             # Create a snapshot of the root volume
-            self.log.info('Creating root device snapshot')
+            self.log.info('Boot-from-volume instance, creating boot volume snapshot')
             root_snapshot = self.conn.create_volume_snapshot(
                 force=True, wait=True, volume_id=volume_id,
                 name='rhosp-migration-{0}'.format(volume_id),
                 timeout=DEFAULT_TIMEOUT)
 
             # Create a new volume from the snapshot
-            self.log.info('Creating new volume from root snapshot')
+            self.log.info('Creating new volume from boot volume snapshot')
             root_volume_copy = self.conn.create_volume(
                 wait=True, name='rhosp-migration-{0}'.format(volume_id),
                 snapshot_id=root_snapshot.id, size=root_snapshot.size,
@@ -362,8 +362,8 @@ class OpenStackSourceHost(OpenStackHostBase):
             # Update the volume map with the new volume ID
             self.volume_map['/dev/vda']['source_id'] = root_volume_copy.id
             self.volume_map['/dev/vda']['snap_id'] = root_snapshot.id
-        elif sourcevm.image:
-            self.log.info('Image-based instance, creating snapshot...')
+        elif sourcevm.image and ser_srv.migration_params()['boot_disk_copy']:
+            self.log.info('Image-based instance, boot_disk_copy enabled: creating snapshot')
             image = self.conn.compute.create_server_image(
                 name='rhosp-migration-root-{0}'.format(sourcevm.name),
                 server=sourcevm.id,
@@ -382,6 +382,8 @@ class OpenStackSourceHost(OpenStackHostBase):
                 size=volume.size, port=None, url=None, progress=None,
                 bootable=volume.bootable, description=volume.description)
             self._update_progress('/dev/vda', 0.0)
+        elif sourcevm.image and not ser_srv.migration_params()['boot_disk_copy']:
+            self.log.info('Image-based instance, boot_disk_copy disabled: skipping boot volume')
         else:
             raise RuntimeError('No known boot device found for this instance!')
 
@@ -495,8 +497,8 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    src = server.Server.from_data(module.params['data'])
-    params, info = src.params_and_info()
+    ser_srv = server.Server.from_data(module.params['data'])
+    params, info = ser_srv.params_and_info()
 
     # Required parameters
     source_conversion_host_id = module.params['conversion_host']['id']
@@ -520,7 +522,7 @@ def run_module():
         state_file=state_file,
         log_file=log_file
     )
-    source_host.prepare_exports()
+    source_host.prepare_exports(ser_srv)
     result['transfer_uuid'] = source_host.transfer_uuid
     result['volume_map'] = source_host.volume_map
 

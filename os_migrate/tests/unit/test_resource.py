@@ -20,6 +20,9 @@ class FakeResource(resource.Resource):
     params_from_refs = ['param3name', 'param4name']
     sdk_params_from_refs = ['param3id', 'param4id']
     readonly_sdk_params = ['readonly_param']
+    migration_param_defaults = {
+        'migparam1': 'migval1',
+    }
 
     @staticmethod
     def _create_sdk_res(conn, sdk_params):
@@ -83,7 +86,9 @@ def valid_fakeresource_data():
             'param3name': 'param3nameval',
             'param4name': 'param4nameval',
         },
-        '_migration_params': {},
+        '_migration_params': {
+            'migparam1': 'migval1',
+        },
         '_info': {
             'info1': 'info1val',
             'info2': 'info2val',
@@ -124,6 +129,9 @@ class TestResource(unittest.TestCase):
         res.update_migration_params({'migparam1': 'val1'})
         res.update_migration_params({'migparam2': 'val2'})
         self.assertEqual(res.migration_params(), {'migparam1': 'val1', 'migparam2': 'val2'})
+        res.update_migration_params({'migparam3': None, 'migparam4': 'val4'})
+        self.assertEqual(res.migration_params(),
+                         {'migparam1': 'val1', 'migparam2': 'val2', 'migparam4': 'val4'})
 
     def test_needs_update(self):
         res1 = FakeResource.from_data(valid_fakeresource_data())

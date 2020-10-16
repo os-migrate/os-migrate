@@ -1,10 +1,12 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
+from copy import deepcopy
+
 import openstack
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
-    import const, reference, resource
+    import const, exc, reference, resource
 
 
 class Server(resource.Resource):
@@ -29,20 +31,30 @@ class Server(resource.Resource):
     params_from_refs = [
         'addresses_refs',
         'flavor_ref',
+        'image_ref',
         'security_group_refs',
     ]
     sdk_params_from_refs = [
         'flavor_id',
+        'image_id',
     ]
+
+    migration_param_defaults = {
+        'boot_disk_copy': False,
+    }
 
     @classmethod
     def from_sdk(cls, conn, sdk_resource):
         obj = super(Server, cls).from_sdk(conn, sdk_resource)
+        params = obj.params()
+        migration_params = obj.migration_params()
+        if params.get('image_ref') is None:
+            migration_params['boot_disk_copy'] = True
         return obj
 
     def create(self, conn, block_device_mapping):
         sdk_params = self.sdk_params(conn)
-        sdk_params['block_device_mapping'] = block_device_mapping
+        self.update_sdk_params_block_device_mapping(sdk_params, block_device_mapping)
         return conn.compute.create_server(**sdk_params)
 
     def sdk_params(self, conn):
@@ -66,6 +78,47 @@ class Server(resource.Resource):
                     })
 
         return sdk_params
+
+    def update_sdk_params_block_device_mapping(self, sdk_params, block_device_mapping):
+        params, info = self.params_and_info()
+        migration_params = self.migration_params()
+        sdk_params['block_device_mapping'] = deepcopy(block_device_mapping)
+        # shadowing to make sure we don't modify the function argument
+        block_device_mapping = sdk_params['block_device_mapping']
+
+        has_boot_volume = len(list(filter(
+            lambda mapping: str(mapping['boot_index']) != '-1', block_device_mapping))) > 0
+        if migration_params['boot_disk_copy'] and not has_boot_volume:
+            raise exc.InconsistentState(
+                ("Instance '{0}' ({1}) has boot_disk_copy enabled but block device mapping "
+                 "has no boot volume: {2}").format(
+                     params['name'], info['id'], block_device_mapping),
+            )
+        if not migration_params['boot_disk_copy'] and has_boot_volume:
+            raise exc.InconsistentState(
+                ("Instance '{0}' ({1}) has boot_disk_copy disabled but block device mapping "
+                 "has a boot volume: {2}").format(
+                     params['name'], info['id'], block_device_mapping)
+            )
+
+        image_id = sdk_params.get('image_id', None)
+        if not has_boot_volume:
+            if image_id is not None:
+                block_device_mapping.insert(0, {
+                    'boot_index': 0,
+                    'delete_on_termination': True,
+                    'destination_type': 'local',
+                    'source_type': 'image',
+                    'uuid': image_id,
+                })
+            else:
+                raise exc.InconsistentState(
+                    ("Instance '{0}' ({1}) has neither boot volume nor image reference. "
+                     "Block device mapping: {2}").format(
+                         params['name'], info['id'], block_device_mapping)
+                )
+        else:
+            sdk_params.pop('image_id')
 
     @staticmethod
     def _find_sdk_res(conn, name_or_id, filters=None):
@@ -99,6 +152,10 @@ class Server(resource.Resource):
         refs['flavor_ref'] = reference.flavor_ref(
             conn, flavor_id)
 
+        refs['image_id'] = sdk_res['image']['id']
+        refs['image_ref'] = reference.image_ref(
+            conn, sdk_res['image']['id'])
+
         sec_groups = list(conn.compute.fetch_server_security_groups(sdk_res)
                           .security_groups)
         refs['security_group_ids'] = [
@@ -111,12 +168,13 @@ class Server(resource.Resource):
 
     def _refs_from_ser(self, conn, filters=None):
         refs = {}
+        params = self.params()
 
         # Nova only returns network names in response, not IDs. This
         # can be insufficient in edge cases. We have to hope that
         # private/public network names don't collide, and do a lookup
         # without project scope.
-        refs['addresses_refs'] = self.params()['addresses_refs']
+        refs['addresses_refs'] = params['addresses_refs']
         refs['addresses_ids'] = {}
         for net_name, net_addrs in refs['addresses_refs'].items():
             net_id = reference.network_id(conn, {
@@ -126,13 +184,16 @@ class Server(resource.Resource):
             })
             refs['addresses_ids'][net_id] = net_addrs
 
+        refs['flavor_ref'] = params['flavor_ref']
         refs['flavor_id'] = reference.flavor_id(
-            conn, self.params()['flavor_ref'])
-        refs['flavor_ref'] = self.params()['flavor_ref']
+            conn, params['flavor_ref'])
 
-        refs['security_group_refs'] = self.params()['security_group_refs']
+        refs['image_ref'] = params['image_ref']
+        refs['image_id'] = reference.image_id(conn, params['image_ref'])
+
+        refs['security_group_refs'] = params['security_group_refs']
         refs['security_group_ids'] = [
             reference.security_group_id(conn, sec_group_ref)
-            for sec_group_ref in self.params()['security_group_refs']]
+            for sec_group_ref in params['security_group_refs']]
 
         return refs

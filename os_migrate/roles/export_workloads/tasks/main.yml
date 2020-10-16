@@ -32,7 +32,7 @@
     path: "{{ os_migrate_data_dir }}/workloads.yml"
     name: "{{ item['id'] }}"
     migration_params:
-      boot_disk_copy: "{{ os_migrate_workload_boot_disk_copy }}"
+      boot_disk_copy: "{{ os_migrate_workloads_boot_disk_copy }}"
     auth: "{{ os_migrate_src_auth }}"
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_src_region_name|default(omit) }}"
