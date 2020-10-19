@@ -33,7 +33,6 @@ unlink-latest:
 os_migrate-os_migrate-latest.tar.gz:
 	./scripts/build.sh
 
-
 # TESTS
 
 test-lint: reinstall
