@@ -26,6 +26,7 @@ class Server(resource.Resource):
     ]
     params_from_sdk = [
         'description',
+        'key_name',
         'name',
     ]
     params_from_refs = [

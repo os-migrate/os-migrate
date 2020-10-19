@@ -24,16 +24,13 @@ def sdk_server():
         },
         id='uuid-test-server',
         image=dict(id='uuid-test-image'),
+        key_name='test-key',
+        name='test-server',
         security_groups=[
             dict(name='testing123'),
             dict(name='default'),
         ],
-        name='test-server',
         status='ACTIVE',
-        security_group_names=[
-            'testing123',
-            'default',
-        ],
     )
 
 
@@ -109,13 +106,14 @@ class TestServer(unittest.TestCase):
                  'version': 4},
             ],
         })
-        self.assertEqual(info['id'], 'uuid-test-server')
-        self.assertEqual(params['name'], 'test-server')
         self.assertEqual(params['description'], 'test server')
-        self.assertEqual(info['status'], 'ACTIVE')
         self.assertEqual(params['flavor_ref']['name'], 'm1.small')
+        self.assertEqual(info['id'], 'uuid-test-server')
+        self.assertEqual(params['key_name'], 'test-key')
+        self.assertEqual(params['name'], 'test-server')
         self.assertEqual(params['security_group_refs'][0]['name'], 'default')
         self.assertEqual(params['security_group_refs'][1]['name'], 'testing123')
+        self.assertEqual(info['status'], 'ACTIVE')
 
     def test_block_device_mapping_boot_disk_copy(self):
         srv = Server.from_sdk(None, sdk_server())
