@@ -41,9 +41,32 @@ jobs:
         run: |
           mkdir -p ~/.config/containers
           echo 'cgroup_manager = "cgroupfs"' > ~/.config/containers/libpod.conf
-      - name: Make the container image to launch the tests
+      - name: Log into GitHub Container Registry
         run: |
-          NO_VAGRANT=1 make toolbox-build
+          echo "${{ secrets.GITHUB_TOKEN }}" | \
+            podman login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+      - id: file_changes
+        uses: trilom/file-changes-action@v1.2.3
+      - name: Build or reuse the toolbox container image
+        run: |
+          # The following array defines the expressions that
+          # when matching the container image for the toolbox
+          # will be created from scratch, otherwise we reuse
+          # it from the latest build.
+          check_list=('toolbox' 'Makefile' 'tests' 'scripts')
+
+          REUSE=1
+          filez=( $(echo '${{ steps.file_changes.outputs.files }}' | jq -c '.[]') )
+          for file in "${filez[@]}"; do
+            for index in ${!check_list[*]}; do
+              if [[ "${file}" == *"${check_list[$index]}"* ]]; then
+                echo "We need to re-create the toolbox container image"
+                echo "${check_list[$index]} is in ${file}"
+                REUSE=0
+              fi
+            done
+          done
+          REUSE_TOOLBOX=$REUSE NO_VAGRANT=1 make toolbox-build
       - name: Run all the tests non OpenStack dependant
         run: |
           ./toolbox/run make test-fast
@@ -171,9 +194,32 @@ jobs:
         run: |
           mkdir -p ~/.config/containers
           echo 'cgroup_manager = "cgroupfs"' > ~/.config/containers/libpod.conf
-      - name: Make the container image to launch the tests
+      - name: Log into GitHub Container Registry
         run: |
-          NO_VAGRANT=1 make toolbox-build
+          echo "${{ secrets.GITHUB_TOKEN }}" | \
+            podman login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+      - id: file_changes
+        uses: trilom/file-changes-action@v1.2.3
+      - name: Build or reuse the toolbox container image
+        run: |
+          # The following array defines the expressions that
+          # when matching the container image for the toolbox
+          # will be created from scratch, otherwise we reuse
+          # it from the latest build.
+          check_list=('toolbox' 'Makefile' 'tests' 'scripts')
+
+          REUSE=1
+          filez=( $(echo '${{ steps.file_changes.outputs.files }}' | jq -c '.[]') )
+          for file in "${filez[@]}"; do
+            for index in ${!check_list[*]}; do
+              if [[ "${file}" == *"${check_list[$index]}"* ]]; then
+                echo "We need to re-create the toolbox container image"
+                echo "${check_list[$index]} is in ${file}"
+                REUSE=0
+              fi
+            done
+          done
+          REUSE_TOOLBOX=$REUSE NO_VAGRANT=1 make toolbox-build
       # We're hitting filesystem ownership issue on some GH Actions workers:
       # https://ubuntuforums.org/showthread.php?t=2406453
       - name: Make sure filesystem ownership is correct
