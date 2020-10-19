@@ -70,13 +70,6 @@ class Network(resource.Resource):
             conn, sdk_res['qos_policy_id'])
         return refs
 
-    def _refs_from_ser(self, conn, filters=None):
-        refs = {}
-        refs['qos_policy_ref'] = self.params()['qos_policy_ref']
-        refs['qos_policy_id'] = reference.qos_policy_id(
-            conn, self.params()['qos_policy_ref'])
-        return refs
-
     @staticmethod
     def _update_sdk_res(conn, sdk_res, sdk_params):
         return conn.network.update_network(sdk_res, **sdk_params)
