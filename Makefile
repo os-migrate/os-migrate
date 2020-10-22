@@ -151,7 +151,8 @@ test-unit: reinstall
 # TOOLBOX
 
 toolbox-build:
-	if [[ -z "$REUSE_TOOLBOX" || $(REUSE_TOOLBOX) -eq "0" ]]; then \
+	REUSE_TOOLBOX="${REUSE_TOOLBOX:-0}"; \
+	if [[ $(REUSE_TOOLBOX) -eq "0" ]]; then \
 		echo "Building the toolbox container image"; \
 		cd toolbox && \
 		podman build --format docker --build-arg NO_VAGRANT=$(NO_VAGRANT) -t localhost/os_migrate_toolbox:latest . && \
