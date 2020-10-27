@@ -17,17 +17,26 @@ class Server(resource.Resource):
     info_from_sdk = [
         'created_at',
         'id',
+        'launched_at',
         'status',
         'updated_at',
+        'user_id',
     ]
     info_from_refs = [
         'flavor_id',
         'security_group_ids',
     ]
     params_from_sdk = [
+        'availability_zone',
+        'config_drive',
         'description',
+        'disk_config',
         'key_name',
+        'metadata',
         'name',
+        'user_data',
+        'scheduler_hints',
+        'tags',
     ]
     params_from_refs = [
         'addresses_refs',
@@ -49,8 +58,16 @@ class Server(resource.Resource):
         obj = super(Server, cls).from_sdk(conn, sdk_resource)
         params = obj.params()
         migration_params = obj.migration_params()
+
+        # boot-from-volume servers must copy boot disk
         if params.get('image_ref') is None:
             migration_params['boot_disk_copy'] = True
+
+        # config_drive can be returned as empty string but it cannot
+        # be fed that way into create_server
+        if params.get('config_drive') == '':
+            params['config_drive'] = None
+
         return obj
 
     def create(self, conn, block_device_mapping):

@@ -7,41 +7,43 @@
     - osm_server.state
     - workloads.yml
 
-- name: Detach volumes from conversion host if still attached
+- name: Detach src volumes if still attached
   os_server_volume:
-    server: os_migrate_conv
+    server: "{{ item.server }}"
     volume: "{{ item.volume }}"
     state: absent
-    auth: "{{ item.auth }}"
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
+    auth: "{{ os_migrate_src_auth }}"
+    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
   loop:
-    - volume: rhosp-migration-root-osm_server
-      auth: "{{ os_migrate_src_auth }}"
-      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-    - volume: rhosp-migration-root-osm_server
-      auth: "{{ os_migrate_dst_auth }}"
-      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-    - volume: osm_volume
-      auth: "{{ os_migrate_src_auth }}"
-      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-    - volume: osm_volume
-      auth: "{{ os_migrate_dst_auth }}"
-      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    - server: os_migrate_conv
+      volume: rhosp-migration-root-osm_server
+    - server: os_migrate_conv
+      volume: osm_volume
+    - server: osm_server
+      volume: osm_volume
+  # The module will fail if server or volume don't exist.
+  failed_when: false
+
+- name: Detach dst volumes if still attached
+  os_server_volume:
+    server: "{{ item.server }}"
+    volume: "{{ item.volume }}"
+    state: absent
+    auth: "{{ os_migrate_dst_auth }}"
+    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+  loop:
+    - server: os_migrate_conv
+      volume: rhosp-migration-root-osm_server
+    - server: os_migrate_conv
+      volume: osm_volume
+    - server: osm_server
+      volume: osm_volume
   # The module will fail if server or volume don't exist.
   failed_when: false
 
