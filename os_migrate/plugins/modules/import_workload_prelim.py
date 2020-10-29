@@ -61,9 +61,9 @@ options:
       - Data structure with server parameters as loaded from OS-Migrate workloads YAML file.
     required: true
     type: dict
-  data_dir:
+  log_dir:
     description:
-      - OS-Migrate data directory.
+      - Directory for storing log and state files.
     required: true
     type: str
   availability_zone:
@@ -146,7 +146,7 @@ workload.yml:
           user_domain_id: default
       src_validate_certs: False
       data: "{{ item }}"
-      data_dir: "{{ os_migrate_data_dir }}"
+      log_dir: "{{ os_migrate_data_dir }}/workload_logs"
     register: prelim
 
   - debug:
@@ -192,7 +192,7 @@ def run_module():
         dst_filters=dict(type='dict', required=False, default={}),
         src_conversion_host=dict(type='dict', required=True),
         data=dict(type='dict', required=True),
-        data_dir=dict(type='str', default=None),
+        log_dir=dict(type='str', default=None),
     )
 
     result = dict(
@@ -209,7 +209,7 @@ def run_module():
 
     server_name = params['name']
     result['server_name'] = server_name
-    data_dir = module.params['data_dir']
+    log_dir = module.params['log_dir']
 
     # Do not convert source conversion host!
     if info['id'] == module.params['src_conversion_host']['id']:
@@ -229,8 +229,8 @@ def run_module():
         msg = 'Skipping instance {} because it is not in state SHUTOFF!'
         module.exit_json(skipped=True, skip_reason=msg.format(name), **result)
 
-    result['log_file'] = os.path.join(data_dir, server_name) + '.log'
-    result['state_file'] = os.path.join(data_dir, server_name) + '.state'
+    result['log_file'] = os.path.join(log_dir, server_name) + '.log'
+    result['state_file'] = os.path.join(log_dir, server_name) + '.state'
     result['changed'] = True
 
     module.exit_json(**result)

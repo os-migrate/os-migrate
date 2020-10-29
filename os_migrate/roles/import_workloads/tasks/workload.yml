@@ -11,7 +11,7 @@
       dst_filters: "{{ os_migrate_dst_filters }}"
       src_conversion_host:
         "{{ os_src_conversion_host_info.openstack_conversion_host }}"
-      data_dir: "{{ os_migrate_data_dir }}"
+      log_dir: "{{ os_migrate_data_dir }}/workload_logs"
       data: "{{ item }}"
     register: prelim
 
@@ -33,8 +33,8 @@
       conversion_host:
         "{{ os_src_conversion_host_info.openstack_conversion_host }}"
       data: "{{ item }}"
-      log_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.log"
-      state_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.state"
+      log_file: "{{ prelim.log_file }}"
+      state_file: "{{ prelim.state_file }}"
       ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
       ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
     register: exports
@@ -58,8 +58,8 @@
       src_conversion_host_address:
         "{{ os_src_conversion_host_info.openstack_conversion_host.address }}"
       volume_map: "{{ exports.volume_map }}"
-      state_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.state"
-      log_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.log"
+      log_file: "{{ prelim.log_file }}"
+      state_file: "{{ prelim.state_file }}"
     register: transfer
     when: prelim.changed
 
@@ -93,8 +93,8 @@
       ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
       transfer_uuid: "{{ exports.transfer_uuid }}"
       volume_map: "{{ exports.volume_map }}"
-      state_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.state"
-      log_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.log"
+      log_file: "{{ prelim.log_file }}"
+      state_file: "{{ prelim.state_file }}"
     when: prelim.changed
 
   rescue:

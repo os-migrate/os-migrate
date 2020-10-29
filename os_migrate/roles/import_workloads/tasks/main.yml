@@ -15,6 +15,11 @@
     path: "{{ os_migrate_data_dir }}/workloads.yml"
   register: read_workloads
 
+- name: create directory for workload migration logs
+  file:
+    path: "{{ os_migrate_data_dir }}/workload_logs"
+    state: directory
+
 - name: get source conversion host address
   os_migrate.os_migrate.os_conversion_host_info:
     auth: "{{ os_migrate_src_auth }}"
