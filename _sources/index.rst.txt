@@ -33,3 +33,4 @@ Content
    user/README.rst
    roles
    modules
+   changelog

@@ -1,0 +1,1405 @@
+Changelog
+=========
+
+
+(unreleased)
+------------
+
+New
+~~~
+- Include changelog in docs. [Carlos Camacho]
+
+  This patch includes the changelog in the documentation automatically.
+
+Changes
+~~~~~~~
+- More metadata to migrate with servers. [Jiri Stransky]
+
+Fix
+~~~
+- Detach stuck volumes in unit tests. [Jiri Stransky]
+- Revert to conditional empty variable check. [Carlos Camacho]
+
+  Im following now the same approach we have in another
+  variables check in the same makefile.
+  Even if locally the check works in the job we have
+  errors like: if [[ EUSE_TOOLBOX -eq "0" ]]; then \
+  Notice that EUSE instead or REUSE
+- Assign a default value for reusing the toolbox image. [Carlos Camacho]
+
+  Currently, the container image build job is failing
+  as we are calling the toolbox build without the
+  variable TOOLBOX_BUILD. This patch defaults the value to 0
+  if not defined, which means, build the container image.
+
+Other
+~~~~~
+- Move resource checks from utility to Resource classes. [Ryan Brady]
+
+  This patch moves the responsibility of comparing resources from
+  the serialization class into the Resource class hierarchy so subclasses
+  can add custom comparisons as needed.
+- Store workload migration logs in a separate dir. [Jiri Stransky]
+
+  Previously workload migration logs were stored directly in
+  os_migrate_data_dir together with resource YAMLs. This meant that when
+  migrating multiple workloads, the directory would get cluttered. Let's
+  separate workload migration logs into its own directory.
+- Reuse container images if possible. [Carlos Camacho]
+- Preserve keypair when creating a server from an image. [Jiri Stransky]
+
+  This will ensure ssh-ability of servers which were migrated using the
+  from-image method. Naturally the ssh keypair needs to be migrated
+  before migrating the server.
+- Migration of rebuildable servers. [Jiri Stransky]
+
+  * This enables the boot_disk_copy migration parameter for
+    workloads. When it's `false`, server is booted from an image. When
+    it's `true`, server boot disk is copied and the destination
+    server is created as boot-from-volume.
+
+  * Default value for boot_disk_copy depends on each server. Servers
+    booted from a volume default to `true` (as that is the only sensible
+    option), servers booted from an image default to `false`.
+
+  * `image_ref` is added to the server serialization to track the Glance
+    image that should be used to create the server.
+
+  * E2e tests for workload migration are now testing these cases:
+
+    * Instance booted from an image, with boot_disk_copy: false.
+
+    * Instance booted from an image, with boot_disk_copy: true.
+- Add migration param defaults to the resource class. [Jiri Stransky]
+
+  This will allow us to assume that some keys exist in the migration
+  params. We won't have to check for their existence before using them
+  in code.
+- Specify the image format. [Carlos Camacho]
+- Create servers using proper Nova bindings, support server description.
+  [Jiri Stransky]
+
+  This commit moves us off old bindings for server creation onto the
+  current ones. Points of interest:
+
+  * Only `block_device_mapping` is now used for all volumes, we can get
+    rid of special handling for `boot_volume_id`.
+
+  * We can and do support the `description` parameter on servers.
+
+  * The move forced changes in how we specify security groups and NICs
+    but we still support the important features we supported before,
+    e.g. fixed IP preservation.
+
+  * In general this enable us to support more Nova API features /
+    instance parameters.
+- Resilience in e2e cleaning against failed migrations. [Jiri Stransky]
+
+  If workload migration fails, volumes might still be attached to the
+  conversion host(s) which prevents them from being deleted. Make sure
+  they are detached before deleting.
+- Stop busy-looping during volume transfer (fix for 100% CPU usage)
+  [Jiri Stransky]
+
+  The EAGAIN error code is used when polling, meaning there's no data to
+  read right now but it should be tried again later. Instead of trying
+  right away, sleep for a second. This will prevent Ansible from eating
+  100% CPU on the migrator machine.
+- Add Tenant(Project) Roles. [Ryan Brady]
+
+  This patch adds the roles and supporting code to import and export
+  OpenStack projects.
+- Use an additional non-boot volume in e2e workload tests. [Jiri
+  Stransky]
+
+  This should improve our test coverage, only instance with no attached
+  volumes was tested until now.
+- Fix non-boot volume attachement. [Jiri Stransky]
+
+  After migrating, the additional non-boot volume didn't attach onto the
+  instance correctly, instead it was stuck in "reserved". This was due
+  to malformed block_device_mapping_v2 data structure. See docs [1].
+- Include lint checks. [Carlos Camacho]
+- Export/import users with functional tests. [Carlos Camacho]
+- Adjust docs job and build nightly image. [Carlos Camacho]
+
+
+0.5.0 (2020-10-02)
+------------------
+- Add missing role readme files. [Jiri Stransky]
+
+  Galaxy releasing fails without these.
+- Release 0.5.0. [Jiri Stransky]
+- Separates Functional Tests into Admin/Tenant. [Ryan Brady]
+
+  This patch changes the func tests to run separately for both admin
+  and tenant roles.  It follows the pattern done for the e2e testing
+  a short time ago.
+- Allow running e2e tests in smaller chunks for development. [Jiri
+  Stransky]
+
+  Currently running e2e tests does all this: deploy conversion hosts,
+  seed pre-workload resources, then workload resources, then migrate
+  pre-workload, then migrate workload, then clean everything up.
+
+  For working on workload migration, it would be great if we could leave
+  conversion hosts and pre-workload resources in place between test
+  runs, and only cycle seed-migrate-clean on the actual workload. This
+  is now implemented, but the default test run remains unchanged.
+
+  First i can just run everything without cleaning up:
+
+  ./toolbox/run bash -c "E2E_TEST_ARGS='--skip-tags test_clean_after -e test_clean_conversion_hosts_after=false' make test-e2e-tenant"
+
+  And then i can run workload tests specifically, which will auto-clean
+  before and after, but only the workload parts:
+
+  ./toolbox/run bash -c "E2E_TEST_ARGS='--tags test_workload' make test-e2e-tenant"
+- Put e2e scenario variables last. [Jiri Stransky]
+
+  This allows them to also override the auth file, if desired.
+- Add 'boot_disk_copy' migration parameter to workloads. [Jiri Stransky]
+
+  Default it to true for now, as currently that's the only supported
+  migration method.
+- Move server creation logic into the resource class. [Jiri Stransky]
+- Add _migration dict into resource serialization. [Jiri Stransky]
+
+  Currently we have two dicts within the resource serialization:
+
+  * params - parameters relevant for resource creation in destination
+    cloud, and for idempotence,
+
+  * _info - additional information about the resource from source cloud,
+    which will not be passed on into the destination cloud when creating
+    the resource.
+
+  With work on migration of rebuildable instances, we will add a third one:
+
+  * _migration - parameters for the migration process itself, not
+    capturing properties of the resource, but rather *how* we want the
+    resource to be migrated.
+
+  The example use case here is the workload migration. There is one
+  server in the source cloud but we have at least two options how to
+  move it to destination:
+
+  * full copy (current method) - root disk is copied as a volume, and
+    the instance in the destination cloud is booted from that volume,
+
+  * rebuild (to be implemented) - instance is booted from the same
+    glance image in the destination cloud, putting the destination
+    instance into a similar state as after using `openstack server
+    rebuild` on the original. This is better suited for instances which
+    are stateless or only save state on external volumes, not on the
+    root disk.
+
+  To distinguish how we want a given server migrated, we will have a
+  parameter in the _migration section.
+- Update wrong links. [Carlos Camacho]
+- Foundation for running e2e tests as admin. [Jiri Stransky]
+- Use separate tmp dir for e2e tests. [Jiri Stransky]
+- Split file paths to prepare separate e2e tenant/admin tests. [Jiri
+  Stransky]
+- Prefix and shorten export variable names. [Jiri Stransky]
+
+  We had a bunch of unprefixed variables like:
+
+  export_networks_name_filter
+
+  We should add the os_migrate prefix and we can perhaps shorten the
+  variable name to still remain descriptive enough, like this:
+
+  os_migrate_networks_filter
+
+  The rename in this sense is applied across the project to all affected
+  variables.
+
+  This rename also opens up the possibility to use this filter on
+  imports in the future, allowing to work on full YAML files while
+  selecting just a few resources to import. It cannot be done right now
+  because the stringfilter module only supports looking at direct
+  attribute and not nested ones, so we cannot look at ['params']['name']
+  presently. An enhancement for stringfilter could be implemented.
+- Allow setting conversion subnet DNS separately for src/dst. [Jiri
+  Stransky]
+
+  DNS nameservers is a parameter for conversion subnet where it makes
+  sense to allow different values between src/dst clouds.
+- Fix readme and include a link to the project in the docs root. [Carlos
+  Camacho]
+- Filter exported images by the currently authenticated project. [Jiri
+  Stransky]
+
+  This kind of filtering is standard for our other resources, but for
+  Glance images it was missing due to Glance API lack of functionality
+  which translates into lack of functionality in the os_image_info
+  Ansible module. The filtering is done explicitly in the playbook now.
+- Docs refactor. [Carlos Camacho]
+- (WIP) Adds Nova Idempotence Tests. [Ryan Brady]
+
+  This patch adds idempotence tests for the Nova Flavor and Keypair
+  resources.
+- Include the fixed IP when restoring the server. [Carlos Camacho]
+
+  The nics parameter is not documented in the upstream
+  docs, also there is no way in inject the MAC address,
+  or assign the floating IP when executing create_server
+
+  This should be fixed by creating a port and assign it
+  to the node before is created.
+- Walkthrough doc updates and formatting fixes. [Jiri Stransky]
+
+  This makes walkthrough doc up to date and generally into a better
+  shape. Some notable changes:
+
+  * Prerequisites section regarding authentication and parameters which
+    are used for both pre-workload and workload migration is
+    consolidated and moved at the beginning of the doc.
+
+  * Nesting of headlines is fixed.
+
+  * Removed mentions RH OSP.
+
+  * Updated conversion host deployment to use the playbook instead of
+    manual wiring instructions.
+
+  * Updated the workload migration process to the new one which runs on
+    plain CentOS and doesn't require VDDK.
+
+  * Command shortcuts.
+- Adds Roles For Nova Keypair Import and Export. [Ryan Brady]
+
+  This patch adds the roles and associated code required to export
+  and import Nova keypairs.
+- Add an update test for images. [Jiri Stransky]
+- Add idempotence tests for image export/import. [Jiri Stransky]
+- Implement Glance image import. [Jiri Stransky]
+- Fix pylint issues. [Jiri Stransky]
+
+  It seems like pylint got updated and our code started failing the
+  lint, this is now fixed.
+- Adds Import and Export Roles for Nova Flavors. [Ryan Brady]
+
+  This patch adds import and export roles, supporting files and tests
+  for migrating Nova Flavors between clouds.
+- Adds Nova services to the CI stack. [Ryan Brady]
+
+  This patch adds the nova services to the stack to support functional
+  tests.
+- Export of Glance images. [Jiri Stransky]
+
+  Since Glance images contain binary data, the export is done via two
+  modules:
+
+  * export_image_meta -- exports image metadata (YAML file)
+
+  * export_image_blob -- exports image binary data
+
+  The export of binary data is optional. This split between metadata and
+  data exporting should leave us an open door towards migrating images
+  in a direct way between clouds (e.g. via conversion hosts) rather than
+  via the migrator host.
+- Update user docs to use Keystone v2. [Carlos Camacho]
+- Support migrations between keystone v2 and v3. [Carlos Camacho]
+- Update references from 'master' branch to 'main' [Jiri Stransky]
+- Allow configure the ssh user. [Carlos Camacho]
+- These are the pending changes to allow using the centos image. [Carlos
+  Camacho]
+
+  We use become from vars and include internal DNS to
+  be able to install packages.
+
+  We also increase the timeout to create the conversion hosts to
+  10 minutes, and change the default image to be CentOS.
+- Adds Role to Install Conversion Host Content. [Ryan Brady]
+
+  This patch adds a role to install content for the conversion host
+  conditionally.  The role currently supports CentOS and RHEL but
+  is written in a way that should be simple to add additional OS
+  support if needed in the future.
+- Adds Link For Contributing To Developer Doc. [Ryan Brady]
+
+  Adds a link for the the contributing doc to the README.
+- Adds Contribution Document. [Ryan Brady]
+
+  This patch adds information to help a potential contributor add
+  new roles or supporting code to the project.
+- Fixes Walkthrough Images. [Ryan Brady]
+
+  When the walkthrough doc was merged, the URIs for the images were
+  incorrect and the images were not displayed for users.  This patch
+  fixes the URIs for the images to the correct path and removed an
+  erroneous TODO comment left in the previous version.
+- Fully qualified refs in workload serialization. [Jiri Stransky]
+- Add Matthew into authors. [Jiri Stransky]
+- Use cgroupfs as cgroup manager in Github Actions. [Jiri Stransky]
+- Format variable names as code. [Jiri Stransky]
+- Restructure user documentation landing page. [Jiri Stransky]
+
+  Remove the walkthrough-like part of the root user readme, we have a
+  specific Walkthrough doc now. Make the main readme a link directory.
+- Configuring the conversion host. [Carlos Camacho]
+- Fully qualified refs in network serialization. [Jiri Stransky]
+- Fully qualified refs in security groups and rules serialization. [Jiri
+  Stransky]
+- Fully qualified refs in router and router interface serialization.
+  [Jiri Stransky]
+- Fully qualified refs in subnet serialization. [Jiri Stransky]
+- Adds Walkthrough Document. [Jiri Stransky, Matthew Arnold, Ryan Brady]
+
+  This patch adds documentation for executing a parallel cloud migration
+  using os-migrate.
+- Fix. [Carlos Camacho]
+- Improve variable naming consistency in conversion host playbook. [Jiri
+  Stransky]
+
+
+0.4.1 (2020-06-26)
+------------------
+- Prepare release of 0.4.1. [Jiri Stransky]
+- Fix. [Carlos Camacho]
+
+
+0.4.0 (2020-06-26)
+------------------
+- Prepare release 0.4.0. [Jiri Stransky]
+
+  Mainly utilizes a new workload migration approach with new conversion
+  host and conversion host deployment/deletion playbooks.
+- Fix subnet update test. [Jiri Stransky]
+
+  The lineinfile module only makes sure one line is present. So after it
+  does its replacement in one spot, it stops replacing. Due to random
+  order of subnets in the file, it sometimes replaces the description of
+  the wrong subnet, resulting in intermittent failures. To make the
+  tests work, we simply replace descriptions of both subnets in the func
+  test, and then we check only one.
+
+  To keep tests consistent, use 'replace' instead of 'lineinfile' module
+  in other tests too.
+- Variables cleanup. [Carlos Camacho]
+
+  This patch makes the variables used in the
+  configurable so we can trigger different scenarios
+  just changing this default file.
+
+  Also separates the network/flavor/image names for
+  src/dst conversion hosts
+
+  And remove some required variables that can be safely
+  defaulted.
+- Adds Functional Update Test for Security Groups. [Ryan Brady]
+
+  This patch adds a test to ensure the updates for security group
+  resources is working properly.
+- Adds Update Functional Tests for Subnets. [Ryan Brady]
+
+  This patch adds the code to test the update functionality of the
+  subnet resources.
+- Adds Functional Test for Network Update. [Ryan Brady]
+
+  This patch adds a functional test to ensure that updates are working
+  for the network resource.
+- Adds Functional Update Test For Router Resources. [Ryan Brady]
+
+  This patch adds a test to ensure updates work for router resources.
+- Use conversion host deployment/deletion playbooks in CI. [Jiri
+  Stransky]
+- Set up conversion hosts to talk to each other. [Jiri Stransky]
+
+  A separate ssh key is used to connect from dst conversion host to src
+  conversion host, so that user can't mistakenly upload their own
+  private key into the conversion host.
+- Fix Resource Updates. [Jiri Stransky, Ryan Brady]
+
+  For the resources that support updating, the code previously called
+  the update sending the resource name causing the update to fail
+  from the corresponding API with a "BadRequest" error.  This patch
+  updates the code to use the instance of the resource itself when
+  calling the associated update method.
+- Hack for conversion host reachability in CI. [Jiri Stransky]
+- Update workload exporting for new openstacksdk. [Jiri Stransky]
+- Make sure we respect virtualenv in playbooks. [Jiri Stransky]
+
+  When we run our playbooks, it seems that virtualenv is ignored even
+  when it's active for the ansible-playbook command invocation. We set
+  it into the inventory explicitly, so that when venv is active for
+  ansible-playbook invocation, it will also be active for the Ansible
+  modules invocations.
+- Print whether we're sourcing venv or not in Makefile. [Jiri Stransky]
+- Fix timeout logic on snapshot creation. [Jiri Stransky]
+
+  In CI we're hitting this error:
+
+      File "/tmp/ansible_os_migrate.os_migrate.import_workload_export_volumes_payload_4g3ps56s/ansible_os_migrate.os_migrate.import_workload_export_volumes_payload.zip/ansible_collections/os_migrate/os_migrate/plugins/modules/import_workload_export_volumes.py", line 364, in _detach_data_volumes_from_source
+      AttributeError: 'NoneType' object has no attribute 'id'
+
+  Looks like the call to create snapshot returns None. We'll try moving
+  the timeout into the call itself and using wait=True.
+- Add playbooks for deployment and deletion of conversion hosts. [Jiri
+  Stransky]
+
+  Deploys and deletes the conversion hosts including supporting
+  resources like networking, security group, and key pair. The
+  deployment and deletion are within a single role to make use of common
+  defaults file.
+- Relax YAML lint - allow 100 character lines. [Jiri Stransky]
+
+  The 80 character limit is a bit too strict for dealing with long
+  Ansible variables. 100 characters should still be comfortable enough
+  for modern screens.
+- Update uch image. [Carlos Camacho]
+- Gitignore local directory. [Jiri Stransky]
+
+  This directory allows putting some personal files in, e.g. credential
+  or parameter files for manual testing. This directory is available in
+  `./toolbox/venv-shell` containers.
+- Use nbdkit if available with fallback to qemu-nbd. [Matthew Arnold]
+- Clean up temporary volumes and SSH processes. [Matthew Arnold]
+- Create destination instance and attach volumes. [Matthew Arnold]
+
+  Also add number/names of networks, without preserving MAC addresses.
+- Transfer exported volumes to destination. [Matthew Arnold]
+
+  Also factor out common code between source and destination conversion hosts.
+- Export volumes from source conversion host. [Matthew Arnold]
+- Fix exporting router interfaces when router name filter is undefined.
+  [Jiri Stransky]
+
+  Just a missing default.
+
+  Closes https://github.com/os-migrate/os-migrate/issues/201
+- Docs for publishing a release. [Jiri Stransky]
+- Make sure that docs CI passes 'functional' test automatically too.
+  [Jiri Stransky]
+
+  Without this a pull request seems to be able to get stuck waiting for
+  the functional test to complete.
+
+
+0.3.1 (2020-06-05)
+------------------
+- Prepare release 0.3.1. [Jiri Stransky]
+- Fix exporting router interfaces when router name filter is undefined.
+  [Jiri Stransky]
+
+  Just a missing default.
+
+  Closes https://github.com/os-migrate/os-migrate/issues/201
+
+  (cherry picked from commit fc81f87d147980aae45f205959d42628885f4b36)
+
+
+0.3.0 (2020-06-02)
+------------------
+- Add readme files to all roles, pointing to user docs. [Jiri Stransky]
+
+  It looks like this is now required, otherwise the Galaxy publish
+  script fails with:
+
+  ERROR! Galaxy import process failed: No role readme found. (Code: None)
+- Prepare the release of 0.3.0. [Jiri Stransky]
+- Adds additional user docs. [Ryan Brady]
+
+  This patch adds more data to the repo README and updates the
+  the user doc to remove clouds.yml info and replace it with
+  the newer auth vars.
+- Reintroduce project filtering into workload migration idempotence
+  check. [Jiri Stransky]
+
+  This was added earlier but errorneously, reporting that server exists
+  even if it wasn't true, so it had to be reverted. The project id
+  filtering is now reintroduced into the workload migration idempotence
+  check, and it doesn't produce false positives.
+- Include the workload migration. [Carlos Camacho]
+- Add dst filters to workload migration. [Jiri Stransky]
+
+  This is only necessary when looking up the conversion host and when
+  checking for idempotence. The actual workload migration uses the VM's
+  ID from _info, so it should be already good to go:
+
+  https://github.com/os-migrate/os-migrate/blob/2aa04ad4c2cf6d1e8abb24f845c7c9009fcd58fd/os_migrate/plugins/modules/import_workload_prelim.py#L297
+- Include network mappings in wrapper input. [Matthew Arnold]
+- Import lookups filtering by project_id for pre-workload migration.
+  [Jiri Stransky]
+- Rename export_prelude role to prelude_src. [Jiri Stransky]
+
+  I realized that e.g. workload import might need to fetch authenticated
+  project IDs for both src and dst. Rather than having an export/import
+  prelude, it may make more sense to have prelude roles for interacting
+  with src/dst clouds.
+- Add project id filter to the remaining export roles. [Jiri Stransky]
+
+  By default, make sure we export only resources in the currently
+  autheticated project.
+- Remove unused (and incorrect) os_security_group_rules_info. [Jiri
+  Stransky]
+
+  This isn't used and it's not utilizing the filters parameter correctly.
+- Implement export filter for resources in current project (for
+  networks) [Jiri Stransky]
+
+  This adds the reusable code for fetching current project ID and
+  setting a general export filter with that project ID by
+  default. Networks export is amended to make use of this filtering
+  parameter.
+- Adds test for Router Interface idempotence. [Ryan Brady]
+
+  This patch adds a test to ensure router interface idempotence and
+  updates the router interface resource class to handle the case
+  when a router interface already exists when attempting to create
+  an identical one.
+
+  This patch also fixes a small bug in the router interface where
+  it was using the "subnet_name" key where it should have been
+  using a "subnet_id" key.  This was causing the unintended behavior
+  of never finding a matching port when checking for ports that may
+  have already been created, so it always tried to create the port
+  leading to conflicts.
+- Capture wrapper stdout/stderr to data directory. [Matthew Arnold]
+- Split import_workload into two modules. [Matthew Arnold]
+
+  The 'prelim' module configures everything right up to the point of
+  running the virt-v2v-wrapper container, and returns paths to the
+  expected log and state files at that point. The import_workload module
+  just runs the container, so it will still sit without showing progress
+  for potentially a very long time - but this way the operator can
+  optionally monitor the previously-provided log files as needed.
+- Ansible automation for the e2e tests. [Carlos Camacho]
+- Adds Functional Test for Security Group Rule Idempotence. [Ryan Brady]
+
+  This patch adds a functional test to ensure security group rule idempotence.
+- Make sure releasing is done from toolbox container. [Jiri Stransky]
+
+  E.g. if shyaml is missing, the releasing will fail with a weird
+  error. In toolbox, we have all the releasing dependencies.
+- Prepare for 0.0.2 release to Galaxy. [Jiri Stransky]
+- First attempt at workload migration. (#170) [Matthew Arnold]
+
+  First attempt at workload migration.
+
+  This runs virt-v2v-wrapper on the destination conversion host.
+
+
+  Squashed commits from review process:
+
+  * Rename uci_container_id to uci_container_image.
+
+  * Remove flavor and security_groups objects from info.
+
+  * Rename ssh_key_path to clarify what it is used for.
+
+  * Pass auth parameters straight through to wrapper.
+
+    No longer forces password authentication.
+
+  * Rename server_address module to conversion_host_info.
+
+  * Allow specifying conversion hosts with name or ID.
+
+  * Include remote wrapper directory in return value.
+
+    This helps debug migration failures.
+
+  * Remove flavor_id from Server's info_from_sdk.
+
+  * Run UCI container with host networking.
+- Save ether_type for security group rules. [Jiri Stransky]
+
+  This is a fundamental property of the rule, specifies whether the rule
+  applies to IPv4 or IPv6 traffic.
+- Adds Router Idempotence Fuctional Test. [Ryan Brady]
+
+  This patch adds a test to ensure idempotence for the router resource.
+- Move instance name from info to params. [Matthew Arnold]
+- Basic workload information export. [Matthew Arnold]
+
+  Export instance information from a source OpenStack cloud to
+  workloads.yml. Actual workload migration will require saving more
+  properties than this, but they will get filled in later.
+- Allow skipping func test cleanup only after testing. [Jiri Stransky]
+
+  Previously it was possible to skip cleanup via `--skip-tags
+  test_clean`, but that would affect cleanup both before and after
+  testing. It is now possible to skip the cleanup only after testing,
+  with `--skip-tags test_clean_after`.
+- Fix importing router external gateway. [Jiri Stransky]
+
+  Previously routers were created without an external gateway interface,
+  this is now fixed. The interface is created on the network with the
+  same name as in the source cloud.
+- Make sure router import/export doesn't fail if external gateway is not
+  present. [Jiri Stransky]
+- Add a Router import playbook. [Jiri Stransky]
+- Force upgrade virtualenv. [Carlos Camacho]
+- Galaxy sanity checks. [Carlos Camacho]
+- Check build for docs folder. [Carlos Camacho]
+- Do not ls, use always current version as latest. [Carlos Camacho]
+- Fixes Subnet Update. [Ryan Brady]
+
+  Intermittently, the subnet import functional tests fail for ip_version
+  or network_id attributes.  This patch adds a readonly_params collection
+  to the Resource class and strips out any readonly properties during an
+  attempt to update.  For the Subnet resource this patch removes the
+  blacklisted properties in neutron source for the subnet resource
+  (project_id, network_id) from the update args.
+
+  A follow up issue and series of patches is forthcoming for adding
+  functional testing for the update on all resources.
+
+  closes #142
+- Document class vars in Resource. [Jiri Stransky]
+- Fixes Subnet Update. [Ryan Brady]
+
+  Intermittently, the subnet import functional tests fail for ip_version
+  or network_id attributes.  This patch adds a readonly_params collection
+  to the Resource class and strips out any readonly properties during an
+  attempt to update.  For the Subnet resource this patch removes the
+  blacklisted properties in neutron source for the subnet resource
+  (project_id, network_id) from the update args.
+
+  A follow up issue and series of patches is forthcoming for adding
+  functional testing for the update on all resources.
+
+  closes #142
+- Update dev docs. [Jiri Stransky]
+
+  The dev docs for running functional tests went out of date as we
+  changed auth mechanism and as we changed how to run a subset of
+  functional tests. They are now updated to current workflows.
+
+  Also slight edit has been made to the design doc now that we've made
+  some implementation decisions where previously there was uncertainty.
+- Start polishing the Galaxy sanity check to publish the collection.
+  [Carlos Camacho]
+
+  There are several checks we need to pass in order to be able
+  to publish the collection in both Galaxy and the Automation Hub.
+
+  This will be the first change to make it possible.
+
+  With this, we can pass the required to publish into galaxy.
+- OOP security group rules. [Carlos Camacho]
+- Move README. [Carlos Camacho]
+- Remove old auth mechanism. [Jiri Stransky]
+
+  The removal will make sure that we cannot depend on the old
+  clouds.yaml based auth mechanism and usage of new auth is enforced.
+- Switch func tests seed/clean/verify to new auth. [Jiri Stransky]
+
+  We already have new auth used in all modules, but the func test code
+  still used the old auth. Switch func tests too.
+- Switch remaining modules to new auth. [Jiri Stransky]
+
+  This swithces the remaining Ansible modules (for routers, router
+  interfaces, subnets, security groups, security group rules) into using
+  the new auth mechanism.
+- Move Network to use transferable auth instead of named clouds. [Jiri
+  Stransky]
+
+  This move Network to use an auth mechanism that we can use also with
+  Universal Conversion Hosts (something that is easily pushable as data
+  rather than having to reference a clouds.yaml file).
+- Script to extract auth info from clouds.yml. [Jiri Stransky]
+
+  We'll need to stop using named clouds because we'll need to feed
+  credentials into universal conversion host, we can't simply copy
+  user's clouds.yml there. So let's start moving towards the other auth
+  mechanism used - auth + auth_type + region_name. IIUC should still
+  support advanced mechanisms like Application Credentials, via
+  different values in auth_type and corresponding auth dictionary.
+- Fix subnet import idempotence. [Jiri Stransky]
+
+  The last param that must be sorted for import idempotence to work is
+  'host_routes'. It's a list of dicts so it needs a list of keys to look
+  at in each dict. The list-of-dicts sorting is implemented in Resource
+  class to be reusable.
+- OOP sec group. [Carlos Camacho]
+- Split security groups and rules from networks. [Carlos Camacho]
+- Remove Transible code to cleanup the repo structure. [Jiri Stransky]
+
+  We're not using it, and where OS-Migrate is heading now, it doesn't
+  seem we will literally need to take parts from it. It can only confuse
+  folks who try to understand OS-Migrate, making them think that the
+  code under openstack_ansible directory is being used for the
+  migration. If we need to revive any of that code, we can find it in
+  git history.
+- Add Sagi as a co-author. [Jiri Stransky]
+
+  The Transible code from Sagi has been an inspiration for parts of what
+  we do in OS-Migrate.
+- Fix Subnet Update. [Ryan Brady]
+
+  During the idempotency testing, the subnet update calls to the API
+  failed for ip_version and network_id.  These parameters are accepted
+  for the create, but not the update.  Sorting the allocation_pools and
+  dns_nameservers migtigated the condistion that caused this error.
+- Lint target needs to make sure the collection is installed. [Jiri
+  Stransky]
+
+  Otherwise it fails with:
+
+      Couldn't parse task at
+      /root/os_migrate/tests/func/idempotence/security_group.yml:28
+      (couldn't resolve module/action
+      'os_migrate.os_migrate.os_security_groups_info'. This often
+      indicates a misspelling, missing collection, or incorrect module
+      path.
+- Fixes CI. [Ryan Brady]
+
+  The CI started failing today when attempting to run the checkout
+  source step.  I started researching online and found there is a
+  race condition issue with the actions/checkout@v1[1].  This patch
+  changes the checkout action to use @v2 which supposedly addresses
+  this issue.
+
+  [1] https://github.com/actions/checkout/issues/23
+- Security Group Idempotence Test. [Ryan Brady]
+
+  This patch adds idempotence tests for security group import and export.
+
+  partially-addresses: #21
+- Router interfaces import. [Jiri Stransky]
+
+  Import interfaces which Routers have in tenant Subnets. This is a more
+  advanced resource than the basic "CRUD" approach. First we need to
+  create a port with the desired IP addresses in the desired subnets,
+  and then we attach those ports to the router. This ensures that the
+  router interface IP addresses in tenant networks are migrated without
+  change.
+- Router interfaces export. [Jiri Stransky]
+
+  Export information about interfaces which Routers have in Subnets.
+- Subnet Idempotence Testing. [Ryan Brady]
+
+  This patch adds idempotence test for subnet import and export.
+
+  partially-addresses #21
+- Adds Subnets Import Role. [Ryan Brady]
+
+  This patch adds the ability to import subnets from a os_migrate
+  yaml structure.
+- Use mysql service instead. [Carlos Camacho]
+- Run using the mysql service. [Carlos Camacho]
+- Add basic import of Routers. [Jiri Stransky]
+
+  Import routers. Some params were refused on the router creation
+  request so i had to move them to 'info'.
+- Refactor router export via Resource subclass. [Jiri Stransky]
+
+  The router functionality is just export right now, let's first
+  refactor it as Resource subclass before we add import.
+- Subnets Refactor. [Ryan Brady]
+
+  This patch refactors the export subnets role to use the new
+  Resource class.
+- Default implementation for Resource.create_or_update. [Jiri Stransky]
+
+  By extracting the find/create/update calls for the underlying SDK
+  object, we can provide a default implementation for the
+  create_or_update method on Resource. Subclasses can either provide the
+  find/create/update mini-methods and reuse the create_or_update logic,
+  or override the create_or_update method fully.
+- Do not lint YAML files in ./tests/func/tmpdata. [Jiri Stransky]
+
+  These resource files are generated in tests via YAML dumper and they
+  don't pass the lint check on indentation :).
+
+  Also reformat the linters.sh file to make the commands a bit easier to
+  read.
+- Remove begining of line. [Carlos Camacho]
+- Run ansible-lint last, feed all files into a single process. [Carlos
+  Camacho, Jiri Stransky]
+
+  Ansible-lint is the slowest linter, running it last should speed up
+  catching Python and YAML lint issues via `test-fast` target.
+
+  Also feeding all files into a single ansible-lint process seems to be
+  much faster than running ansible-lint per file.
+- Fix YAML nits. [Carlos Camacho]
+- Python lint checks. [Carlos Camacho]
+- Introduce Resource class. [Jiri Stransky, Ryan Brady]
+
+  We created a Resource class as the base class for all our exported
+  resources. It improves the DRYness of our overall code and is suitable
+  for both export and import. It uses method composition internally so
+  that it can be easily "disconnected from network" for purposes of unit
+  testing.
+
+  The common interfaces are now backwards compatible, e.g. the
+  add_or_replace method for exporting resources now accepts both direct
+  resource data or an instance of Resource.
+- Fis bashate. [Carlos Camacho]
+- Run Ansible lint. [Carlos Camacho]
+- Fix podman's TTY-related options in vagrant-run. [Jiri Stransky]
+
+  The TTY-related options passed to create vs. start are not perfect
+  substitutes of each other.
+
+  * When calling `start`, we want to always pass `-a` even when not in
+    interactive shell, simply to avoid launching the container in
+    background (`podman start` ~= `podman run -d`; `podman start -a` ~=
+    `podman run`).
+
+  * There is no `-t` equivalent for `podman start`. It looks like we
+    need to decide on allocating pseudo-TTY in `podman create`.
+
+  * I'm not 100% sure on the `-i` behavior but from docs it looks like
+    we either want to pass it to both or neither.
+- Allow running functional tests more individually. [Jiri Stransky]
+
+  Now one can run this to run only Network tests for example:
+
+  ./toolbox/run bash -c "FUNC_TEST_ARGS='--tags test_network' make test-func"
+
+  or Network + Subnet tests:
+
+  ./toolbox/run bash -c "FUNC_TEST_ARGS='--tags test_network,test_subnet' make test-func"
+
+  Special new use case is:
+
+  ./toolbox/run bash -c "FUNC_TEST_ARGS='--tags test_clean' make test-func"
+
+  which will only clean up the test data from the named clouds.
+- Implement Router export. [Jiri Stransky]
+
+  Note that this doesn't export router's interfaces on private subnets,
+  they will have to be exported/imported via a separate resource.
+- Write resource correctly when iterating over resources. [Carlos
+  Camacho]
+
+  We are writing only the last item in the array to the output file.
+
+  Closes:#100
+- Import security groups and rules. [Carlos Camacho]
+
+  Including unit and functional tests.
+- Registry.fedoraproject.org consistently fails on pulling images.
+  [Carlos Camacho]
+
+  We had several CI issues related to errors when pulling the
+  container image from registry.fedoraproject.org
+
+  Maybe we wont hit this anymore if we use Docker Hub.
+  Also, the image shuold be exactly the same.
+- Include functional tests from exporting security groups and security
+  group rules. [Carlos Camacho]
+
+  We also change the way we query for the security group and rules
+  before, we were querying the old API which returns a Munch object
+  instead of the API object we were waiting for.
+- Correct $HOME ownership in vagrant-run and vagrant-shell. [Jiri
+  Stransky]
+
+  I was considering several options how to solve the issue of incorrect
+  $HOME ownership in containers:
+
+  * Give the user sudo rights to do the chown in entrypoint. Bad mainly
+    because we don't know which user we'll run as when creating the
+    container image, and for sudo to work in a container we also need to
+    mount in /etc/shadow (even when using NOPASSWD sudo).
+
+  * Launch the container as root, perform chown in its entrypoint, and
+    then `su` to another user (we'd pass it in via env variable) to run
+    the real command. Better than previous but reimplementing the
+    `--user` argument of `podman run` via an env variable and custom
+    entrypoint still feels somewhat suboptimal, especially if Vagrant is
+    not the only use case for the os_migrate_toolbox image.
+
+  * First create the container without starting it, tweak the
+    container's filesystem as needed via `podman mount`, and then start
+    the container.
+
+  The last options feels the cleanest and it's the one implemented in
+  this commit.
+- Add validation of unique resource naming. [Jiri Stransky]
+
+  This adds validation of resource files. Unique resource naming in
+  ensured per resource type. Multiple resource files can be fed into the
+  validation, so if someone had a resource file setup where resources of
+  the same type are spread across multiple files, the names would still
+  get validated properly.
+
+  Validation can currently be executed in 2 ways:
+
+  * After loading resources, before importing them (can be disabled by a
+    boolean flag).
+
+  * Independently on all resources in a directory via validate_data_dir
+    playbook.
+- Adds Subnet Export. [Ryan Brady]
+
+  This patch adds the ability to export subnets from an openstack
+  cloud into a yaml file.
+- Use id-based iteration for Security Groups and Security Group Rules.
+  [Carlos Camacho]
+- Including matching id by name for the security group name on rules
+  param section. [Carlos Camacho]
+
+  This commit adds the parameter security_group_name
+  to the params section.
+
+  Closes #79
+- Update Vagrant-Devstack setup to Fedora 30. [Jiri Stransky]
+
+  Fedora 29 is no longer supported.
+
+  Closes https://github.com/os-migrate/os-migrate/issues/74
+  Closes https://github.com/os-migrate/os-migrate/issues/65
+- Adding the export security groups and security group rules. [Carlos
+  Camacho]
+
+  This patch exports the current deployed security
+  groups into the yaml os-migrate format.
+
+  It also export each security group rule per
+  security group.
+- Functional CI fixes. [Jiri Stransky]
+
+  This moves the container build earlier in the functional CI. There
+  seem to be flakes recently in the image build, and moving it earlier
+  in the CI steps should help us fail faster.
+
+  Also it makes sure that devstack is ran from /home/stack when it is
+  ran as stack user. We hit weird ownership issues when running as
+  `stack` user but devstack is under `/home/runner`.
+- Assert correct os_migrate_version when loading files. [Jiri Stransky]
+
+  Currently we do not guarantee any backward/forward compatibility in
+  serialized files. Using different version of OS-Migrate between export
+  and import isn't supported. Should users get to a situation where
+  differing versions are needed between export and import, they will
+  have to investigate the risks and e.g. `sed` the version in files to
+  the expected one. We're defaulting to being defensive here.
+
+  I was thinking whether this could go into validations as one of the
+  validation errors, but in fact if the versions are different, we
+  cannot even guarantee that the validations will work correctly, so
+  let's be careful and just raise a clear exception right away.
+
+  Closes https://github.com/os-migrate/os-migrate/issues/20
+- Allow duplicate names on export - iterate over resources by ID. [Jiri
+  Stransky]
+
+  We want to export the resources as they are, even if they'd fail
+  validation e.g. due to duplicate naming. Validation will be performed
+  on the exported files and/or prior to importing.
+
+  This requires an amendment to stringfilter to be able to filter a list
+  of dicts and not just a simple list of strings. The `attribute`
+  optional argument is added. This is consistent with behavior of
+  Ansible's `sort` filter. By default it operates on flat lists, but
+  with `attribute` argument it can be made to operate on lists of dicts.
+- Decide resource sameness on export by ID rather than name. [Jiri
+  Stransky]
+
+  This change is fueled by work on validations. We have essentially 2
+  options there:
+
+  * Export all resources including ones with empty name and duplicate
+    names. Then run validatiton on the exported files. This requires
+    that resources are iterated over for export by ID and not by name.
+
+    This is nicer because the files can be perhaps edited by hand to
+    amend the naming on destination cloud without forcing name changes
+    on source cloud. Validation can be re-ran arbitrarily on the files
+    to iterate forward.
+
+  * Validate the state in the source cloud to verify whether export can
+    be ran, and change the state in the source cloud until unique naming
+    is achieved. Then run export.
+
+    This is less nice because amendments of the source cloud are
+    necessary before an export can be performed.
+
+  To achieve the former (nicer) option, we need to start exporting by
+  ID. First step, which is done in this commit, is to amend the resource
+  sameness check which is used during export to figure out if a resource
+  should be added into a file or if it's already present.
+- Do not enable non-existent Copr repo. [Jiri Stransky]
+
+  Ian's copr repo was fixing iSCSI in Fedora but it doesn't exist
+  anymore. Let's just remove it because we don't need Nova instances
+  working right now, and we'll probably be moving onto Fedora 30 or
+  CentOS 8 subsequently.
+- Fix prerequisites for Devstack. [Jiri Stransky]
+
+  python2 is needed because `/usr/bin/env python` must work, and
+  python3-pyyaml must be absent.
+- Better devstack logging. [Jiri Stransky]
+
+  Use the LOGFILE variable supported by devstack, instead of `tee`.
+- Initialize vagrant storage pool in vagrant-destroy if needed. [Jiri
+  Stransky]
+
+  This way you can call ./vagrant-destroy right after starting
+  vagrant-shell. Previously it would complain that the pool doesn't
+  exist. The libvirt session for vagrant is transient and the pool gets
+  lost every time the container is stopped, but the storage content is
+  not lost and the pool can simply be recreated on top of the same dir.
+- Allow local edits in Devstack. [Jiri Stransky]
+
+  Now when devstack fails, you can edit files locally and run `vagrant
+  provision` to retry.
+- Do not build container with Vagrant in CI. [Jiri Stransky]
+
+  We don't need Vagrant in CI and it pulls a lot of deps, skipping its
+  installation in CI should speed up the jobs.
+- Fix checker of resource sameness, add tests for it. [Jiri Stransky]
+
+  When two resources have the same type but their names are undefined,
+  we should not consider them the same. This is now the case after a
+  copypasta typo is fixed, and tests are added to verify correct
+  behavior.
+- Implement generic idempotence checker. [Jiri Stransky]
+
+  The resource_needs_update function should be generically usable on all
+  our resources to check whether some resource is in target state or
+  needs update (= idempotence checks). It is right away plugged into the
+  check method for Network.
+- Simplify and speed up Network functional tests by using name filter.
+  [Jiri Stransky]
+
+  This ensures we only export the network we're interested in and we
+  don't have to hack the resulting file. There is also slight speedup
+  due to making fewer API calls.
+- Implement advanced name filtering (exact match, regex) [Jiri Stransky]
+
+  This adds a new filter plugin 'stringfilter' which allows advanced
+  conditioning which resources to export, by their name. Either by exact
+  match or regular expression match, on the names of resources that we
+  want to export.
+- Document reusable module_utils functions and network functions. [Jiri
+  Stransky]
+
+  Documents what our functions (especially the reusable ones that are
+  intended to be shared) should do.
+
+  Since Pydoc is a free-form format, i went for very simple way of
+  describing the functions, trying to maximize the information provided
+  per characters typed and limit rigid boilerplate. This should help us
+  be diligent about documenting the functions by making documentation
+  not much pain to write :).
+- Adapt conventions based on Security Groups discussion. [Jiri Stransky]
+
+  Work on Security Groups spawned a discussion about some
+  conventions. This patch performs following adaptation:
+
+  * Use '_info' instead of 'info' for resource properties which are
+    irrelevant for importing and idempotence checks. This should further
+    reduce a chance of conflict with some real property and allow us to
+    ignore any '_info' *also in nested dicts* when importing / checking
+    idempotence.
+
+  * Better namespacing for Network type
+    serialization. 'openstack.network.Network' rather than
+    'openstack.network'.
+
+  * Resource field names for type/params/_info are now constants to
+    prevent typos.
+- Use tab in Makefile. [Jiri Stransky]
+
+  This is make's weirdness, it wants tabs. Here the spaces worked by
+  accident since they weren't the beginning of a recipe, rather inside a
+  bash multi-liner. But it can throw off indentation, so let's stick to
+  tabs everywhere.
+- Initial user documentation. [Jiri Stransky]
+- Make sure toolbox container RPMs are up-to-date when building. [Jiri
+  Stransky]
+
+  We install a bunch of (latest) RPMs but until now we didn't update the
+  others. This could result in a mixture of RPMs that has never been
+  tested together in Fedora. Let's update packages before installing
+  additional ones.
+- Remove Tmit PoC build requirements. [Jiri Stransky]
+
+  I thought i was pasting just vagrant-libvirt package list but in fact
+  pasted full Tmit build package list. We don't need the Rust bits in
+  OS-Migrate.
+
+  GCC needs to be explicitly added because it was an unstated dependency
+  pulled in by the previous package list.
+- Use tags in functional tests instead of separate playbooks. [Jiri
+  Stransky]
+
+  To run subset of functional tests, the current pattern was to create a
+  full playbook which would only include the desired parts.
+
+  An alternative pattern might be to use --skip-tags or --tags with the
+  test_all.yml playbook. This might allow better mix-and-match execution
+  for particular test environments and developer scenarios.
+
+  Due to env vars not being automatically passed into the toolbox
+  container, currently there are two ways to test this approach e.g. by
+  skipping the network tests:
+
+      ./toolbox/shell
+      FUNC_TEST_ARGS='--skip-tags test_network' make test-func
+
+  and
+
+      ./toolbox/run bash -c "FUNC_TEST_ARGS='--skip-tags test_network' make test-func"
+
+  The 2nd case perhaps deserves some improvement (list of env vars we
+  want to detect and pass into toolbox container automatically?) but
+  that's beyond the scope of this commit.
+- Split documentation between developer and user parts. [Jiri Stransky]
+- Exclude docs from CI. [Carlos Camacho]
+- Fix qos_policy ref in Network and remove TODOs. [Jiri Stransky]
+
+  Fix a case of copypasta in network_refs_from_ser function.
+
+  Remove the TODOs related to the Network refs. Originally i wanted to
+  load also project_name and subnet_names list, but those are not
+  necessary for importing under current OS-Migrate assumptions, and
+  fetching this information in network_refs_from_sdk and
+  network_refs_from_ser would slow down the import/export with
+  unnecessary API requests. For now let's assume this info does not need
+  to be queried, we can re-evaluatethe decision if we get any hints that
+  this info would be useful.
+- Add utility functions for fetching references. [Jiri Stransky]
+- References handling for import/export. [Jiri Stransky]
+
+  ID-based references to other resources need to be converted to
+  name-based ones on export, and back to ID-based ones during
+  import. This is now implemented for Network's
+  qos_policy_id/qos_policy_name reference.
+
+  The functions which talk to OpenStack API are still kept separate from
+  functions which only do serialization/deserialization data
+  mangling. This makes testing and hopefully also reasoning about what
+  happens where a bit easier.
+
+  There's perhaps still opportunity to extract some of the reference
+  handling code into a new utility Python module, and add more
+  references to Network (its Project name and contained Subnet
+  names). This can be expanded on in another commit.
+- DRY parameter copying in serialization. [Jiri Stransky]
+
+  This DRY code doesn't reduce line count but it does simplify it
+  conceptually and is less prone to typos.
+- Check that what is passed into serialize_network is indeed Network.
+  [Jiri Stransky]
+- Network import idempotence. [Jiri Stransky]
+
+  For idempotence of imports we largely have all the pieces, all that
+  needs to be done is to serialize the existing network into our format
+  and compare if the resulting 'params' are the same as the ones
+  provided to the import_network module.
+
+  Crucial is looking at 'params' only and not 'info', as 'params'
+  contain the important network parameters that are meant to be
+  migrated, while 'info' contains non-migratable info, e.g. the
+  network's UUID.
+- Export idempotence common code, tests, idempotence for Networks. [Jiri
+  Stransky]
+
+  This adds export idempotence common code - when replacing a resource
+  in a resource YAML file, we first check if indeed anything changed. If
+  it didn't, we don't overwrite that resource and don't even write into
+  the file.
+
+  This is now utilized for Network resources specifically. Some things
+  coming from OpenStack API seem to have non-deterministic order,
+  e.g. the list of networks itself, or list of subnet IDs in a
+  Network. To make the idempotence work properly, i've added sorting
+  where applicable.
+
+  Functional tests which re-execute the export and check that the file
+  content is the same are added.
+- Ansible.cfg for func tests - timestamps and nicer output. [Jiri
+  Stransky]
+
+  The profile_tasks callback plugin adds timestamps, allowing us to
+  check what actions took how long. And YAML log output is generally
+  easier/faster to read than the non-indented JSON.
+- Wait until the Devstack fix is merged. [Carlos Camacho]
+
+  We need to wait until https://review.opendev.org/#/c/704136/
+  is merged to remove the pin.
+- Design doc - challenges of problem domain and how we deal with them.
+  [Jiri Stransky]
+
+  This is part of the design doc which i forgot to transfer from Tmit
+  [1]. It is useful to have this rationale captured.
+
+  [1] https://gitlab.com/jistr/tmit/blob/4559f58718f133e8ce44e50f31fef8485ff66fc7/doc/design.md#L107-121
+- Make 'build.sh' use 'releases' dir and make 'publish.sh' use
+  'build.sh' [Carlos Camacho]
+- Build and publish the collection to Galaxy. [Carlos Camacho]
+
+  This patch builds on each merge a new version of the collection,
+  then this build should be published to Galaxy.
+- Update version in const.py based on galaxy.yml when building the
+  collection. [Jiri Stransky]
+
+  Initially i wanted to just load the collection manifest from const.py,
+  but it's not possible, more details at [1].
+
+  Our next best shot is probably to auto-update const.py constant
+  OS_MIGRATE_VERSION each time we build the collection, which is what
+  this commit implements.
+
+  [1] https://github.com/os-migrate/os-migrate/pull/28
+
+  Closes #12
+- Use network class from the .network. openstacksdk submodule. [Jiri
+  Stransky]
+
+  I was initially surprised that the network object from openstacksdk is
+  inconsistent between creation and fetching, and then i realized that
+  openstacksdk probably has 2 different Python APIs. The
+  Connection.get_network() function returns a different object than
+  Connection.network.find_network().
+
+  I'm guessing the API calls directly on Connection are older and we
+  should probably avoid using them. On brief inspection, the code under
+  .network. seems better documented and a somewhat nicer API. It is also
+  the way recommended in the relevant guide:
+
+  https://docs.openstack.org/openstacksdk/train/user/guides/network.html
+- Resource file reading and networks import. [Jiri Stransky]
+
+  The import_networks playbook and role, and import_network module are
+  for importing networks specifically.
+
+  The read_resources module is meant for all importing in general. It
+  loads the resource YAML file structure into an Ansible variable so
+  that individual resources can be iterated on inside the roles.
+
+  Small deserialization utility functions are added too, for
+  transforming serialized data into parameters for OpenStack SDK when
+  creating/updating resources.
+
+  There is a block in functional tests that isn't very nice but it can
+  be fully removed once we implement name-based filtering on export:
+
+  https://github.com/os-migrate/os-migrate/issues/22
+- Add minor fixes to unit/functional tests and readme. [Carlos Camacho]
+
+  This patch add:
+
+  * Adds a name convention for the tests, currently [unit|functional]-all
+  where all should be replaced for the specific type of tests that need
+  to run, i.e. unit-network or functional-network.
+
+  * Moves the functional tests to run with latest python 3.7.
+
+  * Removes unneeded python versions in unit tests.
+
+  * Improves the README with links to current tests for merged commmits.
+
+  * Add a very initial logo for the project.
+- Add serialization basics and network exporting. [Jiri Stransky]
+
+  This adds serialization and resource file read/write basics, and adds
+  rudimentary network exporting.
+
+  We may further think whether using some classes for our structures
+  makes sense, or if just plain dict/list structures are good enough (my
+  initial approach in this commit). Given that Python is a dynamic
+  language, we won't get any compile time validation even if we do add
+  classes/structures for the data, and any errors will pop up at runtime
+  either way. This already manifested in dealing with the openstacksdk's
+  Network class -- even though it's a class, it didn't feel like we're
+  getting many benefits from it over a plain dict, it is very free-form,
+  see serialization method in network.py.
+- Fix filesystem ownership in CI. [Jiri Stransky]
+
+  We were hitting weird issues in filesystem ownership [1] which failed
+  devstack install. Making sure the ownership is correct seems to fix
+  the problems.
+
+  [1] https://ubuntuforums.org/showthread.php?t=2406453
+- Add CI. [Carlos Camacho]
+- Improve documentation. [Carlos Camacho]
+- Add a note about Vagrant VM lifespan being tied to vagrant-shell.
+  [Jiri Stransky]
+- Prevent nesting of toolbox commands. [Jiri Stransky]
+- Rough draft of workflow on Ansible level. [Jiri Stransky]
+
+  This is a very high-level idea of how we might structure the workflow
+  to give a decent debuggability and hackability of our Ansible-based
+  tooling.
+- High-level development goals. [Jiri Stransky]
+
+  This list was originally for Tmit PoC (https://gitlab.com/jistr/tmit),
+  and i think a lot of it could apply for OS-Migrate, so i post it here,
+  with minor amendments.
+- Add network serialization stub code. [Jiri Stransky]
+
+  The data from serialized network is split between "params" and "info",
+  the idea being that params are important values which are needed when
+  importing the network, while info are not used when importing but
+  might be useful for a human looking through the exported data.
+- Call vagrant-up from vagrant-snapshot-revert if needed. [Jiri
+  Stransky]
+- Fix for Fedora 31 vagrant-run. [Jiri Stransky]
+
+  It seems that /etc/qemu isn't required but /dev/net is.
+- Update toolbox to F31, mount /etc/qemu for Vagrant. [Jiri Stransky]
+- Vagrant container - get rid of env vars which are undefined on Fedora
+  31. [Jiri Stransky]
+- Add skeleton for unit and sanity tests. [Jiri Stransky]
+
+  This adds Makefile targets "test-sanity", "test-unit" and a shorthand
+  target for both, called "test-fast". The ansible-test tool is used for
+  sanity and unit testing, and an empty unit test is added to show that
+  the unit tests run.
+- Autodetect whether containers run interactively. [Jiri Stransky]
+
+  This automatically enables e.g. colored terminal output.
+- Add a stub of network exporting. [Jiri Stransky]
+
+  This is a very rough "i do nothing yet" prototype, but it should give
+  us something to talk about re structuring the code and tests. It is
+  exercised from the functional tests already.
+- Func tests now seed and clean up a network. [Jiri Stransky]
+- Clarify functional tests' clouds.yaml. [Jiri Stransky]
+- Remove Vagrant's clouds.yaml, fix gitignore. [Jiri Stransky]
+- Make it possible to run functional tests just for network migration.
+  [Jiri Stransky]
+- Rename test_full to test_all. [Jiri Stransky]
+- Document how to run functional tests. [Jiri Stransky]
+- Test-func target depends on reinstall. [Jiri Stransky]
+
+  Prior to using a collection, it needs to be installed in ~/.ansible in
+  the toolbox container, so tests should make sure we've built and
+  installed the latest state.
+- Functional tests skeleton. [Jiri Stransky]
+- Add python3-devel to toolbox and openstacksdk to virtualenv. [Jiri
+  Stransky]
+- Make targets for building and installing the collection. [Jiri
+  Stransky]
+- Go for os_migrate namespace right away. [Jiri Stransky]
+
+  It seems that the 'jistr' namespace might be referenced in may places,
+  let's just go for 'os_migrate' anticipated namespace right away and
+  we'll request it before publishing, or figure out alternatives then.
+- One more note about naming. [Jiri Stransky]
+- Fix capitalization in readme. [Jiri Stransky]
+- Document dev env setup steps. [Jiri Stransky]
+- Scripts for running vagrant halt and destroy. [Jiri Stransky]
+- Add openstack to ansible (transible) converter. [Sagi Shnaidman]
+- Add run/shell commands with venv active inside. [Jiri Stransky]
+- Interactive editing of toolbox image. [Jiri Stransky]
+- Move virtualenv into the container image. [Jiri Stransky]
+- Move venv setup into its subdir. [Jiri Stransky]
+- Add license file -- Apache 2.0. [Jiri Stransky]
+- Add vagrantized devstack for running tests against (for now) [Jiri
+  Stransky]
+
+  I guess ideally we'd deploy something more stable like RDO TripleO
+  Standalone, but i had devstack for now which i've written for Tmit
+  project, so let's start with that for now.
+- Generated Ansible collection skeleton. [Jiri Stransky]
+- Add virtualenv for locking Python deps. [Jiri Stransky]
+
+  Pip install in the virtualenv only works if the toolbox is started
+  with --security-opt label=disable.
+- Makefile and a simple toolbox container. [Jiri Stransky]
+- Naming convention - underscores rather than hyphens. [Jiri Stransky]
+- Init. [Jiri Stransky]
+
+

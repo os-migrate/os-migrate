@@ -124,6 +124,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../modules.html">Documented modules in os-migrate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
 </ul>
 
             
@@ -203,8 +204,11 @@
 </dd>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_workloads_filter</span><span class="p">:</span>
 <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
-<span class="c1"># TODO: Default this to false when rebuildable instances are supported.</span>
-<span class="nt">os_migrate_workload_boot_disk_copy</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="c1"># `null` means we let the Server class decide on defaults.</span>
+<span class="c1"># In case of boot_disk_copy, the default differs based on whether</span>
+<span class="c1"># the server was created as boot-from-volume or not.</span>
+<span class="nt">os_migrate_workloads_boot_disk_copy</span><span class="p">:</span>
 </pre></div>
 </div>
 </div>
