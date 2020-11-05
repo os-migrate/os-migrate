@@ -34,3 +34,7 @@ class Project(resource.Resource):
     @staticmethod
     def _update_sdk_res(conn, sdk_res, sdk_params):
         return conn.identity.update_project(sdk_res, **sdk_params)
+
+    def _is_same_resource(self, target_data):
+        return (self.data[const.RES_PARAMS].get('name', '__undefined1__') ==
+                target_data[const.RES_PARAMS].get('name', '__undefined2__'))

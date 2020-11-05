@@ -5,6 +5,7 @@ import yaml
 from os import path
 import unittest
 
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import exc
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import filesystem
 from ansible_collections.os_migrate.os_migrate.tests.unit import fixtures
@@ -14,10 +15,12 @@ from ansible_collections.os_migrate.os_migrate.tests.unit import utils
 class TestFilesystem(unittest.TestCase):
 
     def test_write_or_replace_resource_new_file(self):
+        minimal_resource = fixtures.MinimalResource.from_data(
+            fixtures.valid_minimalresource_data())
         with utils.tmp_dir_context() as tmp_dir:
             file_path = path.join(tmp_dir, 'resources.yml')
             filesystem.write_or_replace_resource(
-                file_path, fixtures.minimal_resource())
+                file_path, minimal_resource)
 
             file_struct = filesystem.load_resources_file(file_path)
             resource = file_struct['resources'][0]
@@ -32,10 +35,11 @@ class TestFilesystem(unittest.TestCase):
             with open(file_path, 'w') as f:
                 f.write(yaml.dump(fixtures.minimal_resource_file_struct()))
 
-            minimal2 = fixtures.minimal_resource()
-            minimal2['params']['name'] = 'minimal2'
-            minimal2['params']['description'] = 'minimal two'
-            minimal2['_info']['id'] = 'id-minimal2'
+            minimal2 = fixtures.MinimalResource.from_data(
+                fixtures.valid_minimalresource_data())
+            minimal2.data[const.RES_PARAMS]['name'] = 'minimal2'
+            minimal2.data[const.RES_PARAMS]['description'] = 'minimal two'
+            minimal2.data[const.RES_INFO]['id'] = 'id-minimal2'
             self.assertTrue(
                 filesystem.write_or_replace_resource(file_path, minimal2))
             # repeated replacement should report no changes - return False

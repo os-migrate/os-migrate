@@ -6,8 +6,19 @@ import unittest
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import const
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
+    import resource
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import serialization
 from ansible_collections.os_migrate.os_migrate.tests.unit import fixtures
+
+
+class MinimalResource(resource.Resource):
+
+    resource_type = 'openstack.Minimal'
+    sdk_class = dict
+
+    info_from_sdk = ['id']
+    params_from_sdk = ['name', 'description']
 
 
 class TestSerialization(unittest.TestCase):
@@ -20,86 +31,101 @@ class TestSerialization(unittest.TestCase):
     def test_add_or_replace_resource(self):
         resources = [
             {
-                'type': 'openstack.network.Network',
+                'type': 'openstack.Minimal',
                 'params': {'name': 'one', 'description': 'one'},
                 '_info': {'id': 'id-one'},
+                '_migration_params': {}
             },
             {
-                'type': 'openstack.network.Network',
+                'type': 'openstack.Minimal',
                 'params': {'name': 'two', 'description': 'two'},
                 '_info': {'id': 'id-two'},
+                '_migration_params': {}
             },
         ]
 
-        # append at the end
-        self.assertTrue(serialization.add_or_replace_resource(resources, {
-            'type': 'openstack.network.Network',
+        add_resource = MinimalResource.from_data({
+            'type': 'openstack.Minimal',
             'params': {'name': 'three', 'description': 'three'},
             '_info': {'id': 'id-three'},
-        }))
+        })
+
+        # append at the end
+        self.assertTrue(serialization.add_or_replace_resource(resources,
+                                                              add_resource))
         self.assertEqual(resources, [
             {
-                'type': 'openstack.network.Network',
+                'type': 'openstack.Minimal',
                 'params': {'name': 'one', 'description': 'one'},
                 '_info': {'id': 'id-one'},
+                '_migration_params': {}
             },
             {
-                'type': 'openstack.network.Network',
+                'type': 'openstack.Minimal',
                 'params': {'name': 'two', 'description': 'two'},
                 '_info': {'id': 'id-two'},
+                '_migration_params': {}
             },
             {
-                'type': 'openstack.network.Network',
+                'type': 'openstack.Minimal',
                 'params': {'name': 'three', 'description': 'three'},
                 '_info': {'id': 'id-three'},
+                '_migration_params': {}
             },
         ])
 
-        # replace existing
-        self.assertTrue(serialization.add_or_replace_resource(resources, {
-            'type': 'openstack.network.Network',
+        replace_resource = MinimalResource.from_data({
+            'type': 'openstack.Minimal',
             'params': {'name': 'two', 'description': 'two updated'},
             '_info': {'id': 'id-two'},
-        }))
+            '_migration_params': {}
+        })
+
+        # replace existing
+        self.assertTrue(serialization.add_or_replace_resource(
+            resources, replace_resource))
         self.assertEqual(resources, [
             {
-                'type': 'openstack.network.Network',
+                'type': 'openstack.Minimal',
                 'params': {'name': 'one', 'description': 'one'},
                 '_info': {'id': 'id-one'},
+                '_migration_params': {}
             },
             {
-                'type': 'openstack.network.Network',
+                'type': 'openstack.Minimal',
                 'params': {'name': 'two', 'description': 'two updated'},
                 '_info': {'id': 'id-two'},
+                '_migration_params': {}
             },
             {
-                'type': 'openstack.network.Network',
+                'type': 'openstack.Minimal',
                 'params': {'name': 'three', 'description': 'three'},
                 '_info': {'id': 'id-three'},
+                '_migration_params': {}
             },
         ])
 
         # same replacement again - should return False, nothing changed
-        self.assertFalse(serialization.add_or_replace_resource(resources, {
-            'type': 'openstack.network.Network',
-            'params': {'name': 'two', 'description': 'two updated'},
-            '_info': {'id': 'id-two'},
-        }))
+        self.assertFalse(serialization.add_or_replace_resource(
+            resources, replace_resource))
         self.assertEqual(resources, [
             {
-                'type': 'openstack.network.Network',
+                'type': 'openstack.Minimal',
                 'params': {'name': 'one', 'description': 'one'},
                 '_info': {'id': 'id-one'},
+                '_migration_params': {}
             },
             {
-                'type': 'openstack.network.Network',
+                'type': 'openstack.Minimal',
                 'params': {'name': 'two', 'description': 'two updated'},
                 '_info': {'id': 'id-two'},
+                '_migration_params': {}
             },
             {
-                'type': 'openstack.network.Network',
+                'type': 'openstack.Minimal',
                 'params': {'name': 'three', 'description': 'three'},
                 '_info': {'id': 'id-three'},
+                '_migration_params': {}
             },
         ])
 
@@ -146,38 +172,6 @@ class TestSerialization(unittest.TestCase):
         target[const.RES_PARAMS]['subresources'][0][const.RES_TYPE] \
             = 'openstack.UpdatedType'
         self.assertTrue(serialization.resource_needs_update(current, target))
-
-    def test_is_same_resource(self):
-        r1 = fixtures.minimal_resource()
-        r2 = fixtures.minimal_resource()
-        self.assertTrue(serialization.is_same_resource(r1, r2))
-
-        r2['params']['description'] = 'different description'
-        self.assertTrue(serialization.is_same_resource(r1, r2))
-
-        r2['params']['name'] = 'different-name'
-        self.assertTrue(serialization.is_same_resource(r1, r2))
-
-        r2['_info']['id'] = 'different-id'
-
-        # reset to sameness
-        r1 = fixtures.minimal_resource()
-        r2 = fixtures.minimal_resource()
-
-        r2['type'] = 'different.type'
-        self.assertFalse(serialization.is_same_resource(r1, r2))
-
-        del r1['type']
-        del r2['type']
-        self.assertFalse(serialization.is_same_resource(r1, r2))
-
-        # reset to sameness
-        r1 = fixtures.minimal_resource()
-        r2 = fixtures.minimal_resource()
-
-        del r1['_info']['id']
-        del r2['_info']['id']
-        self.assertFalse(serialization.is_same_resource(r1, r2))
 
     def test_set_sdk_param(self):
         ser_params = {'a': 'b', 'c': 'd', 'e': 'f'}

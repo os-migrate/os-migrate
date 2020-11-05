@@ -14,7 +14,7 @@ class FakeResource(resource.Resource):
     resource_type = 'some.FakeResource'
     sdk_class = dict
 
-    info_from_sdk = ['info1', 'info2']
+    info_from_sdk = ['id', 'info1', 'info2']
     params_from_sdk = ['name', 'param1', 'readonly_param']
     info_from_refs = ['param3id', 'param4id']
     params_from_refs = ['param3name', 'param4name']
@@ -61,6 +61,7 @@ def valid_fakeresource_sdk():
         'readonly_param': 'no_can_change',
         'param3id': 'param3idval',
         'param4id': 'param4idval',
+        'id': 'idval',
         'info1': 'info1val',
         'info2': 'info2val',
     }
@@ -90,6 +91,7 @@ def valid_fakeresource_data():
             'migparam1': 'migval1',
         },
         '_info': {
+            'id': 'idval',
             'info1': 'info1val',
             'info2': 'info2val',
             'param3id': 'param3idval',
@@ -176,3 +178,39 @@ class TestResource(unittest.TestCase):
         self.assertTrue(res.create_or_update(None))
         res._create_sdk_res.assert_called_once()
         res._update_sdk_res.assert_not_called()
+
+    def test_is_same_resource(self):
+        r1 = FakeResource.from_data(valid_fakeresource_data())
+        r2 = FakeResource.from_data(valid_fakeresource_data())
+        self.assertTrue(r1.is_same_resource(r2))
+
+        # test that it can be called with data dict
+        r2 = valid_fakeresource_data()
+        self.assertTrue(r1.is_same_resource(r2))
+
+        r2['params']['description'] = 'different description'
+        self.assertTrue(r1.is_same_resource(r2))
+
+        r2['params']['name'] = 'different-name'
+        self.assertTrue(r1.is_same_resource(r2))
+
+        r2['_info']['id'] = 'different-id'
+        self.assertFalse(r1.is_same_resource(r2))
+
+        # reset to sameness
+        r1 = FakeResource.from_data(valid_fakeresource_data())
+        r2 = valid_fakeresource_data()
+
+        r2['type'] = 'different.type'
+        self.assertFalse(r1.is_same_resource(r2))
+
+        del r2['type']
+        self.assertFalse(r1.is_same_resource(r2))
+
+        # reset to sameness
+        r1 = FakeResource.from_data(valid_fakeresource_data())
+        r2 = valid_fakeresource_data()
+
+        del r1.info()['id']
+        del r2['_info']['id']
+        self.assertFalse(r1.is_same_resource(r2))

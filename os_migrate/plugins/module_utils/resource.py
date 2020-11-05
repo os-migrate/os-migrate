@@ -213,6 +213,30 @@ class Resource():
     def info(self):
         return self.data[const.RES_INFO]
 
+    # Not meant to be overriden in majority of subclasses.
+    def is_same_resource(self, target):
+        """Check the `target` dict represents the same data found in the
+        resource. Type and id are checked by default.  Custom comparison
+        logic can be overridden in _is_same_resource method.
+
+        Returns: True if same, False otherwise
+        """
+        if isinstance(target, Resource):
+            target_data = target.data
+        else:
+            target_data = target
+
+        # UUID should be enough of a check but just in case we get back to
+        # checking by name in the future, let's keep the type check as
+        # well, it doesn't hurt.
+        if self.data[const.RES_TYPE] != target_data.get(const.RES_TYPE):
+            return False
+
+        # if something else than ['type'] && ['_info']['id'] should be the
+        # deciding factors for sameness, just override the following method in
+        # the specific subclass
+        return self._is_same_resource(target_data)
+
     def migration_params(self):
         return self.data[const.RES_MIGRATION_PARAMS]
 
@@ -259,6 +283,20 @@ class Resource():
         self._set_ser_params_same_name(params, refs, self.params_from_refs)
         self._set_ser_params_same_name(info, sdk_res, self.info_from_sdk)
         self._set_ser_params_same_name(info, refs, self.info_from_refs)
+
+    # May be overridden in subclasses as needed.  The public instance method of
+    # the same name without the leading underscore also provides a type
+    # comparison before calling this method.
+    def _is_same_resource(self, target_data):
+        """Check if `target_data` dict is the same resource as self.
+
+        Returns: True if the `target` is the same resource as self.
+        """
+        # if something else than ['type'] && ['_info']['id'] should be the
+        # deciding factors for sameness, just override the following method in
+        # the specific subclass
+        return (self.data[const.RES_INFO].get('id', '__undefined1__') ==
+                target_data[const.RES_INFO].get('id', '__undefined2__'))
 
     # Not meant to be overriden in majority of subclasses.
     def _needs_update(self, target):

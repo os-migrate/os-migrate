@@ -1,8 +1,6 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils.resource \
-    import Resource
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
 
 
@@ -16,59 +14,24 @@ def new_resources_file_struct():
     return data
 
 
-def add_or_replace_resource(resources, resource_or_data):
+def add_or_replace_resource(resources, resource):
     """Add a `resource` into `resources` struct, or replace it if already
     present (check via is_same_resource). Edits `resources` in place.
 
     Returns: True if something changed in resources structure, False
     otherwise
     """
-    # TODO: remove this compatibility handler when everything is a
-    # Resource, rename parameter from `resource_or_data` back to
-    # `resource`
-    if isinstance(resource_or_data, Resource):
-        resource = resource_or_data.data
-    else:
-        resource = resource_or_data
-
     for i, r in enumerate(resources):
-        if is_same_resource(r, resource):
-            if r == resource:
+        if resource.is_same_resource(r):
+            if r == resource.data:
                 return False
             else:
-                resources[i] = resource
+                resources[i] = resource.data
                 return True
 
     # If we didn't return by now, the resource wasn't found, so append it.
-    resources.append(resource)
+    resources.append(resource.data)
     return True
-
-
-# TODO: move sameness check into Resource when everything is a Resource
-def is_same_resource(res1, res2):
-    """Check whether two `res1` and `res2` dicts represent the same
-    resource. Type and id are checked.
-
-    Returns: True if same, False otherwise
-    """
-    # UUID should be enough of a check but just in case we get back to
-    # checking by name in the future, let's keep the type check as
-    # well, it doesn't hurt.
-    if res1.get(const.RES_TYPE, '__undefined1__') != res2.get(
-            const.RES_TYPE, '__undefined2__'):
-        return False
-
-    # We can add special cases if something else than ['type'] &&
-    # ['_info']['id'] should be the deciding factors for sameness,
-    # but it's not necessary for now.
-    # special cases
-    # projects
-    if res1.get(const.RES_TYPE, '__undefined1__') == const.RES_TYPE_PROJECT:
-        return (res1.get(const.RES_PARAMS, {}).get('name', '__undefined1__') ==
-                res2.get(const.RES_PARAMS, {}).get('name', '__undefined2__'))
-
-    return (res1.get(const.RES_INFO, {}).get('id', '__undefined1__') ==
-            res2.get(const.RES_INFO, {}).get('id', '__undefined2__'))
 
 
 # TODO: Remove when everything is a Resource
