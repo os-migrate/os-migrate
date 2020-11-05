@@ -63,6 +63,7 @@
           tags:
             - test_workload
             - test_image_workload_boot_nocopy
+            - test_image_workload_boot_nocopy_clean
       tags: always
 
     # server from image with attached volume
@@ -90,6 +91,7 @@
             - test_clean_after
             - test_workload
             - test_image_workload_boot_copy
+            - test_image_workload_boot_copy_clean
       tags: always
 
     # pre-workload cleanup

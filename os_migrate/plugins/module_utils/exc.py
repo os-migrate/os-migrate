@@ -4,6 +4,15 @@ __metaclass__ = type
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
 
 
+class CannotConverge(Exception):
+    """State is incorrect and cannot be auto-converged.
+    Operator intervention is required.
+    """
+
+    def __init__(self, message):
+        super().__init__(message)
+
+
 class DataVersionMismatch(Exception):
     """Data version does not match OS-Migrate version."""
 
@@ -11,6 +20,16 @@ class DataVersionMismatch(Exception):
 
     def __init__(self, got_version):
         message = self.msg_format.format(const.OS_MIGRATE_VERSION, got_version)
+        super().__init__(message)
+
+
+class InconsistentState(Exception):
+    """Inconsistent state in data."""
+
+    msg_format = "Inconsistent state: '{}'."
+
+    def __init__(self, msg):
+        message = self.msg_format.format(msg)
         super().__init__(message)
 
 
@@ -24,15 +43,6 @@ class UnexpectedResourceType(Exception):
         super().__init__(message)
 
 
-class CannotConverge(Exception):
-    """State is incorrect and cannot be auto-converged.
-    Operator intervention is required.
-    """
-
-    def __init__(self, message):
-        super().__init__(message)
-
-
 class UnexpectedValue(Exception):
     """Unexpected value of a variable."""
 
@@ -43,10 +53,10 @@ class UnexpectedValue(Exception):
         super().__init__(message)
 
 
-class InconsistentState(Exception):
-    """Inconsistent state in data."""
+class Unsupported(Exception):
+    """Unsupported action."""
 
-    msg_format = "Inconsistent state: '{}'."
+    msg_format = "Unsupported: '{}'."
 
     def __init__(self, msg):
         message = self.msg_format.format(msg)

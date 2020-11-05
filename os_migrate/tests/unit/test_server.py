@@ -36,22 +36,6 @@ def sdk_server():
 
 def server_refs():
     return {
-        'addresses_ids': {
-            'uuid-external-network': [
-                {'OS-EXT-IPS-MAC:mac_addr': 'fa:16:3e:d7:ae:16',
-                 'OS-EXT-IPS:type': 'fixed',
-                 'addr': '10.19.2.50',
-                 'version': 4},
-            ],
-        },
-        'addresses_refs': {
-            'external_network': [
-                {'OS-EXT-IPS-MAC:mac_addr': 'fa:16:3e:d7:ae:16',
-                 'OS-EXT-IPS:type': 'fixed',
-                 'addr': '10.19.2.50',
-                 'version': 4},
-            ],
-        },
         'flavor_id': 'uuid-flavor-m1.small',
         'flavor_ref': {
             'name': 'm1.small',
@@ -64,6 +48,34 @@ def server_refs():
             'project_name': 'test-project',
             'domain_name': 'Default',
         },
+        'ports': [
+            {
+                '_info': {
+                    'device_id': 'becd9aa6-8934-4086-a21e-3058452d45e6',
+                    'device_owner': 'compute:None',
+                    'id': '18e85b51-c64e-4c8a-bbba-797d8dd7a3b7',
+                },
+                '_migration_params': {},
+                'params': {
+                    'fixed_ips_refs': [
+                        {
+                            'ip_address': '10.19.2.50',
+                            'subnet_ref': {
+                                'domain_name': '%auth%',
+                                'name': 'osm_subnet',
+                                'project_name': '%auth%',
+                            },
+                        },
+                    ],
+                    'network_ref': {
+                        'domain_name': '%auth%',
+                        'name': 'osm_net',
+                        'project_name': '%auth%',
+                    },
+                },
+                'type': 'openstack.network.ServerPort',
+            },
+        ],
         'security_group_ids': [
             'uuid-secgroup-default',
             'uuid-secgroup-testing123',
@@ -98,14 +110,19 @@ class TestServer(unittest.TestCase):
         params, info = srv.params_and_info()
 
         self.assertEqual(srv.type(), 'openstack.compute.Server')
-        self.assertEqual(params['addresses_refs'], {
-            'external_network': [
-                {'OS-EXT-IPS-MAC:mac_addr': 'fa:16:3e:d7:ae:16',
-                 'OS-EXT-IPS:type': 'fixed',
-                 'addr': '10.19.2.50',
-                 'version': 4},
+        self.assertEqual(
+            params['ports'][0]['params']['fixed_ips_refs'],
+            [
+                {
+                    'ip_address': '10.19.2.50',
+                    'subnet_ref': {
+                        'domain_name': '%auth%',
+                        'name': 'osm_subnet',
+                        'project_name': '%auth%',
+                    },
+                },
             ],
-        })
+        )
         self.assertEqual(params['description'], 'test server')
         self.assertEqual(params['flavor_ref']['name'], 'm1.small')
         self.assertEqual(info['id'], 'uuid-test-server')

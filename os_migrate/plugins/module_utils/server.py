@@ -7,6 +7,8 @@ import openstack
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import const, exc, reference, resource
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils.server_port \
+    import server_ports, ServerPort
 
 
 class Server(resource.Resource):
@@ -39,7 +41,7 @@ class Server(resource.Resource):
         'tags',
     ]
     params_from_refs = [
-        'addresses_refs',
+        'ports',
         'flavor_ref',
         'image_ref',
         'security_group_refs',
@@ -72,6 +74,11 @@ class Server(resource.Resource):
 
     def create(self, conn, block_device_mapping):
         sdk_params = self.sdk_params(conn)
+
+        # Simple port creation via Nova. Subsequently we may add
+        # support for advanced port creation via Neutron.
+        self.update_sdk_params_networks_simple(conn, sdk_params)
+
         self.update_sdk_params_block_device_mapping(sdk_params, block_device_mapping)
         return conn.compute.create_server(**sdk_params)
 
@@ -84,16 +91,6 @@ class Server(resource.Resource):
             lambda ref: {'name': ref['name']},
             refs['security_group_refs'],
         ))
-
-        sdk_params['networks'] = []
-        addresses = refs['addresses_ids']
-        for net_id, net_ports in addresses.items():
-            for port in net_ports:
-                if port['OS-EXT-IPS:type'] == 'fixed':
-                    sdk_params['networks'].append({
-                        "uuid": net_id,
-                        "fixed_ip": port['addr'],
-                    })
 
         return sdk_params
 
@@ -138,6 +135,19 @@ class Server(resource.Resource):
         else:
             sdk_params.pop('image_id')
 
+    def update_sdk_params_networks_simple(self, conn, sdk_params):
+        sdk_params['networks'] = []
+        ports = list(map(ServerPort.from_data, self.params()['ports']))
+        for port in ports:
+            try:
+                sdk_params['networks'].append(port.nova_sdk_params(conn))
+            except exc.InconsistentState as e:
+                params, info = self.params_and_info()
+                raise exc.InconsistentState(
+                    "Error creating network parameters for server '{0}' ({1}): {2}"
+                    .format(params['name'], info['id'], e)
+                ) from e
+
     @staticmethod
     def _find_sdk_res(conn, name_or_id, filters=None):
         return conn.compute.find_server(name_or_id, **(filters or {}))
@@ -145,20 +155,6 @@ class Server(resource.Resource):
     @staticmethod
     def _refs_from_sdk(conn, sdk_res):
         refs = {}
-
-        # Nova only returns network names in response, not IDs. This
-        # can be insufficient in edge cases. We have to hope that
-        # private/public network names don't collide, and do a lookup
-        # without project scope.
-        refs['addresses_refs'] = sdk_res['addresses']
-        refs['addresses_ids'] = {}
-        for net_name, net_addrs in sdk_res['addresses'].items():
-            net_id = reference.network_id(conn, {
-                'name': net_name,
-                'project_name': None,
-                'domain_name': None,
-            })
-            refs['addresses_ids'][net_id] = net_addrs
 
         # There are multiple representations of server in SDK, some of
         # them don't have flavor ID info.
@@ -182,25 +178,16 @@ class Server(resource.Resource):
         refs['security_group_refs'] = [
             reference.security_group_ref(conn, sec_group['id'])
             for sec_group in sec_groups]
+
+        sdk_ports = server_ports(conn, sdk_res)
+        ser_ports = map(lambda p: ServerPort.from_sdk(conn, p), sdk_ports)
+        refs['ports'] = list(map(lambda p: p.data, ser_ports))
+
         return refs
 
     def _refs_from_ser(self, conn, filters=None):
         refs = {}
         params = self.params()
-
-        # Nova only returns network names in response, not IDs. This
-        # can be insufficient in edge cases. We have to hope that
-        # private/public network names don't collide, and do a lookup
-        # without project scope.
-        refs['addresses_refs'] = params['addresses_refs']
-        refs['addresses_ids'] = {}
-        for net_name, net_addrs in refs['addresses_refs'].items():
-            net_id = reference.network_id(conn, {
-                'name': net_name,
-                'project_name': None,
-                'domain_name': None,
-            })
-            refs['addresses_ids'][net_id] = net_addrs
 
         refs['flavor_ref'] = params['flavor_ref']
         refs['flavor_id'] = reference.flavor_id(
@@ -213,5 +200,7 @@ class Server(resource.Resource):
         refs['security_group_ids'] = [
             reference.security_group_id(conn, sec_group_ref)
             for sec_group_ref in params['security_group_refs']]
+
+        refs['ports'] = params['ports']
 
         return refs
