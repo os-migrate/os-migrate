@@ -164,6 +164,51 @@ data. A common pattern is validating the data file created by the
 associated export role, reading the data file and then calling the
 module you created for import.
 
+
+Commit messages
+---------------
+
+For every pull request we request contributors to be compliant with the
+following notation to help generating automatically the project's changelog.
+
+Format
+^^^^^^
+
+.. code-block:: console
+
+    <feat>: <add an awesome feature>
+    ^----^  ^----------------------^
+    |       |
+    |       +-> Summary in present tense.
+    |
+    +-------> Type: [Nn]ew, [cC]hg, [fF]ix.
+
+    <body> ----> The commit's body.
+
+Accepted types:
+
+- `new` or `New`: newly implemented features
+- `chg` or `Chg`: changes in the CI automation, documentation or any other change not presented as a new feature
+- `fix` or `Fix`: a bugfix
+
+Message subject (first line)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The first line should not be longer than 70 characters, the second line is always
+blank and other lines should be wrapped at 80 characters.
+
+Ignoring the message subject
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If the commit's message subject starts with `dev:` or `Dev:` it will be
+ommited when rendering the changelog. 
+
+Message body
+^^^^^^^^^^^^
+
+Uses the imperative, present tense: “change” not “changed” nor “changes” and
+includes motivation for the change and contrasts with previous behavior.
+
 Documentation
 -------------
 
