@@ -2,6 +2,24 @@
   tasks:
     - include_role:
         name: os_migrate.os_migrate.conversion_host
+        tasks_from: conv_hosts_inventory.yml
+
+- hosts: os_migrate_conv_src
+  tasks:
+    - include_role:
+        name: os_migrate.os_migrate.conversion_host
+        tasks_from: unregister.yml
+
+- hosts: os_migrate_conv_dst
+  tasks:
+    - include_role:
+        name: os_migrate.os_migrate.conversion_host
+        tasks_from: unregister.yml
+
+- hosts: migrator
+  tasks:
+    - include_role:
+        name: os_migrate.os_migrate.conversion_host
         tasks_from: delete.yml
       vars:
         os_migrate_conversion_auth: "{{ os_migrate_src_auth }}"
