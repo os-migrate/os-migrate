@@ -97,6 +97,13 @@
 <li class="toctree-l3"><a class="reference internal" href="#roles">Roles</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#export-roles">Export Roles</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#import-roles">Import Roles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commit-messages">Commit Messages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#format">Format</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#message-subject-first-line">Message Subject (First Line)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ignoring-the-message-subject">Ignoring the Message Subject</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#message-body">Message Body</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#documentation">Documentation</a></li>
 </ul>
 </li>
@@ -323,6 +330,45 @@ following default content:</p>
 data. A common pattern is validating the data file created by the
 associated export role, reading the data file and then calling the
 module you created for import.</p>
+</div>
+<div class="section" id="commit-messages">
+<h2>Commit Messages<a class="headerlink" href="#commit-messages" title="Permalink to this headline">¶</a></h2>
+<p>For every pull request we request contributors to be compliant with the
+following notation to help generating automatically the project’s changelog.</p>
+<div class="section" id="format">
+<h3>Format<a class="headerlink" href="#format" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">&lt;feat&gt;: &lt;add an awesome feature&gt;</span>
+<span class="go">^----^  ^----------------------^</span>
+<span class="go">|       |</span>
+<span class="go">|       +-&gt; Summary in present tense.</span>
+<span class="go">|</span>
+<span class="go">+-------&gt; Type: [Nn]ew, [cC]hg, [fF]ix.</span>
+
+<span class="go">&lt;body&gt; ----&gt; The commit&#39;s body.</span>
+</pre></div>
+</div>
+<p>Accepted types:</p>
+<ul class="simple">
+<li><p><cite>new</cite> or <cite>New</cite>: newly implemented features</p></li>
+<li><p><cite>chg</cite> or <cite>Chg</cite>: changes in the CI automation, documentation or any other change not presented as a new feature</p></li>
+<li><p><cite>fix</cite> or <cite>Fix</cite>: a bugfix</p></li>
+</ul>
+</div>
+<div class="section" id="message-subject-first-line">
+<h3>Message Subject (First Line)<a class="headerlink" href="#message-subject-first-line" title="Permalink to this headline">¶</a></h3>
+<p>The first line should not be longer than 70 characters, the second line is always
+blank and other lines should be wrapped at 80 characters.</p>
+</div>
+<div class="section" id="ignoring-the-message-subject">
+<h3>Ignoring the Message Subject<a class="headerlink" href="#ignoring-the-message-subject" title="Permalink to this headline">¶</a></h3>
+<p>If the commit message subject starts with <cite>dev:</cite> or <cite>Dev:</cite> it will be
+ommited when rendering the changelog.</p>
+</div>
+<div class="section" id="message-body">
+<h3>Message Body<a class="headerlink" href="#message-body" title="Permalink to this headline">¶</a></h3>
+<p>Uses the imperative, present tense: “change” not “changed” nor “changes” and
+includes motivation for the change and contrasts with previous behavior.</p>
+</div>
 </div>
 <div class="section" id="documentation">
 <h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>

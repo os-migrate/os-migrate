@@ -34,6 +34,9 @@ Fix
 
 Other
 ~~~~~
+- Update contributing.rst. [Ryan Brady]
+
+  minor edit, changed titles to title case
 - Move resource checks from utility to Resource classes. [Ryan Brady]
 
   This patch moves the responsibility of comparing resources from
