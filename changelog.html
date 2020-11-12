@@ -180,7 +180,19 @@
 </div>
 <div class="section" id="changes">
 <h3>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
+<ul>
+<li><p>Take info about server ports from Neutron. [Jiri Stransky]</p>
+<p>Previously we took it from Nova but that does not contain all the
+needed info for advanced use cases. Now we export info from Neutron
+which should allow us to export more port properties.</p>
+<p>The creation of ports during server import is still kept simple for
+now, via Nova. This has the benefit that if the server is deleted
+later, its ports are deleted automatically too. We may add an opt-in
+advanced port creation method via Neutron to support additional
+properties (e.g. setting a MAC address). However, IIUC, the ports
+created via Neutron don’t get automatically deleted on server deletion
+and have to be cleaned up afterwards.</p>
+</li>
 <li><p>More metadata to migrate with servers. [Jiri Stransky]</p></li>
 </ul>
 </div>
