@@ -165,7 +165,7 @@ associated export role, reading the data file and then calling the
 module you created for import.
 
 
-Commit messages
+Commit Messages
 ---------------
 
 For every pull request we request contributors to be compliant with the
@@ -191,19 +191,19 @@ Accepted types:
 - `chg` or `Chg`: changes in the CI automation, documentation or any other change not presented as a new feature
 - `fix` or `Fix`: a bugfix
 
-Message subject (first line)
+Message Subject (First Line)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The first line should not be longer than 70 characters, the second line is always
 blank and other lines should be wrapped at 80 characters.
 
-Ignoring the message subject
+Ignoring the Message Subject
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If the commit's message subject starts with `dev:` or `Dev:` it will be
+If the commit message subject starts with `dev:` or `Dev:` it will be
 ommited when rendering the changelog. 
 
-Message body
+Message Body
 ^^^^^^^^^^^^
 
 Uses the imperative, present tense: “change” not “changed” nor “changes” and
