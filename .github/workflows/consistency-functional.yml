@@ -46,7 +46,7 @@ jobs:
           echo "${{ secrets.GITHUB_TOKEN }}" | \
             podman login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
       - id: file_changes
-        uses: trilom/file-changes-action@v1.2.3
+        uses: trilom/file-changes-action@v1.2.4
       - name: Build or reuse the toolbox container image
         run: |
           # The following array defines the expressions that
