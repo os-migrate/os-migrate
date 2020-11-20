@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installation &mdash; os-migrate  documentation</title>
+  <title>Installation from Galaxy (recommended) &mdash; os-migrate  documentation</title>
   
 
   
@@ -36,8 +36,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="OS Migrate Walkthrough" href="walkthrough.html" />
-    <link rel="prev" title="Installation from source" href="install-from-source.html" /> 
+    <link rel="next" title="Installation from source (when customizing)" href="install-from-source.html" />
+    <link rel="prev" title="OS-Migrate User Documentation" href="README.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -83,19 +83,19 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../devel/README.html">OS-Migrate Developer Documentation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="README.html">OS-Migrate User Documentation</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="install-from-source.html">Installation from source</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Installation from Galaxy (recommended)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#installation-1">Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installation">Installation</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="install-from-source.html">Installation from source (when customizing)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="walkthrough.html">OS Migrate Walkthrough</a></li>
-<li class="toctree-l2"><a class="reference internal" href="configuring-variables.html">Configuring variables in os-migrate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="variables-guide.html">Variables Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="README.html#general-usage-notes">General usage notes</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../devel/README.html">OS-Migrate Developer Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../roles.html">Documented roles in os-migrate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules.html">Documented modules in os-migrate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
@@ -147,7 +147,7 @@
         
           <li><a href="README.html">OS-Migrate User Documentation</a> &raquo;</li>
         
-      <li>Installation</li>
+      <li>Installation from Galaxy (recommended)</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -166,8 +166,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="installation-from-galaxy-recommended">
+<h1>Installation from Galaxy (recommended)<a class="headerlink" href="#installation-from-galaxy-recommended" title="Permalink to this headline">¶</a></h1>
 <p>This document describes the recommended method of installing OS-Migrate,
 from Ansible Galaxy. Alternatively, you can <a class="reference external" href="install-from-source.md">install from
 source</a>.</p>
@@ -177,16 +177,17 @@ source</a>.</p>
 <li><p>Ansible &gt;= 2.9</p></li>
 </ul>
 </div>
-<div class="section" id="installation-1">
-<span id="id1"></span><h2>Installation<a class="headerlink" href="#installation-1" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="installation">
+<span id="installation-1"></span><h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <p>To install latest release:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ansible-galaxy collection install os_migrate.os_migrate
 </pre></div>
 </div>
 <p>To install a particular release:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ansible-galaxy collection install os_migrate.os_migrate &lt;VERSION&gt;
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ansible-galaxy collection install os_migrate.os_migrate:&lt;VERSION&gt;
 </pre></div>
 </div>
+<p>You can find available releases at <a class="reference external" href="https://galaxy.ansible.com/os_migrate/os_migrate">OS Migrate Galaxy page</a>.</p>
 </div>
 </div>
 
@@ -198,10 +199,10 @@ source</a>.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="walkthrough.html" class="btn btn-neutral float-right" title="OS Migrate Walkthrough" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="install-from-source.html" class="btn btn-neutral float-right" title="Installation from source (when customizing)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="install-from-source.html" class="btn btn-neutral float-left" title="Installation from source" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="README.html" class="btn btn-neutral float-left" title="OS-Migrate User Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

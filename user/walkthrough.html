@@ -36,8 +36,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Configuring variables in os-migrate" href="configuring-variables.html" />
-    <link rel="prev" title="Installation" href="install-from-galaxy.html" /> 
+    <link rel="next" title="Variables Guide" href="variables-guide.html" />
+    <link rel="prev" title="Installation from source (when customizing)" href="install-from-source.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -83,10 +83,9 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../devel/README.html">OS-Migrate Developer Documentation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="README.html">OS-Migrate User Documentation</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="install-from-source.html">Installation from source</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install-from-galaxy.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install-from-galaxy.html">Installation from Galaxy (recommended)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install-from-source.html">Installation from source (when customizing)</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">OS Migrate Walkthrough</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#authentication">Authentication</a></li>
@@ -96,21 +95,28 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#pre-workload-migration">Pre-workload migration</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#export-and-import">Export and import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#diagrams">Diagrams</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#demo">Demo</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#workload-migration">Workload migration</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#process-summary">Process summary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#process-summary">Process Summary</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#preparation">Preparation</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-deployment">Conversion host deployment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#export">Export</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#migration-parameters">Migration parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#migration">Migration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cleanup-of-conversion-hosts">Cleanup of conversion hosts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Demo</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="configuring-variables.html">Configuring variables in os-migrate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="variables-guide.html">Variables Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="README.html#general-usage-notes">General usage notes</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../devel/README.html">OS-Migrate Developer Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../roles.html">Documented roles in os-migrate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules.html">Documented modules in os-migrate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
@@ -201,13 +207,13 @@ in the original cluster, they can be gradually added to the new cluster.</p>
 direct database access or other methods to export or import data. The
 Ansible playbooks contained in OS-Migrate are idempotent. If a command
 fails, you can retry with the same command.</p>
-<div class="figure align-default" id="id1">
+<div class="figure align-default" id="id2">
 <img alt="OSP-OSP Migration Overview" src="https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig1.png?sanitize=true" />
-<p class="caption"><span class="caption-text">OSP-OSP Migration Overview</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-text">OSP-OSP Migration Overview</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
 </div>
 <p>The migration is generally performed in this sequence:</p>
 <ul class="simple">
-<li><p>prerequisites: authentication, parameter files,</p></li>
+<li><p>prerequisites: prepare authentication info, parameter files,</p></li>
 <li><p>pre-workload migration, which copies applicable resources into the
 destination cloud (e.g. networks, security groups, images) while
 workloads keep running in the source cloud,</p></li>
@@ -220,28 +226,26 @@ volumes).</p></li>
 <div class="section" id="authentication">
 <h3>Authentication<a class="headerlink" href="#authentication" title="Permalink to this headline">¶</a></h3>
 <p>Users are encouraged to use os-migrate using specific credentials for
-each project/tenant, this means not using the admin user to execute the
-resources migration. In the case that a user is required to use the
-admin credentials this <code class="docutils literal notranslate"><span class="pre">admin</span></code> user needs to have access to the tenant
-resources, otherwise you will hit an error similar to the following:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">keystoneauth1</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">Unauthorized</span><span class="p">:</span> <span class="n">The</span> <span class="n">request</span> <span class="n">you</span> <span class="n">have</span> <span class="n">made</span> <span class="n">requires</span> <span class="n">authentication</span><span class="o">.</span> <span class="p">(</span><span class="n">HTTP</span> <span class="mi">401</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>To pass this error there are some options.</p>
-<ul class="simple">
-<li><p>Add the <code class="docutils literal notranslate"><span class="pre">admin</span></code> user as a <code class="docutils literal notranslate"><span class="pre">_member_</span></code> of each project.</p></li>
-</ul>
+each project/tenant, this means <strong>not using the admin user to execute
+the resources migration</strong> (unless the resource is owned by the admin
+project, e.g. public Glance images).</p>
+<p>In case the circumstances require migrating by the <code class="docutils literal notranslate"><span class="pre">admin</span></code> user,
+this user needs to have access to the respective projects. There are
+two options:</p>
+<ul>
+<li><p>Add the <code class="docutils literal notranslate"><span class="pre">admin</span></code> user as a <code class="docutils literal notranslate"><span class="pre">_member_</span></code> of each project.</p>
 <p>Depending on how many projects need to be migrated this approach seems
 to be suboptimal as there are involved several configuration updates in
 the projects that will need to be reverted after the migration
 completes.</p>
-<ul class="simple">
+</li>
 <li><p>Create a group including the admin user and add the group to each
-project as member.</p></li>
-</ul>
+project as member.</p>
 <p>The difference with this approach is that once the migration is
 completed, by removing the group, all the references in all the projects
 will be removed automatically.</p>
+</li>
+</ul>
 </div>
 <div class="section" id="parameter-file">
 <h3>Parameter file<a class="headerlink" href="#parameter-file" title="Permalink to this headline">¶</a></h3>
@@ -279,8 +283,7 @@ following error will be raised:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">keystoneauth1</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">discovery</span><span class="o">.</span><span class="n">DiscoveryFailure</span><span class="p">:</span> <span class="n">Cannot</span> <span class="n">use</span> <span class="n">v2</span> <span class="n">authentication</span> <span class="k">with</span> <span class="n">domain</span> <span class="n">scope</span>
 </pre></div>
 </div>
-<p>To fix this issue, the user must adjust their auth parameters in this
-way:</p>
+<p>To fix this issue, the user must adjust their auth parameters:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_src_auth</span><span class="p">:</span>
   <span class="nt">auth_url</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">http://192.168.0.13.199/v2.0</span>
   <span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">srcpassword</span>
@@ -289,9 +292,9 @@ way:</p>
 <span class="nt">os_migrate_src_region_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">regionOne</span>
 </pre></div>
 </div>
-<p>Notice that the parameters <code class="docutils literal notranslate"><span class="pre">project_domain_id</span></code> and <code class="docutils literal notranslate"><span class="pre">user_domain_id</span></code>
-do not exist and the <code class="docutils literal notranslate"><span class="pre">auth_url</span></code> parameter points to the Keystone v2
-endpoint.</p>
+<p>Notice that the parameters <code class="docutils literal notranslate"><span class="pre">project_domain_name</span></code> and
+<code class="docutils literal notranslate"><span class="pre">user_domain_name</span></code> are removed and the <code class="docutils literal notranslate"><span class="pre">auth_url</span></code> parameter points
+to the Keystone v2 endpoint.</p>
 </div>
 </div>
 <div class="section" id="shortcuts">
@@ -372,15 +375,21 @@ keypairs.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ls <span class="nv">$OSM_DIR</span>/playbooks
 </pre></div>
 </div>
-<div class="figure align-default" id="id2">
-<img alt="Pre-workload Migration (data flow)" src="https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig2.png?raw=true" />
-<p class="caption"><span class="caption-text">Pre-workload Migration (data flow)</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
 </div>
+<div class="section" id="diagrams">
+<h3>Diagrams<a class="headerlink" href="#diagrams" title="Permalink to this headline">¶</a></h3>
 <div class="figure align-default" id="id3">
-<img alt="Pre-workload Migration (workflow)" src="https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig3.png?raw=true" />
+<a class="reference internal image-reference" href="https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig3.png?raw=true"><img alt="Pre-workload Migration (workflow)" src="https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig3.png?raw=true" style="width: 50%;" /></a>
 <p class="caption"><span class="caption-text">Pre-workload Migration (workflow)</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
 </div>
-<p>Pre-workload migration recorded demo:</p>
+<div class="figure align-default" id="id4">
+<a class="reference internal image-reference" href="https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig2.png?raw=true"><img alt="Pre-workload Migration (data flow)" src="https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig2.png?raw=true" style="width: 75%;" /></a>
+<p class="caption"><span class="caption-text">Pre-workload Migration (data flow)</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+<div class="section" id="demo">
+<h3>Demo<a class="headerlink" href="#demo" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://youtu.be/e7KXy5Hq4CMA">Pre-workload migration recorded demo</a>:</p>
 <p><a class="reference external" href="https://youtu.be/e7KXy5Hq4CMA"><img alt="Watch the video1" src="https://img.youtube.com/vi/e7KXy5Hq4CM/maxresdefault.jpg" /></a></p>
 </div>
 </div>
@@ -411,39 +420,39 @@ desired:</p>
   <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">openstack.compute.Server</span>
 </pre></div>
 </div>
-<p>Note that this playbook only extracts metadata about instances in the
+<p>Note that this playbook only extracts metadata about servers in the
 specified tenant - it does not download OpenStack volumes directly to
 the migration data directory. Data transfer is handled by the
-import_workloads playbook, and it is a fairly involved process to create
-an environment where this playbook will run successfully. The next few
-sections detail the process and some of the rationale for various design
-choices.</p>
+import_workloads playbook. The data is transfered directly between the
+clouds, meaning both clouds have to be running and reachable at the
+same time. The following sections describe the process in more detail.</p>
 <div class="section" id="process-summary">
-<h3>Process summary<a class="headerlink" href="#process-summary" title="Permalink to this headline">¶</a></h3>
+<h3>Process Summary<a class="headerlink" href="#process-summary" title="Permalink to this headline">¶</a></h3>
 <p>This flowchart illustrates the high-level migration workflow, from a
 user’s point of view:</p>
-<div class="figure align-default" id="id4">
-<img alt="alt text" src="https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig4.png?raw=true" />
-<p class="caption"><span class="caption-text">alt text</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+<div class="figure align-default" id="id5">
+<a class="reference internal image-reference" href="https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig4.png?raw=true"><img alt="Workload migration (workflow)" src="https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig4.png?raw=true" style="width: 50%;" /></a>
+<p class="caption"><span class="caption-text">Workload migration (workflow)</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
 </div>
 <p>The process involves the deployment of a “conversion host” on source and
-destination clouds. A conversion host is an OpenStack instance which
+destination clouds. A conversion host is an OpenStack server which
 will be used to transfer binary volume data from the source to the
 destination cloud. Currently, CentOS 8 is expected to be the image from
 which conversion hosts are created.</p>
 <p>The following diagram helps explain the need for a conversion host VM:</p>
-<div class="figure align-default" id="id5">
-<img alt="Workload migration (data flow)" src="https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig5.png?raw=true" />
-<p class="caption"><span class="caption-text">Workload migration (data flow)</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+<div class="figure align-default" id="id6">
+<a class="reference internal image-reference" href="https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig5.png?raw=true"><img alt="Workload migration (data flow)" src="https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig5.png?raw=true" style="width: 75%;" /></a>
+<p class="caption"><span class="caption-text">Workload migration (data flow)</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
 </div>
-<p>This shows that volumes on the source and destination clouds are removed
-from their original VMs and attached to their respective UCH, and then
-transferred over the network from the source UCH to the destination. The
-tooling inside the UCH migrates one instance by automating these actions
-on the source and destination clouds:</p>
+<p>This shows that volumes on the source and destination clouds are
+removed from their original VMs and attached to their respective
+conversion hosts, and then transferred over the network from the
+source conversion host to the destination. The tooling inside the
+conversion host migrates one server by automating these actions on
+the source and destination clouds:</p>
 <p>Source Cloud:</p>
 <ul class="simple">
-<li><p>Detach volumes from the target instance to migrate</p></li>
+<li><p>Detach volumes from the target server to migrate</p></li>
 <li><p>Attach the volumes to the source conversion host</p></li>
 <li><p>Export the volumes as block devices and wait for destination
 conversion host to connect</p></li>
@@ -456,7 +465,7 @@ source volume</p></li>
 <li><p>Connect to the block devices exported by source conversion host, and
 copy the data to the new attached volumes</p></li>
 <li><p>Detach the volumes from the destination conversion host</p></li>
-<li><p>Create a new instance using the new volumes</p></li>
+<li><p>Create a new server using the new volumes</p></li>
 </ul>
 <p>This method keeps broad compatibility with the various flavors and
 configurations of OpenStack using as much of an API-only approach as
@@ -479,7 +488,7 @@ image</a>.</p>
 </div>
 <div class="section" id="conversion-host-deployment">
 <h3>Conversion host deployment<a class="headerlink" href="#conversion-host-deployment" title="Permalink to this headline">¶</a></h3>
-<p>The conversion host deployment playbook creates the instances, installs
+<p>The conversion host deployment playbook creates the servers, installs
 additional required packages, and authorizes the destination conversion
 host to connect to the source conversion host for the actual data
 transfer.</p>
@@ -487,77 +496,122 @@ transfer.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="migration">
-<h3>Migration<a class="headerlink" href="#migration" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="export">
+<h3>Export<a class="headerlink" href="#export" title="Permalink to this headline">¶</a></h3>
 <p>Before migrating workloads, the destination cloud must have imported all
 other resources (networks, security groups, etc.) or the migration will
 fail. Matching named resources (including flavor names) must exist on
-the destination before the instances are created.</p>
-<p>If not already exported, export workload information with the
-export_workloads playbook. Each instance listed in the resulting
-workloads.yml will be migrated, except for the one matching the name
-given to the source conversion host instance.</p>
+the destination before the servers are created.</p>
+<p>Export workload information with the export_workloads playbook. Each
+server listed in the resulting workloads.yml will be migrated,
+except for the one matching the name given to the source conversion
+host server.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">$OSM_CMD</span> <span class="nv">$OSM_DIR</span>/playbooks/export_workloads.yml
 </pre></div>
 </div>
-<p>Then run the import_workloads playbook:</p>
+<p>The resulting workloads.yml file will look similar to:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_version</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.5.0</span>
+<span class="nt">resources</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">_info</span><span class="p">:</span>
+    <span class="nt">created_at</span><span class="p">:</span> <span class="s">&#39;2020-11-12T17:55:40Z&#39;</span>
+    <span class="nt">flavor_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cd6258f9-c34b-4a9c-a1e2-8cb81826781e</span>
+    <span class="nt">id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">af615f8c-378a-4a2e-be6a-b4d38a954242</span>
+    <span class="nt">launched_at</span><span class="p">:</span> <span class="s">&#39;2020-11-12T17:56:00.000000&#39;</span>
+    <span class="nt">security_group_ids</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">1359ec88-4873-40d2-aa0b-18ad0588f107</span>
+    <span class="nt">status</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SHUTOFF</span>
+    <span class="nt">updated_at</span><span class="p">:</span> <span class="s">&#39;2020-11-12T17:56:30Z&#39;</span>
+    <span class="nt">user_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">48be0a2e86a84682b8e4992a65d39e3e</span>
+  <span class="nt">_migration_params</span><span class="p">:</span>
+    <span class="nt">boot_disk_copy</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+  <span class="nt">params</span><span class="p">:</span>
+    <span class="nt">availability_zone</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">nova</span>
+    <span class="nt">config_drive</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
+    <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">osm_server</span>
+    <span class="nt">disk_config</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">MANUAL</span>
+    <span class="nt">flavor_ref</span><span class="p">:</span>
+      <span class="nt">domain_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
+      <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">m1.xtiny</span>
+      <span class="nt">project_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
+    <span class="nt">image_ref</span><span class="p">:</span>
+      <span class="nt">domain_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
+      <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cirros-0.4.0-x86_64-disk.img</span>
+      <span class="nt">project_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
+    <span class="nt">key_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">osm_key</span>
+    <span class="nt">metadata</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">osm_server</span>
+    <span class="nt">ports</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="nt">_info</span><span class="p">:</span>
+        <span class="nt">device_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">af615f8c-378a-4a2e-be6a-b4d38a954242</span>
+        <span class="nt">device_owner</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">compute:nova</span>
+        <span class="nt">id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cf5d73c3-089b-456b-abb9-dc5da988844e</span>
+      <span class="nt">_migration_params</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
+      <span class="nt">params</span><span class="p">:</span>
+        <span class="nt">fixed_ips_refs</span><span class="p">:</span>
+        <span class="p p-Indicator">-</span> <span class="nt">ip_address</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">192.168.20.7</span>
+          <span class="nt">subnet_ref</span><span class="p">:</span>
+            <span class="nt">domain_name</span><span class="p">:</span> <span class="s">&#39;%auth%&#39;</span>
+            <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">osm_subnet</span>
+            <span class="nt">project_name</span><span class="p">:</span> <span class="s">&#39;%auth%&#39;</span>
+        <span class="nt">network_ref</span><span class="p">:</span>
+          <span class="nt">domain_name</span><span class="p">:</span> <span class="s">&#39;%auth%&#39;</span>
+          <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">osm_net</span>
+          <span class="nt">project_name</span><span class="p">:</span> <span class="s">&#39;%auth%&#39;</span>
+      <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">openstack.network.ServerPort</span>
+    <span class="nt">scheduler_hints</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
+    <span class="nt">security_group_refs</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="nt">domain_name</span><span class="p">:</span> <span class="s">&#39;%auth%&#39;</span>
+      <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">osm_security_group</span>
+      <span class="nt">project_name</span><span class="p">:</span> <span class="s">&#39;%auth%&#39;</span>
+    <span class="nt">tags</span><span class="p">:</span> <span class="p p-Indicator">[]</span>
+    <span class="nt">user_data</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">openstack.compute.Server</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="migration-parameters">
+<h3>Migration parameters<a class="headerlink" href="#migration-parameters" title="Permalink to this headline">¶</a></h3>
+<p>You can edit the exported <code class="docutils literal notranslate"><span class="pre">workloads.yml</span></code> to adjust desired
+properties for the servers which will be created in the destination
+cloud during migration.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">boot_disk_copy</span></code> migration parameter in the example above is
+noteworthy, as it controls how the boot disk of the destination server
+is created:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">boot_disk_copy:</span> <span class="pre">false</span></code> means that the destination server will be
+booted from a Glance image of the same name as the source
+server. (This is the default for servers which were booted from an
+image in the source cloud.)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">boot_disk_copy:</span> <span class="pre">true</span></code> means that the source server’s boot disk
+will be copied into the destination as a volume, and the
+destination server will be created as boot-from-volume. (For
+servers which are already boot-from-volume in the source cloud,
+this is the default and the only possible path.)</p></li>
+</ul>
+</div>
+<div class="section" id="migration">
+<h3>Migration<a class="headerlink" href="#migration" title="Permalink to this headline">¶</a></h3>
+<p>Then run the import_workloads playbook to migrate the workloads:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">$OSM_CMD</span> <span class="nv">$OSM_DIR</span>/playbooks/import_workloads.yml
 </pre></div>
 </div>
-<p>After a few minutes, results should start showing up looking something
-like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PLAY</span> <span class="p">[</span><span class="n">migrator</span><span class="p">]</span> <span class="o">********************************************************************************************************************</span>
-
-<span class="n">TASK</span> <span class="p">[</span><span class="n">Gathering</span> <span class="n">Facts</span><span class="p">]</span> <span class="o">********************************************************************************************************************</span>
-<span class="p">[</span><span class="n">DEPRECATION</span> <span class="n">WARNING</span><span class="p">]:</span> <span class="n">Distribution</span> <span class="n">fedora</span> <span class="mi">31</span> <span class="n">on</span> <span class="n">host</span> <span class="n">localhost</span> <span class="n">should</span> <span class="n">use</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python3</span><span class="p">,</span> <span class="n">but</span> <span class="ow">is</span> <span class="n">using</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python</span> <span class="k">for</span> <span class="n">backward</span> <span class="n">compatibility</span> <span class="k">with</span> <span class="n">prior</span> <span class="n">Ansible</span> <span class="n">releases</span><span class="o">.</span> <span class="n">A</span> <span class="n">future</span> <span class="n">Ansible</span> <span class="n">release</span> <span class="n">will</span> <span class="n">default</span> <span class="n">to</span> <span class="n">using</span> <span class="n">the</span>
-<span class="n">discovered</span> <span class="n">platform</span> <span class="n">python</span> <span class="k">for</span> <span class="n">this</span> <span class="n">host</span><span class="o">.</span> <span class="n">See</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">docs</span><span class="o">.</span><span class="n">ansible</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">ansible</span><span class="o">/</span><span class="mf">2.9</span><span class="o">/</span><span class="n">reference_appendices</span><span class="o">/</span><span class="n">interpreter_discovery</span><span class="o">.</span><span class="n">html</span> <span class="k">for</span> <span class="n">more</span> <span class="n">information</span><span class="o">.</span> <span class="n">This</span> <span class="n">feature</span> <span class="n">will</span> <span class="n">be</span> <span class="n">removed</span> <span class="ow">in</span> <span class="n">version</span> <span class="mf">2.12</span><span class="o">.</span> <span class="n">Deprecation</span> <span class="n">warnings</span> <span class="n">can</span> <span class="n">be</span> <span class="n">disabled</span> <span class="n">by</span> <span class="n">setting</span> <span class="n">deprecation_warnings</span><span class="o">=</span><span class="kc">False</span> <span class="ow">in</span> <span class="n">ansible</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span>
-<span class="n">ok</span><span class="p">:</span> <span class="p">[</span><span class="n">localhost</span><span class="p">]</span>
-
-<span class="n">TASK</span> <span class="p">[</span><span class="n">import_workloads</span> <span class="p">:</span> <span class="n">validate</span> <span class="n">loaded</span> <span class="n">resources</span><span class="p">]</span> <span class="o">********************************************************************************************************************</span>
-<span class="n">ok</span><span class="p">:</span> <span class="p">[</span><span class="n">localhost</span><span class="p">]</span>
-
-<span class="n">TASK</span> <span class="p">[</span><span class="n">import_workloads</span> <span class="p">:</span> <span class="n">stop</span> <span class="n">when</span> <span class="n">errors</span> <span class="n">found</span><span class="p">]</span> <span class="o">********************************************************************************************************************</span>
-<span class="n">skipping</span><span class="p">:</span> <span class="p">[</span><span class="n">localhost</span><span class="p">]</span>
-
-<span class="n">TASK</span> <span class="p">[</span><span class="n">import_workloads</span> <span class="p">:</span> <span class="n">read</span> <span class="n">workloads</span> <span class="n">resource</span> <span class="n">file</span><span class="p">]</span> <span class="o">********************************************************************************************************************</span>
-<span class="n">ok</span><span class="p">:</span> <span class="p">[</span><span class="n">localhost</span><span class="p">]</span>
-
-<span class="n">TASK</span> <span class="p">[</span><span class="n">import_workloads</span> <span class="p">:</span> <span class="n">get</span> <span class="n">source</span> <span class="n">conversion</span> <span class="n">host</span> <span class="n">address</span><span class="p">]</span> <span class="o">********************************************************************************************************************</span>
-<span class="n">ok</span><span class="p">:</span> <span class="p">[</span><span class="n">localhost</span><span class="p">]</span>
-
-<span class="n">TASK</span> <span class="p">[</span><span class="n">import_workloads</span> <span class="p">:</span> <span class="n">check</span> <span class="n">source</span> <span class="n">conversion</span> <span class="n">host</span> <span class="n">status</span><span class="p">]</span> <span class="o">********************************************************************************************************************</span>
-<span class="n">skipping</span><span class="p">:</span> <span class="p">[</span><span class="n">localhost</span><span class="p">]</span>
-
-<span class="n">TASK</span> <span class="p">[</span><span class="n">import_workloads</span> <span class="p">:</span> <span class="n">get</span> <span class="n">destination</span> <span class="n">conversion</span> <span class="n">host</span> <span class="n">address</span><span class="p">]</span> <span class="o">********************************************************************************************************************</span>
-<span class="n">ok</span><span class="p">:</span> <span class="p">[</span><span class="n">localhost</span><span class="p">]</span>
-
-<span class="n">TASK</span> <span class="p">[</span><span class="n">import_workloads</span> <span class="p">:</span> <span class="n">check</span> <span class="n">destination</span> <span class="n">conversion</span> <span class="n">host</span> <span class="n">status</span><span class="p">]</span> <span class="o">********************************************************************************************************************</span>
-<span class="n">skipping</span><span class="p">:</span> <span class="p">[</span><span class="n">localhost</span><span class="p">]</span>
-
-<span class="n">TASK</span> <span class="p">[</span><span class="n">import_workloads</span> <span class="p">:</span> <span class="kn">import</span> <span class="nn">workloads</span><span class="p">]</span> <span class="o">********************************************************************************************************************</span>
-<span class="n">changed</span><span class="p">:</span> <span class="p">[</span><span class="n">localhost</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;_info&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;addresses&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;external_network&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;OS-EXT-IPS-MAC:mac_addr&#39;</span><span class="p">:</span> <span class="s1">&#39;fa:16:3e:98:19:a0&#39;</span><span class="p">,</span> <span class="s1">&#39;OS-EXT-IPS:type&#39;</span><span class="p">:</span> <span class="s1">&#39;fixed&#39;</span><span class="p">,</span> <span class="s1">&#39;addr&#39;</span><span class="p">:</span> <span class="s1">&#39;10.19.2.41&#39;</span><span class="p">,</span> <span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}]},</span> <span class="s1">&#39;flavor_id&#39;</span><span class="p">:</span> <span class="s1">&#39;a96b2815-3525-4eea-9ab4-14ba58e17835&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;0025f062-f684-4e02-9da2-3219e011ec74&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;SHUTOFF&#39;</span><span class="p">},</span> <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;flavor_name&#39;</span><span class="p">:</span> <span class="s1">&#39;m1.small&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;migration-vm&#39;</span><span class="p">,</span> <span class="s1">&#39;security_group_names&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;testing123&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">]},</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;openstack.compute.Server&#39;</span><span class="p">})</span>
-<span class="n">changed</span><span class="p">:</span> <span class="p">[</span><span class="n">localhost</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;_info&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;addresses&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;external_network&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;OS-EXT-IPS-MAC:mac_addr&#39;</span><span class="p">:</span> <span class="s1">&#39;fa:16:3e:d7:ae:16&#39;</span><span class="p">,</span> <span class="s1">&#39;OS-EXT-IPS:type&#39;</span><span class="p">:</span> <span class="s1">&#39;fixed&#39;</span><span class="p">,</span> <span class="s1">&#39;addr&#39;</span><span class="p">:</span> <span class="s1">&#39;10.19.2.50&#39;</span><span class="p">,</span> <span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}]},</span> <span class="s1">&#39;flavor_id&#39;</span><span class="p">:</span> <span class="s1">&#39;a96b2815-3525-4eea-9ab4-14ba58e17835&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;0ca7b7d6-6679-4d46-99e5-866672d3e869&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;SHUTOFF&#39;</span><span class="p">},</span> <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;flavor_name&#39;</span><span class="p">:</span> <span class="s1">&#39;m1.small&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;second-migration-vm&#39;</span><span class="p">,</span> <span class="s1">&#39;security_group_names&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">]},</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;openstack.compute.Server&#39;</span><span class="p">})</span>
-<span class="n">skipping</span><span class="p">:</span> <span class="p">[</span><span class="n">localhost</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;_info&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;addresses&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;external_network&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;OS-EXT-IPS-MAC:mac_addr&#39;</span><span class="p">:</span> <span class="s1">&#39;fa:16:3e:14:12:46&#39;</span><span class="p">,</span> <span class="s1">&#39;OS-EXT-IPS:type&#39;</span><span class="p">:</span> <span class="s1">&#39;fixed&#39;</span><span class="p">,</span> <span class="s1">&#39;addr&#39;</span><span class="p">:</span> <span class="s1">&#39;10.19.2.39&#39;</span><span class="p">,</span> <span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}]},</span> <span class="s1">&#39;flavor_id&#39;</span><span class="p">:</span> <span class="s1">&#39;d0c1507e-92ce-48c5-9287-59c7b4e57467&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;240d0194-ee2a-4708-b2c1-bde082887c59&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;ACTIVE&#39;</span><span class="p">},</span> <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;flavor_name&#39;</span><span class="p">:</span> <span class="s1">&#39;ims.conversion-host&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;source-conversion-host-2&#39;</span><span class="p">,</span> <span class="s1">&#39;security_group_names&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">]},</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;openstack.compute.Server&#39;</span><span class="p">})</span>
-<span class="n">changed</span><span class="p">:</span> <span class="p">[</span><span class="n">localhost</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;_info&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;addresses&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;external_network&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;OS-EXT-IPS-MAC:mac_addr&#39;</span><span class="p">:</span> <span class="s1">&#39;fa:16:3e:06:3e:c2&#39;</span><span class="p">,</span> <span class="s1">&#39;OS-EXT-IPS:type&#39;</span><span class="p">:</span> <span class="s1">&#39;fixed&#39;</span><span class="p">,</span> <span class="s1">&#39;addr&#39;</span><span class="p">:</span> <span class="s1">&#39;10.19.2.44&#39;</span><span class="p">,</span> <span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}]},</span> <span class="s1">&#39;flavor_id&#39;</span><span class="p">:</span> <span class="s1">&#39;a96b2815-3525-4eea-9ab4-14ba58e17835&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;980e76f6-9143-475d-89f8-e708342b90e2&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;SHUTOFF&#39;</span><span class="p">},</span> <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;flavor_name&#39;</span><span class="p">:</span> <span class="s1">&#39;m1.small&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;fourth-migration-vm&#39;</span><span class="p">,</span> <span class="s1">&#39;security_group_names&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">]},</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;openstack.compute.Server&#39;</span><span class="p">})</span>
-<span class="n">skipping</span><span class="p">:</span> <span class="p">[</span><span class="n">localhost</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;_info&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;addresses&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;external_network&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;OS-EXT-IPS-MAC:mac_addr&#39;</span><span class="p">:</span> <span class="s1">&#39;fa:16:3e:3a:9b:72&#39;</span><span class="p">,</span> <span class="s1">&#39;OS-EXT-IPS:type&#39;</span><span class="p">:</span> <span class="s1">&#39;fixed&#39;</span><span class="p">,</span> <span class="s1">&#39;addr&#39;</span><span class="p">:</span> <span class="s1">&#39;10.19.2.40&#39;</span><span class="p">,</span> <span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}]},</span> <span class="s1">&#39;flavor_id&#39;</span><span class="p">:</span> <span class="s1">&#39;d0c1507e-92ce-48c5-9287-59c7b4e57467&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;ce4dda96-5d8e-4b67-aee2-9845cdc943fe&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;ACTIVE&#39;</span><span class="p">},</span> <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;flavor_name&#39;</span><span class="p">:</span> <span class="s1">&#39;ims.conversion-host&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;latestuci&#39;</span><span class="p">,</span> <span class="s1">&#39;security_group_names&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">]},</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;openstack.compute.Server&#39;</span><span class="p">})</span>
-<span class="n">skipping</span><span class="p">:</span> <span class="p">[</span><span class="n">localhost</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;_info&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;addresses&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;external_network&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;OS-EXT-IPS-MAC:mac_addr&#39;</span><span class="p">:</span> <span class="s1">&#39;fa:16:3e:3d:d1:25&#39;</span><span class="p">,</span> <span class="s1">&#39;OS-EXT-IPS:type&#39;</span><span class="p">:</span> <span class="s1">&#39;fixed&#39;</span><span class="p">,</span> <span class="s1">&#39;addr&#39;</span><span class="p">:</span> <span class="s1">&#39;10.19.2.37&#39;</span><span class="p">,</span> <span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}]},</span> <span class="s1">&#39;flavor_id&#39;</span><span class="p">:</span> <span class="s1">&#39;d0c1507e-92ce-48c5-9287-59c7b4e57467&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;a4e688e4-8d22-4469-9535-a8c867797c61&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;ACTIVE&#39;</span><span class="p">},</span> <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;flavor_name&#39;</span><span class="p">:</span> <span class="s1">&#39;ims.conversion-host&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;source-conversion-host-&#39;</span><span class="p">,</span> <span class="s1">&#39;security_group_names&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">]},</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;openstack.compute.Server&#39;</span><span class="p">})</span>
-
-<span class="n">PLAY</span> <span class="n">RECAP</span> <span class="o">********************************************************************************************************************</span>
-<span class="n">localhost</span>                  <span class="p">:</span> <span class="n">ok</span><span class="o">=</span><span class="mi">6</span>    <span class="n">changed</span><span class="o">=</span><span class="mi">1</span>    <span class="n">unreachable</span><span class="o">=</span><span class="mi">0</span>    <span class="n">failed</span><span class="o">=</span><span class="mi">0</span>    <span class="n">skipped</span><span class="o">=</span><span class="mi">3</span>    <span class="n">rescued</span><span class="o">=</span><span class="mi">0</span>    <span class="n">ignored</span><span class="o">=</span><span class="mi">0</span>
+<p>Any server marked “changed” should be successfully migrated to the
+destination cloud. Servers are “skipped” if they match the name or
+ID of the specified conversion host. If there is already an server
+on the destination matching the name of the current server, it will
+be marked “ok” and no extra work will be performed.</p>
+</div>
+<div class="section" id="cleanup-of-conversion-hosts">
+<h3>Cleanup of conversion hosts<a class="headerlink" href="#cleanup-of-conversion-hosts" title="Permalink to this headline">¶</a></h3>
+<p>When you are done migrating workloads in given tenants, delete their
+conversion hosts via the delete_conversion_hosts playbook:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">$OSM_CMD</span> <span class="nv">$OSM_DIR</span>/playbooks/delete_conversion_hosts.yml
 </pre></div>
 </div>
-<p>Any instance marked “changed” should be successfully migrated to the
-destination cloud. Instances are “skipped” if they are still running, or
-if they match the name or ID of the specified conversion host. If there
-is already an instance on the destination matching the name of the
-current instance, it will be marked “ok” and no extra work will be
-performed:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">TASK</span> <span class="p">[</span><span class="n">import_workloads</span> <span class="p">:</span> <span class="kn">import</span> <span class="nn">workloads</span><span class="p">]</span> <span class="o">******************************************************************************************************************</span>
-<span class="n">ok</span><span class="p">:</span> <span class="p">[</span><span class="n">localhost</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;_info&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;addresses&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;external_network&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;OS-EXT-IPS-MAC:mac_addr&#39;</span><span class="p">:</span> <span class="s1">&#39;fa:16:3e:98:19:a0&#39;</span><span class="p">,</span> <span class="s1">&#39;OS-EXT-IPS:type&#39;</span><span class="p">:</span> <span class="s1">&#39;fixed&#39;</span><span class="p">,</span> <span class="s1">&#39;addr&#39;</span><span class="p">:</span> <span class="s1">&#39;10.19.2.41&#39;</span><span class="p">,</span> <span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}]},</span> <span class="s1">&#39;flavor_id&#39;</span><span class="p">:</span> <span class="s1">&#39;a96b2815-3525-4eea-9ab4-14ba58e17835&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;0025f062-f684-4e02-9da2-3219e011ec74&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;SHUTOFF&#39;</span><span class="p">},</span> <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;flavor_name&#39;</span><span class="p">:</span> <span class="s1">&#39;m1.small&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;migration-vm&#39;</span><span class="p">,</span> <span class="s1">&#39;security_group_names&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;testing123&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">]},</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;openstack.compute.Server&#39;</span><span class="p">})</span>
-</pre></div>
 </div>
-<p>Workload migration recorded demo:</p>
-<p><a class="reference external" href="https://youtu.be/e7KXy5Hq4CMA"><img alt="Watch the video1" src="https://img.youtube.com/vi/e7KXy5Hq4CM/maxresdefault.jpg" /></a></p>
+<div class="section" id="id1">
+<h3>Demo<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://youtu.be/gEKvgIZqrQY">Workload migration recorded demo</a>:</p>
 <p><a class="reference external" href="https://youtu.be/gEKvgIZqrQY"><img alt="Watch the video2" src="https://img.youtube.com/vi/gEKvgIZqrQY/maxresdefault.jpg" /></a></p>
 </div>
 </div>
@@ -571,10 +625,10 @@ performed:</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="configuring-variables.html" class="btn btn-neutral float-right" title="Configuring variables in os-migrate" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="variables-guide.html" class="btn btn-neutral float-right" title="Variables Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="install-from-galaxy.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="install-from-source.html" class="btn btn-neutral float-left" title="Installation from source (when customizing)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

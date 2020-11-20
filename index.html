@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Welcome to os-migrate’s documentation! &mdash; os-migrate  documentation</title>
+  <title>Welcome to OS Migrate’s documentation! &mdash; os-migrate  documentation</title>
   
 
   
@@ -36,7 +36,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="OS-Migrate Developer Documentation" href="devel/README.html" /> 
+    <link rel="next" title="OS-Migrate User Documentation" href="user/README.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -82,8 +82,8 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="devel/README.html">OS-Migrate Developer Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="user/README.html">OS-Migrate User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devel/README.html">OS-Migrate Developer Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="roles.html">Documented roles in os-migrate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Documented modules in os-migrate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
@@ -133,7 +133,7 @@
     
       <li><a href="#" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Welcome to os-migrate’s documentation!</li>
+      <li>Welcome to OS Migrate’s documentation!</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -153,25 +153,38 @@
            <div itemprop="articleBody">
             
   <div class="section" id="welcome-to-os-migrate-s-documentation">
-<h1>Welcome to os-migrate’s documentation!<a class="headerlink" href="#welcome-to-os-migrate-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>The source code of this project is hosted in
-<a class="reference external" href="https://github.com/os-migrate/os-migrate/">GitHub</a>.</p>
-<p>Parallel cloud migration is a way to modernize an OpenStack deployment.
-Instead of upgrading an OpenStack cluster in place, a second OpenStack cluster is deployed alongside,
-and tenant content is migrated from the original cluster to the new one.
-As hardware resources free up in the original cluster, they can be gradually added to the new cluster.</p>
-<p>OS-Migrate is an open source project that provides a framework for exporting and importing resources
-between two clouds. It’s a collection of Ansible playbooks that provide the basic functionality, but
-may not fit each use case out of the box. You can craft custom playbooks using the OS-Migrate
+<h1>Welcome to OS Migrate’s documentation!<a class="headerlink" href="#welcome-to-os-migrate-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p>OS Migrate is an open source toolbox for parallel cloud migration
+between OpenStack clouds. Parallel cloud migration is a way to
+modernize an OpenStack deployment. Instead of upgrading an OpenStack
+cluster in place, a second OpenStack cluster is deployed alongside,
+and tenant content is migrated from the original cluster to the new
+one. As hardware resources free up in the original cluster, they can
+be gradually added to the new cluster.</p>
+<p>OS Migrate provides a framework for exporting and importing resources
+between two clouds. It’s a collection of Ansible playbooks that
+provide the basic functionality, but may not fit each use case out of
+the box. You can craft custom playbooks using the OS-Migrate
 collection pieces (roles and modules) as building blocks.</p>
-<p>OS-Migrate strictly uses the official OpenStack API and does not utilize direct database access or other
-methods to export or import data. The Ansible playbooks contained in OS-Migrate are idempotent.
+<p>OS Migrate strictly uses the official OpenStack API and does not
+utilize direct database access or other methods to export or import
+data. The Ansible playbooks contained in OS-Migrate are idempotent.
 If a command fails, you can retry with the same command.</p>
+<p>The <a class="reference external" href="https://github.com/os-migrate/os-migrate/">source code of OS Migrate</a>
+is hosted in GitHub.</p>
 </div>
 <div class="section" id="content">
 <h1>Content<a class="headerlink" href="#content" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="user/README.html">OS-Migrate User Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user/install-from-galaxy.html">Installation from Galaxy (recommended)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/install-from-source.html">Installation from source (when customizing)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/walkthrough.html">OS Migrate Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/variables-guide.html">Variables Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/README.html#general-usage-notes">General usage notes</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="devel/README.html">OS-Migrate Developer Documentation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="devel/dev-env-setup.html">OS-Migrate - Development Environment Setup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="devel/dev-env-vagrant-non-containerized.html">Installing Vagrant directly on host</a></li>
@@ -181,14 +194,6 @@ If a command fails, you can retry with the same command.</p>
 <li class="toctree-l2"><a class="reference internal" href="devel/design.html#misc">Misc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="devel/releasing.html">Releasing the OS Migrate collection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="devel/contributing.html">Become a Contributor</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="user/README.html">OS-Migrate User Documentation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="user/install-from-source.html">Installation from source</a></li>
-<li class="toctree-l2"><a class="reference internal" href="user/install-from-galaxy.html">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="user/walkthrough.html">OS Migrate Walkthrough</a></li>
-<li class="toctree-l2"><a class="reference internal" href="user/configuring-variables.html">Configuring variables in os-migrate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="user/README.html#general-usage-notes">General usage notes</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="roles.html">Documented roles in os-migrate</a><ul>
@@ -283,7 +288,7 @@ If a command fails, you can retry with the same command.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="devel/README.html" class="btn btn-neutral float-right" title="OS-Migrate Developer Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="user/README.html" class="btn btn-neutral float-right" title="OS-Migrate User Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>

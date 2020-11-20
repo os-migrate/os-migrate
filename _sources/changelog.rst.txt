@@ -13,6 +13,10 @@ New
 
 Changes
 ~~~~~~~
+- User documentation improvements. [Jiri Stransky]
+
+  Improve clarity of user docs in various spots and add more workload
+  migration info to the walkthrough doc.
 - Take info about server ports from Neutron. [Jiri Stransky]
 
   Previously we took it from Nova but that does not contain all the
