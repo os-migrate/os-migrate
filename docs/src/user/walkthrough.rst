@@ -451,22 +451,10 @@ Migration parameters
 
 You can edit the exported ``workloads.yml`` to adjust desired
 properties for the servers which will be created in the destination
-cloud during migration.
-
-The ``boot_disk_copy`` migration parameter in the example above is
-noteworthy, as it controls how the boot disk of the destination server
-is created:
-
--  ``boot_disk_copy: false`` means that the destination server will be
-   booted from a Glance image of the same name as the source
-   server. (This is the default for servers which were booted from an
-   image in the source cloud.)
-
--  ``boot_disk_copy: true`` means that the source server's boot disk
-   will be copied into the destination as a volume, and the
-   destination server will be created as boot-from-volume. (For
-   servers which are already boot-from-volume in the source cloud,
-   this is the default and the only possible path.)
+cloud during migration. You can also edit migration parameters to
+control how a workload should be migrated. Refer to
+`Migration Parameters Guide <migration-params-guide.rst>`_
+for more information.
 
 Migration
 ~~~~~~~~~

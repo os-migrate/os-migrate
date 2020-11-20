@@ -11,6 +11,7 @@ to another.
    install-from-source.rst
    walkthrough.rst
    variables-guide.rst
+   migration-params-guide.rst
 
 General usage notes
 -------------------
