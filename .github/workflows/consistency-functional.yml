@@ -2,10 +2,10 @@ name: consistency-functional
 on:
   push:
     paths-ignore:
-      - 'doc/**'
+      - 'docs/**'
   pull_request:
     paths-ignore:
-      - 'doc/**'
+      - 'docs/**'
 jobs:
   # TODO: Add a previous job that:
   # * Builds the container image
