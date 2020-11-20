@@ -7,10 +7,10 @@ to another.
 .. toctree::
    :maxdepth: 2
 
-   install-from-source.rst
    install-from-galaxy.rst
+   install-from-source.rst
    walkthrough.rst
-   configuring-variables.rst
+   variables-guide.rst
 
 General usage notes
 -------------------

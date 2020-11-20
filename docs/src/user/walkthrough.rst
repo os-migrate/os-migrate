@@ -29,7 +29,7 @@ fails, you can retry with the same command.
 
 The migration is generally performed in this sequence:
 
--  prerequisites: authentication, parameter files,
+-  prerequisites: prepare authentication info, parameter files,
 
 -  pre-workload migration, which copies applicable resources into the
    destination cloud (e.g. networks, security groups, images) while
@@ -46,30 +46,27 @@ Authentication
 ~~~~~~~~~~~~~~
 
 Users are encouraged to use os-migrate using specific credentials for
-each project/tenant, this means not using the admin user to execute the
-resources migration. In the case that a user is required to use the
-admin credentials this ``admin`` user needs to have access to the tenant
-resources, otherwise you will hit an error similar to the following:
+each project/tenant, this means **not using the admin user to execute
+the resources migration** (unless the resource is owned by the admin
+project, e.g. public Glance images).
 
-::
-
-   keystoneauth1.exceptions.http.Unauthorized: The request you have made requires authentication. (HTTP 401)
-
-To pass this error there are some options.
+In case the circumstances require migrating by the ``admin`` user,
+this user needs to have access to the respective projects. There are
+two options:
 
 -  Add the ``admin`` user as a ``_member_`` of each project.
 
-Depending on how many projects need to be migrated this approach seems
-to be suboptimal as there are involved several configuration updates in
-the projects that will need to be reverted after the migration
-completes.
+   Depending on how many projects need to be migrated this approach seems
+   to be suboptimal as there are involved several configuration updates in
+   the projects that will need to be reverted after the migration
+   completes.
 
 -  Create a group including the admin user and add the group to each
    project as member.
 
-The difference with this approach is that once the migration is
-completed, by removing the group, all the references in all the projects
-will be removed automatically.
+   The difference with this approach is that once the migration is
+   completed, by removing the group, all the references in all the projects
+   will be removed automatically.
 
 Parameter file
 ~~~~~~~~~~~~~~
@@ -114,8 +111,7 @@ following error will be raised:
 
    keystoneauth1.exceptions.discovery.DiscoveryFailure: Cannot use v2 authentication with domain scope
 
-To fix this issue, the user must adjust their auth parameters in this
-way:
+To fix this issue, the user must adjust their auth parameters:
 
 .. code:: yaml
 
@@ -126,9 +122,9 @@ way:
      username: src
    os_migrate_src_region_name: regionOne
 
-Notice that the parameters ``project_domain_id`` and ``user_domain_id``
-do not exist and the ``auth_url`` parameter points to the Keystone v2
-endpoint.
+Notice that the parameters ``project_domain_name`` and
+``user_domain_name`` are removed and the ``auth_url`` parameter points
+to the Keystone v2 endpoint.
 
 Shortcuts
 ~~~~~~~~~
@@ -222,17 +218,25 @@ For a full list of available playbooks, run:
 
    ls $OSM_DIR/playbooks
 
-.. figure:: https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig2.png?raw=true
-   :alt: Pre-workload Migration (data flow)
-
-   Pre-workload Migration (data flow)
+Diagrams
+~~~~~~~~
 
 .. figure:: https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig3.png?raw=true
    :alt: Pre-workload Migration (workflow)
+   :width: 50%
 
    Pre-workload Migration (workflow)
 
-Pre-workload migration recorded demo:
+.. figure:: https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig2.png?raw=true
+   :alt: Pre-workload Migration (data flow)
+   :width: 75%
+
+   Pre-workload Migration (data flow)
+
+Demo
+~~~~
+
+`Pre-workload migration recorded demo <https://youtu.be/e7KXy5Hq4CMA>`_:
 
 |Watch the video1|
 
@@ -266,27 +270,27 @@ desired:
        - default
      type: openstack.compute.Server
 
-Note that this playbook only extracts metadata about instances in the
+Note that this playbook only extracts metadata about servers in the
 specified tenant - it does not download OpenStack volumes directly to
 the migration data directory. Data transfer is handled by the
-import_workloads playbook, and it is a fairly involved process to create
-an environment where this playbook will run successfully. The next few
-sections detail the process and some of the rationale for various design
-choices.
+import_workloads playbook. The data is transfered directly between the
+clouds, meaning both clouds have to be running and reachable at the
+same time. The following sections describe the process in more detail.
 
-Process summary
+Process Summary
 ~~~~~~~~~~~~~~~
 
 This flowchart illustrates the high-level migration workflow, from a
 user’s point of view:
 
 .. figure:: https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig4.png?raw=true
-   :alt: alt text
+   :alt: Workload migration (workflow)
+   :width: 50%
 
-   alt text
+   Workload migration (workflow)
 
 The process involves the deployment of a “conversion host” on source and
-destination clouds. A conversion host is an OpenStack instance which
+destination clouds. A conversion host is an OpenStack server which
 will be used to transfer binary volume data from the source to the
 destination cloud. Currently, CentOS 8 is expected to be the image from
 which conversion hosts are created.
@@ -295,18 +299,20 @@ The following diagram helps explain the need for a conversion host VM:
 
 .. figure:: https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig5.png?raw=true
    :alt: Workload migration (data flow)
+   :width: 75%
 
    Workload migration (data flow)
 
-This shows that volumes on the source and destination clouds are removed
-from their original VMs and attached to their respective UCH, and then
-transferred over the network from the source UCH to the destination. The
-tooling inside the UCH migrates one instance by automating these actions
-on the source and destination clouds:
+This shows that volumes on the source and destination clouds are
+removed from their original VMs and attached to their respective
+conversion hosts, and then transferred over the network from the
+source conversion host to the destination. The tooling inside the
+conversion host migrates one server by automating these actions on
+the source and destination clouds:
 
 Source Cloud:
 
--  Detach volumes from the target instance to migrate
+-  Detach volumes from the target server to migrate
 
 -  Attach the volumes to the source conversion host
 
@@ -325,7 +331,7 @@ Destination Cloud:
 
 -  Detach the volumes from the destination conversion host
 
--  Create a new instance using the new volumes
+-  Create a new server using the new volumes
 
 This method keeps broad compatibility with the various flavors and
 configurations of OpenStack using as much of an API-only approach as
@@ -353,7 +359,7 @@ image <https://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.2
 Conversion host deployment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The conversion host deployment playbook creates the instances, installs
+The conversion host deployment playbook creates the servers, installs
 additional required packages, and authorizes the destination conversion
 host to connect to the source conversion host for the actual data
 transfer.
@@ -362,88 +368,135 @@ transfer.
 
    $OSM_CMD $OSM_DIR/deploy_conversion_hosts.yml
 
-Migration
-~~~~~~~~~
+Export
+~~~~~~
 
 Before migrating workloads, the destination cloud must have imported all
 other resources (networks, security groups, etc.) or the migration will
 fail. Matching named resources (including flavor names) must exist on
-the destination before the instances are created.
+the destination before the servers are created.
 
-If not already exported, export workload information with the
-export_workloads playbook. Each instance listed in the resulting
-workloads.yml will be migrated, except for the one matching the name
-given to the source conversion host instance.
+Export workload information with the export_workloads playbook. Each
+server listed in the resulting workloads.yml will be migrated,
+except for the one matching the name given to the source conversion
+host server.
 
 .. code:: bash
 
    $OSM_CMD $OSM_DIR/playbooks/export_workloads.yml
 
-Then run the import_workloads playbook:
+The resulting workloads.yml file will look similar to:
+
+.. code:: yaml
+
+   os_migrate_version: 0.5.0
+   resources:
+   - _info:
+       created_at: '2020-11-12T17:55:40Z'
+       flavor_id: cd6258f9-c34b-4a9c-a1e2-8cb81826781e
+       id: af615f8c-378a-4a2e-be6a-b4d38a954242
+       launched_at: '2020-11-12T17:56:00.000000'
+       security_group_ids:
+       - 1359ec88-4873-40d2-aa0b-18ad0588f107
+       status: SHUTOFF
+       updated_at: '2020-11-12T17:56:30Z'
+       user_id: 48be0a2e86a84682b8e4992a65d39e3e
+     _migration_params:
+       boot_disk_copy: false
+     params:
+       availability_zone: nova
+       config_drive: null
+       description: osm_server
+       disk_config: MANUAL
+       flavor_ref:
+         domain_name: null
+         name: m1.xtiny
+         project_name: null
+       image_ref:
+         domain_name: null
+         name: cirros-0.4.0-x86_64-disk.img
+         project_name: null
+       key_name: osm_key
+       metadata: {}
+       name: osm_server
+       ports:
+       - _info:
+           device_id: af615f8c-378a-4a2e-be6a-b4d38a954242
+           device_owner: compute:nova
+           id: cf5d73c3-089b-456b-abb9-dc5da988844e
+         _migration_params: {}
+         params:
+           fixed_ips_refs:
+           - ip_address: 192.168.20.7
+             subnet_ref:
+               domain_name: '%auth%'
+               name: osm_subnet
+               project_name: '%auth%'
+           network_ref:
+             domain_name: '%auth%'
+             name: osm_net
+             project_name: '%auth%'
+         type: openstack.network.ServerPort
+       scheduler_hints: null
+       security_group_refs:
+       - domain_name: '%auth%'
+         name: osm_security_group
+         project_name: '%auth%'
+       tags: []
+       user_data: null
+     type: openstack.compute.Server
+
+Migration parameters
+~~~~~~~~~~~~~~~~~~~~
+
+You can edit the exported ``workloads.yml`` to adjust desired
+properties for the servers which will be created in the destination
+cloud during migration.
+
+The ``boot_disk_copy`` migration parameter in the example above is
+noteworthy, as it controls how the boot disk of the destination server
+is created:
+
+-  ``boot_disk_copy: false`` means that the destination server will be
+   booted from a Glance image of the same name as the source
+   server. (This is the default for servers which were booted from an
+   image in the source cloud.)
+
+-  ``boot_disk_copy: true`` means that the source server's boot disk
+   will be copied into the destination as a volume, and the
+   destination server will be created as boot-from-volume. (For
+   servers which are already boot-from-volume in the source cloud,
+   this is the default and the only possible path.)
+
+Migration
+~~~~~~~~~
+
+Then run the import_workloads playbook to migrate the workloads:
 
 .. code:: bash
 
    $OSM_CMD $OSM_DIR/playbooks/import_workloads.yml
 
-After a few minutes, results should start showing up looking something
-like this:
+Any server marked “changed” should be successfully migrated to the
+destination cloud. Servers are “skipped” if they match the name or
+ID of the specified conversion host. If there is already an server
+on the destination matching the name of the current server, it will
+be marked “ok” and no extra work will be performed.
 
-::
+Cleanup of conversion hosts
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   PLAY [migrator] ********************************************************************************************************************
+When you are done migrating workloads in given tenants, delete their
+conversion hosts via the delete_conversion_hosts playbook:
 
-   TASK [Gathering Facts] ********************************************************************************************************************
-   [DEPRECATION WARNING]: Distribution fedora 31 on host localhost should use /usr/bin/python3, but is using /usr/bin/python for backward compatibility with prior Ansible releases. A future Ansible release will default to using the 
-   discovered platform python for this host. See https://docs.ansible.com/ansible/2.9/reference_appendices/interpreter_discovery.html for more information. This feature will be removed in version 2.12. Deprecation warnings can be disabled by setting deprecation_warnings=False in ansible.cfg.
-   ok: [localhost]
+.. code:: bash
 
-   TASK [import_workloads : validate loaded resources] ********************************************************************************************************************
-   ok: [localhost]
+   $OSM_CMD $OSM_DIR/playbooks/delete_conversion_hosts.yml
 
-   TASK [import_workloads : stop when errors found] ********************************************************************************************************************
-   skipping: [localhost]
+Demo
+~~~~
 
-   TASK [import_workloads : read workloads resource file] ********************************************************************************************************************
-   ok: [localhost]
-
-   TASK [import_workloads : get source conversion host address] ********************************************************************************************************************
-   ok: [localhost]
-
-   TASK [import_workloads : check source conversion host status] ********************************************************************************************************************
-   skipping: [localhost]
-
-   TASK [import_workloads : get destination conversion host address] ********************************************************************************************************************
-   ok: [localhost]
-
-   TASK [import_workloads : check destination conversion host status] ********************************************************************************************************************
-   skipping: [localhost]
-
-   TASK [import_workloads : import workloads] ********************************************************************************************************************
-   changed: [localhost] => (item={'_info': {'addresses': {'external_network': [{'OS-EXT-IPS-MAC:mac_addr': 'fa:16:3e:98:19:a0', 'OS-EXT-IPS:type': 'fixed', 'addr': '10.19.2.41', 'version': 4}]}, 'flavor_id': 'a96b2815-3525-4eea-9ab4-14ba58e17835', 'id': '0025f062-f684-4e02-9da2-3219e011ec74', 'status': 'SHUTOFF'}, 'params': {'flavor_name': 'm1.small', 'name': 'migration-vm', 'security_group_names': ['testing123', 'default']}, 'type': 'openstack.compute.Server'})
-   changed: [localhost] => (item={'_info': {'addresses': {'external_network': [{'OS-EXT-IPS-MAC:mac_addr': 'fa:16:3e:d7:ae:16', 'OS-EXT-IPS:type': 'fixed', 'addr': '10.19.2.50', 'version': 4}]}, 'flavor_id': 'a96b2815-3525-4eea-9ab4-14ba58e17835', 'id': '0ca7b7d6-6679-4d46-99e5-866672d3e869', 'status': 'SHUTOFF'}, 'params': {'flavor_name': 'm1.small', 'name': 'second-migration-vm', 'security_group_names': ['default']}, 'type': 'openstack.compute.Server'})
-   skipping: [localhost] => (item={'_info': {'addresses': {'external_network': [{'OS-EXT-IPS-MAC:mac_addr': 'fa:16:3e:14:12:46', 'OS-EXT-IPS:type': 'fixed', 'addr': '10.19.2.39', 'version': 4}]}, 'flavor_id': 'd0c1507e-92ce-48c5-9287-59c7b4e57467', 'id': '240d0194-ee2a-4708-b2c1-bde082887c59', 'status': 'ACTIVE'}, 'params': {'flavor_name': 'ims.conversion-host', 'name': 'source-conversion-host-2', 'security_group_names': ['default']}, 'type': 'openstack.compute.Server'}) 
-   changed: [localhost] => (item={'_info': {'addresses': {'external_network': [{'OS-EXT-IPS-MAC:mac_addr': 'fa:16:3e:06:3e:c2', 'OS-EXT-IPS:type': 'fixed', 'addr': '10.19.2.44', 'version': 4}]}, 'flavor_id': 'a96b2815-3525-4eea-9ab4-14ba58e17835', 'id': '980e76f6-9143-475d-89f8-e708342b90e2', 'status': 'SHUTOFF'}, 'params': {'flavor_name': 'm1.small', 'name': 'fourth-migration-vm', 'security_group_names': ['default']}, 'type': 'openstack.compute.Server'})
-   skipping: [localhost] => (item={'_info': {'addresses': {'external_network': [{'OS-EXT-IPS-MAC:mac_addr': 'fa:16:3e:3a:9b:72', 'OS-EXT-IPS:type': 'fixed', 'addr': '10.19.2.40', 'version': 4}]}, 'flavor_id': 'd0c1507e-92ce-48c5-9287-59c7b4e57467', 'id': 'ce4dda96-5d8e-4b67-aee2-9845cdc943fe', 'status': 'ACTIVE'}, 'params': {'flavor_name': 'ims.conversion-host', 'name': 'latestuci', 'security_group_names': ['default']}, 'type': 'openstack.compute.Server'})
-   skipping: [localhost] => (item={'_info': {'addresses': {'external_network': [{'OS-EXT-IPS-MAC:mac_addr': 'fa:16:3e:3d:d1:25', 'OS-EXT-IPS:type': 'fixed', 'addr': '10.19.2.37', 'version': 4}]}, 'flavor_id': 'd0c1507e-92ce-48c5-9287-59c7b4e57467', 'id': 'a4e688e4-8d22-4469-9535-a8c867797c61', 'status': 'ACTIVE'}, 'params': {'flavor_name': 'ims.conversion-host', 'name': 'source-conversion-host-', 'security_group_names': ['default']}, 'type': 'openstack.compute.Server'}) 
-
-   PLAY RECAP ********************************************************************************************************************
-   localhost                  : ok=6    changed=1    unreachable=0    failed=0    skipped=3    rescued=0    ignored=0 
-
-Any instance marked “changed” should be successfully migrated to the
-destination cloud. Instances are “skipped” if they are still running, or
-if they match the name or ID of the specified conversion host. If there
-is already an instance on the destination matching the name of the
-current instance, it will be marked “ok” and no extra work will be
-performed:
-
-::
-
-   TASK [import_workloads : import workloads] ******************************************************************************************************************
-   ok: [localhost] => (item={'_info': {'addresses': {'external_network': [{'OS-EXT-IPS-MAC:mac_addr': 'fa:16:3e:98:19:a0', 'OS-EXT-IPS:type': 'fixed', 'addr': '10.19.2.41', 'version': 4}]}, 'flavor_id': 'a96b2815-3525-4eea-9ab4-14ba58e17835', 'id': '0025f062-f684-4e02-9da2-3219e011ec74', 'status': 'SHUTOFF'}, 'params': {'flavor_name': 'm1.small', 'name': 'migration-vm', 'security_group_names': ['testing123', 'default']}, 'type': 'openstack.compute.Server'})
-
-Workload migration recorded demo:
-
-|Watch the video1|
+`Workload migration recorded demo <https://youtu.be/gEKvgIZqrQY>`_:
 
 |Watch the video2|
 
