@@ -5,7 +5,7 @@ OS Migrate is a framework for OpenStack parallel cloud migration
 (migrating content between OpenStack tenants which are not necessarily
 in the same cloud). It’s a collection of Ansible playbooks that provide
 the basic functionality, but may not fit each use case out of the box.
-You can craft custom playbooks using the OS-Migrate collection pieces
+You can craft custom playbooks using the OS Migrate collection pieces
 (roles and modules) as building blocks.
 
 Parallel cloud migration is a way to modernize an OpenStack deployment.
@@ -17,9 +17,9 @@ be performed without a hardware refresh, but extra hardware resources
 are needed to bootstrap the new cluster. As hardware resources free up
 in the original cluster, they can be gradually added to the new cluster.
 
-OS-Migrate strictly uses the official OpenStack API and does not utilize
+OS Migrate strictly uses the official OpenStack API and does not utilize
 direct database access or other methods to export or import data. The
-Ansible playbooks contained in OS-Migrate are idempotent. If a command
+Ansible playbooks contained in OS Migrate are idempotent. If a command
 fails, you can retry with the same command.
 
 .. figure:: https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig1.png?sanitize=true

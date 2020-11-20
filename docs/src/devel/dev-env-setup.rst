@@ -1,4 +1,4 @@
-OS-Migrate - Development Environment Setup
+OS Migrate - Development Environment Setup
 ==========================================
 
 Prerequisites
@@ -63,12 +63,12 @@ Vagrant for functional tests
 
 To run functional tests, you’ll need to connect to OpenStack cloud(s)
 where tenant resources can be managed. As a developer, the easiest way
-is to run a local virtualized all-in-one OpenStack cloud. OS-Migrate has
+is to run a local virtualized all-in-one OpenStack cloud. OS Migrate has
 Vagrant+Devstack setup for this purpose.
 
 If you have Vagrant-libvirt installed on your machine, you can use it
-directly, but OS-Migrate tooling does not assume that, the customary way
-is to run it via the OS-Migrate toolbox container. Special
+directly, but OS Migrate tooling does not assume that, the customary way
+is to run it via the OS Migrate toolbox container. Special
 ``vagrant-shell`` and ``vagrant-run`` wrapper scripts are provided for
 this purpose. Note that this container does not run in rootless mode
 since it talks to libvirt.

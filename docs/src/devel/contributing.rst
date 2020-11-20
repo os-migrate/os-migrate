@@ -1,7 +1,7 @@
 Become a Contributor
 ====================
 
-As an open source project, OS-Migrate welcomes contributions from the
+As an open source project, OS Migrate welcomes contributions from the
 community at large. The following guide provides information on how to
 add a new role to the project and where additional testing or
 documentation artifacts should be added. This isn’t an exhaustive
@@ -11,7 +11,7 @@ project formalizes any practice or pattern.
 Adding a New Role
 -----------------
 
-The most common contribution to OS-Migrate is adding a new role to
+The most common contribution to OS Migrate is adding a new role to
 support the export or import of resources. The construction of the roles
 will likely follow a similar pattern. Each role also has specific unit
 and functional test requirements. The most common pattern for adding a
