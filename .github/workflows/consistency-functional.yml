@@ -4,8 +4,7 @@ on:
     paths-ignore:
       - 'docs/**'
   pull_request:
-    paths-ignore:
-      - 'docs/**'
+
 jobs:
   # TODO: Add a previous job that:
   # * Builds the container image
