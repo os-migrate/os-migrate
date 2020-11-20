@@ -1,5 +1,5 @@
-Installation from source
-========================
+Installation from source (when customizing)
+===========================================
 
 .. code:: bash
 

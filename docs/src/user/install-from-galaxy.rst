@@ -1,5 +1,5 @@
-Installation
-============
+Installation from Galaxy (recommended)
+======================================
 
 This document describes the recommended method of installing OS-Migrate,
 from Ansible Galaxy. Alternatively, you can `install from
@@ -25,4 +25,7 @@ To install a particular release:
 
 .. code:: bash
 
-   ansible-galaxy collection install os_migrate.os_migrate <VERSION>
+   ansible-galaxy collection install os_migrate.os_migrate:<VERSION>
+
+You can find available releases at `OS Migrate Galaxy page
+<https://galaxy.ansible.com/os_migrate/os_migrate>`_.
