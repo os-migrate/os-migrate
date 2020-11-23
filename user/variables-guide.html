@@ -36,7 +36,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="OS-Migrate Developer Documentation" href="../devel/README.html" />
+    <link rel="next" title="Migration Parameters Guide" href="migration-params-guide.html" />
     <link rel="prev" title="OS Migrate Walkthrough" href="walkthrough.html" /> 
 </head>
 
@@ -83,12 +83,16 @@
             
             
               <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="README.html">OS-Migrate User Documentation</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="README.html">OS Migrate User Documentation</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="install-from-galaxy.html">Installation from Galaxy (recommended)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install-from-source.html">Installation from source (when customizing)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="walkthrough.html">OS Migrate Walkthrough</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Variables Guide</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#conversion-host-parameters">Conversion host parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#general-variables">General variables</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#resource-filters">Resource filters</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#conversion-host-variables">Conversion host variables</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-external-network">Conversion host external network</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-flavor-name">Conversion host flavor name</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-image-name">Conversion host image name</a></li>
@@ -96,10 +100,11 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="migration-params-guide.html">Migration Parameters Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="README.html#general-usage-notes">General usage notes</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../devel/README.html">OS-Migrate Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devel/README.html">OS Migrate Developer Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../roles.html">Documented roles in os-migrate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules.html">Documented modules in os-migrate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
@@ -149,7 +154,7 @@
     
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
-          <li><a href="README.html">OS-Migrate User Documentation</a> &raquo;</li>
+          <li><a href="README.html">OS Migrate User Documentation</a> &raquo;</li>
         
       <li>Variables Guide</li>
     
@@ -176,9 +181,67 @@
 most important variables in OS Migrate. For a complete listing of
 variables configurable for each Ansible role, refer to the
 documentation of the individual roles.</p>
-<div class="section" id="conversion-host-parameters">
-<h2>Conversion host parameters<a class="headerlink" href="#conversion-host-parameters" title="Permalink to this headline">¶</a></h2>
-<p>The following parameters are those that need to be configured prior to
+<div class="section" id="general-variables">
+<h2>General variables<a class="headerlink" href="#general-variables" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="resource-filters">
+<h3>Resource filters<a class="headerlink" href="#resource-filters" title="Permalink to this headline">¶</a></h3>
+<p>Resource filters allow the user to control which resources will be
+exported (and thus which resources will be migrated). The filters
+match against resource <strong>names</strong>.</p>
+<p>The value of a filter variable is a list, where each item can be a
+string (exact match) or a dictionary with <code class="docutils literal notranslate"><span class="pre">regex</span></code> key (regular
+expression match). A resource is exported if it matches at least one
+of the list items.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_networks_filter</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">my_net</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">other_net</span>
+  <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">myprefix_.*</span>
+</pre></div>
+</div>
+<p>The above example says: Export only networks named <code class="docutils literal notranslate"><span class="pre">my_net</span></code> <strong>or</strong>
+<code class="docutils literal notranslate"><span class="pre">other_net</span></code> <strong>or</strong> starting with <code class="docutils literal notranslate"><span class="pre">myprefix_</span></code>.</p>
+<p>The filters default to:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
+</pre></div>
+</div>
+<p>meaning “export all resources”. (The set of resources exported will
+still be limited to those you can see with the authentication
+variables you used.)</p>
+<p>Sometimes two roles use the same variable where this makes sense,
+especially for attached resources. E.g. roles
+<code class="docutils literal notranslate"><span class="pre">export_security_groups</span></code> and <code class="docutils literal notranslate"><span class="pre">export_security_group_rules</span></code> both
+use <code class="docutils literal notranslate"><span class="pre">os_migrate_security_groups_filter</span></code>. Similarly,
+<code class="docutils literal notranslate"><span class="pre">export_routers</span></code> and <code class="docutils literal notranslate"><span class="pre">export_router_interfaces</span></code> both use
+<code class="docutils literal notranslate"><span class="pre">os_migrate_routers_filter</span></code>.</p>
+<p>List of the currently implemented filters with default values you can
+copy into your variables file and customize:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_flavors_filter</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
+<span class="nt">os_migrate_images_filter</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
+<span class="nt">os_migrate_keypairs_filter</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
+<span class="nt">os_migrate_networks_filter</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
+<span class="nt">os_migrate_projects_filter</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
+<span class="nt">os_migrate_routers_filter</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
+<span class="nt">os_migrate_security_groups_filter</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
+<span class="nt">os_migrate_subnets_filter</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
+<span class="nt">os_migrate_users_filter</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
+<span class="nt">os_migrate_workloads_filter</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="conversion-host-variables">
+<h2>Conversion host variables<a class="headerlink" href="#conversion-host-variables" title="Permalink to this headline">¶</a></h2>
+<p>The following variables are those that need to be configured prior to
 running os_migrate.</p>
 <div class="section" id="conversion-host-external-network">
 <h3>Conversion host external network<a class="headerlink" href="#conversion-host-external-network" title="Permalink to this headline">¶</a></h3>
@@ -199,7 +262,7 @@ destination clouds respectively, via these variables:</p>
 <p>The conversion host flavor defines the compute, memory, and storage
 capacity that will be allocated for the conversion hosts. It needs to
 have at least a volume with 20GB.</p>
-<p>The parameters to be configured are:</p>
+<p>The variables to be configured are:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">os_migrate_src_conversion_flavor_name</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">os_migrate_dst_conversion_flavor_name</span></code></p></li>
@@ -211,7 +274,7 @@ be different between deployments.</p>
 <h3>Conversion host image name<a class="headerlink" href="#conversion-host-image-name" title="Permalink to this headline">¶</a></h3>
 <p>The conversion host image is the guest configure to execute the
 instances migrations.</p>
-<p>The parameters to be configured are:</p>
+<p>The variables to be configured are:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">os_migrate_src_conversion_image_name</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">os_migrate_dst_conversion_image_name</span></code></p></li>
@@ -233,7 +296,7 @@ clouds), these variables do not need to be configured explicitly.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../devel/README.html" class="btn btn-neutral float-right" title="OS-Migrate Developer Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="migration-params-guide.html" class="btn btn-neutral float-right" title="Migration Parameters Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="walkthrough.html" class="btn btn-neutral float-left" title="OS Migrate Walkthrough" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

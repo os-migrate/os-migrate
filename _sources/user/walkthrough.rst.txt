@@ -5,7 +5,7 @@ OS Migrate is a framework for OpenStack parallel cloud migration
 (migrating content between OpenStack tenants which are not necessarily
 in the same cloud). It’s a collection of Ansible playbooks that provide
 the basic functionality, but may not fit each use case out of the box.
-You can craft custom playbooks using the OS-Migrate collection pieces
+You can craft custom playbooks using the OS Migrate collection pieces
 (roles and modules) as building blocks.
 
 Parallel cloud migration is a way to modernize an OpenStack deployment.
@@ -17,9 +17,9 @@ be performed without a hardware refresh, but extra hardware resources
 are needed to bootstrap the new cluster. As hardware resources free up
 in the original cluster, they can be gradually added to the new cluster.
 
-OS-Migrate strictly uses the official OpenStack API and does not utilize
+OS Migrate strictly uses the official OpenStack API and does not utilize
 direct database access or other methods to export or import data. The
-Ansible playbooks contained in OS-Migrate are idempotent. If a command
+Ansible playbooks contained in OS Migrate are idempotent. If a command
 fails, you can retry with the same command.
 
 .. figure:: https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig1.png?sanitize=true
@@ -451,22 +451,10 @@ Migration parameters
 
 You can edit the exported ``workloads.yml`` to adjust desired
 properties for the servers which will be created in the destination
-cloud during migration.
-
-The ``boot_disk_copy`` migration parameter in the example above is
-noteworthy, as it controls how the boot disk of the destination server
-is created:
-
--  ``boot_disk_copy: false`` means that the destination server will be
-   booted from a Glance image of the same name as the source
-   server. (This is the default for servers which were booted from an
-   image in the source cloud.)
-
--  ``boot_disk_copy: true`` means that the source server's boot disk
-   will be copied into the destination as a volume, and the
-   destination server will be created as boot-from-volume. (For
-   servers which are already boot-from-volume in the source cloud,
-   this is the default and the only possible path.)
+cloud during migration. You can also edit migration parameters to
+control how a workload should be migrated. Refer to
+`Migration Parameters Guide <migration-params-guide.rst>`_
+for more information.
 
 Migration
 ~~~~~~~~~

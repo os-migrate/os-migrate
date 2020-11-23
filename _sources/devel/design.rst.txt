@@ -42,10 +42,10 @@ High-level development goals
    to fail in mysterious ways with partial completion and limited
    re-runnability.
 
--  OS-Migrate is intended to be a building block for tenant migrations
+-  OS Migrate is intended to be a building block for tenant migrations
    rather than a push-button solution. The assumption is that to cover
    needs of a particular tenant migration, a knowledgeable human is
-   running OS-Migrate manually and/or has tweaked it to their needs.
+   running OS Migrate manually and/or has tweaked it to their needs.
 
 Challenges of the problem domain
 --------------------------------

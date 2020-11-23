@@ -1,4 +1,4 @@
-OS-Migrate Developer Documentation
+OS Migrate Developer Documentation
 ==================================
 
 -  `Development environment setup <dev-env-setup.rst>`__ - Environment

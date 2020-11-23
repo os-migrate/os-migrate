@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>OS-Migrate User Documentation &mdash; os-migrate  documentation</title>
+  <title>OS Migrate User Documentation &mdash; os-migrate  documentation</title>
   
 
   
@@ -83,15 +83,16 @@
             
             
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">OS-Migrate User Documentation</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">OS Migrate User Documentation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="install-from-galaxy.html">Installation from Galaxy (recommended)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install-from-source.html">Installation from source (when customizing)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="walkthrough.html">OS Migrate Walkthrough</a></li>
 <li class="toctree-l2"><a class="reference internal" href="variables-guide.html">Variables Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migration-params-guide.html">Migration Parameters Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#general-usage-notes">General usage notes</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../devel/README.html">OS-Migrate Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devel/README.html">OS Migrate Developer Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../roles.html">Documented roles in os-migrate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules.html">Documented modules in os-migrate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
@@ -141,7 +142,7 @@
     
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>OS-Migrate User Documentation</li>
+      <li>OS Migrate User Documentation</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -161,8 +162,8 @@
            <div itemprop="articleBody">
             
   <div class="section" id="os-migrate-user-documentation">
-<h1>OS-Migrate User Documentation<a class="headerlink" href="#os-migrate-user-documentation" title="Permalink to this headline">¶</a></h1>
-<p>OS-Migrate is a tool to migrate tenant content from one OpenStack cloud
+<h1>OS Migrate User Documentation<a class="headerlink" href="#os-migrate-user-documentation" title="Permalink to this headline">¶</a></h1>
+<p>OS Migrate is a tool to migrate tenant content from one OpenStack cloud
 to another.</p>
 <div class="toctree-wrapper compound">
 <ul>
@@ -179,7 +180,13 @@ to another.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="variables-guide.html">Variables Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="variables-guide.html#conversion-host-parameters">Conversion host parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="variables-guide.html#general-variables">General variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="variables-guide.html#conversion-host-variables">Conversion host variables</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migration-params-guide.html">Migration Parameters Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migration-params-guide.html#what-are-migration-parameters">What are migration parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migration-params-guide.html#workloads">Workloads</a></li>
 </ul>
 </li>
 </ul>
@@ -189,10 +196,10 @@ to another.</p>
 <ul class="simple">
 <li><p>Run against testing/staging clouds first, verify that you are getting
 the expected results.</p></li>
-<li><p>OS-Migrate may not fit each use case out of the box. You can craft
-custom playbooks using the OS-Migrate collection pieces (roles and
+<li><p>OS Migrate may not fit each use case out of the box. You can craft
+custom playbooks using the OS Migrate collection pieces (roles and
 modules) as building blocks.</p></li>
-<li><p>Use the same version of OS-Migrate for export and import. We
+<li><p>Use the same version of OS Migrate for export and import. We
 currently do not guarantee that data files are compatible across
 versions.</p></li>
 </ul>

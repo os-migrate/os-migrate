@@ -83,7 +83,7 @@
             
             
               <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="README.html">OS-Migrate User Documentation</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="README.html">OS Migrate User Documentation</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="install-from-galaxy.html">Installation from Galaxy (recommended)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install-from-source.html">Installation from source (when customizing)</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">OS Migrate Walkthrough</a><ul>
@@ -113,10 +113,11 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="variables-guide.html">Variables Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migration-params-guide.html">Migration Parameters Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="README.html#general-usage-notes">General usage notes</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../devel/README.html">OS-Migrate Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devel/README.html">OS Migrate Developer Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../roles.html">Documented roles in os-migrate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules.html">Documented modules in os-migrate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
@@ -166,7 +167,7 @@
     
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
-          <li><a href="README.html">OS-Migrate User Documentation</a> &raquo;</li>
+          <li><a href="README.html">OS Migrate User Documentation</a> &raquo;</li>
         
       <li>OS Migrate Walkthrough</li>
     
@@ -193,7 +194,7 @@
 (migrating content between OpenStack tenants which are not necessarily
 in the same cloud). It’s a collection of Ansible playbooks that provide
 the basic functionality, but may not fit each use case out of the box.
-You can craft custom playbooks using the OS-Migrate collection pieces
+You can craft custom playbooks using the OS Migrate collection pieces
 (roles and modules) as building blocks.</p>
 <p>Parallel cloud migration is a way to modernize an OpenStack deployment.
 Instead of upgrading an OpenStack cluster in place, a second OpenStack
@@ -203,9 +204,9 @@ for environments which are due for a hardware refresh cycle. It may also
 be performed without a hardware refresh, but extra hardware resources
 are needed to bootstrap the new cluster. As hardware resources free up
 in the original cluster, they can be gradually added to the new cluster.</p>
-<p>OS-Migrate strictly uses the official OpenStack API and does not utilize
+<p>OS Migrate strictly uses the official OpenStack API and does not utilize
 direct database access or other methods to export or import data. The
-Ansible playbooks contained in OS-Migrate are idempotent. If a command
+Ansible playbooks contained in OS Migrate are idempotent. If a command
 fails, you can retry with the same command.</p>
 <div class="figure align-default" id="id2">
 <img alt="OSP-OSP Migration Overview" src="https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig1.png?sanitize=true" />
@@ -573,21 +574,10 @@ host server.</p>
 <h3>Migration parameters<a class="headerlink" href="#migration-parameters" title="Permalink to this headline">¶</a></h3>
 <p>You can edit the exported <code class="docutils literal notranslate"><span class="pre">workloads.yml</span></code> to adjust desired
 properties for the servers which will be created in the destination
-cloud during migration.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">boot_disk_copy</span></code> migration parameter in the example above is
-noteworthy, as it controls how the boot disk of the destination server
-is created:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">boot_disk_copy:</span> <span class="pre">false</span></code> means that the destination server will be
-booted from a Glance image of the same name as the source
-server. (This is the default for servers which were booted from an
-image in the source cloud.)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">boot_disk_copy:</span> <span class="pre">true</span></code> means that the source server’s boot disk
-will be copied into the destination as a volume, and the
-destination server will be created as boot-from-volume. (For
-servers which are already boot-from-volume in the source cloud,
-this is the default and the only possible path.)</p></li>
-</ul>
+cloud during migration. You can also edit migration parameters to
+control how a workload should be migrated. Refer to
+<a class="reference external" href="migration-params-guide.rst">Migration Parameters Guide</a>
+for more information.</p>
 </div>
 <div class="section" id="migration">
 <h3>Migration<a class="headerlink" href="#migration" title="Permalink to this headline">¶</a></h3>

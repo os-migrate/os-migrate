@@ -7,6 +7,8 @@ Changelog
 
 New
 ~~~
+- Documentation for resource filters. [Jiri Stransky]
+- Guide for using migration parameters. [Jiri Stransky]
 - Include changelog in docs. [Carlos Camacho]
 
   This patch includes the changelog in the documentation automatically.
