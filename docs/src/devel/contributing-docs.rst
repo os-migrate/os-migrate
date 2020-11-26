@@ -1,9 +1,11 @@
-Become a Documentation Contributor
-==================================
+Contributing Documentation
+==========================
 
 If you notice missing or errorneous documentation, you can either
-create an issue on Github, or you can create a pull request with the
-desired documentation changes.
+create an `issue on Github
+<https://github.com/os-migrate/os-migrate/issues>`_, or you can create
+a `pull request <https://github.com/os-migrate/os-migrate/pulls>`_
+with the desired documentation changes.
 
 Documentation sources in the repository:
 
