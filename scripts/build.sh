@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ -z "$${VIRTUAL_ENV:-}" ]; then
+if [ -z "${VIRTUAL_ENV:-}" ]; then
     source /root/venv/bin/activate
 fi
 set -euxo pipefail
