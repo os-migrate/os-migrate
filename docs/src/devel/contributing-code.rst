@@ -1,5 +1,5 @@
-Become a Contributor
-====================
+Become a Code Contributor
+=========================
 
 As an open source project, OS Migrate welcomes contributions from the
 community at large. The following guide provides information on how to
@@ -201,7 +201,7 @@ Ignoring the Message Subject
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If the commit message subject starts with `dev:` or `Dev:` it will be
-ommited when rendering the changelog. 
+ommited when rendering the changelog.
 
 Message Body
 ^^^^^^^^^^^^
@@ -222,3 +222,6 @@ In each Ansible module in ``os_migrate\plugins\modules``, there is a
 ``DOCUMENTATION`` constant where you must provide standard documentation
 on what the module does and an example of how you would use it in a
 playbook.
+
+Each new role must have a ``README.md`` file as a requirement for
+Ansible Galaxy publishing.

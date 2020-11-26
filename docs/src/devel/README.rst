@@ -17,8 +17,11 @@ OS Migrate Developer Documentation
 -  `Releasing <releasing.rst>`__ - Procedure to release a new version of
    OS Migrate to Ansible Galaxy.
 
--  `Contributing <contributing.md>`__ - Guide for developers to
-   contribute code or documentation to the project.
+- `Contributing Code <contributing-code.md>`__ - Guide for developers
+   to contribute code to the project.
+
+- `Contributing Documentation <contributing-docs.md>`__ - Guide for
+   contributing to the project documentation.
 
 .. toctree::
    :maxdepth: 2
