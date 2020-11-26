@@ -148,6 +148,13 @@ test-unit: reinstall
 	cd /root/.ansible/collections/ansible_collections/os_migrate/os_migrate; \
 	ansible-test units
 
+
+# DOCS
+
+docs: build
+	./scripts/docs-build.sh
+
+
 # TOOLBOX
 
 toolbox-build:
