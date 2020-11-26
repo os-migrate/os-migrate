@@ -2,6 +2,19 @@ Changelog
 =========
 
 
+(unreleased)
+------------
+
+Fix
+~~~
+- Fix building OS Migrate from source. [Jiri Stransky]
+
+  The conditional for sourcing virtualenv was incorrect in the script,
+  and virtualenv wasn't being sourced automatically. This is now fixed
+  for users who want to build OS Migrate from source via the toolbox
+  container.
+
+
 0.6.0 (2020-11-25)
 ------------------
 
