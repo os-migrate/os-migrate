@@ -1,5 +1,10 @@
-Installing Vagrant directly on host
-===================================
+Installing Vagrant directly on host (alternative path)
+======================================================
+
+Normally you should run Vagrant containerized as the `developer
+environment setup <dev-env-setup.rst>`_ doc suggests. If you have a
+reason to install on bare metal instead, here are relevant
+instructions.
 
 ::
 

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>High-level development goals &mdash; os-migrate  documentation</title>
+  <title>OS Migrate Design &mdash; os-migrate  documentation</title>
   
 
   
@@ -36,8 +36,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Releasing the OS Migrate collection" href="releasing.html" />
-    <link rel="prev" title="Installing Vagrant directly on host" href="dev-env-vagrant-non-containerized.html" /> 
+    <link rel="next" title="Development Environment Setup" href="dev-env-setup.html" />
+    <link rel="prev" title="OS Migrate Developer Documentation" href="README.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -85,14 +85,19 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../user/README.html">OS Migrate User Documentation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="README.html">OS Migrate Developer Documentation</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="dev-env-setup.html">OS Migrate - Development Environment Setup</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dev-env-vagrant-non-containerized.html">Installing Vagrant directly on host</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">High-level development goals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#challenges-of-the-problem-domain">Challenges of the problem domain</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#basic-ansible-workflow-design">Basic Ansible workflow design</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#misc">Misc</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">OS Migrate Design</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#high-level-development-goals">High-level development goals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#challenges-of-the-problem-domain">Challenges of the problem domain</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#basic-ansible-workflow-design">Basic Ansible workflow design</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#misc">Misc</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dev-env-setup.html">Development Environment Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing-general.html">General Contribution Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing-code.html">Contributing Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing-docs.html">Contributing Documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="releasing.html">Releasing the OS Migrate collection</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html">Become a Contributor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev-env-vagrant-non-containerized.html">Installing Vagrant directly on host (alternative path)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../roles.html">Documented roles in os-migrate</a></li>
@@ -146,7 +151,7 @@
         
           <li><a href="README.html">OS Migrate Developer Documentation</a> &raquo;</li>
         
-      <li>High-level development goals</li>
+      <li>OS Migrate Design</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -165,8 +170,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="high-level-development-goals">
-<h1>High-level development goals<a class="headerlink" href="#high-level-development-goals" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="os-migrate-design">
+<h1>OS Migrate Design<a class="headerlink" href="#os-migrate-design" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="high-level-development-goals">
+<h2>High-level development goals<a class="headerlink" href="#high-level-development-goals" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>I/O-based. Fetch metadata and/or content from source cloud -&gt; write
 them as outputs -&gt; read them as inputs -&gt; push it to the destination
@@ -212,7 +219,7 @@ running OS Migrate manually and/or has tweaked it to their needs.</p></li>
 </ul>
 </div>
 <div class="section" id="challenges-of-the-problem-domain">
-<h1>Challenges of the problem domain<a class="headerlink" href="#challenges-of-the-problem-domain" title="Permalink to this headline">¶</a></h1>
+<h2>Challenges of the problem domain<a class="headerlink" href="#challenges-of-the-problem-domain" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Generally, admins can view resources of all projects, but cannot
 create resources in those projects (unless they have a role in the
@@ -245,7 +252,7 @@ per resource type.</p></li>
 </ul>
 </div>
 <div class="section" id="basic-ansible-workflow-design">
-<h1>Basic Ansible workflow design<a class="headerlink" href="#basic-ansible-workflow-design" title="Permalink to this headline">¶</a></h1>
+<h2>Basic Ansible workflow design<a class="headerlink" href="#basic-ansible-workflow-design" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>The challenge and a goal here is to give meaningful Ansible log
 output for debugging. This means, for example, that we shouldn’t have
@@ -320,7 +327,7 @@ disciplined use in order to be helpful.</p></li>
 </ul>
 </div>
 <div class="section" id="misc">
-<h1>Misc<a class="headerlink" href="#misc" title="Permalink to this headline">¶</a></h1>
+<h2>Misc<a class="headerlink" href="#misc" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Naming conventions - <a class="reference external" href="https://github.com/ansible/galaxy/issues/1128#issuecomment-454519526">underscores over hyphens in
 Ansible</a>.</p>
@@ -334,6 +341,7 @@ os_migrate Ansible collection.</p></li>
 Galaxy.</p></li>
 </ul>
 </div>
+</div>
 
 
            </div>
@@ -343,10 +351,10 @@ Galaxy.</p></li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="releasing.html" class="btn btn-neutral float-right" title="Releasing the OS Migrate collection" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="dev-env-setup.html" class="btn btn-neutral float-right" title="Development Environment Setup" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="dev-env-vagrant-non-containerized.html" class="btn btn-neutral float-left" title="Installing Vagrant directly on host" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="README.html" class="btn btn-neutral float-left" title="OS Migrate Developer Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

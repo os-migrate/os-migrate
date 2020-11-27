@@ -1,5 +1,5 @@
-OS Migrate - Development Environment Setup
-==========================================
+Development Environment Setup
+=============================
 
 Prerequisites
 -------------

@@ -5,6 +5,14 @@ Changelog
 (unreleased)
 ------------
 
+New
+~~~
+- Guide for contributing changes to documentation. [Jiri Stransky]
+
+  For developers, but also for users who find the docs lacking in some
+  way. They can either report the issue on Github, or submit a patch
+  with the changes.
+
 Fix
 ~~~
 - Fix building OS Migrate from source. [Jiri Stransky]

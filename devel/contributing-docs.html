@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Releasing the OS Migrate collection &mdash; os-migrate  documentation</title>
+  <title>Contributing Documentation &mdash; os-migrate  documentation</title>
   
 
   
@@ -36,8 +36,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Installing Vagrant directly on host (alternative path)" href="dev-env-vagrant-non-containerized.html" />
-    <link rel="prev" title="Contributing Documentation" href="contributing-docs.html" /> 
+    <link rel="next" title="Releasing the OS Migrate collection" href="releasing.html" />
+    <link rel="prev" title="Contributing Code" href="contributing-code.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -89,8 +89,11 @@
 <li class="toctree-l2"><a class="reference internal" href="dev-env-setup.html">Development Environment Setup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="contributing-general.html">General Contribution Guidelines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="contributing-code.html">Contributing Code</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contributing-docs.html">Contributing Documentation</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Releasing the OS Migrate collection</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Contributing Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#rendering-the-documentation">Rendering the Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="releasing.html">Releasing the OS Migrate collection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dev-env-vagrant-non-containerized.html">Installing Vagrant directly on host (alternative path)</a></li>
 </ul>
 </li>
@@ -145,13 +148,13 @@
         
           <li><a href="README.html">OS Migrate Developer Documentation</a> &raquo;</li>
         
-      <li>Releasing the OS Migrate collection</li>
+      <li>Contributing Documentation</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/devel/releasing.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/devel/contributing-docs.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -164,42 +167,36 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="releasing-the-os-migrate-collection">
-<h1>Releasing the OS Migrate collection<a class="headerlink" href="#releasing-the-os-migrate-collection" title="Permalink to this headline">¶</a></h1>
-<p>Set env vars with old and new versions:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">OLD_VERSION</span><span class="o">=</span><span class="mf">0.0</span><span class="o">.</span><span class="mi">2</span>
-<span class="n">NEW_VERSION</span><span class="o">=</span><span class="mf">0.3</span><span class="o">.</span><span class="mi">0</span>
+  <div class="section" id="contributing-documentation">
+<h1>Contributing Documentation<a class="headerlink" href="#contributing-documentation" title="Permalink to this headline">¶</a></h1>
+<p>If you notice missing or errorneous documentation, you can either
+create an <a class="reference external" href="https://github.com/os-migrate/os-migrate/issues">issue on Github</a>, or you can create
+a <a class="reference external" href="https://github.com/os-migrate/os-migrate/pulls">pull request</a>
+with the desired documentation changes.</p>
+<p>Documentation sources in the repository:</p>
+<ul class="simple">
+<li><p>The majority of documentation is located under <code class="docutils literal notranslate"><span class="pre">docs/src</span></code> folder.</p></li>
+<li><p>Individual roles have a readme file under
+<code class="docutils literal notranslate"><span class="pre">os_migrate/roles/&lt;ROLE&gt;/README.md</span></code> (Ansible Galaxy requirement).</p></li>
+<li><p>Modules are documented directly in their Python file
+<code class="docutils literal notranslate"><span class="pre">os_migrate/plugins/modules/&lt;MODULE&gt;.py</span></code> (Ansible convention).</p></li>
+</ul>
+<div class="section" id="rendering-the-documentation">
+<h2>Rendering the Documentation<a class="headerlink" href="#rendering-the-documentation" title="Permalink to this headline">¶</a></h2>
+<p>After you make your change and before you submit a pull request, it’s
+good to verify that the changes you made are getting rendered into
+HTML correctly.</p>
+<p>If you haven’t yet built a toolbox container for OS Migrate
+development, do so now:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">toolbox</span><span class="o">-</span><span class="n">build</span>
 </pre></div>
 </div>
-<p>Edit the version in galaxy.yml and any hardcoded values in functional
-tests:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sed -i -e <span class="s2">&quot;s/^version: </span><span class="nv">$OLD_VERSION</span><span class="s2">/version: </span><span class="nv">$NEW_VERSION</span><span class="s2">/&quot;</span> ./os_migrate/galaxy.yml
-grep -lr <span class="s2">&quot;os_migrate_version: </span><span class="nv">$OLD_VERSION</span><span class="s2">&quot;</span> ./tests <span class="p">|</span> xargs sed -i -e <span class="s2">&quot;s/^os_migrate_version: </span><span class="nv">$OLD_VERSION</span><span class="s2">/os_migrate_version: </span><span class="nv">$NEW_VERSION</span><span class="s2">/&quot;</span>
+<p>To build the documentation, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">docs</span>
 </pre></div>
 </div>
-<p>Test that the changes didn’t break tests:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span>
-</pre></div>
-</div>
-<p>Create a pull request with these changes. Once it’s merged, check out
-the merge commit and release to galaxy:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>git checkout $MERGED_COMMIT
-./toolbox/run ./scripts/publish.sh -k &lt;YOUR_GALAXY_TOKEN&gt;
-</pre></div>
-</div>
-<p>After a successful release, create a tag on the commit you built the
-release from, and push the tag to the upstream repo:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">tag</span> <span class="o">-</span><span class="n">m</span> <span class="s2">&quot;$NEW_VERSION&quot;</span> <span class="s2">&quot;$NEW_VERSION&quot;</span>
-<span class="c1"># assuming the os-migrate upstream repo is named &#39;upstream&#39; in your repo clone</span>
-<span class="n">git</span> <span class="n">push</span> <span class="n">upstream</span> <span class="o">--</span><span class="n">tags</span>
-</pre></div>
-</div>
-<p>If you’ve incremented “X” or “Y” in “X.Y.Z” version scheme, create also
-a stable branch to allow us to create “.Z” releases:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>STABLE_VERSION=$(awk -F. &#39;{ print $1 &quot;.&quot; $2; }&#39; &lt;&lt;&lt;&quot;$NEW_VERSION&quot;)
-git checkout -b stable/$STABLE_VERSION
-git push upstream stable/$STABLE_VERSION
-</pre></div>
+<p>You can inspect the rendered documentation by opening
+<code class="docutils literal notranslate"><span class="pre">docs/src/_build/html/index.html</span></code> in your web browser.</p>
 </div>
 </div>
 
@@ -211,10 +208,10 @@ git push upstream stable/$STABLE_VERSION
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="dev-env-vagrant-non-containerized.html" class="btn btn-neutral float-right" title="Installing Vagrant directly on host (alternative path)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="releasing.html" class="btn btn-neutral float-right" title="Releasing the OS Migrate collection" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="contributing-docs.html" class="btn btn-neutral float-left" title="Contributing Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="contributing-code.html" class="btn btn-neutral float-left" title="Contributing Code" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

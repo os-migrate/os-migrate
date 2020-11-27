@@ -1,0 +1,397 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Contributing Code &mdash; os-migrate  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contributing Documentation" href="contributing-docs.html" />
+    <link rel="prev" title="General Contribution Guidelines" href="contributing-general.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> os-migrate
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user/README.html">OS Migrate User Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="README.html">OS Migrate Developer Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="design.html">OS Migrate Design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev-env-setup.html">Development Environment Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing-general.html">General Contribution Guidelines</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Contributing Code</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#adding-a-new-role">Adding a New Role</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resources">Resources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#roles">Roles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#export-roles">Export Roles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#import-roles">Import Roles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#necessary-documentation">Necessary Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="contributing-docs.html">Contributing Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releasing.html">Releasing the OS Migrate collection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev-env-vagrant-non-containerized.html">Installing Vagrant directly on host (alternative path)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../roles.html">Documented roles in os-migrate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Documented modules in os-migrate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">os-migrate</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="README.html">OS Migrate Developer Documentation</a> &raquo;</li>
+        
+      <li>Contributing Code</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/devel/contributing-code.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="contributing-code">
+<h1>Contributing Code<a class="headerlink" href="#contributing-code" title="Permalink to this headline">¶</a></h1>
+<p>As an open source project, OS Migrate welcomes contributions from the
+community at large. The following guide provides information on how to
+add a new role to the project and where additional testing or
+documentation artifacts should be added. This isn’t an exhaustive
+reference and is a living document subject to change as needed when the
+project formalizes any practice or pattern.</p>
+<div class="section" id="adding-a-new-role">
+<h2>Adding a New Role<a class="headerlink" href="#adding-a-new-role" title="Permalink to this headline">¶</a></h2>
+<p>The most common contribution to OS Migrate is adding a new role to
+support the export or import of resources. The construction of the roles
+will likely follow a similar pattern. Each role also has specific unit
+and functional test requirements. The most common pattern for adding a
+new role will follow these steps:</p>
+<ul class="simple">
+<li><p>Add a resource class to <code class="docutils literal notranslate"><span class="pre">os_migrate/plugins/module_utils</span></code> that
+inherits from
+<code class="docutils literal notranslate"><span class="pre">ansible_collections.os_migrate.os_migrate.plugins.module_utils.resource.Resource</span></code></p></li>
+<li><p>Add a unit test to <code class="docutils literal notranslate"><span class="pre">os_migrate/tests/unit</span></code> to test serializing and
+de-serializing data, and any other functionality your class may have.</p></li>
+<li><p>Create a new module in <code class="docutils literal notranslate"><span class="pre">os_migrate/plugins/modules</span></code> to facilitate
+the import or export of the resource.</p></li>
+<li><p>Add a new playbook to <code class="docutils literal notranslate"><span class="pre">os_migrate/playbooks</span></code>.</p></li>
+<li><p>Add a new role to <code class="docutils literal notranslate"><span class="pre">os_migrate/roles</span></code>.</p></li>
+<li><p>Add functional tests to <code class="docutils literal notranslate"><span class="pre">tests/func</span></code> support primary use,
+idempotency, updates as a minimum. Additional tests as necessary.</p></li>
+<li><p>Add documentation within classes and roles/playbooks as required.
+Update developer or user documentation as needed.</p></li>
+</ul>
+</div>
+<div class="section" id="resources">
+<h2>Resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h2>
+<p>Resources are the primary data that is exported from and imported to
+clouds. In the <code class="docutils literal notranslate"><span class="pre">os-migrate/os_migrate/plugins/module_utils</span></code> directory,
+there is a <code class="docutils literal notranslate"><span class="pre">Resource</span></code> class provided for your new resource to inherit
+from. It provides a way to quickly build an organized class that uses
+openstacksdk to retrieve, create and update data within a connected
+OpenStack tenant.</p>
+<p>Two very important properties are the ‘params’ and ‘info’, as these are
+the primary data fields that will be exported and imported. At a
+minimum, the name property of any resource should be in params_from_sdk,
+and most likely addresses should be there too. The difference between
+info and params is:</p>
+<ul class="simple">
+<li><p>A property that would be an ‘info’ type is something that we don’t
+want or cannot “make the same” in the destination cloud. For example,
+typically UUIDs can’t be the same between two tenants so an ‘id’
+property should remain in info.</p></li>
+<li><p>A property that would be in a ‘params’ type are things that we do
+want to copy to the destination cloud. These typically also get
+looked at when we’re making sure the import behavior is idempotent.
+I.e. when we re-run import playbooks, things that already got
+imported before are not attempted to be imported again.</p></li>
+</ul>
+<p>The workload migration will probably not “fit existing molds” in some
+ways so we will probably be ironing things out over time and finding new
+patterns, but at the very least name should move into params
+(params_from_sdk).</p>
+</div>
+<div class="section" id="roles">
+<h2>Roles<a class="headerlink" href="#roles" title="Permalink to this headline">¶</a></h2>
+<p>To create an import or export role, start by adding a [role].yml file to
+<code class="docutils literal notranslate"><span class="pre">os_migrate\playbooks\</span></code>. Next, add your directory to
+<code class="docutils literal notranslate"><span class="pre">os_migrate\roles</span></code> with the following layout:</p>
+<ul class="simple">
+<li><p>[role]</p>
+<ul>
+<li><p>defaults</p>
+<ul>
+<li><p>main.yml</p></li>
+</ul>
+</li>
+<li><p>meta</p>
+<ul>
+<li><p>main.yml</p></li>
+</ul>
+</li>
+<li><p>tasks</p>
+<ul>
+<li><p>main.yml</p></li>
+</ul>
+</li>
+<li><p>README.md</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="export-roles">
+<h2>Export Roles<a class="headerlink" href="#export-roles" title="Permalink to this headline">¶</a></h2>
+<p>In the <code class="docutils literal notranslate"><span class="pre">defaults/main.yml</span></code> file, at a minimum you will need to define
+the <code class="docutils literal notranslate"><span class="pre">export_[role]_name_filter</span></code> variable to support filtering of
+resources by the name property.</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">meta/main.yml</span></code> file you will likely just need to add the
+following default content:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="nt">galaxy_info</span><span class="p">:</span>
+  <span class="nt">author</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">os-migrate</span>
+  <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">os-migrate resource</span>
+  <span class="nt">company</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Red Hat</span>
+  <span class="nt">license</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Apache-2.0</span>
+  <span class="nt">min_ansible_version</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2.9</span>
+  <span class="nt">platforms</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Fedora</span>
+      <span class="nt">versions</span><span class="p">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">30</span>
+  <span class="nt">galaxy_tags</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;os-migrate&quot;</span><span class="p p-Indicator">]</span>
+<span class="nt">dependencies</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">role</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">os_migrate.os_migrate.prelude_src</span>
+</pre></div>
+</div>
+<p>In the <code class="docutils literal notranslate"><span class="pre">tasks/main.yml</span></code> file, add your Ansible tasks for exporting the
+data. A common pattern is retrieving data from an OpenStack tenant via a
+<a class="reference external" href="https://docs.ansible.com/ansible/latest/modules/list_of_cloud_modules.html#openstack">cloud
+module</a>
+, creating a collection of name/id pairs for export, filtering the names
+for specific resources, and then calling the module you created for
+export.</p>
+</div>
+<div class="section" id="import-roles">
+<h2>Import Roles<a class="headerlink" href="#import-roles" title="Permalink to this headline">¶</a></h2>
+<p>In the <code class="docutils literal notranslate"><span class="pre">defaults/main.yml</span></code> file, at a minimum you will need to define
+the <code class="docutils literal notranslate"><span class="pre">import_[role]_validate_file:</span> <span class="pre">true</span></code> variable to set whether or not
+the import data file should be validated for this role. In most cases,
+it should be set to <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">import_[role]_validate_file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+<p>In the <code class="docutils literal notranslate"><span class="pre">meta/main.yml</span></code> file you will likely just need to add the
+following default content:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="nt">galaxy_info</span><span class="p">:</span>
+  <span class="nt">author</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">os-migrate</span>
+  <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">os-migrate resource</span>
+  <span class="nt">company</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Red Hat</span>
+  <span class="nt">license</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Apache-2.0</span>
+  <span class="nt">min_ansible_version</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2.9</span>
+  <span class="nt">platforms</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Fedora</span>
+      <span class="nt">versions</span><span class="p">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">30</span>
+  <span class="nt">galaxy_tags</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;os-migrate&quot;</span><span class="p p-Indicator">]</span>
+<span class="nt">dependencies</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">role</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">os_migrate.os_migrate.prelude_dst</span>
+</pre></div>
+</div>
+<p>In the <code class="docutils literal notranslate"><span class="pre">tasks/main.yml</span></code> file, add your Ansible tasks for importing the
+data. A common pattern is validating the data file created by the
+associated export role, reading the data file and then calling the
+module you created for import.</p>
+</div>
+<div class="section" id="necessary-documentation">
+<h2>Necessary Documentation<a class="headerlink" href="#necessary-documentation" title="Permalink to this headline">¶</a></h2>
+<p>If this is your first time adding a pull request to the os-migrate
+repository, add your author information to <code class="docutils literal notranslate"><span class="pre">galaxy.yml</span></code>.</p>
+<p>Please ensure you comment your code. If you deviate from the provided
+patterns already in the code base, add an explanation.</p>
+<p>In each Ansible module in <code class="docutils literal notranslate"><span class="pre">os_migrate\plugins\modules</span></code>, there is a
+<code class="docutils literal notranslate"><span class="pre">DOCUMENTATION</span></code> constant where you must provide standard documentation
+on what the module does and an example of how you would use it in a
+playbook.</p>
+<p>Each new role must have a <code class="docutils literal notranslate"><span class="pre">README.md</span></code> file as a requirement for
+Ansible Galaxy publishing.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="contributing-docs.html" class="btn btn-neutral float-right" title="Contributing Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="contributing-general.html" class="btn btn-neutral float-left" title="General Contribution Guidelines" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, os-migrate
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
