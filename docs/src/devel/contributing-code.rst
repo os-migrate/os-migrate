@@ -1,5 +1,5 @@
-Become a Contributor
-====================
+Contributing Code
+=================
 
 As an open source project, OS Migrate welcomes contributions from the
 community at large. The following guide provides information on how to
@@ -165,52 +165,8 @@ associated export role, reading the data file and then calling the
 module you created for import.
 
 
-Commit Messages
----------------
-
-For every pull request we request contributors to be compliant with the
-following notation to help generating automatically the project's changelog.
-
-Format
-^^^^^^
-
-.. code-block:: console
-
-    <feat>: <add an awesome feature>
-    ^----^  ^----------------------^
-    |       |
-    |       +-> Summary in present tense.
-    |
-    +-------> Type: [Nn]ew, [cC]hg, [fF]ix.
-
-    <body> ----> The commit's body.
-
-Accepted types:
-
-- `new` or `New`: newly implemented features
-- `chg` or `Chg`: changes in the CI automation, documentation or any other change not presented as a new feature
-- `fix` or `Fix`: a bugfix
-
-Message Subject (First Line)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The first line should not be longer than 70 characters, the second line is always
-blank and other lines should be wrapped at 80 characters.
-
-Ignoring the Message Subject
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-If the commit message subject starts with `dev:` or `Dev:` it will be
-ommited when rendering the changelog. 
-
-Message Body
-^^^^^^^^^^^^
-
-Uses the imperative, present tense: “change” not “changed” nor “changes” and
-includes motivation for the change and contrasts with previous behavior.
-
-Documentation
--------------
+Necessary Documentation
+-----------------------
 
 If this is your first time adding a pull request to the os-migrate
 repository, add your author information to ``galaxy.yml``.
@@ -222,3 +178,6 @@ In each Ansible module in ``os_migrate\plugins\modules``, there is a
 ``DOCUMENTATION`` constant where you must provide standard documentation
 on what the module does and an example of how you would use it in a
 playbook.
+
+Each new role must have a ``README.md`` file as a requirement for
+Ansible Galaxy publishing.
