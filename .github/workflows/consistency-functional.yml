@@ -26,6 +26,8 @@ jobs:
         run: |
           sudo locale-gen en_US.UTF-8
           sudo dpkg-reconfigure locales
+          sudo python -m pip install --upgrade wheel
+          sudo python setup.py bdist_wheel
           sudo python -m pip install --upgrade pip
           sudo pip install tox
           sudo apt install software-properties-common -y
