@@ -122,7 +122,9 @@ jobs:
           sudo apt install python3-httplib2 -y
           # We need to be sure we use the latest versions of
           # pip, virtualenv and setuptools
-          sudo python -m pip install --upgrade pip
+          # FIXME: `git revert` the pip version constraint when devstack is fixed for new pip
+          #        https://github.com/os-migrate/os-migrate/issues/317
+          sudo python -m pip install --upgrade "pip<20.3"
           sudo python -m pip install --upgrade virtualenv
           sudo python -m pip install --upgrade setuptools
       - name: Verify MySQL connection from container
@@ -229,6 +231,14 @@ jobs:
       - name: Clone devstack
         run: |
           git clone https://opendev.org/openstack/devstack
+      # FIXME: `git revert` the pip version constraint when devstack is fixed for new pip
+      #        https://github.com/os-migrate/os-migrate/issues/317
+      # yamllint disable
+      - name: Devstack pin for pip version until devstack is fixed
+        run: |
+          sed -i -e 's/sudo -H -E python\${PYTHON3_VERSION} \$LOCAL_PIP/sudo -H -E python\${PYTHON3_VERSION} \$LOCAL_PIP "pip<20.3"/' \
+            devstack/tools/install_pip.sh
+      # yamllint enable
       - name: Configure devstack
         run: |
           DIR=$(pwd)
