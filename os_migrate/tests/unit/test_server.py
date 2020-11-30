@@ -48,12 +48,31 @@ def server_refs():
             'project_name': 'test-project',
             'domain_name': 'Default',
         },
+        "floating_ips": [
+            {
+                "_info": {
+                    "created_at": "2020-11-25T15:26:15Z",
+                    "floating_network_id": "uuid-test-external-net",
+                    "id": "uuid-test-server-fip",
+                    "port_id": "uuid-test-server-port",
+                    "router_id": "uuid-test-router",
+                    "updated_at": "2020-11-25T15:26:18Z",
+                },
+                "_migration_params": {},
+                "params": {
+                    "fixed_ip_address": "192.168.20.7",
+                    "floating_ip_address": "172.20.9.135",
+                    "tags": [],
+                },
+                "type": "openstack.network.ServerFloatingIP",
+            },
+        ],
         'ports': [
             {
                 '_info': {
-                    'device_id': 'becd9aa6-8934-4086-a21e-3058452d45e6',
+                    'device_id': 'uuid-test-server',
                     'device_owner': 'compute:None',
-                    'id': '18e85b51-c64e-4c8a-bbba-797d8dd7a3b7',
+                    'id': 'uuid-test-server-port',
                 },
                 '_migration_params': {},
                 'params': {

@@ -7,6 +7,8 @@ import openstack
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import const, exc, reference, resource
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils.server_floating_ip \
+    import server_floating_ips, ServerFloatingIP
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils.server_port \
     import server_ports, ServerPort
 
@@ -43,6 +45,7 @@ class Server(resource.Resource):
     params_from_refs = [
         'ports',
         'flavor_ref',
+        'floating_ips',
         'image_ref',
         'security_group_refs',
     ]
@@ -180,8 +183,12 @@ class Server(resource.Resource):
             for sec_group in sec_groups]
 
         sdk_ports = server_ports(conn, sdk_res)
-        ser_ports = map(lambda p: ServerPort.from_sdk(conn, p), sdk_ports)
+        ser_ports = list(map(lambda p: ServerPort.from_sdk(conn, p), sdk_ports))
         refs['ports'] = list(map(lambda p: p.data, ser_ports))
+
+        sdk_fips = server_floating_ips(conn, ser_ports)
+        ser_fips = map(lambda fip: ServerFloatingIP.from_sdk(conn, fip), sdk_fips)
+        refs['floating_ips'] = list(map(lambda fip: fip.data, ser_fips))
 
         return refs
 
@@ -202,5 +209,6 @@ class Server(resource.Resource):
             for sec_group_ref in params['security_group_refs']]
 
         refs['ports'] = params['ports']
+        refs['floating_ips'] = params['floating_ips']
 
         return refs
