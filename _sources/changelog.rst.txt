@@ -7,6 +7,9 @@ Changelog
 
 New
 ~~~
+- Floating IP export for workloads (servers) [Jiri Stransky]
+
+  When exporting servers, export information about their floating IPs.
 - Guide for contributing changes to documentation. [Jiri Stransky]
 
   For developers, but also for users who find the docs lacking in some
