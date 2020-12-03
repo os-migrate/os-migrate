@@ -39,7 +39,11 @@ jobs:
       - name: Configure podman to use cgroupfs as cgroup manager
         run: |
           mkdir -p ~/.config/containers
-          echo 'cgroup_manager = "cgroupfs"' > ~/.config/containers/libpod.conf
+          echo 'cgroup_manager = "cgroupfs"' > ~/.config/containers/containers.conf
+      - name: Hack to fix podman 2.2.0 issue with creating tmp files
+        run: |
+          ln -s /tmp/run-$( id -u ) /tmp/podman-run-$( id -u )
+          mkdir /tmp/podman-run-$( id -u )/libpod
       - name: Log into GitHub Container Registry
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | \
@@ -194,7 +198,11 @@ jobs:
       - name: Configure podman to use cgroupfs as cgroup manager
         run: |
           mkdir -p ~/.config/containers
-          echo 'cgroup_manager = "cgroupfs"' > ~/.config/containers/libpod.conf
+          echo 'cgroup_manager = "cgroupfs"' > ~/.config/containers/containers.conf
+      - name: Hack to fix podman 2.2.0 issue with creating tmp files
+        run: |
+          ln -s /tmp/run-$( id -u ) /tmp/podman-run-$( id -u )
+          mkdir /tmp/podman-run-$( id -u )/libpod
       - name: Log into GitHub Container Registry
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | \
