@@ -3,6 +3,11 @@
     name: epel-release
     state: present
 
+- name: update all packages
+  yum:
+    name: '*'
+    state: latest
+
 - name: install content
   yum:
     name:
