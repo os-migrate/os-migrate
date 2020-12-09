@@ -90,20 +90,21 @@
 <li class="toctree-l2"><a class="reference internal" href="#unreleased">(unreleased)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#new">New</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#other">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#id1">0.6.0 (2020-11-25)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id2">New</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#changes">Changes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id3">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#other">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Other</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">0.5.0 (2020-10-02)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">0.4.1 (2020-06-26)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id6">0.4.0 (2020-06-26)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id7">0.3.1 (2020-06-05)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id8">0.3.0 (2020-06-02)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">0.5.0 (2020-10-02)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">0.4.1 (2020-06-26)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">0.4.0 (2020-06-26)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">0.3.1 (2020-06-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">0.3.0 (2020-06-02)</a></li>
 </ul>
 </li>
 </ul>
@@ -199,6 +200,19 @@ container.</p>
 </li>
 </ul>
 </div>
+<div class="section" id="other">
+<h3>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p>Update packages when deploying conversion hosts. [Jiri Stransky]</p>
+<p>I ran into a bug when trying to migrate workloads, the volume export
+step crashed with:</p>
+<p>qemu-img: Unable to initialize gcrypt</p>
+<p>It turns out there was desync in package versions, we were installing
+latest qemu-img but libgcrypt was old. We need to update to latest
+when deploying the conversion hosts.</p>
+</li>
+</ul>
+</div>
 </div>
 <div class="section" id="id1">
 <h2>0.6.0 (2020-11-25)<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
@@ -252,8 +266,8 @@ if not defined, which means, build the container image.</p>
 </li>
 </ul>
 </div>
-<div class="section" id="other">
-<h3>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id4">
+<h3>Other<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><p>Update contributing.rst. [Ryan Brady]</p>
 <p>minor edit, changed titles to title case</p>
@@ -347,8 +361,8 @@ to malformed block_device_mapping_v2 data structure. See docs [1].</p>
 </ul>
 </div>
 </div>
-<div class="section" id="id4">
-<h2>0.5.0 (2020-10-02)<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id5">
+<h2>0.5.0 (2020-10-02)<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <ul>
 <li><p>Add missing role readme files. [Jiri Stransky]</p>
 <p>Galaxy releasing fails without these.</p>
@@ -560,15 +574,15 @@ using os-migrate.</p>
 Stransky]</p></li>
 </ul>
 </div>
-<div class="section" id="id5">
-<h2>0.4.1 (2020-06-26)<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id6">
+<h2>0.4.1 (2020-06-26)<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Prepare release of 0.4.1. [Jiri Stransky]</p></li>
 <li><p>Fix. [Carlos Camacho]</p></li>
 </ul>
 </div>
-<div class="section" id="id6">
-<h2>0.4.0 (2020-06-26)<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id7">
+<h2>0.4.0 (2020-06-26)<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <ul>
 <li><p>Prepare release 0.4.0. [Jiri Stransky]</p>
 <p>Mainly utilizes a new workload migration approach with new conversion
@@ -681,8 +695,8 @@ the functional test to complete.</p>
 </li>
 </ul>
 </div>
-<div class="section" id="id7">
-<h2>0.3.1 (2020-06-05)<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id8">
+<h2>0.3.1 (2020-06-05)<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
 <ul>
 <li><p>Prepare release 0.3.1. [Jiri Stransky]</p></li>
 <li><p>Fix exporting router interfaces when router name filter is undefined.
@@ -693,8 +707,8 @@ the functional test to complete.</p>
 </li>
 </ul>
 </div>
-<div class="section" id="id8">
-<h2>0.3.0 (2020-06-02)<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id9">
+<h2>0.3.0 (2020-06-02)<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
 <ul>
 <li><p>Add readme files to all roles, pointing to user docs. [Jiri Stransky]</p>
 <p>It looks like this is now required, otherwise the Galaxy publish

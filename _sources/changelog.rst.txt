@@ -25,6 +25,19 @@ Fix
   for users who want to build OS Migrate from source via the toolbox
   container.
 
+Other
+~~~~~
+- Update packages when deploying conversion hosts. [Jiri Stransky]
+
+  I ran into a bug when trying to migrate workloads, the volume export
+  step crashed with:
+
+  qemu-img: Unable to initialize gcrypt
+
+  It turns out there was desync in package versions, we were installing
+  latest qemu-img but libgcrypt was old. We need to update to latest
+  when deploying the conversion hosts.
+
 
 0.6.0 (2020-11-25)
 ------------------
