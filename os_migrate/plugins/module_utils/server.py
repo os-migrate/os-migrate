@@ -56,6 +56,7 @@ class Server(resource.Resource):
 
     migration_param_defaults = {
         'boot_disk_copy': False,
+        'floating_ip_mode': 'auto',
     }
 
     @classmethod
@@ -83,7 +84,9 @@ class Server(resource.Resource):
         self.update_sdk_params_networks_simple(conn, sdk_params)
 
         self.update_sdk_params_block_device_mapping(sdk_params, block_device_mapping)
-        return conn.compute.create_server(**sdk_params)
+        sdk_srv = conn.compute.create_server(**sdk_params)
+        self._create_floating_ips(conn, sdk_srv)
+        return sdk_srv
 
     def sdk_params(self, conn):
         refs = self._refs_from_ser(conn)
@@ -96,6 +99,21 @@ class Server(resource.Resource):
         ))
 
         return sdk_params
+
+    def _create_floating_ips(self, conn, sdk_srv):
+        floating_ip_mode = self.migration_params()['floating_ip_mode']
+        for fip_data in self.params()['floating_ips']:
+            fip = ServerFloatingIP.from_data(fip_data)
+            fip.create(conn, sdk_srv, floating_ip_mode)
+
+    def update_migration_params(self, params_dict):
+        if 'floating_ip_mode' in params_dict:
+            value = params_dict['floating_ip_mode']
+            choices = ['auto', 'skip']
+            if value not in choices:
+                raise exc.UnexpectedChoice('floating_ip_mode', choices, value)
+
+        return super().update_migration_params(params_dict)
 
     def update_sdk_params_block_device_mapping(self, sdk_params, block_device_mapping):
         params, info = self.params_and_info()
