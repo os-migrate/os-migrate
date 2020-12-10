@@ -1,7 +1,10 @@
 - name: Conversion host content tasks
   block:
     - name: Display host os
-      debug: msg="Conversion Host OS is {{ ansible_distribution }}."
+      debug:
+        msg: >-
+          Conversion Host OS is
+          {{ ansible_distribution }} {{ ansible_distribution_version }}
 
     - name: Include CentOS tasks
       include_tasks: centos.yml
