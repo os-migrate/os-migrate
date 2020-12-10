@@ -39,6 +39,23 @@ Other
   when deploying the conversion hosts.
 
 
+0.6.1 (2020-12-10)
+------------------
+- Update packages when deploying conversion hosts. [Jiri Stransky]
+
+  I ran into a bug when trying to migrate workloads, the volume export
+  step crashed with:
+
+  qemu-img: Unable to initialize gcrypt
+
+  It turns out there was desync in package versions, we were installing
+  latest qemu-img but libgcrypt was old. We need to update to latest
+  when deploying the conversion hosts.
+
+  Resolves: https://github.com/os-migrate/os-migrate/issues/322
+  (cherry picked from commit 3e68a4aad182472d8d343769c83640512551a673)
+
+
 0.6.0 (2020-11-25)
 ------------------
 
