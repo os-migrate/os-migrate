@@ -16,6 +16,17 @@ New
   way. They can either report the issue on Github, or submit a patch
   with the changes.
 
+Changes
+~~~~~~~
+- Workload Source Check. [Ryan Brady]
+
+  During the workload import, the code was checking the workload status
+  via the export file.  If a server had been turned on or moved into
+  another state other than "SHUTOFF" since the export occured, the
+  workload import would fail.  This patch addresses that by checking
+  the source cloud via the openstacksdk to ensure the workload status
+  is "SHUTOFF" before attempting to migrate it.
+
 Fix
 ~~~
 - Fix building OS Migrate from source. [Jiri Stransky]

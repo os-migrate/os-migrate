@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Module - validate_resource_files &mdash; os-migrate  documentation</title>
+  <title>Module - import_workload_source_check &mdash; os-migrate  documentation</title>
   
 
   
@@ -36,8 +36,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Changelog" href="../changelog.html" />
-    <link rel="prev" title="Module - read_resources" href="module-read_resources.html" /> 
+    <link rel="next" title="Module - import_workload_transfer_volumes" href="module-import_workload_transfer_volumes.html" />
+    <link rel="prev" title="Module - import_workload_prelim" href="module-import_workload_prelim.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -116,14 +116,7 @@
 <li class="toctree-l2"><a class="reference internal" href="module-import_workload_create_instance.html">Module - import_workload_create_instance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="module-import_workload_export_volumes.html">Module - import_workload_export_volumes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="module-import_workload_prelim.html">Module - import_workload_prelim</a></li>
-<li class="toctree-l2"><a class="reference internal" href="module-import_workload_source_check.html">Module - import_workload_source_check</a></li>
-<li class="toctree-l2"><a class="reference internal" href="module-import_workload_transfer_volumes.html">Module - import_workload_transfer_volumes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="module-os_conversion_host_info.html">Module - os_conversion_host_info</a></li>
-<li class="toctree-l2"><a class="reference internal" href="module-os_keypairs_info.html">Module - os_keypairs_info</a></li>
-<li class="toctree-l2"><a class="reference internal" href="module-os_routers_info.html">Module - os_routers_info</a></li>
-<li class="toctree-l2"><a class="reference internal" href="module-os_security_groups_info.html">Module - os_security_groups_info</a></li>
-<li class="toctree-l2"><a class="reference internal" href="module-read_resources.html">Module - read_resources</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Module - validate_resource_files</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Module - import_workload_source_check</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#m-o-d-u-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">Module Documentation</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#o-p-t-i-o-n-s">Options</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#a-u-t-h-o-r-s">Authors</a></li>
@@ -132,6 +125,13 @@
 <li class="toctree-l3"><a class="reference internal" href="#e-x-a-m-p-l-e-t-a-s-k-s">Example Tasks</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="module-import_workload_transfer_volumes.html">Module - import_workload_transfer_volumes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-os_conversion_host_info.html">Module - os_conversion_host_info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-os_keypairs_info.html">Module - os_keypairs_info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-os_routers_info.html">Module - os_routers_info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-os_security_groups_info.html">Module - os_security_groups_info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-read_resources.html">Module - read_resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-validate_resource_files.html">Module - validate_resource_files</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
@@ -183,13 +183,13 @@
         
           <li><a href="../modules.html">Documented modules in os-migrate</a> &raquo;</li>
         
-      <li>Module - validate_resource_files</li>
+      <li>Module - import_workload_source_check</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/modules/module-validate_resource_files.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/modules/module-import_workload_source_check.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -202,25 +202,41 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-validate-resource-files">
-<h1>Module - validate_resource_files<a class="headerlink" href="#module-validate-resource-files" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-import-workload-source-check">
+<h1>Module - import_workload_source_check<a class="headerlink" href="#module-import-workload-source-check" title="Permalink to this headline">¶</a></h1>
 <p>This module provides for the following ansible plugin:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>validate_resource_files</p></li>
+<li><p>import_workload_source_check</p></li>
 </ul>
 </div></blockquote>
 <div class="section" id="m-o-d-u-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">
 <h2>Module Documentation<a class="headerlink" href="#m-o-d-u-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n" title="Permalink to this headline">¶</a></h2>
-<p><p>Validate OS-Migrate YAML resource files.</p>
-</p>
-<p><p>Unique resource naming is validated across all files provided.</p>
+<p><p>Check OpenStack workload in source cloud</p>
 </p>
 <div class="section" id="o-p-t-i-o-n-s">
 <h3>Options<a class="headerlink" href="#o-p-t-i-o-n-s" title="Permalink to this headline">¶</a></h3>
 <dl class="field-list">
-<dt class="field-odd">paths</dt>
-<dd class="field-odd"><p>Resources YAML files to read.</p>
+<dt class="field-odd">auth</dt>
+<dd class="field-odd"><p>Dictionary with parameters for chosen auth type.</p>
+</dd>
+<dt class="field-even">auth_type</dt>
+<dd class="field-even"><p>Auth type plugin for OpenStack. Can be omitted if using password authentication.</p>
+</dd>
+<dt class="field-odd">validate_certs</dt>
+<dd class="field-odd"><p>Validate HTTPS certificates when logging in to OpenStack.</p>
+</dd>
+<dt class="field-even">region_name</dt>
+<dd class="field-even"><p>OpenStack region name. Can be omitted if using default region.</p>
+</dd>
+<dt class="field-odd">name</dt>
+<dd class="field-odd"><p>Name (or ID) of an instance to check.</p>
+</dd>
+<dt class="field-even">availability_zone</dt>
+<dd class="field-even"><p>Availability zone.</p>
+</dd>
+<dt class="field-odd">cloud</dt>
+<dd class="field-odd"><p>Ignored. Present for backwards compatibility.</p>
 </dd>
 </dl>
 </div>
@@ -235,19 +251,17 @@
 </div>
 <div class="section" id="e-x-a-m-p-l-e-t-a-s-k-s">
 <h2>Example Tasks<a class="headerlink" href="#e-x-a-m-p-l-e-t-a-s-k-s" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Read resources from /opt/os-migrate/networks.yml</span>
-  <span class="nt">os_migrate.os_migrate.validate_resource_files</span><span class="p">:</span>
-    <span class="nt">paths</span><span class="p">:</span>
-    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/opt/os-migrate/networks.yml</span>
-    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/opt/os-migrate/security_groups.yml</span>
-    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/opt/os-migrate/security_group_rules.yml</span>
-    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/opt/os-migrate/subnets.yml</span>
-  <span class="nt">register</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">validation_results</span>
-</pre></div>
-</div>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Debug-print validation results</span>
-  <span class="nt">debug</span><span class="p">:</span>
-    <span class="nt">var</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">validation_results</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ensure workload in source cloud is ready to continue</span>
+  <span class="nt">os_migrate.os_migrate.import_workload_source_check</span><span class="p">:</span>
+    <span class="nt">auth</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_auth</span><span class="nv"> </span><span class="s">}}&#39;</span>
+    <span class="nt">auth_type</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_auth_type|default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span>
+    <span class="nt">region_name</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_region_name|default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span>
+    <span class="nt">validate_certs</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_validate_certs|default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span>
+    <span class="nt">ca_cert</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_ca_cert|default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span>
+    <span class="nt">client_cert</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_client_cert|default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span>
+    <span class="nt">client_key</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_client_key|default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span>
+    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">migration-vm</span>
+  <span class="nt">when</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">prelim.changed</span>
 </pre></div>
 </div>
 </div>
@@ -261,10 +275,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../changelog.html" class="btn btn-neutral float-right" title="Changelog" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="module-import_workload_transfer_volumes.html" class="btn btn-neutral float-right" title="Module - import_workload_transfer_volumes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="module-read_resources.html" class="btn btn-neutral float-left" title="Module - read_resources" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="module-import_workload_prelim.html" class="btn btn-neutral float-left" title="Module - import_workload_prelim" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
