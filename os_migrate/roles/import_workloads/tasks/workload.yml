@@ -21,6 +21,18 @@
         - "{{ prelim.server_name }} progress file: {{ prelim.state_file }}"
     when: prelim.changed
 
+  - name: perform required checks to ensure source workload is ready
+    os_migrate.os_migrate.import_workload_source_check:
+      auth: "{{ os_migrate_src_auth }}"
+      auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+      region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+      name: "{{ item['_info']['id'] }}"
+    when: prelim.changed
+
   - name: expose source volumes
     os_migrate.os_migrate.import_workload_export_volumes:
       auth: "{{ os_migrate_src_auth }}"
