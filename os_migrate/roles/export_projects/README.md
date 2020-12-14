@@ -1,2 +1,9 @@
-Please refer to
-[OS Migrate user docs](https://github.com/os-migrate/os-migrate/blob/main/doc/user/README.md).
+The role export_projects
+scans the available projects in the
+source tenant, creates an id-name pairs
+of the resources to export, filters them
+based on a regular expression, and serializes
+the result in the output folder.
+
+For further information about the role export_projects refer to the
+[official docs](https://os-migrate.github.io/os-migrate/roles/role-export_projects.html).

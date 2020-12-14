@@ -62,11 +62,20 @@ roles_number=`ls os_migrate/roles/ | wc -l`
 modules_docs_number=`ls docs/src/modules | wc -l`
 modules_number=`ls os_migrate/plugins/modules/ | wc -l`
 
+pending_readmes=`grep -R role_description_goes_here . | wc -l`
+
 echo "Roles in docs: $roles_docs_number"
 echo "Roles: $roles_number"
 
 echo "Modules in docs: $modules_docs_number"
 echo "Modules: $modules_number"
+
+if [ "$pending_readmes" -ne "3" ];then
+    echo "The README.md files in each role must have";
+    echo "a brief description, role_description_goes_here";
+    echo "is not allowed.";
+    exit 1;
+fi
 
 if [ "$roles_readmes_number" -ne "$roles_number" ];then
     echo "The README.md file in each role do not";

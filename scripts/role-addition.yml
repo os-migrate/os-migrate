@@ -1,0 +1,55 @@
+#!/usr/bin/env ansible-playbook
+---
+# Copyright 2020 Red Hat, Inc.
+#
+# All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+- name: Create a new role for os-migrate
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Check for role name
+      fail:
+        msg: >-
+          The required variable `role_name` is undefined. Check your settings.
+      when:
+        - role_name is undefined
+
+    - name: Check for role name syntax
+      fail:
+        msg: >-
+          The role_name can only have letters and underscores
+      when: not role_name|regex_search('^[A-Za-z0-9_]+$')
+
+    - name: Create role
+      command: >-
+        ansible-galaxy init
+        --role-skeleton=_skeleton_role_
+        --init-path=../os_migrate/roles {{ role_name }}
+      args:
+        creates: "os_migrate/roles/{{ role_name }}"
+
+    - name: Create role documentation
+      copy:
+        content: |
+          {% set opening = 'Role - ' ~ role_name %}
+          {{ '=' * (opening | length) }}
+          {{ opening }}
+          {{ '=' * (opening | length) }}
+
+          .. ansibleautoplugin::
+            :role: os_migrate/roles/{{ role_name }}
+        dest: "../docs/src/roles/role-{{ role_name }}.rst"

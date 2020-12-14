@@ -37,6 +37,27 @@ new role will follow these steps:
 -  Add documentation within classes and roles/playbooks as required.
    Update developer or user documentation as needed.
 
+
+Creating the role skeleton automatically
+----------------------------------------
+
+Adding roles into os-migrate can be easily achieved by
+creating the role structure skeleton automatically.
+
+
+From the repository root directory execute:
+
+.. code:: bash
+
+   ansible-playbook \
+      -i 'localhost,' \
+      ./scripts/role-addition.yml \
+      -e ansible_connection=local \
+      -e role_name=import_example_resource
+
+This command will generate the role, the default variables file,
+and the documentation stub.
+
 Resources
 ---------
 
