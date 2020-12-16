@@ -90,6 +90,7 @@
 <li class="toctree-l2"><a class="reference internal" href="contributing-general.html">General Contribution Guidelines</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Contributing Code</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#adding-a-new-role">Adding a New Role</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#creating-the-role-skeleton-automatically">Creating the role skeleton automatically</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#resources">Resources</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#roles">Roles</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#export-roles">Export Roles</a></li>
@@ -202,6 +203,21 @@ idempotency, updates as a minimum. Additional tests as necessary.</p></li>
 <li><p>Add documentation within classes and roles/playbooks as required.
 Update developer or user documentation as needed.</p></li>
 </ul>
+</div>
+<div class="section" id="creating-the-role-skeleton-automatically">
+<h2>Creating the role skeleton automatically<a class="headerlink" href="#creating-the-role-skeleton-automatically" title="Permalink to this headline">¶</a></h2>
+<p>Adding roles into os-migrate can be easily achieved by
+creating the role structure skeleton automatically.</p>
+<p>From the repository root directory execute:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ansible-playbook <span class="se">\</span>
+   -i <span class="s1">&#39;localhost,&#39;</span> <span class="se">\</span>
+   ./scripts/role-addition.yml <span class="se">\</span>
+   -e <span class="nv">ansible_connection</span><span class="o">=</span><span class="nb">local</span> <span class="se">\</span>
+   -e <span class="nv">role_name</span><span class="o">=</span>import_example_resource
+</pre></div>
+</div>
+<p>This command will generate the role, the default variables file,
+and the documentation stub.</p>
 </div>
 <div class="section" id="resources">
 <h2>Resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h2>

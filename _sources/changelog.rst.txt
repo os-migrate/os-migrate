@@ -44,6 +44,7 @@ Fix
 
 Other
 ~~~~~
+- Docs: include information in all roles. [Carlos Camacho]
 - Update packages when deploying conversion hosts. [Jiri Stransky]
 
   I ran into a bug when trying to migrate workloads, the volume export
