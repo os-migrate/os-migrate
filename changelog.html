@@ -181,6 +181,12 @@
 <div class="section" id="new">
 <h3>New<a class="headerlink" href="#new" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Parallel installation of conversion hosts. [Jiri Stransky]</p>
+<p>The updating and installing of packages on conversion hosts can take
+minutes. These actions were done in series until now (src then dst),
+but now they’re done in parallel, which should speed up execution of
+the conversion host deployment playbook.</p>
+</li>
 <li><p>Floating IP export for workloads (servers) [Jiri Stransky]</p>
 <p>When exporting servers, export information about their floating IPs.</p>
 </li>

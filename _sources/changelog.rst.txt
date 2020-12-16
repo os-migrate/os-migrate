@@ -7,6 +7,12 @@ Changelog
 
 New
 ~~~
+- Parallel installation of conversion hosts. [Jiri Stransky]
+
+  The updating and installing of packages on conversion hosts can take
+  minutes. These actions were done in series until now (src then dst),
+  but now they're done in parallel, which should speed up execution of
+  the conversion host deployment playbook.
 - Floating IP export for workloads (servers) [Jiri Stransky]
 
   When exporting servers, export information about their floating IPs.
