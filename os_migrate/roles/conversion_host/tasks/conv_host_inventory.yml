@@ -10,6 +10,15 @@
     client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
   register: _server_info
 
+- name: fail when conversion host was not found
+  fail:
+    msg: >-
+      Nova server of name '{{ os_migrate_conversion_host_name }}' not
+      found, it was meant to be used as {{ inventory_name }}
+  when:
+    - _server_info.openstack_servers|length == 0
+    - not ignore_missing_conversion_hosts|default(false)|bool
+
 - name: add conversion host to inventory
   add_host:
     name: "{{ inventory_name }}"
@@ -22,3 +31,5 @@
     # Generally conversion hosts act as cloud-user, not as
     # root. E.g. link ssh keys need to be added to cloud-user.
     ansible_become: false
+  when:
+    - _server_info.openstack_servers|length > 0

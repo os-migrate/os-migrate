@@ -1,4 +1,10 @@
-- name: unregister rhel hosts from rhsm
+- name: unregister RHEL hosts from RHSM
   redhat_subscription:
     state: absent
-  when: ansible_distribution in ['RedHat']
+  vars:
+    # Unregistration gets stuck unless we explicitly run the module as root.
+    ansible_become: true
+    ansible_become_user: root
+  when:
+    - ansible_distribution is defined
+    - ansible_distribution in ['RedHat']

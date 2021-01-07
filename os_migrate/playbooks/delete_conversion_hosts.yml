@@ -3,14 +3,14 @@
     - include_role:
         name: os_migrate.os_migrate.conversion_host
         tasks_from: conv_hosts_inventory.yml
+      vars:
+        ignore_missing_conversion_hosts: true
 
-- hosts: os_migrate_conv_src
-  tasks:
-    - include_role:
-        name: os_migrate.os_migrate.conversion_host
-        tasks_from: unregister.yml
-
-- hosts: os_migrate_conv_dst
+- hosts: conversion_hosts
+  # Unregistration is best-effort. If the conversion hosts faced some
+  # issues and are unreachable, we don't want the host deletion to
+  # fail too.
+  ignore_unreachable: true
   tasks:
     - include_role:
         name: os_migrate.os_migrate.conversion_host
