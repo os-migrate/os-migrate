@@ -151,7 +151,7 @@ test-unit: reinstall
 
 # DOCS
 
-docs: build
+docs: reinstall
 	./scripts/docs-build.sh
 
 
