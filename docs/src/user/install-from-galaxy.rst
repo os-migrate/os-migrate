@@ -10,6 +10,9 @@ Prerequisites
 
 -  Ansible >= 2.9
 
+-  Additional package requirements from Ansible modules:
+   ``iputils python3-openstackclient python3-openstacksdk``
+
 .. _installation-1:
 
 Installation
