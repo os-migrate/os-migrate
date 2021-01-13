@@ -53,6 +53,16 @@ class UnexpectedValue(Exception):
         super().__init__(message)
 
 
+class UnexpectedChoice(Exception):
+    """Unexpected value of a variable which should be chosen from a list."""
+
+    msg_format = "Unexpected value of '{}': expected one of {} but got '{}'."
+
+    def __init__(self, var, choice_list, got):
+        message = self.msg_format.format(var, choice_list, got)
+        super().__init__(message)
+
+
 class Unsupported(Exception):
     """Unsupported action."""
 
