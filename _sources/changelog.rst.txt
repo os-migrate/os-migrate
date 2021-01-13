@@ -7,6 +7,30 @@ Changelog
 
 New
 ~~~
+- Creation of Floating IPs on migrated workloads. [Jiri Stransky]
+
+  A new migration parameter 'floating_ip_mode' is added into the
+  workload serialization. The current possible values are 'auto' and
+  'skip'.
+
+  * 'auto' means that floating IP creation is attempted for the VM, if
+    the source VM had floating IP(s). The floating IP info is already
+    being exported with the workload.
+
+    Currently we only support auto-assignment of the floating IP
+    address. (Exact assignment is typically not allowed by policy for
+    tenants, but this should be investigated too.)
+
+    Each floating IP serialization has a 'floating_network_ref'
+    reference, which specifies the network where the floating IP should
+    be created. The 'fixed_ip_address' parameter controls which
+    port/address will the floating IP attach to.
+
+  * 'skip' means that even if the workload serialization does include
+    serialized floating IP subresources, their creation in destination
+    cloud will not be attempted.
+
+  The 'floating_ip_mode' parameter defaults to 'auto'.
 - Parallel installation of conversion hosts. [Jiri Stransky]
 
   The updating and installing of packages on conversion hosts can take
