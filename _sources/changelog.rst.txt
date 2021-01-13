@@ -7,6 +7,12 @@ Changelog
 
 New
 ~~~
+- Adds Logic to Unsubscribe RHEL Conversion Hosts. [Ryan Brady]
+
+  This patch adds logic to unsubscribe systems from RHSM when using
+  RHEL as the OS for a conversion host.  The unsubscribe is called
+  for both the source and destination conversion hosts just before
+  they are deleted.
 - Creation of Floating IPs on migrated workloads. [Jiri Stransky]
 
   A new migration parameter 'floating_ip_mode' is added into the
@@ -48,6 +54,15 @@ New
 
 Changes
 ~~~~~~~
+- Resilient RHEL unregistration mechanism. [Jiri Stransky]
+
+  Previously the deletion of RHEL conversion hosts would require the
+  hosts to exist and always execute the unregisteration from RHSM. But
+  if at least one of the hosts didn't exist, or the host got somehow
+  damaged and wasn't reachable via ssh, the playbook would fail and
+  would not delete the conversion hosts. The deletion playbook is now
+  resilient in these scenarios and progresses towards ensuring the
+  conversion hosts are deleted.
 - Workload Source Check. [Ryan Brady]
 
   During the workload import, the code was checking the workload status
