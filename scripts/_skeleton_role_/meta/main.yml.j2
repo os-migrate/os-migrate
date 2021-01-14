@@ -10,5 +10,12 @@ galaxy_info:
       versions:
         - 30
   galaxy_tags: ["os-migrate"]
+{% if 'export' in role_name %}
 dependencies:
   - role: os_migrate.os_migrate.prelude_src
+{% elif 'import' in role_name %}
+dependencies:
+  - role: os_migrate.os_migrate.prelude_dst
+{% else %}
+dependencies: []
+{% endif %}
