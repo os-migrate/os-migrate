@@ -54,6 +54,17 @@ New
 
 Changes
 ~~~~~~~
+- Don't feed availability_zone_hints into requests when empty. [Jiri
+  Stransky]
+
+  The availability_zone_hints parameter for routers and networks can
+  often be an empty list. Previously we've fed it as-is into the API
+  requests. However, if the extension for network/router availability
+  zones isn't enabled, this can cause the request to fail.
+
+  We now only use the availability_zone_hints parameter when its not
+  empty. This should have no effect on correctness, but it can prevent
+  false-alarm failures.
 - Resilient RHEL unregistration mechanism. [Jiri Stransky]
 
   Previously the deletion of RHEL conversion hosts would require the

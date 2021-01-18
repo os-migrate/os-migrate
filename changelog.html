@@ -232,6 +232,16 @@ with the changes.</p>
 <div class="section" id="changes">
 <h3>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Don’t feed availability_zone_hints into requests when empty. [Jiri
+Stransky]</p>
+<p>The availability_zone_hints parameter for routers and networks can
+often be an empty list. Previously we’ve fed it as-is into the API
+requests. However, if the extension for network/router availability
+zones isn’t enabled, this can cause the request to fail.</p>
+<p>We now only use the availability_zone_hints parameter when its not
+empty. This should have no effect on correctness, but it can prevent
+false-alarm failures.</p>
+</li>
 <li><p>Resilient RHEL unregistration mechanism. [Jiri Stransky]</p>
 <p>Previously the deletion of RHEL conversion hosts would require the
 hosts to exist and always execute the unregisteration from RHSM. But
