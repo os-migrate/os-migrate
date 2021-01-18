@@ -33,10 +33,17 @@ class Resource():
     # Items of refs dict that are used as SDK call kwargs when
     # issuing a create/update REST API request.
     sdk_params_from_refs = []
-    # some parameters are allowed when creating a resource but not when
+    # Some parameters are allowed when creating a resource but not when
     # updating it.  This list of parameter names is purged from the parameter
     # list before calling update.
     readonly_sdk_params = []
+    # Some parameters get serialized as e.g. an empty array and it can
+    # matter whether they are fed into a create/update request or
+    # skipped altogether. Parameters listed here will not be included
+    # in sdk_params in case their value is falsey - false, empty
+    # array, empty dict etc. (Parameters with None value are skipped
+    # anyway and do not need to be listed here.)
+    skip_falsey_sdk_params = []
     # Defaults for migration parameters. They are deep-copied into the
     # resource serialization when the resource is being instantiated
     # from_sdk.
@@ -141,6 +148,16 @@ class Resource():
         """
         for p_name in param_names:
             cls._set_sdk_param(ser_params, p_name, sdk_params, p_name)
+
+    # Not meant to be overriden in majority of subclasses.
+    @classmethod
+    def _del_sdk_params_if_falsey(cls, sdk_params, param_names):
+        """Delete parameters specified in `param_names` list from `sdk_params`
+        dict in case their value is falsey.
+        """
+        for p_name in param_names:
+            if p_name in sdk_params and not sdk_params[p_name]:
+                del sdk_params[p_name]
 
     # Not meant to be overriden in majority of subclasses.
     @staticmethod
@@ -345,6 +362,7 @@ class Resource():
 
         self._set_sdk_params_same_name(self.params(), sdk_params, sdk_params_from_params)
         self._set_sdk_params_same_name(refs, sdk_params, self.sdk_params_from_refs)
+        self._del_sdk_params_if_falsey(sdk_params, self.skip_falsey_sdk_params)
 
     # Not meant to be overriden in majority of subclasses.
     def _sort_info(self, info_name, by_keys=None):

@@ -40,6 +40,9 @@ class Router(resource.Resource):
         'external_gateway_info',
         'flavor_id',
     ]
+    skip_falsey_sdk_params = [
+        'availability_zone_hints',
+    ]
 
     @classmethod
     def from_sdk(cls, conn, sdk_resource):

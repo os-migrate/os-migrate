@@ -15,11 +15,12 @@ class FakeResource(resource.Resource):
     sdk_class = dict
 
     info_from_sdk = ['id', 'info1', 'info2']
-    params_from_sdk = ['name', 'param1', 'readonly_param']
+    params_from_sdk = ['name', 'param1', 'readonly_param', 'skip_falsey']
     info_from_refs = ['param3id', 'param4id']
     params_from_refs = ['param3name', 'param4name']
     sdk_params_from_refs = ['param3id', 'param4id']
     readonly_sdk_params = ['readonly_param']
+    skip_falsey_sdk_params = ['skip_falsey']
     migration_param_defaults = {
         'migparam1': 'migval1',
     }
@@ -59,6 +60,7 @@ def valid_fakeresource_sdk():
         'name': 'nameval',
         'param1': 'param1val',
         'readonly_param': 'no_can_change',
+        'skip_falsey': ['truthy'],
         'param3id': 'param3idval',
         'param4id': 'param4idval',
         'id': 'idval',
@@ -72,6 +74,7 @@ def valid_fakeresource_sdk_creation_params():
         'name': 'nameval',
         'param1': 'param1val',
         'readonly_param': 'no_can_change',
+        'skip_falsey': ['truthy'],
         'param3id': 'param3idval',
         'param4id': 'param4idval',
     }
@@ -84,6 +87,7 @@ def valid_fakeresource_data():
             'name': 'nameval',
             'param1': 'param1val',
             'readonly_param': 'no_can_change',
+            'skip_falsey': ['truthy'],
             'param3name': 'param3nameval',
             'param4name': 'param4nameval',
         },
@@ -125,6 +129,16 @@ class TestResource(unittest.TestCase):
         refs = res._refs_from_ser(None)
         sdk_params = res._to_sdk_params(refs)
         self.assertEqual(sdk_params, valid_fakeresource_sdk_creation_params())
+
+    def test_to_sdk_params_skip_falsey(self):
+        res = FakeResource.from_data(valid_fakeresource_data())
+        res.params()['skip_falsey'] = []
+        # conn=None because the fake _refs_from_* methods don't need it
+        refs = res._refs_from_ser(None)
+        sdk_params = res._to_sdk_params(refs)
+        expected = valid_fakeresource_sdk_creation_params()
+        del expected['skip_falsey']
+        self.assertEqual(sdk_params, expected)
 
     def test_update_migration_params(self):
         res = FakeResource.from_data(valid_fakeresource_data())
