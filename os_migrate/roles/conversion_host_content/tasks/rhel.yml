@@ -1,12 +1,12 @@
 - name: register and auto-subscribe to available content.
   redhat_subscription:
     state: present
-    username: "{{ os_migrate_conversion_host_content_rhsm_user|default(omit) }}"
-    password: "{{ os_migrate_conversion_host_content_rhsm_password|default(omit) }}"
+    username: "{{ os_migrate_conversion_rhsm_username|default(omit) }}"
+    password: "{{ os_migrate_conversion_rhsm_password|default(omit) }}"
     auto_attach: true
   when:
-    - os_migrate_conversion_host_content_rhsm_user is defined
-    - os_migrate_conversion_host_content_rhsm_password is defined
+    - os_migrate_conversion_rhsm_username is defined
+    - os_migrate_conversion_rhsm_password is defined
 
 - name: update all packages
   yum:
