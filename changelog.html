@@ -232,6 +232,18 @@ with the changes.</p>
 <div class="section" id="changes">
 <h3>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Pass through all RHSM parameters for conversion hosts. [Jiri Stransky]</p>
+<p>All parameters supported by the redhat_subscription Ansible module are
+now exposed as variables for the conversion host content installation.</p>
+</li>
+<li><p>Shorter names for RHSM variables. [Jiri Stransky]</p>
+<p>The RHSM variables are renamed from previous pattern of
+e.g. ‘os_migrate_conversion_host_content_rhsm_user’ to
+e.g. ‘os_migrate_conversion_rhsm_user’ which is shorter but should
+still be descriptive enough and not risk a naming collision.</p>
+<p>The ‘user’ variable is also renamed to ‘username’ to match the
+parameter naming on the redhat_subscription module.</p>
+</li>
 <li><p>Don’t feed availability_zone_hints into requests when empty. [Jiri
 Stransky]</p>
 <p>The availability_zone_hints parameter for routers and networks can
