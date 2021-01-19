@@ -1,0 +1,8 @@
+- name: remove osm_flavor
+  os_nova_flavor:
+    auth: "{{ item }}"
+    name: osm_flavor
+    state: absent
+  loop:
+    - "{{ os_migrate_src_auth }}"
+    - "{{ os_migrate_dst_auth }}"

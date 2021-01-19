@@ -22,25 +22,24 @@
       {{ flavor_resources_idem | to_nice_yaml }}
       flavor_resources:
       {{ flavor_resources | to_nice_yaml }}
-
 ### IMPORT IDEMPOTENCE ###
 
-- name: look up m1.small dst cloud
+- name: look up osm_flavor dst cloud
   os_flavor_info:
     auth: "{{ os_migrate_dst_auth }}"
-    name: "m1.small"
+    name: "osm_flavor"
   register: flavor_import_idem_before
 
 - include_role:
     name: os_migrate.os_migrate.import_flavors
 
-- name: look up m1.small in dst cloud again
+- name: look up osm_flavor in dst cloud again
   os_flavor_info:
     auth: "{{ os_migrate_dst_auth }}"
-    name: "m1.small"
+    name: "osm_flavor"
   register: flavor_import_idem_after
 
-- name: ensure ram for m1.small did not change
+- name: ensure ram for osm_flavor did not change
   assert:
     that:
       - flavor_import_idem_before['openstack_flavors'][0].ram != None

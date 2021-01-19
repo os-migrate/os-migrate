@@ -25,3 +25,13 @@
         - test_clean
   tags:
     - always
+
+- name: Include flavor tasks
+  include_tasks: flavor.yml
+  args:
+    apply:
+      tags:
+        - test_flavor
+        - test_clean
+  tags:
+    - always

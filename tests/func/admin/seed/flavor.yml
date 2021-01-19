@@ -1,0 +1,9 @@
+- name: create osm_flavor
+  os_nova_flavor:
+    auth: "{{ os_migrate_src_auth }}"
+    state: present
+    name: osm_flavor
+    ram: 1024
+    vcpus: 1
+    disk: 10
+    ephemeral: 10
