@@ -1,5 +1,5 @@
 os_migrate_conversion_host_content_install: true
 # The following two variables must be
 # configured to set up properly the RHSM
-# os_migrate_conversion_host_content_rhsm_user: username
-# os_migrate_conversion_host_content_rhsm_password: password
+# os_migrate_conversion_rhsm_username: username
+# os_migrate_conversion_rhsm_password: password
