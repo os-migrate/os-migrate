@@ -1,22 +1,23 @@
 - name: validate loaded resources
-  os_migrate.os_migrate.validate_resource_files:
-    paths:
-      - "{{ os_migrate_data_dir }}/router_interfaces.yml"
   register: router_interfaces_file_validation
   when: import_router_interfaces_validate_file
 
+  ansible.builtin.os_migrate.os_migrate.validate_resource_files:
+    paths:
+    - "{{ os_migrate_data_dir }}/router_interfaces.yml"
 - name: stop when errors found
-  fail:
-    msg: "{{ router_interfaces_file_validation.errors|join(' ') }}"
   when: not ( router_interfaces_file_validation.ok | bool )
 
+  ansible.builtin.fail:
+    msg: "{{ router_interfaces_file_validation.errors|join(' ') }}"
 - name: read router interfaces resource file
-  os_migrate.os_migrate.read_resources:
-    path: "{{ os_migrate_data_dir }}/router_interfaces.yml"
   register: read_router_interfaces
 
+  ansible.builtin.os_migrate.os_migrate.read_resources:
+    path: "{{ os_migrate_data_dir }}/router_interfaces.yml"
 - name: import router interfaces
-  os_migrate.os_migrate.import_router_interface:
+  loop: "{{ read_router_interfaces.resources }}"
+  ansible.builtin.os_migrate.os_migrate.import_router_interface:
     auth: "{{ os_migrate_dst_auth }}"
     auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
@@ -26,4 +27,3 @@
     ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-  loop: "{{ read_router_interfaces.resources }}"

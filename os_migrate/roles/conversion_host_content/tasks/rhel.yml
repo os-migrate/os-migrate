@@ -1,5 +1,10 @@
 - name: register and auto-subscribe to available content.
-  redhat_subscription:
+  when:
+  - >-
+    os_migrate_conversion_rhsm_username is defined or
+    os_migrate_conversion_rhsm_org_id is defined
+
+  ansible.builtin.redhat_subscription:
     state: present
     # These params have defaults specified:
     auto_attach: "{{ os_migrate_conversion_rhsm_auto_attach|default(true) }}"
@@ -16,30 +21,32 @@
     pool_ids: "{{ os_migrate_conversion_rhsm_pool_ids|default(omit) }}"
     release: "{{ os_migrate_conversion_rhsm_release|default(omit) }}"
     rhsm_baseurl: "{{ os_migrate_conversion_rhsm_rhsm_baseurl|default(omit) }}"
-    rhsm_repo_ca_cert: "{{ os_migrate_conversion_rhsm_rhsm_repo_ca_cert|default(omit) }}"
-    server_hostname: "{{ os_migrate_conversion_rhsm_server_hostname|default(omit) }}"
-    server_insecure: "{{ os_migrate_conversion_rhsm_server_insecure|default(omit) }}"
-    server_proxy_hostname: "{{ os_migrate_conversion_rhsm_server_proxy_hostname|default(omit) }}"
-    server_proxy_password: "{{ os_migrate_conversion_rhsm_server_proxy_password|default(omit) }}"
-    server_proxy_port: "{{ os_migrate_conversion_rhsm_server_proxy_port|default(omit) }}"
-    server_proxy_user: "{{ os_migrate_conversion_rhsm_server_proxy_user|default(omit) }}"
+    rhsm_repo_ca_cert: "{{ os_migrate_conversion_rhsm_rhsm_repo_ca_cert|default(omit)\
+      \ }}"
+    server_hostname: "{{ os_migrate_conversion_rhsm_server_hostname|default(omit)\
+      \ }}"
+    server_insecure: "{{ os_migrate_conversion_rhsm_server_insecure|default(omit)\
+      \ }}"
+    server_proxy_hostname: "{{ os_migrate_conversion_rhsm_server_proxy_hostname|default(omit)\
+      \ }}"
+    server_proxy_password: "{{ os_migrate_conversion_rhsm_server_proxy_password|default(omit)\
+      \ }}"
+    server_proxy_port: "{{ os_migrate_conversion_rhsm_server_proxy_port|default(omit)\
+      \ }}"
+    server_proxy_user: "{{ os_migrate_conversion_rhsm_server_proxy_user|default(omit)\
+      \ }}"
     syspurpose: "{{ os_migrate_conversion_rhsm_syspurpose|default(omit) }}"
     username: "{{ os_migrate_conversion_rhsm_username|default(omit) }}"
-  when:
-    - >-
-      os_migrate_conversion_rhsm_username is defined or
-      os_migrate_conversion_rhsm_org_id is defined
-
 - name: update all packages
-  yum:
+  ansible.builtin.yum:
     name: '*'
     state: latest
 
 - name: install content
-  yum:
+  ansible.builtin.yum:
     name:
-      - nbdkit
-      - nbdkit-basic-plugins
-      - qemu-img
-      - libguestfs-tools
+    - nbdkit
+    - nbdkit-basic-plugins
+    - qemu-img
+    - libguestfs-tools
     state: present

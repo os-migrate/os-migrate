@@ -1,5 +1,5 @@
 - name: create osm_keypair
-  os_keypair:
+  ansible.builtin.os_keypair:
     auth: "{{ os_migrate_src_auth }}"
     name: osm_keypair
     state: present

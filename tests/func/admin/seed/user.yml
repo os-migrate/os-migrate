@@ -1,5 +1,5 @@
 - name: create osm_user
-  os_user:
+  ansible.builtin.os_user:
     auth: "{{ os_migrate_src_auth }}"
     name: osm_user
     state: present

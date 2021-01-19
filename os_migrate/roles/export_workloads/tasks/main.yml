@@ -1,5 +1,7 @@
 - name: scan instances for workloads to export
-  os_server_info:
+  register: src_workloads_info
+
+  ansible.builtin.os_server_info:
     filters: "{{ os_migrate_src_filters }}"
     auth: "{{ os_migrate_src_auth }}"
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
@@ -8,27 +10,22 @@
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  register: src_workloads_info
-
-- debug:
+- ansible.builtin.debug:
     msg: "{{ src_workloads_info.openstack_servers }}"
 
 - name: create id-name pairs of workloads to export
-  set_fact:
-    export_workloads_ids_names: "{{ (
-      src_workloads_info.openstack_servers
-        | json_query('[*].{name: name, id: id}')
-        | sort(attribute='id') ) }}"
+  ansible.builtin.set_fact:
+    export_workloads_ids_names: "{{ (src_workloads_info.openstack_servers | community.general.json_query('[*].{name:\
+      \ name, id: id}') | sort(attribute='id') ) }}"
 
 - name: filter names of workloads to export
-  set_fact:
-    export_workloads_ids_names: "{{ (
-      export_workloads_ids_names
-        | os_migrate.os_migrate.stringfilter(os_migrate_workloads_filter,
-                                             attribute='name') ) }}"
+  ansible.builtin.set_fact:
+    export_workloads_ids_names: "{{ ( export_workloads_ids_names | os_migrate.os_migrate.stringfilter(os_migrate_workloads_filter,\
+      \ attribute='name') ) }}"
 
 - name: export workload
-  os_migrate.os_migrate.export_workload:
+  loop: "{{ export_workloads_ids_names }}"
+  ansible.builtin.os_migrate.os_migrate.export_workload:
     path: "{{ os_migrate_data_dir }}/workloads.yml"
     name: "{{ item['id'] }}"
     migration_params:
@@ -40,4 +37,3 @@
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  loop: "{{ export_workloads_ids_names }}"

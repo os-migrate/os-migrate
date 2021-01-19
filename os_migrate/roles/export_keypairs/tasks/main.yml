@@ -1,5 +1,7 @@
 - name: scan available keypairs
-  os_migrate.os_migrate.os_keypairs_info:
+  register: src_keypairs_info
+
+  ansible.builtin.os_migrate.os_migrate.os_keypairs_info:
     auth: "{{ os_migrate_src_auth }}"
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_src_region_name|default(omit) }}"
@@ -7,24 +9,19 @@
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  register: src_keypairs_info
-
 - name: create id-name pairs of keypairs to export
-  set_fact:
-    export_keypairs_ids_names: "{{ (
-      src_keypairs_info.openstack_keypairs
-        | json_query('[*].{name: name, id: id}')
-        | sort(attribute='id') ) }}"
+  ansible.builtin.set_fact:
+    export_keypairs_ids_names: "{{ (src_keypairs_info.openstack_keypairs | community.general.json_query('[*].{name:\
+      \ name, id: id}') | sort(attribute='id') ) }}"
 
 - name: filter names of keypairs to export
-  set_fact:
-    export_keypairs_ids_names: "{{ (
-      export_keypairs_ids_names
-        | os_migrate.os_migrate.stringfilter(os_migrate_keypairs_filter,
-                                             attribute='name') ) }}"
+  ansible.builtin.set_fact:
+    export_keypairs_ids_names: "{{ ( export_keypairs_ids_names | os_migrate.os_migrate.stringfilter(os_migrate_keypairs_filter,\
+      \ attribute='name') ) }}"
 
 - name: export keypair
-  os_migrate.os_migrate.export_keypair:
+  loop: "{{ export_keypairs_ids_names }}"
+  ansible.builtin.os_migrate.os_migrate.export_keypair:
     auth: "{{ os_migrate_src_auth }}"
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_src_region_name|default(omit) }}"
@@ -34,4 +31,3 @@
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  loop: "{{ export_keypairs_ids_names }}"

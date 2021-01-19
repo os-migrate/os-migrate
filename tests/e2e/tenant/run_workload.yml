@@ -6,37 +6,32 @@
 
 - name: Workloads tasks
   block:
-    - include_role:
-        name: os_migrate.os_migrate.export_workloads
-      vars:
+  - vars:
         # This expression should export all osm_ workloads
         # skipping the universal conversion host (osm_uch)
         # which is used to move the VM's.
         # We create it on in seed.yml but we dont export it.
-        os_migrate_workloads_filter:
-          - regex: '^osm_(?!uch)'
+      os_migrate_workloads_filter:
+      - regex: '^osm_(?!uch)'
 
-    - name: set boot disk copy
-      replace:
-        path: "{{ os_migrate_data_dir }}/workloads.yml"
-        regexp: "boot_disk_copy: false"
-        replace: "boot_disk_copy: true"
-      when: set_boot_volume_copy|default(false)|bool
+    ansible.builtin.include_role:
+      name: os_migrate.os_migrate.export_workloads
+  - name: set boot disk copy
+    when: set_boot_volume_copy|default(false)|bool
 
-    - name: load exported data
-      set_fact:
-        resources: "{{ (lookup('file',
-                               os_migrate_data_dir +
-                               '/workloads.yml') | from_yaml)
-                       ['resources'] }}"
+    ansible.builtin.replace:
+      path: "{{ os_migrate_data_dir }}/workloads.yml"
+      regexp: "boot_disk_copy: false"
+      replace: "boot_disk_copy: true"
+  - name: load exported data
+    ansible.builtin.set_fact:
+      resources: "{{ (lookup('file', os_migrate_data_dir + '/workloads.yml') | from_yaml)\
+        \ ['resources'] }}"
 
-    - name: verify data contents
-      assert:
-        that:
-          - (resources |
-            json_query("[?params.name ==
-            'osm_server'].params.name")
-            == ['osm_server'])
+  - name: verify data contents
+    ansible.builtin.assert:
+      that:
+      - (resources | community.general.json_query("[?params.name == 'osm_server'].params.name") == ['osm_server'])
 
-    - include_role:
-        name: os_migrate.os_migrate.import_workloads
+  - ansible.builtin.include_role:
+      name: os_migrate.os_migrate.import_workloads

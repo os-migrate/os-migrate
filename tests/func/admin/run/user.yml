@@ -1,23 +1,18 @@
-- include_role:
-    name: os_migrate.os_migrate.export_users
-  vars:
+- vars:
     os_migrate_users_filter:
-      - regex: '^osm_'
+    - regex: '^osm_'
 
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.export_users
 - name: load exported data
-  set_fact:
-    resources: "{{ (lookup('file',
-                           os_migrate_data_dir +
-                           '/users.yml') | from_yaml)
-                   ['resources'] }}"
+  ansible.builtin.set_fact:
+    resources: "{{ (lookup('file', os_migrate_data_dir + '/users.yml') | from_yaml)\
+      \ ['resources'] }}"
 
 - name: verify data contents
-  assert:
+  ansible.builtin.assert:
     that:
-      - (resources |
-        json_query("[?params.name ==
-        'osm_user'].params.name")
-        == ['osm_user'])
+    - (resources | community.general.json_query("[?params.name == 'osm_user'].params.name") == ['osm_user'])
 
-- include_role:
+- ansible.builtin.include_role:
     name: os_migrate.os_migrate.import_users

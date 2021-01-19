@@ -1,5 +1,5 @@
 - name: Create security group rule
-  os_security_group_rule:
+  ansible.builtin.os_security_group_rule:
     auth: "{{ os_migrate_src_auth }}"
     security_group: osm_security_group
     protocol: tcp

@@ -1,41 +1,40 @@
----
 name: container-image-build
 on:
   push:
     paths-ignore:
-      - 'doc/**'
+    - 'doc/**'
 jobs:
   push_to_reg:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Install dependencies
-        run: |
-          sudo locale-gen en_US.UTF-8
-          sudo dpkg-reconfigure locales
-          sudo python -m pip install --upgrade pip
-          sudo pip install tox
-          sudo apt install software-properties-common -y
-          sudo add-apt-repository -y ppa:projectatomic/ppa
-          sudo apt update -y
-          sudo apt install build-essential findutils -y
-          sudo apt install podman -y
-      - name: Build os-migrate image
-        run: |
-          # The default tag is localhost/os_migrate_toolbox:latest
-          make toolbox-build
-      - name: Log into GitHub Container Registry
-        run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | \
-            podman login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-      - name: Push os-migrate image to GitHub Container Registry
-        run: |
-          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/os_migrate_toolbox
-          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-          [ "$VERSION" == "master" ] && VERSION=latest
-          echo IMAGE_ID=$IMAGE_ID
-          echo VERSION=$VERSION
-          podman tag localhost/os_migrate_toolbox $IMAGE_ID:$VERSION
-          podman push $IMAGE_ID:$VERSION
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        sudo locale-gen en_US.UTF-8
+        sudo dpkg-reconfigure locales
+        sudo python -m pip install --upgrade pip
+        sudo pip install tox
+        sudo apt install software-properties-common -y
+        sudo add-apt-repository -y ppa:projectatomic/ppa
+        sudo apt update -y
+        sudo apt install build-essential findutils -y
+        sudo apt install podman -y
+    - name: Build os-migrate image
+      run: |
+        # The default tag is localhost/os_migrate_toolbox:latest
+        make toolbox-build
+    - name: Log into GitHub Container Registry
+      run: |
+        echo "${{ secrets.GITHUB_TOKEN }}" | \
+          podman login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+    - name: Push os-migrate image to GitHub Container Registry
+      run: |
+        IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/os_migrate_toolbox
+        IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+        VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+        [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+        [ "$VERSION" == "master" ] && VERSION=latest
+        echo IMAGE_ID=$IMAGE_ID
+        echo VERSION=$VERSION
+        podman tag localhost/os_migrate_toolbox $IMAGE_ID:$VERSION
+        podman push $IMAGE_ID:$VERSION

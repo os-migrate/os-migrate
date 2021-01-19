@@ -1,5 +1,5 @@
 - name: create osm_net
-  os_network:
+  ansible.builtin.os_network:
     auth: "{{ os_migrate_src_auth }}"
     name: osm_net
     # Apparently description is an unsupported param in Ansible even

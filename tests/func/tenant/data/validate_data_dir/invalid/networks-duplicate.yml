@@ -1,30 +1,30 @@
 os_migrate_version: 0.6.0
 resources:
-  - _info:
-      availability_zones: []
-      created_at: '2020-02-17T16:02:56Z'
-      id: ee2f0425-d87f-4173-90e5-b8993665a033
-      project_id: fc4098dfdf564598812a2a73c49c46df
-      qos_policy_id: null
-      revision_number: 1
-      status: ACTIVE
-      subnet_ids: []
-      updated_at: '2020-02-17T16:02:56Z'
-    params:
-      availability_zone_hints: []
-      description: osm_net test network
-      dns_domain: null
-      is_admin_state_up: true
-      is_default: null
-      is_port_security_enabled: true
-      is_router_external: false
-      is_shared: false
-      is_vlan_transparent: null
-      mtu: 1450
-      name: osm_net
-      provider_network_type: null
-      provider_physical_network: null
-      provider_segmentation_id: null
-      qos_policy_name: null
-      segments: null
-    type: openstack.network.Network
+- _info:
+    availability_zones: []
+    created_at: '2020-02-17T16:02:56Z'
+    id: ee2f0425-d87f-4173-90e5-b8993665a033
+    project_id: fc4098dfdf564598812a2a73c49c46df
+    qos_policy_id:
+    revision_number: 1
+    status: ACTIVE
+    subnet_ids: []
+    updated_at: '2020-02-17T16:02:56Z'
+  params:
+    availability_zone_hints: []
+    description: osm_net test network
+    dns_domain:
+    is_admin_state_up: true
+    is_default:
+    is_port_security_enabled: true
+    is_router_external: false
+    is_shared: false
+    is_vlan_transparent:
+    mtu: 1450
+    name: osm_net
+    provider_network_type:
+    provider_physical_network:
+    provider_segmentation_id:
+    qos_policy_name:
+    segments:
+  type: openstack.network.Network

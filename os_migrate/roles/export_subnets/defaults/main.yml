@@ -1,2 +1,2 @@
 os_migrate_subnets_filter:
-  - regex: .*
+- regex: .*

@@ -1,8 +1,8 @@
 - name: remove osm_flavor
-  os_nova_flavor:
+  loop:
+  - "{{ os_migrate_src_auth }}"
+  - "{{ os_migrate_dst_auth }}"
+  ansible.builtin.os_nova_flavor:
     auth: "{{ item }}"
     name: osm_flavor
     state: absent
-  loop:
-    - "{{ os_migrate_src_auth }}"
-    - "{{ os_migrate_dst_auth }}"

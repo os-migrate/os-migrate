@@ -1,28 +1,39 @@
 - name: add conversion hosts to inventory
-  include_tasks: conv_host_inventory.yml
   vars:
     inventory_name: "{{ item.inventory_name }}"
     os_migrate_conversion_auth: "{{ item.os_migrate_conversion_auth }}"
     os_migrate_conversion_auth_type: "{{ item.os_migrate_conversion_auth_type }}"
-    os_migrate_conversion_region_name: "{{ item.os_migrate_conversion_region_name }}"
-    os_migrate_conversion_validate_certs: "{{ item.os_migrate_conversion_validate_certs }}"
+    os_migrate_conversion_region_name: "{{ item.os_migrate_conversion_region_name\
+      \ }}"
+    os_migrate_conversion_validate_certs: "{{ item.os_migrate_conversion_validate_certs\
+      \ }}"
     os_migrate_conversion_ca_cert: "{{ item.os_migrate_conversion_ca_cert }}"
-    os_migrate_conversion_client_cert: "{{ item.os_migrate_conversion_client_cert }}"
+    os_migrate_conversion_client_cert: "{{ item.os_migrate_conversion_client_cert\
+      \ }}"
     os_migrate_conversion_client_key: "{{ item.os_migrate_conversion_client_key }}"
   loop:
-    - inventory_name: os_migrate_conv_src
-      os_migrate_conversion_auth: "{{ os_migrate_src_auth }}"
-      os_migrate_conversion_auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
-      os_migrate_conversion_region_name: "{{ os_migrate_src_region_name|default(omit) }}"
-      os_migrate_conversion_validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-      os_migrate_conversion_ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-      os_migrate_conversion_client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-      os_migrate_conversion_client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-    - inventory_name: os_migrate_conv_dst
-      os_migrate_conversion_auth: "{{ os_migrate_dst_auth }}"
-      os_migrate_conversion_auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
-      os_migrate_conversion_region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
-      os_migrate_conversion_validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-      os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-      os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-      os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+  - inventory_name: os_migrate_conv_src
+    os_migrate_conversion_auth: "{{ os_migrate_src_auth }}"
+    os_migrate_conversion_auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+    os_migrate_conversion_region_name: "{{ os_migrate_src_region_name|default(omit)\
+      \ }}"
+    os_migrate_conversion_validate_certs: "{{ os_migrate_src_validate_certs|default(omit)\
+      \ }}"
+    os_migrate_conversion_ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+    os_migrate_conversion_client_cert: "{{ os_migrate_src_client_cert|default(omit)\
+      \ }}"
+    os_migrate_conversion_client_key: "{{ os_migrate_src_client_key|default(omit)\
+      \ }}"
+  - inventory_name: os_migrate_conv_dst
+    os_migrate_conversion_auth: "{{ os_migrate_dst_auth }}"
+    os_migrate_conversion_auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+    os_migrate_conversion_region_name: "{{ os_migrate_dst_region_name|default(omit)\
+      \ }}"
+    os_migrate_conversion_validate_certs: "{{ os_migrate_dst_validate_certs|default(omit)\
+      \ }}"
+    os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+    os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert|default(omit)\
+      \ }}"
+    os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key|default(omit)\
+      \ }}"
+  ansible.builtin.include_tasks: conv_host_inventory.yml

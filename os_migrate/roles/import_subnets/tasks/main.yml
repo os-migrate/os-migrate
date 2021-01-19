@@ -1,22 +1,23 @@
 - name: validate loaded resources
-  os_migrate.os_migrate.validate_resource_files:
-    paths:
-      - "{{ os_migrate_data_dir }}/subnets.yml"
   register: subnets_file_validation
   when: import_subnets_validate_file
 
+  ansible.builtin.os_migrate.os_migrate.validate_resource_files:
+    paths:
+    - "{{ os_migrate_data_dir }}/subnets.yml"
 - name: stop when errors found
-  fail:
-    msg: "{{ subnets_file_validation.errors|join(' ') }}"
   when: not ( subnets_file_validation.ok | bool )
 
+  ansible.builtin.fail:
+    msg: "{{ subnets_file_validation.errors|join(' ') }}"
 - name: read subnets resource file
-  os_migrate.os_migrate.read_resources:
-    path: "{{ os_migrate_data_dir }}/subnets.yml"
   register: read_networks
 
+  ansible.builtin.os_migrate.os_migrate.read_resources:
+    path: "{{ os_migrate_data_dir }}/subnets.yml"
 - name: import subnets
-  os_migrate.os_migrate.import_subnet:
+  loop: "{{ read_networks.resources }}"
+  ansible.builtin.os_migrate.os_migrate.import_subnet:
     auth: "{{ os_migrate_dst_auth }}"
     auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
@@ -26,4 +27,3 @@
     ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-  loop: "{{ read_networks.resources }}"

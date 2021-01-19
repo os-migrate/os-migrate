@@ -3,19 +3,19 @@ name: os_migrate
 version: 0.6.0
 readme: README.md
 authors:
-  - Jiri Stransky <jistr@redhat.com>
-  - Carlos Camacho <ccamacho@redhat.com>
-  - Ryan Brady <rbrady@redhat.com>
-  - Sagi Shnaidman <sshnaidm@redhat.com>
-  - Matthew Arnold <marnold@redhat.com>
+- Jiri Stransky <jistr@redhat.com>
+- Carlos Camacho <ccamacho@redhat.com>
+- Ryan Brady <rbrady@redhat.com>
+- Sagi Shnaidman <sshnaidm@redhat.com>
+- Matthew Arnold <marnold@redhat.com>
   # Keep this at the bottom
-  - os-migrate (https://github.com/os-migrate)
+- os-migrate (https://github.com/os-migrate)
 description: OpenStack tenant migration tooling
 license:
-  - Apache-2.0
+- Apache-2.0
 tags:
-  - openstack
-  - migrations
+- openstack
+- migrations
 dependencies: {}
 repository: 'https://github.com/os-migrate/os-migrate'
 homepage: 'https://github.com/os-migrate/os-migrate'

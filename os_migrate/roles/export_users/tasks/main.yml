@@ -1,5 +1,7 @@
 - name: scan available users
-  os_user_info:
+  register: src_users_info
+
+  ansible.builtin.os_user_info:
     auth: "{{ os_migrate_src_auth }}"
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_src_region_name|default(omit) }}"
@@ -7,24 +9,19 @@
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  register: src_users_info
-
 - name: create id-name pairs of users to export
-  set_fact:
-    export_users_ids_names: "{{ (
-      src_users_info.openstack_users
-        | json_query('[*].{name: name, id: id}')
-        | sort(attribute='id') ) }}"
+  ansible.builtin.set_fact:
+    export_users_ids_names: "{{ (src_users_info.openstack_users | community.general.json_query('[*].{name:\
+      \ name, id: id}') | sort(attribute='id') ) }}"
 
 - name: filter names of users to export
-  set_fact:
-    export_users_ids_names: "{{ (
-      export_users_ids_names
-        | os_migrate.os_migrate.stringfilter(os_migrate_users_filter,
-                                             attribute='name') ) }}"
+  ansible.builtin.set_fact:
+    export_users_ids_names: "{{ ( export_users_ids_names | os_migrate.os_migrate.stringfilter(os_migrate_users_filter,\
+      \ attribute='name') ) }}"
 
 - name: export users
-  os_migrate.os_migrate.export_user:
+  loop: "{{ export_users_ids_names }}"
+  ansible.builtin.os_migrate.os_migrate.export_user:
     auth: "{{ os_migrate_src_auth }}"
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_src_region_name|default(omit) }}"
@@ -34,4 +31,3 @@
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  loop: "{{ export_users_ids_names }}"

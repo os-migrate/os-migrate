@@ -1,5 +1,7 @@
 - name: scan available routers
-  os_migrate.os_migrate.os_routers_info:
+  register: src_routers_info
+
+  ansible.builtin.os_migrate.os_migrate.os_routers_info:
     filters: "{{ os_migrate_src_filters }}"
     auth: "{{ os_migrate_src_auth }}"
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
@@ -8,24 +10,19 @@
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  register: src_routers_info
-
 - name: create id-name pairs of routers to export
-  set_fact:
-    export_routers_ids_names: "{{ (
-      src_routers_info.openstack_routers
-        | json_query('[*].{name: name, id: id}')
-        | sort(attribute='id') ) }}"
+  ansible.builtin.set_fact:
+    export_routers_ids_names: "{{ (src_routers_info.openstack_routers | community.general.json_query('[*].{name:\
+      \ name, id: id}') | sort(attribute='id') ) }}"
 
 - name: filter names of routers to export
-  set_fact:
-    export_routers_ids_names: "{{ (
-      export_routers_ids_names
-        | os_migrate.os_migrate.stringfilter(os_migrate_routers_filter,
-                                             attribute='name') ) }}"
+  ansible.builtin.set_fact:
+    export_routers_ids_names: "{{ ( export_routers_ids_names | os_migrate.os_migrate.stringfilter(os_migrate_routers_filter,\
+      \ attribute='name') ) }}"
 
 - name: export router interfaces
-  os_migrate.os_migrate.export_router_interfaces:
+  loop: "{{ export_routers_ids_names }}"
+  ansible.builtin.os_migrate.os_migrate.export_router_interfaces:
     auth: "{{ os_migrate_src_auth }}"
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_src_region_name|default(omit) }}"
@@ -35,4 +32,3 @@
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  loop: "{{ export_routers_ids_names }}"

@@ -1,22 +1,23 @@
 - name: validate loaded resources
-  os_migrate.os_migrate.validate_resource_files:
-    paths:
-      - "{{ os_migrate_data_dir }}/security_groups.yml"
   register: security_groups_file_validation
   when: import_security_groups_validate_file
 
+  ansible.builtin.os_migrate.os_migrate.validate_resource_files:
+    paths:
+    - "{{ os_migrate_data_dir }}/security_groups.yml"
 - name: stop when errors found
-  fail:
-    msg: "{{ security_groups_file_validation.errors|join(' ') }}"
   when: not ( security_groups_file_validation.ok | bool )
 
+  ansible.builtin.fail:
+    msg: "{{ security_groups_file_validation.errors|join(' ') }}"
 - name: read security groups resource file
-  os_migrate.os_migrate.read_resources:
-    path: "{{ os_migrate_data_dir }}/security_groups.yml"
   register: read_security_groups
 
+  ansible.builtin.os_migrate.os_migrate.read_resources:
+    path: "{{ os_migrate_data_dir }}/security_groups.yml"
 - name: import security groups
-  os_migrate.os_migrate.import_security_group:
+  loop: "{{ read_security_groups.resources }}"
+  ansible.builtin.os_migrate.os_migrate.import_security_group:
     auth: "{{ os_migrate_dst_auth }}"
     auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
@@ -26,4 +27,3 @@
     ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-  loop: "{{ read_security_groups.resources }}"

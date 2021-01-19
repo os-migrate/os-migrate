@@ -1,15 +1,15 @@
 - name: clone devstack
-  git:
+  become: true
+  become_user: stack
+
+  ansible.builtin.git:
     repo: https://opendev.org/openstack/devstack
     version: master
     dest: /home/stack/devstack
     update: no
+- name: write devstack config
   become: true
   become_user: stack
-
-- name: write devstack config
-  template:
+  ansible.builtin.template:
     src: local.conf.j2
     dest: /home/stack/devstack/local.conf
-  become: true
-  become_user: stack

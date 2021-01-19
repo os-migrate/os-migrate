@@ -1,5 +1,5 @@
-os_migrate_src_validate_certs: False
-os_migrate_dst_validate_certs: False
+os_migrate_src_validate_certs: false
+os_migrate_dst_validate_certs: false
 
 os_migrate_src_release: 13
 os_migrate_dst_release: 13

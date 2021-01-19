@@ -1,17 +1,17 @@
 - name: remove osm_subnet
-  os_subnet:
+  loop:
+  - "{{ os_migrate_src_auth }}"
+  - "{{ os_migrate_dst_auth }}"
+
+  ansible.builtin.os_subnet:
     auth: "{{ item }}"
     name: osm_subnet
     state: absent
-  loop:
-    - "{{ os_migrate_src_auth }}"
-    - "{{ os_migrate_dst_auth }}"
-
 - name: remove osm_router_subnet
-  os_subnet:
+  loop:
+  - "{{ os_migrate_src_auth }}"
+  - "{{ os_migrate_dst_auth }}"
+  ansible.builtin.os_subnet:
     auth: "{{ item }}"
     name: osm_router_subnet
     state: absent
-  loop:
-    - "{{ os_migrate_src_auth }}"
-    - "{{ os_migrate_dst_auth }}"

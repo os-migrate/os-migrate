@@ -1,5 +1,7 @@
 - name: scan available projects
-  os_project_info:
+  register: src_projects_info
+
+  ansible.builtin.os_project_info:
     auth: "{{ os_migrate_src_auth }}"
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_src_region_name|default(omit) }}"
@@ -7,21 +9,15 @@
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  register: src_projects_info
-
 - name: create id-name pairs of projects to export
-  set_fact:
-    export_projects_ids_names: "{{ (
-      src_projects_info.openstack_projects
-        | json_query('[*].{name: name, id: id}')
-        | sort(attribute='id') ) }}"
+  ansible.builtin.set_fact:
+    export_projects_ids_names: "{{ (src_projects_info.openstack_projects | community.general.json_query('[*].{name:\
+      \ name, id: id}') | sort(attribute='id') ) }}"
 
 - name: filter names of projects to export
-  set_fact:
-    export_projects_ids_names: "{{ (
-      export_projects_ids_names
-        | os_migrate.os_migrate.stringfilter(os_migrate_projects_filter,
-                                             attribute='name') ) }}"
+  ansible.builtin.set_fact:
+    export_projects_ids_names: "{{ ( export_projects_ids_names | os_migrate.os_migrate.stringfilter(os_migrate_projects_filter,\
+      \ attribute='name') ) }}"
 
 - name: export project
   os_migrate.os_migrate.export_project:

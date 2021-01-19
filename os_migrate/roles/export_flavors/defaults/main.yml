@@ -1,2 +1,2 @@
 os_migrate_flavors_filter:
-  - regex: .*
+- regex: .*

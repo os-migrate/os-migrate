@@ -1,7 +1,7 @@
 - name: start devstack
   changed_when: true
-  shell: |
-    cd /home/stack/devstack
-    LOGFILE=/home/stack/devstack.log ./stack.sh 2>&1
   become: true
   become_user: stack
+  ansible.builtin.shell: |
+    cd /home/stack/devstack
+    LOGFILE=/home/stack/devstack.log ./stack.sh 2>&1

@@ -3,26 +3,22 @@
 # import_playbook, or spawn an ansible-playbook subprocess? The latter
 # might be actually a more precise way to test the real end-user
 # experience.
-- include_role:
-    name: os_migrate.os_migrate.export_images
-  vars:
+- vars:
     os_migrate_images_filter:
-      - regex: '^osm_'
+    - regex: '^osm_'
 
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.export_images
 - name: load exported data
-  set_fact:
-    image_resources: "{{ (lookup('file',
-                           os_migrate_data_dir +
-                           '/images.yml') | from_yaml)
-                   ['resources'] }}"
+  ansible.builtin.set_fact:
+    image_resources: "{{ (lookup('file', os_migrate_data_dir + '/images.yml') | from_yaml)\
+      \ ['resources'] }}"
 
 - name: verify data contents
-  assert:
+  ansible.builtin.assert:
     that:
-      - (image_resources |
-        json_query("[?params.name ==
-        'osm_image'].params.min_ram")
-        == [128])
+    - (image_resources | community.general.json_query("[?params.name == 'osm_image'].params.min_ram")
+      == [128])
 
-- include_role:
+- ansible.builtin.include_role:
     name: os_migrate.os_migrate.import_images

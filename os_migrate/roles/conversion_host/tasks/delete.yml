@@ -1,5 +1,5 @@
 - name: delete os_migrate conversion host
-  os_server:
+  ansible.builtin.os_server:
     name: "{{ os_migrate_conversion_host_name }}"
     state: absent
     delete_fip: yes
@@ -13,7 +13,7 @@
     client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
 
 - name: delete os_migrate conversion keypair
-  os_keypair:
+  ansible.builtin.os_keypair:
     name: "{{ os_migrate_conversion_keypair_name }}"
     state: absent
     auth: "{{ os_migrate_conversion_auth }}"
@@ -25,7 +25,7 @@
     client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
 
 - name: delete os_migrate conversion security group
-  os_security_group:
+  ansible.builtin.os_security_group:
     name: "{{ os_migrate_conversion_secgroup_name }}"
     state: absent
     auth: "{{ os_migrate_conversion_auth }}"
@@ -37,7 +37,7 @@
     client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
 
 - name: delete os_migrate conversion router
-  os_router:
+  ansible.builtin.os_router:
     name: "{{ os_migrate_conversion_router_name }}"
     state: absent
     auth: "{{ os_migrate_conversion_auth }}"
@@ -49,7 +49,7 @@
     client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
 
 - name: delete os_migrate conversion subnet
-  os_subnet:
+  ansible.builtin.os_subnet:
     name: "{{ os_migrate_conversion_subnet_name }}"
     state: absent
     auth: "{{ os_migrate_conversion_auth }}"
@@ -61,7 +61,7 @@
     client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
 
 - name: delete os_migrate conversion net
-  os_network:
+  ansible.builtin.os_network:
     name: "{{ os_migrate_conversion_net_name }}"
     state: absent
     auth: "{{ os_migrate_conversion_auth }}"

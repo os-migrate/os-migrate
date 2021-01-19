@@ -1,5 +1,5 @@
 - name: create osm_flavor
-  os_nova_flavor:
+  ansible.builtin.os_nova_flavor:
     auth: "{{ os_migrate_src_auth }}"
     state: present
     name: osm_flavor

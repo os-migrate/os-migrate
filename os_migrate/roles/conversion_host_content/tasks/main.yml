@@ -1,15 +1,15 @@
 - name: Conversion host content tasks
   block:
-    - name: Display host os
-      debug:
-        msg: >-
-          Conversion Host OS is
-          {{ ansible_distribution }} {{ ansible_distribution_version }}
+  - name: Display host os
+    ansible.builtin.debug:
+      msg: >-
+        Conversion Host OS is
+        {{ ansible_distribution }} {{ ansible_distribution_version }}
 
-    - name: Include CentOS tasks
-      include_tasks: centos.yml
-      when: ansible_distribution in ['CentOS']
+  - name: Include CentOS tasks
+    when: ansible_distribution in ['CentOS']
 
-    - name: Include RHEL tasks
-      include_tasks: rhel.yml
-      when: ansible_distribution in ['RedHat']
+    ansible.builtin.include_tasks: centos.yml
+  - name: Include RHEL tasks
+    when: ansible_distribution in ['RedHat']
+    ansible.builtin.include_tasks: rhel.yml

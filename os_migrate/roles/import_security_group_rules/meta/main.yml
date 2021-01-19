@@ -1,4 +1,3 @@
----
 galaxy_info:
   author: os-migrate
   description: os-migrate resource
@@ -6,9 +5,9 @@ galaxy_info:
   license: Apache-2.0
   min_ansible_version: 2.9
   platforms:
-    - name: Fedora
-      versions:
-        - 30
+  - name: Fedora
+    versions:
+    - 30
   galaxy_tags: ["os-migrate"]
 dependencies:
-  - role: os_migrate.os_migrate.prelude_dst
+- role: os_migrate.os_migrate.prelude_dst

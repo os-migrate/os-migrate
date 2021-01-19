@@ -1,5 +1,7 @@
 - name: scan available subnets
-  os_subnets_info:
+  register: src_subnets_info
+
+  ansible.builtin.os_subnets_info:
     filters: "{{ os_migrate_src_filters }}"
     auth: "{{ os_migrate_src_auth }}"
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
@@ -8,24 +10,19 @@
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  register: src_subnets_info
-
 - name: create id-name pairs of subnets to export
-  set_fact:
-    export_subnets_ids_names: "{{ (
-      src_subnets_info.openstack_subnets
-        | json_query('[*].{name: name, id: id}')
-        | sort(attribute='id') ) }}"
+  ansible.builtin.set_fact:
+    export_subnets_ids_names: "{{ (src_subnets_info.openstack_subnets | community.general.json_query('[*].{name:\
+      \ name, id: id}') | sort(attribute='id') ) }}"
 
 - name: filter names of subnets to export
-  set_fact:
-    export_subnets_ids_names: "{{ (
-      export_subnets_ids_names
-        | os_migrate.os_migrate.stringfilter(os_migrate_subnets_filter,
-                                             attribute='name') ) }}"
+  ansible.builtin.set_fact:
+    export_subnets_ids_names: "{{ ( export_subnets_ids_names | os_migrate.os_migrate.stringfilter(os_migrate_subnets_filter,\
+      \ attribute='name') ) }}"
 
 - name: export subnet
-  os_migrate.os_migrate.export_subnet:
+  loop: "{{ export_subnets_ids_names }}"
+  ansible.builtin.os_migrate.os_migrate.export_subnet:
     auth: "{{ os_migrate_src_auth }}"
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_src_region_name|default(omit) }}"
@@ -35,4 +32,3 @@
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  loop: "{{ export_subnets_ids_names }}"

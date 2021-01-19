@@ -1,5 +1,5 @@
 - name: Create osm_volume
-  os_volume:
+  ansible.builtin.os_volume:
     display_name: osm_volume
     size: 1
     auth: "{{ os_migrate_src_auth }}"
@@ -9,7 +9,7 @@
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
 
 - name: Create osm_server
-  os_server:
+  ansible.builtin.os_server:
     name: osm_server
     state: present
     flavor: "{{ os_migrate_src_osm_server_flavor|default(m1.small) }}"
@@ -18,7 +18,7 @@
     network: osm_net
     security_groups: osm_security_group
     volumes:
-      - osm_volume
+    - osm_volume
     # We get a floating IP
     # for the workload VM
     auto_ip: yes
@@ -32,7 +32,7 @@
 
 # In order to be able to migrate the VMS they must be turned off
 - name: Shutdown osm_server
-  os_server_action:
+  ansible.builtin.os_server_action:
     auth: "{{ os_migrate_src_auth }}"
     server: osm_server
     action: stop

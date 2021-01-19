@@ -1,22 +1,20 @@
 ### EXPORT IDEMPOTENCE ###
 
-- include_role:
-    name: os_migrate.os_migrate.export_security_group_rules
-  vars:
+- vars:
     os_migrate_security_groups_filter:
-      - regex: '^osm_'
+    - regex: '^osm_'
 
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.export_security_group_rules
 - name: re-load resources for idempotency test
-  set_fact:
-    sgr_resources_idem: "{{ (lookup('file',
-                                os_migrate_data_dir +
-                                '/security_group_rules.yml') | from_yaml)
-                        ['resources'] }}"
+  ansible.builtin.set_fact:
+    sgr_resources_idem: "{{ (lookup('file', os_migrate_data_dir + '/security_group_rules.yml')\
+      \ | from_yaml) ['resources'] }}"
 
 - name: verify that export file did not change
-  assert:
+  ansible.builtin.assert:
     that:
-      - sgr_resources_idem == security_group_rule_resources
+    - sgr_resources_idem == security_group_rule_resources
     fail_msg: |
       sgr_resources_idem:
       {{ sgr_resources_idem | to_nice_yaml }}
@@ -26,29 +24,27 @@
 ### IMPORT IDEMPOTENCE ###
 
 - name: look up osm_security_group dst cloud
-  os_migrate.os_migrate.os_security_groups_info:
+  register: sgr_import_idem_before
+
+  ansible.builtin.os_migrate.os_migrate.os_security_groups_info:
     auth: "{{ os_migrate_dst_auth }}"
     auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
-  register: sgr_import_idem_before
-
-- include_role:
+- ansible.builtin.include_role:
     name: os_migrate.os_migrate.import_security_group_rules
 
 - name: look up osm_security_group dst cloud again
-  os_migrate.os_migrate.os_security_groups_info:
+  register: sgr_import_idem_after
+
+  ansible.builtin.os_migrate.os_migrate.os_security_groups_info:
     auth: "{{ os_migrate_dst_auth }}"
     auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
-  register: sgr_import_idem_after
-
 - name: ensure updated_at for osm_security_group did not change
-  assert:
+  ansible.builtin.assert:
     that:
-      - "sgr_import_idem_before['openstack_security_groups'][0].updated_at
-        != None"
-      - "sgr_import_idem_before['openstack_security_groups'][0]['updated_at'] \
-         == sgr_import_idem_after['openstack_security_groups'][0]['updated_at']"
+    - "sgr_import_idem_before['openstack_security_groups'][0].updated_at != None"
+    - "sgr_import_idem_before['openstack_security_groups'][0]['updated_at'] == sgr_import_idem_after['openstack_security_groups'][0]['updated_at']"
     fail_msg: |
       sgr_import_idem_before updated_at:
       {{ sgr_import_idem_before['openstack_security_groups'][0].updated_at }}
