@@ -21,3 +21,11 @@
       tags:
         - test_project
   tags: always
+
+- name: Include flavor tasks
+  include_tasks: flavor.yml
+  args:
+    apply:
+      tags:
+        - test_flavor
+  tags: always
