@@ -1,37 +1,37 @@
-- name: Include keypair tasks
-  include_tasks: keypair.yml
-  args:
-    apply:
-      tags:
-        - test_keypair
-        - test_clean
+-   name: Include keypair tasks
+    args:
+      apply:
+        tags:
+        -   test_keypair
+        -   test_clean
 
-- name: Include user tasks
-  include_tasks: user.yml
-  args:
-    apply:
-      tags:
-        - test_user
-        - test_clean
-  tags:
-    - always
+    ansible.builtin.include_tasks: keypair.yml
+-   name: Include user tasks
+    args:
+      apply:
+        tags:
+        -   test_user
+        -   test_clean
+    tags:
+    -   always
 
-- name: Include project tasks
-  include_tasks: project.yml
-  args:
-    apply:
-      tags:
-        - test_project
-        - test_clean
-  tags:
-    - always
+    ansible.builtin.include_tasks: user.yml
+-   name: Include project tasks
+    args:
+      apply:
+        tags:
+        -   test_project
+        -   test_clean
+    tags:
+    -   always
 
-- name: Include flavor tasks
-  include_tasks: flavor.yml
-  args:
-    apply:
-      tags:
-        - test_flavor
-        - test_clean
-  tags:
-    - always
+    ansible.builtin.include_tasks: project.yml
+-   name: Include flavor tasks
+    args:
+      apply:
+        tags:
+        -   test_flavor
+        -   test_clean
+    tags:
+    -   always
+    ansible.builtin.include_tasks: flavor.yml

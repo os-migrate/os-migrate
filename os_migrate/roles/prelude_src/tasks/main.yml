@@ -1,20 +1,20 @@
-- name: set os_migrate_src_project unless it was set explicitly
-  when:
-    - os_migrate_src_filter_current_project|default(true)|bool
-  block:
-    - name: fetch information about currently authenticated user/project
-      os_migrate.os_migrate.auth_info:
-        auth: "{{ os_migrate_src_auth }}"
-        auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
-        region_name: "{{ os_migrate_src_region_name|default(omit) }}"
-        validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-        ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-        client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-        client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-      register: _auth_info
+-   name: set os_migrate_src_project unless it was set explicitly
+    when:
+    -   os_migrate_src_filter_current_project|default(true)|bool
+    block:
+    -   name: fetch information about currently authenticated user/project
+        register: _auth_info
 
-    - name: set os_migrate_src_project_id and os_migrate_src_filters
-      set_fact:
-        os_migrate_src_project_id: "{{ _auth_info.auth_info.project_id }}"
-        os_migrate_src_filters:
-          project_id: "{{ _auth_info.auth_info.project_id }}"
+        ansible.builtin.os_migrate.os_migrate.auth_info:
+          auth: "{{ os_migrate_src_auth }}"
+          auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+          region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+          validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+          ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+          client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+          client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    -   name: set os_migrate_src_project_id and os_migrate_src_filters
+        ansible.builtin.set_fact:
+          os_migrate_src_project_id: "{{ _auth_info.auth_info.project_id }}"
+          os_migrate_src_filters:
+            project_id: "{{ _auth_info.auth_info.project_id }}"

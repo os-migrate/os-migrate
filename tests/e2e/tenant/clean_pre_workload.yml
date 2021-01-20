@@ -1,182 +1,182 @@
-- name: Remove pre-workload test data
-  file:
-    path: "{{ os_migrate_data_dir }}/{{ item }}"
-    state: absent
-  loop:
-    - image_blobs
-    - images.yml
-    - networks.yml
-    - routers.yml
-    - security_group_rules.yml
-    - security_groups.yml
-    - subnets.yml
+-   name: Remove pre-workload test data
+    loop:
+    -   image_blobs
+    -   images.yml
+    -   networks.yml
+    -   routers.yml
+    -   security_group_rules.yml
+    -   security_groups.yml
+    -   subnets.yml
 
-- name: remove osm_image
-  os_image:
-    auth: "{{ item.auth }}"
-    name: osm_image
-    state: absent
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
-  loop:
-    - auth: "{{ os_migrate_src_auth }}"
-      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-    - auth: "{{ os_migrate_dst_auth }}"
-      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    ansible.builtin.file:
+      path: "{{ os_migrate_data_dir }}/{{ item }}"
+      state: absent
+-   name: remove osm_image
+    loop:
+    -   auth: "{{ os_migrate_src_auth }}"
+        validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    -   auth: "{{ os_migrate_dst_auth }}"
+        validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
-- name: remove osm_key keypair
-  os_keypair:
-    auth: "{{ item.auth }}"
-    state: absent
-    name: osm_key
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
-  loop:
-    - auth: "{{ os_migrate_src_auth }}"
-      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-    - auth: "{{ os_migrate_dst_auth }}"
-      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    ansible.builtin.os_image:
+      auth: "{{ item.auth }}"
+      name: osm_image
+      state: absent
+      validate_certs: "{{ item.validate_certs }}"
+      ca_cert: "{{ item.ca_cert }}"
+      client_cert: "{{ item.client_cert }}"
+      client_key: "{{ item.client_key }}"
+-   name: remove osm_key keypair
+    loop:
+    -   auth: "{{ os_migrate_src_auth }}"
+        validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    -   auth: "{{ os_migrate_dst_auth }}"
+        validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
-- name: remove osm_router
-  os_router:
-    auth: "{{ item.auth }}"
-    name: osm_router
-    state: absent
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
-    wait: yes
-  loop:
-    - auth: "{{ os_migrate_src_auth }}"
-      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-    - auth: "{{ os_migrate_dst_auth }}"
-      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    ansible.builtin.os_keypair:
+      auth: "{{ item.auth }}"
+      state: absent
+      name: osm_key
+      validate_certs: "{{ item.validate_certs }}"
+      ca_cert: "{{ item.ca_cert }}"
+      client_cert: "{{ item.client_cert }}"
+      client_key: "{{ item.client_key }}"
+-   name: remove osm_router
+    loop:
+    -   auth: "{{ os_migrate_src_auth }}"
+        validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    -   auth: "{{ os_migrate_dst_auth }}"
+        validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
-- name: remove osm_server_port
-  os_port:
-    auth: "{{ item.auth }}"
-    name: osm_server_port_0
-    network: osm_net
-    state: absent
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
-  loop:
-    - auth: "{{ os_migrate_src_auth }}"
-      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-    - auth: "{{ os_migrate_dst_auth }}"
-      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    ansible.builtin.os_router:
+      auth: "{{ item.auth }}"
+      name: osm_router
+      state: absent
+      validate_certs: "{{ item.validate_certs }}"
+      ca_cert: "{{ item.ca_cert }}"
+      client_cert: "{{ item.client_cert }}"
+      client_key: "{{ item.client_key }}"
+      wait: yes
+-   name: remove osm_server_port
+    loop:
+    -   auth: "{{ os_migrate_src_auth }}"
+        validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    -   auth: "{{ os_migrate_dst_auth }}"
+        validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
-- name: remove osm_subnet
-  os_subnet:
-    auth: "{{ item.auth }}"
-    name: osm_subnet
-    state: absent
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
-  loop:
-    - auth: "{{ os_migrate_src_auth }}"
-      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-    - auth: "{{ os_migrate_dst_auth }}"
-      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    ansible.builtin.os_port:
+      auth: "{{ item.auth }}"
+      name: osm_server_port_0
+      network: osm_net
+      state: absent
+      validate_certs: "{{ item.validate_certs }}"
+      ca_cert: "{{ item.ca_cert }}"
+      client_cert: "{{ item.client_cert }}"
+      client_key: "{{ item.client_key }}"
+-   name: remove osm_subnet
+    loop:
+    -   auth: "{{ os_migrate_src_auth }}"
+        validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    -   auth: "{{ os_migrate_dst_auth }}"
+        validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
-- name: remove osm_net
-  os_network:
-    auth: "{{ item.auth }}"
-    name: osm_net
-    state: absent
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
-  loop:
-    - auth: "{{ os_migrate_src_auth }}"
-      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-    - auth: "{{ os_migrate_dst_auth }}"
-      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    ansible.builtin.os_subnet:
+      auth: "{{ item.auth }}"
+      name: osm_subnet
+      state: absent
+      validate_certs: "{{ item.validate_certs }}"
+      ca_cert: "{{ item.ca_cert }}"
+      client_cert: "{{ item.client_cert }}"
+      client_key: "{{ item.client_key }}"
+-   name: remove osm_net
+    loop:
+    -   auth: "{{ os_migrate_src_auth }}"
+        validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    -   auth: "{{ os_migrate_dst_auth }}"
+        validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
-- name: remove osm_security_group
-  os_security_group:
-    auth: "{{ item.auth }}"
-    name: osm_security_group
-    state: absent
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
-  loop:
-    - auth: "{{ os_migrate_src_auth }}"
-      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-    - auth: "{{ os_migrate_dst_auth }}"
-      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    ansible.builtin.os_network:
+      auth: "{{ item.auth }}"
+      name: osm_net
+      state: absent
+      validate_certs: "{{ item.validate_certs }}"
+      ca_cert: "{{ item.ca_cert }}"
+      client_cert: "{{ item.client_cert }}"
+      client_key: "{{ item.client_key }}"
+-   name: remove osm_security_group
+    loop:
+    -   auth: "{{ os_migrate_src_auth }}"
+        validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    -   auth: "{{ os_migrate_dst_auth }}"
+        validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
-- name: remove osm_security_group_rule
-  os_security_group_rule:
-    auth: "{{ item.auth }}"
-    security_group: osm_security_group
-    state: absent
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
-  loop:
-    - auth: "{{ os_migrate_src_auth }}"
-      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-    - auth: "{{ os_migrate_dst_auth }}"
-      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    ansible.builtin.os_security_group:
+      auth: "{{ item.auth }}"
+      name: osm_security_group
+      state: absent
+      validate_certs: "{{ item.validate_certs }}"
+      ca_cert: "{{ item.ca_cert }}"
+      client_cert: "{{ item.client_cert }}"
+      client_key: "{{ item.client_key }}"
+-   name: remove osm_security_group_rule
+    loop:
+    -   auth: "{{ os_migrate_src_auth }}"
+        validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    -   auth: "{{ os_migrate_dst_auth }}"
+        validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    ansible.builtin.os_security_group_rule:
+      auth: "{{ item.auth }}"
+      security_group: osm_security_group
+      state: absent
+      validate_certs: "{{ item.validate_certs }}"
+      ca_cert: "{{ item.ca_cert }}"
+      client_cert: "{{ item.client_cert }}"
+      client_key: "{{ item.client_key }}"

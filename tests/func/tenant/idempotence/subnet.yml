@@ -1,55 +1,52 @@
 ### EXPORT IDEMPOTENCE ###
 
-- include_role:
-    name: os_migrate.os_migrate.export_subnets
-  vars:
-    os_migrate_subnets_filter:
-      - regex: '^osm_'
+-   vars:
+      os_migrate_subnets_filter:
+      -   regex: '^osm_'
 
-- name: re-load resources for idempotency test
-  set_fact:
-    subnet_resources_idem: "{{ (lookup('file',
-                                os_migrate_data_dir +
-                                '/subnets.yml') | from_yaml)
-                        ['resources'] }}"
+    ansible.builtin.include_role:
+      name: os_migrate.os_migrate.export_subnets
+-   name: re-load resources for idempotency test
+    ansible.builtin.set_fact:
+      subnet_resources_idem: "{{ (lookup('file', os_migrate_data_dir + '/subnets.yml')\
+        \ | from_yaml) ['resources'] }}"
 
-- name: verify that export file did not change
-  assert:
-    that:
-      - subnet_resources_idem == subnet_resources
-    fail_msg: |
-      subnet_resources_idem:
-      {{ subnet_resources_idem | to_nice_yaml }}
-      subnet_resources:
-      {{ subnet_resources | to_nice_yaml }}
+-   name: verify that export file did not change
+    ansible.builtin.assert:
+      that:
+      -   subnet_resources_idem == subnet_resources
+      fail_msg: |
+        subnet_resources_idem:
+        {{ subnet_resources_idem | to_nice_yaml }}
+        subnet_resources:
+        {{ subnet_resources | to_nice_yaml }}
 
 ### IMPORT IDEMPOTENCE ###
 
-- name: look up osm_subnet dst cloud
-  os_subnets_info:
-    auth: "{{ os_migrate_dst_auth }}"
-    filters:
-      name: osm_subnet
-  register: subnet_import_idem_before
+-   name: look up osm_subnet dst cloud
+    register: subnet_import_idem_before
 
-- include_role:
-    name: os_migrate.os_migrate.import_subnets
+    ansible.builtin.os_subnets_info:
+      auth: "{{ os_migrate_dst_auth }}"
+      filters:
+        name: osm_subnet
+-   ansible.builtin.include_role:
+      name: os_migrate.os_migrate.import_subnets
 
-- name: look up osm_subnet in dst cloud again
-  os_subnets_info:
-    auth: "{{ os_migrate_dst_auth }}"
-    filters:
-      name: osm_subnet
-  register: subnet_import_idem_after
+-   name: look up osm_subnet in dst cloud again
+    register: subnet_import_idem_after
 
-- name: ensure updated_at for osm_subnet did not change
-  assert:
-    that:
-      - subnet_import_idem_before['openstack_subnets'][0].updated_at != None
-      - "subnet_import_idem_before['openstack_subnets'][0]['updated_at'] \
-         == subnet_import_idem_after['openstack_subnets'][0]['updated_at']"
-    fail_msg: |
-      subnet_import_idem_before updated_at:
-      {{ subnet_import_idem_before['openstack_subnets'][0].updated_at }}
-      subnet_import_idem_after updated_at:
-      {{ subnet_import_idem_after['openstack_subnets'][0].updated_at }}
+    ansible.builtin.os_subnets_info:
+      auth: "{{ os_migrate_dst_auth }}"
+      filters:
+        name: osm_subnet
+-   name: ensure updated_at for osm_subnet did not change
+    ansible.builtin.assert:
+      that:
+      -   subnet_import_idem_before['openstack_subnets'][0].updated_at != None
+      -   "subnet_import_idem_before['openstack_subnets'][0]['updated_at'] == subnet_import_idem_after['openstack_subnets'][0]['updated_at']"
+      fail_msg: |
+        subnet_import_idem_before updated_at:
+        {{ subnet_import_idem_before['openstack_subnets'][0].updated_at }}
+        subnet_import_idem_after updated_at:
+        {{ subnet_import_idem_after['openstack_subnets'][0].updated_at }}

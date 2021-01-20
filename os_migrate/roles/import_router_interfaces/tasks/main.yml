@@ -1,29 +1,29 @@
-- name: validate loaded resources
-  os_migrate.os_migrate.validate_resource_files:
-    paths:
-      - "{{ os_migrate_data_dir }}/router_interfaces.yml"
-  register: router_interfaces_file_validation
-  when: import_router_interfaces_validate_file
+-   name: validate loaded resources
+    register: router_interfaces_file_validation
+    when: import_router_interfaces_validate_file
 
-- name: stop when errors found
-  fail:
-    msg: "{{ router_interfaces_file_validation.errors|join(' ') }}"
-  when: not ( router_interfaces_file_validation.ok | bool )
+    ansible.builtin.os_migrate.os_migrate.validate_resource_files:
+      paths:
+      -   "{{ os_migrate_data_dir }}/router_interfaces.yml"
+-   name: stop when errors found
+    when: not ( router_interfaces_file_validation.ok | bool )
 
-- name: read router interfaces resource file
-  os_migrate.os_migrate.read_resources:
-    path: "{{ os_migrate_data_dir }}/router_interfaces.yml"
-  register: read_router_interfaces
+    ansible.builtin.fail:
+      msg: "{{ router_interfaces_file_validation.errors|join(' ') }}"
+-   name: read router interfaces resource file
+    register: read_router_interfaces
 
-- name: import router interfaces
-  os_migrate.os_migrate.import_router_interface:
-    auth: "{{ os_migrate_dst_auth }}"
-    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
-    data: "{{ item }}"
-    filters: "{{ os_migrate_dst_filters }}"
-    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-  loop: "{{ read_router_interfaces.resources }}"
+    ansible.builtin.os_migrate.os_migrate.read_resources:
+      path: "{{ os_migrate_data_dir }}/router_interfaces.yml"
+-   name: import router interfaces
+    loop: "{{ read_router_interfaces.resources }}"
+    ansible.builtin.os_migrate.os_migrate.import_router_interface:
+      auth: "{{ os_migrate_dst_auth }}"
+      auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+      region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+      data: "{{ item }}"
+      filters: "{{ os_migrate_dst_filters }}"
+      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"

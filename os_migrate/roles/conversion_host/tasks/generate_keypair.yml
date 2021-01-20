@@ -1,8 +1,8 @@
-- name: create the keypair folder
-  file:
-    path: "{{ os_migrate_conversion_keypair_private_path|dirname }}"
-    state: directory
+-   name: create the keypair folder
+    ansible.builtin.file:
+      path: "{{ os_migrate_conversion_keypair_private_path|dirname }}"
+      state: directory
 
-- name: generate a keypair for the conversion host
-  openssh_keypair:
-    path: "{{ os_migrate_conversion_keypair_private_path }}"
+-   name: generate a keypair for the conversion host
+    ansible.builtin.openssh_keypair:
+      path: "{{ os_migrate_conversion_keypair_private_path }}"

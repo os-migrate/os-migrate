@@ -1,28 +1,28 @@
-- name: validate loaded resources
-  os_migrate.os_migrate.validate_resource_files:
-    paths:
-      - "{{ os_migrate_data_dir }}/projects.yml"
-  register: projects_file_validation
-  when: import_projects_validate_file
+-   name: validate loaded resources
+    register: projects_file_validation
+    when: import_projects_validate_file
 
-- name: stop when errors found
-  fail:
-    msg: "{{ projects_file_validation.errors|join(' ') }}"
-  when: not ( projects_file_validation.ok | bool )
+    ansible.builtin.os_migrate.os_migrate.validate_resource_files:
+      paths:
+      -   "{{ os_migrate_data_dir }}/projects.yml"
+-   name: stop when errors found
+    when: not ( projects_file_validation.ok | bool )
 
-- name: read projects resource file
-  os_migrate.os_migrate.read_resources:
-    path: "{{ os_migrate_data_dir }}/projects.yml"
-  register: read_projects
+    ansible.builtin.fail:
+      msg: "{{ projects_file_validation.errors|join(' ') }}"
+-   name: read projects resource file
+    register: read_projects
 
-- name: import projects
-  os_migrate.os_migrate.import_project:
-    auth: "{{ os_migrate_dst_auth }}"
-    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
-    data: "{{ item }}"
-    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-  loop: "{{ read_projects.resources }}"
+    ansible.builtin.os_migrate.os_migrate.read_resources:
+      path: "{{ os_migrate_data_dir }}/projects.yml"
+-   name: import projects
+    os_migrate.os_migrate.import_project:
+      auth: "{{ os_migrate_dst_auth }}"
+      auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+      region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+      data: "{{ item }}"
+      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    loop: "{{ read_projects.resources }}"

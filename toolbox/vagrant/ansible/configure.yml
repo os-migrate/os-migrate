@@ -1,5 +1,5 @@
-- hosts: devstack
-  vars:
-    ansible_python_interpreter: /usr/bin/python3
-  roles:
-    - devstack
+-   hosts: devstack
+    vars:
+      ansible_python_interpreter: /usr/bin/python3
+    roles:
+    -   devstack

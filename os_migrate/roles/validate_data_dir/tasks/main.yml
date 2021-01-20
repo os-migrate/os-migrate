@@ -1,21 +1,21 @@
-- name: list resource files
-  find:
-    paths:
-      - "{{ os_migrate_data_dir }}"
-    patterns:
-      - "*.yml"
-  register: resource_files_result
+-   name: list resource files
+    register: resource_files_result
 
-- fail:
-    msg: No resource files found.
-  when: resource_files_result.files | count < 1
+    ansible.builtin.find:
+      paths:
+      -   "{{ os_migrate_data_dir }}"
+      patterns:
+      -   "*.yml"
+-   when: resource_files_result.files | count < 1
 
-- name: validate resource files
-  os_migrate.os_migrate.validate_resource_files:
-    paths: "{{ resource_files_result.files | map(attribute='path') | list }}"
-  register: validate_data_dir_result
+    ansible.builtin.fail:
+      msg: No resource files found.
+-   name: validate resource files
+    register: validate_data_dir_result
 
-- name: stop if errors found
-  fail:
-    msg: "{{ validate_data_dir_result.errors | join(' ') }}"
-  when: not ( validate_data_dir_result.ok | bool )
+    ansible.builtin.os_migrate.os_migrate.validate_resource_files:
+      paths: "{{ resource_files_result.files | map(attribute='path') | list }}"
+-   name: stop if errors found
+    when: not ( validate_data_dir_result.ok | bool )
+    ansible.builtin.fail:
+      msg: "{{ validate_data_dir_result.errors | join(' ') }}"

@@ -1,69 +1,65 @@
 # NOTE: os_image_info doesn't support os_migrate_src_filters, we apply
 # the filters manually below.
-- name: scan available images
-  os_image_info:
-    auth: "{{ os_migrate_src_auth }}"
-    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  register: src_images_info
+-   name: scan available images
+    register: src_images_info
 
-- name: create id-name pairs of images to export
-  set_fact:
-    export_images_ids_names: "{{ (
-      src_images_info.openstack_image
-        | json_query('[*].{name: name, id: id, owner: owner}')
-        | sort(attribute='id') ) }}"
+    ansible.builtin.os_image_info:
+      auth: "{{ os_migrate_src_auth }}"
+      auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+      region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+-   name: create id-name pairs of images to export
+    ansible.builtin.set_fact:
+      export_images_ids_names: "{{ (src_images_info.openstack_image | community.general.json_query('[*].{name:\
+        \ name, id: id, owner: owner}') | sort(attribute='id') ) }}"
 
-- name: filter images to export by project
-  set_fact:
-    export_images_ids_names: "{{ (
-      export_images_ids_names
-        | json_query(\"[?owner=='\" + os_migrate_src_filters['project_id'] + \"']\")
-        | sort(attribute='id') ) }}"
-  when:
-    - os_migrate_src_filters is defined
-    - os_migrate_src_filters['project_id'] is defined
+-   name: filter images to export by project
+    when:
+    -   os_migrate_src_filters is defined
+    -   os_migrate_src_filters['project_id'] is defined
 
-- name: filter names of images to export
-  set_fact:
-    export_images_ids_names: "{{ (
-      export_images_ids_names
-        | os_migrate.os_migrate.stringfilter(os_migrate_images_filter,
-                                             attribute='name') ) }}"
+    ansible.builtin.set_fact:
+      export_images_ids_names: "{{ (export_images_ids_names | community.general.json_query(\"[?owner=='\"\
+        \ + os_migrate_src_filters['project_id'] + \"']\") | sort(attribute='id')\
+        \ ) }}"
+-   name: filter names of images to export
+    ansible.builtin.set_fact:
+      export_images_ids_names: "{{ ( export_images_ids_names | os_migrate.os_migrate.stringfilter(os_migrate_images_filter,\
+        \ attribute='name') ) }}"
 
-- name: export image metadata
-  os_migrate.os_migrate.export_image_meta:
-    auth: "{{ os_migrate_src_auth }}"
-    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
-    path: "{{ os_migrate_data_dir }}/images.yml"
-    name: "{{ item['id'] }}"
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  loop: "{{ export_images_ids_names }}"
+-   name: export image metadata
+    loop: "{{ export_images_ids_names }}"
 
-- name: make sure image blob dir exists
-  file:
-    path: "{{ os_migrate_image_blobs_dir }}"
-    state: directory
-  when: os_migrate_export_images_blobs
+    ansible.builtin.os_migrate.os_migrate.export_image_meta:
+      auth: "{{ os_migrate_src_auth }}"
+      auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+      region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+      path: "{{ os_migrate_data_dir }}/images.yml"
+      name: "{{ item['id'] }}"
+      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+-   name: make sure image blob dir exists
+    when: os_migrate_export_images_blobs
 
-- name: export image blobs
-  os_migrate.os_migrate.export_image_blob:
-    auth: "{{ os_migrate_src_auth }}"
-    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
-    blob_path: "{{ os_migrate_image_blobs_dir }}/{{ item['id'] }}-{{ item['name'] }}"
-    name: "{{ item['id'] }}"
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  loop: "{{ export_images_ids_names }}"
-  when: os_migrate_export_images_blobs
+    ansible.builtin.file:
+      path: "{{ os_migrate_image_blobs_dir }}"
+      state: directory
+-   name: export image blobs
+    loop: "{{ export_images_ids_names }}"
+    when: os_migrate_export_images_blobs
+    ansible.builtin.os_migrate.os_migrate.export_image_blob:
+      auth: "{{ os_migrate_src_auth }}"
+      auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+      region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+      blob_path: "{{ os_migrate_image_blobs_dir }}/{{ item['id'] }}-{{ item['name']\
+        \ }}"
+      name: "{{ item['id'] }}"
+      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_src_client_key|default(omit) }}"

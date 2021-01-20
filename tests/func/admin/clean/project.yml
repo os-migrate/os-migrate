@@ -1,8 +1,8 @@
-- name: remove osm_project
-  os_project:
-    auth: "{{ item }}"
-    name: osm_project
-    state: absent
-  loop:
-    - "{{ os_migrate_src_auth }}"
-    - "{{ os_migrate_dst_auth }}"
+-   name: remove osm_project
+    loop:
+    -   "{{ os_migrate_src_auth }}"
+    -   "{{ os_migrate_dst_auth }}"
+    ansible.builtin.os_project:
+      auth: "{{ item }}"
+      name: osm_project
+      state: absent

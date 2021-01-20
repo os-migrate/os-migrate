@@ -1,81 +1,81 @@
-- name: validate loaded resources
-  os_migrate.os_migrate.validate_resource_files:
-    paths:
-      - "{{ os_migrate_data_dir }}/workloads.yml"
-  register: workloads_file_validation
-  when: import_workloads_validate_file
+-   name: validate loaded resources
+    register: workloads_file_validation
+    when: import_workloads_validate_file
 
-- name: stop when errors found
-  fail:
-    msg: "{{ workloads_file_validation.errors|join(' ') }}"
-  when: not ( workloads_file_validation.ok | bool )
+    ansible.builtin.os_migrate.os_migrate.validate_resource_files:
+      paths:
+      -   "{{ os_migrate_data_dir }}/workloads.yml"
+-   name: stop when errors found
+    when: not ( workloads_file_validation.ok | bool )
 
-- name: read workloads resource file
-  os_migrate.os_migrate.read_resources:
-    path: "{{ os_migrate_data_dir }}/workloads.yml"
-  register: read_workloads
+    ansible.builtin.fail:
+      msg: "{{ workloads_file_validation.errors|join(' ') }}"
+-   name: read workloads resource file
+    register: read_workloads
 
-- name: create directory for workload migration logs
-  file:
-    path: "{{ os_migrate_data_dir }}/workload_logs"
-    state: directory
+    ansible.builtin.os_migrate.os_migrate.read_resources:
+      path: "{{ os_migrate_data_dir }}/workloads.yml"
+-   name: create directory for workload migration logs
+    ansible.builtin.file:
+      path: "{{ os_migrate_data_dir }}/workload_logs"
+      state: directory
 
-- name: get source conversion host address
-  os_migrate.os_migrate.os_conversion_host_info:
-    auth: "{{ os_migrate_src_auth }}"
-    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
-    server: "{{ os_migrate_conversion_host_name }}"
-    filters: "{{ os_migrate_src_filters }}"
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  register: os_src_conversion_host_info
+-   name: get source conversion host address
+    register: os_src_conversion_host_info
 
-- name: fail if source conversion host is not active
-  fail:
-    msg: The source conversion host is not running!
-  when: os_src_conversion_host_info.openstack_conversion_host.status != "ACTIVE"
+    ansible.builtin.os_migrate.os_migrate.os_conversion_host_info:
+      auth: "{{ os_migrate_src_auth }}"
+      auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+      region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+      server: "{{ os_migrate_conversion_host_name }}"
+      filters: "{{ os_migrate_src_filters }}"
+      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+-   name: fail if source conversion host is not active
+    when: os_src_conversion_host_info.openstack_conversion_host.status != "ACTIVE"
 
-- name: get destination conversion host address
-  os_migrate.os_migrate.os_conversion_host_info:
-    auth: "{{ os_migrate_dst_auth }}"
-    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
-    server: "{{ os_migrate_conversion_host_name }}"
-    filters: "{{ os_migrate_dst_filters }}"
-    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-  register: os_dst_conversion_host_info
+    ansible.builtin.fail:
+      msg: The source conversion host is not running!
+-   name: get destination conversion host address
+    register: os_dst_conversion_host_info
 
-- name: fail if destination conversion is not active
-  fail:
-    msg: The destination conversion host is not running!
-  when: os_dst_conversion_host_info.openstack_conversion_host.status != "ACTIVE"
+    ansible.builtin.os_migrate.os_migrate.os_conversion_host_info:
+      auth: "{{ os_migrate_dst_auth }}"
+      auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+      region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+      server: "{{ os_migrate_conversion_host_name }}"
+      filters: "{{ os_migrate_dst_filters }}"
+      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+-   name: fail if destination conversion is not active
+    when: os_dst_conversion_host_info.openstack_conversion_host.status != "ACTIVE"
 
 # Depending on the virtualization hypervisor,
 # the conversion host machines can take too
 # much time to start.
 
-- name: Wait until the dst conversion host is reachable
-  wait_for:
-    port: 22
-    host: '{{ os_dst_conversion_host_info.openstack_conversion_host.address }}'
-    search_regex: OpenSSH
-    delay: 10
-    timeout: 600
+    ansible.builtin.fail:
+      msg: The destination conversion host is not running!
+-   name: Wait until the dst conversion host is reachable
+    ansible.builtin.wait_for:
+      port: 22
+      host: '{{ os_dst_conversion_host_info.openstack_conversion_host.address }}'
+      search_regex: OpenSSH
+      delay: 10
+      timeout: 600
 
-- name: Wait until the src conversion host is reachable
-  wait_for:
-    port: 22
-    host: '{{ os_src_conversion_host_info.openstack_conversion_host.address }}'
-    search_regex: OpenSSH
-    delay: 10
-    timeout: 600
+-   name: Wait until the src conversion host is reachable
+    ansible.builtin.wait_for:
+      port: 22
+      host: '{{ os_src_conversion_host_info.openstack_conversion_host.address }}'
+      search_regex: OpenSSH
+      delay: 10
+      timeout: 600
 
-- name: import workloads
-  include_tasks: workload.yml
-  loop: "{{ read_workloads.resources }}"
+-   name: import workloads
+    loop: "{{ read_workloads.resources }}"
+    ansible.builtin.include_tasks: workload.yml

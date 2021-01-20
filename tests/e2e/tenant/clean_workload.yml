@@ -1,113 +1,113 @@
-- name: Remove workload test data
-  file:
-    path: "{{ os_migrate_data_dir }}/{{ item }}"
-    state: absent
-  loop:
-    - osm_server.log
-    - osm_server.state
-    - workloads.yml
+-   name: Remove workload test data
+    loop:
+    -   osm_server.log
+    -   osm_server.state
+    -   workloads.yml
 
-- name: Detach src volumes if still attached
-  os_server_volume:
-    server: "{{ item.server }}"
-    volume: "{{ item.volume }}"
-    state: absent
-    auth: "{{ os_migrate_src_auth }}"
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  loop:
-    - server: os_migrate_conv
-      volume: rhosp-migration-root-osm_server
-    - server: os_migrate_conv
-      volume: osm_volume
-    - server: osm_server
-      volume: osm_volume
+    ansible.builtin.file:
+      path: "{{ os_migrate_data_dir }}/{{ item }}"
+      state: absent
+-   name: Detach src volumes if still attached
+    loop:
+    -   server: os_migrate_conv
+        volume: rhosp-migration-root-osm_server
+    -   server: os_migrate_conv
+        volume: osm_volume
+    -   server: osm_server
+        volume: osm_volume
   # The module will fail if server or volume don't exist.
-  failed_when: false
+    failed_when: false
 
-- name: Detach dst volumes if still attached
-  os_server_volume:
-    server: "{{ item.server }}"
-    volume: "{{ item.volume }}"
-    state: absent
-    auth: "{{ os_migrate_dst_auth }}"
-    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-  loop:
-    - server: os_migrate_conv
-      volume: rhosp-migration-root-osm_server
-    - server: os_migrate_conv
-      volume: osm_volume
-    - server: osm_server
-      volume: osm_volume
+    ansible.builtin.os_server_volume:
+      server: "{{ item.server }}"
+      volume: "{{ item.volume }}"
+      state: absent
+      auth: "{{ os_migrate_src_auth }}"
+      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+-   name: Detach dst volumes if still attached
+    loop:
+    -   server: os_migrate_conv
+        volume: rhosp-migration-root-osm_server
+    -   server: os_migrate_conv
+        volume: osm_volume
+    -   server: osm_server
+        volume: osm_volume
   # The module will fail if server or volume don't exist.
-  failed_when: false
+    failed_when: false
 
-- name: Remove osm_server
-  os_server:
-    name: osm_server
-    state: absent
-    delete_fip: yes
-    auth: "{{ item.auth }}"
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
-    wait: yes
-  loop:
-    - auth: "{{ os_migrate_src_auth }}"
-      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-    - auth: "{{ os_migrate_dst_auth }}"
+    ansible.builtin.os_server_volume:
+      server: "{{ item.server }}"
+      volume: "{{ item.volume }}"
+      state: absent
+      auth: "{{ os_migrate_dst_auth }}"
       validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
       ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
       client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+-   name: Remove osm_server
+    loop:
+    -   auth: "{{ os_migrate_src_auth }}"
+        validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    -   auth: "{{ os_migrate_dst_auth }}"
+        validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
-- name: Remove osm_server boot volume
-  os_volume:
-    display_name: rhosp-migration-root-osm_server
-    state: absent
-    auth: "{{ item.auth }}"
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
-  loop:
-    - auth: "{{ os_migrate_src_auth }}"
-      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-    - auth: "{{ os_migrate_dst_auth }}"
-      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    ansible.builtin.os_server:
+      name: osm_server
+      state: absent
+      delete_fip: yes
+      auth: "{{ item.auth }}"
+      validate_certs: "{{ item.validate_certs }}"
+      ca_cert: "{{ item.ca_cert }}"
+      client_cert: "{{ item.client_cert }}"
+      client_key: "{{ item.client_key }}"
+      wait: yes
+-   name: Remove osm_server boot volume
+    loop:
+    -   auth: "{{ os_migrate_src_auth }}"
+        validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    -   auth: "{{ os_migrate_dst_auth }}"
+        validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
-- name: Remove osm_volume
-  os_volume:
-    display_name: osm_volume
-    state: absent
-    auth: "{{ item.auth }}"
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
-  loop:
-    - auth: "{{ os_migrate_src_auth }}"
-      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-    - auth: "{{ os_migrate_dst_auth }}"
-      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    ansible.builtin.os_volume:
+      display_name: rhosp-migration-root-osm_server
+      state: absent
+      auth: "{{ item.auth }}"
+      validate_certs: "{{ item.validate_certs }}"
+      ca_cert: "{{ item.ca_cert }}"
+      client_cert: "{{ item.client_cert }}"
+      client_key: "{{ item.client_key }}"
+-   name: Remove osm_volume
+    loop:
+    -   auth: "{{ os_migrate_src_auth }}"
+        validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    -   auth: "{{ os_migrate_dst_auth }}"
+        validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    ansible.builtin.os_volume:
+      display_name: osm_volume
+      state: absent
+      auth: "{{ item.auth }}"
+      validate_certs: "{{ item.validate_certs }}"
+      ca_cert: "{{ item.ca_cert }}"
+      client_cert: "{{ item.client_cert }}"
+      client_key: "{{ item.client_key }}"

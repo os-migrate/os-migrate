@@ -1,6 +1,6 @@
-- name: Create security group
-  os_security_group:
-    auth: "{{ os_migrate_src_auth }}"
-    state: present
-    name: osm_security_group
-    description: OSM security group
+-   name: Create security group
+    ansible.builtin.os_security_group:
+      auth: "{{ os_migrate_src_auth }}"
+      state: present
+      name: osm_security_group
+      description: OSM security group

@@ -1,7 +1,7 @@
-- name: create osm_project
-  os_project:
-    auth: "{{ os_migrate_src_auth }}"
-    name: osm_project
-    domain: default
-    description: seeded
-    state: present
+-   name: create osm_project
+    ansible.builtin.os_project:
+      auth: "{{ os_migrate_src_auth }}"
+      name: osm_project
+      domain: default
+      description: seeded
+      state: present

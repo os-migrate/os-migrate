@@ -1,55 +1,52 @@
 ### EXPORT IDEMPOTENCE ###
 
-- include_role:
-    name: os_migrate.os_migrate.export_router_interfaces
-  vars:
-    os_migrate_routers_filter:
-      - regex: '^osm_'
+-   vars:
+      os_migrate_routers_filter:
+      -   regex: '^osm_'
 
-- name: re-load resources for idempotency test
-  set_fact:
-    router_interface_resources_idem: "{{ (lookup('file',
-                                os_migrate_data_dir +
-                                '/router_interfaces.yml') | from_yaml)
-                        ['resources'] }}"
+    ansible.builtin.include_role:
+      name: os_migrate.os_migrate.export_router_interfaces
+-   name: re-load resources for idempotency test
+    ansible.builtin.set_fact:
+      router_interface_resources_idem: "{{ (lookup('file', os_migrate_data_dir + '/router_interfaces.yml')\
+        \ | from_yaml) ['resources'] }}"
 
-- name: verify that export file did not change
-  assert:
-    that:
-      - router_interface_resources_idem == router_interface_resources
-    fail_msg: |
-      router_interface_resources_idem:
-      {{ router_interface_resources_idem | to_nice_yaml }}
-      router_interface_resources:
-      {{ router_interface_resources | to_nice_yaml }}
+-   name: verify that export file did not change
+    ansible.builtin.assert:
+      that:
+      -   router_interface_resources_idem == router_interface_resources
+      fail_msg: |
+        router_interface_resources_idem:
+        {{ router_interface_resources_idem | to_nice_yaml }}
+        router_interface_resources:
+        {{ router_interface_resources | to_nice_yaml }}
 
 ### IMPORT IDEMPOTENCE ###
 
-- name: look up osm_router dst cloud
-  os_migrate.os_migrate.os_routers_info:
-    auth: "{{ os_migrate_dst_auth }}"
-    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
-  register: ri_import_idem_before
+-   name: look up osm_router dst cloud
+    register: ri_import_idem_before
 
-- include_role:
-    name: os_migrate.os_migrate.import_router_interfaces
+    ansible.builtin.os_migrate.os_migrate.os_routers_info:
+      auth: "{{ os_migrate_dst_auth }}"
+      auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+      region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+-   ansible.builtin.include_role:
+      name: os_migrate.os_migrate.import_router_interfaces
 
-- name: look up osm_router in dst cloud again
-  os_migrate.os_migrate.os_routers_info:
-    auth: "{{ os_migrate_dst_auth }}"
-    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
-  register: ri_import_idem_after
+-   name: look up osm_router in dst cloud again
+    register: ri_import_idem_after
 
-- name: ensure updated_at for osm_router did not change
-  assert:
-    that:
-      - ri_import_idem_before['openstack_routers'][0].updated_at != None
-      - "ri_import_idem_before['openstack_routers'][0]['updated_at'] \
-         == ri_import_idem_after['openstack_routers'][0]['updated_at']"
-    fail_msg: |
-      ri_import_idem_before updated_at:
-      {{ ri_import_idem_before['openstack_routers'][0].updated_at }}
-      ri_import_idem_after updated_at:
-      {{ ri_import_idem_after['openstack_routers'][0].updated_at }}
+    ansible.builtin.os_migrate.os_migrate.os_routers_info:
+      auth: "{{ os_migrate_dst_auth }}"
+      auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+      region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+-   name: ensure updated_at for osm_router did not change
+    ansible.builtin.assert:
+      that:
+      -   ri_import_idem_before['openstack_routers'][0].updated_at != None
+      -   "ri_import_idem_before['openstack_routers'][0]['updated_at'] == ri_import_idem_after['openstack_routers'][0]['updated_at']"
+      fail_msg: |
+        ri_import_idem_before updated_at:
+        {{ ri_import_idem_before['openstack_routers'][0].updated_at }}
+        ri_import_idem_after updated_at:
+        {{ ri_import_idem_after['openstack_routers'][0].updated_at }}

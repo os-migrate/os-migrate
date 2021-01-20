@@ -1,8 +1,8 @@
-- name: remove osm_user
-  os_user:
-    auth: "{{ item }}"
-    name: osm_user
-    state: absent
-  loop:
-    - "{{ os_migrate_src_auth }}"
-    - "{{ os_migrate_dst_auth }}"
+-   name: remove osm_user
+    loop:
+    -   "{{ os_migrate_src_auth }}"
+    -   "{{ os_migrate_dst_auth }}"
+    ansible.builtin.os_user:
+      auth: "{{ item }}"
+      name: osm_user
+      state: absent

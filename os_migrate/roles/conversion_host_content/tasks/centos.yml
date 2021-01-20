@@ -1,18 +1,18 @@
-- name: install epel release
-  yum:
-    name: epel-release
-    state: present
+-   name: install epel release
+    ansible.builtin.yum:
+      name: epel-release
+      state: present
 
-- name: update all packages
-  yum:
-    name: '*'
-    state: latest
+-   name: update all packages
+    ansible.builtin.yum:
+      name: '*'
+      state: latest
 
-- name: install content
-  yum:
-    name:
-      - nbdkit
-      - nbdkit-basic-plugins
-      - qemu-img
-      - libguestfs-tools
-    state: present
+-   name: install content
+    ansible.builtin.yum:
+      name:
+      -   nbdkit
+      -   nbdkit-basic-plugins
+      -   qemu-img
+      -   libguestfs-tools
+      state: present
