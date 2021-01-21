@@ -1,8 +1,8 @@
 - name: remove osm_security_group_rule
-  os_security_group_rule:
-    auth: "{{ item }}"
-    security_group: osm_security_group
-    state: absent
   loop:
     - "{{ os_migrate_src_auth }}"
     - "{{ os_migrate_dst_auth }}"
+  openstack.cloud.security_group_rule:
+    auth: "{{ item }}"
+    security_group: osm_security_group
+    state: absent

@@ -1,33 +1,8 @@
 - name: change item in file for update test
-  replace:
-    path: "{{ os_migrate_data_dir }}/subnets.yml"
-    regexp: "    description: ''"
-    replace: "    description: 'osm_subnet_updated'"
-    backup: yes
-
 - name: scan available subnets after before test
-  os_subnets_info:
-    filters: "{{ os_migrate_dst_filters }}"
-    auth: "{{ os_migrate_dst_auth }}"
-    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
-    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
   register: dst_subnets_info_before
 
-- name: get original description
-  set_fact:
-    original_desc: |-
-      {{ dst_subnets_info_before['openstack_subnets'] | json_query(
-        "[?name=='osm_subnet'].description") }}
-
-- include_role:
-    name: os_migrate.os_migrate.import_subnets
-
-- name: scan available subnets after update test
-  os_subnets_info:
+  openstack.cloud.subnets_info:
     filters: "{{ os_migrate_dst_filters }}"
     auth: "{{ os_migrate_dst_auth }}"
     auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
@@ -36,21 +11,19 @@
     ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+- name: get original description
+- {}
+- name: scan available subnets after update test
   register: dst_subnets_info_after
 
+  openstack.cloud.subnets_info:
+    filters: "{{ os_migrate_dst_filters }}"
+    auth: "{{ os_migrate_dst_auth }}"
+    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 - name: get changed description
-  set_fact:
-    changed_desc: |-
-      {{ dst_subnets_info_after['openstack_subnets'] | json_query(
-        "[?name=='osm_subnet'].description") }}
-
 - name: ensure description for osm_subnet changed
-  assert:
-    that:
-      - original_desc == ['']
-      - changed_desc == ['osm_subnet_updated']
-    fail_msg: |
-      dst_subnets_info_before description:
-      {{ original_desc }}
-      dst_subnets_info_after description:
-      {{ changed_desc }}

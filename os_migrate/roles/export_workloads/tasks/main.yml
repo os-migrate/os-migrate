@@ -1,5 +1,7 @@
 - name: scan instances for workloads to export
-  os_server_info:
+  register: src_workloads_info
+
+  openstack.cloud.server_info:
     filters: "{{ os_migrate_src_filters }}"
     auth: "{{ os_migrate_src_auth }}"
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
@@ -8,36 +10,10 @@
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  register: src_workloads_info
-
-- debug:
+- ansible.posix.debug:
     msg: "{{ src_workloads_info.openstack_servers }}"
 
 - name: create id-name pairs of workloads to export
-  set_fact:
-    export_workloads_ids_names: "{{ (
-      src_workloads_info.openstack_servers
-        | json_query('[*].{name: name, id: id}')
-        | sort(attribute='id') ) }}"
-
 - name: filter names of workloads to export
-  set_fact:
-    export_workloads_ids_names: "{{ (
-      export_workloads_ids_names
-        | os_migrate.os_migrate.stringfilter(os_migrate_workloads_filter,
-                                             attribute='name') ) }}"
-
 - name: export workload
-  os_migrate.os_migrate.export_workload:
-    path: "{{ os_migrate_data_dir }}/workloads.yml"
-    name: "{{ item['id'] }}"
-    migration_params:
-      boot_disk_copy: "{{ os_migrate_workloads_boot_disk_copy }}"
-    auth: "{{ os_migrate_src_auth }}"
-    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
   loop: "{{ export_workloads_ids_names }}"

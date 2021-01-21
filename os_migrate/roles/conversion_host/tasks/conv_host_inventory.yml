@@ -1,5 +1,7 @@
 - name: discover conversion host
-  os_server_info:
+  register: _server_info
+
+  openstack.cloud.server_info:
     server: "{{ os_migrate_conversion_host_name }}*"
     auth: "{{ os_migrate_conversion_auth }}"
     auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
@@ -8,28 +10,11 @@
     ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
-  register: _server_info
-
 - name: fail when conversion host was not found
-  fail:
-    msg: >-
-      Nova server of name '{{ os_migrate_conversion_host_name }}' not
-      found, it was meant to be used as {{ inventory_name }}
   when:
     - _server_info.openstack_servers|length == 0
     - not ignore_missing_conversion_hosts|default(false)|bool
 
 - name: add conversion host to inventory
-  add_host:
-    name: "{{ inventory_name }}"
-    groups:
-      - conversion_hosts
-    ansible_ssh_host: "{{ _server_info.openstack_servers[0].accessIPv4 }}"
-    ansible_ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
-    ansible_ssh_private_key_file: "{{ os_migrate_conversion_keypair_private_path }}"
-    ansible_ssh_extra_args: '-o StrictHostKeyChecking=no'
-    # Generally conversion hosts act as cloud-user, not as
-    # root. E.g. link ssh keys need to be added to cloud-user.
-    ansible_become: false
   when:
     - _server_info.openstack_servers|length > 0

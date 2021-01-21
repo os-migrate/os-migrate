@@ -1,2 +1,2 @@
 os_migrate_routers_filter:
-  - regex: .*
+- regex: .*

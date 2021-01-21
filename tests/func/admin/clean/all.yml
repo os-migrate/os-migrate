@@ -1,5 +1,4 @@
 - name: Include keypair tasks
-  include_tasks: keypair.yml
   args:
     apply:
       tags:
@@ -7,7 +6,6 @@
         - test_clean
 
 - name: Include user tasks
-  include_tasks: user.yml
   args:
     apply:
       tags:
@@ -17,7 +15,6 @@
     - always
 
 - name: Include project tasks
-  include_tasks: project.yml
   args:
     apply:
       tags:
@@ -27,7 +24,6 @@
     - always
 
 - name: Include flavor tasks
-  include_tasks: flavor.yml
   args:
     apply:
       tags:

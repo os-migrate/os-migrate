@@ -1,54 +1,11 @@
 - name: change item in file for update test
-  replace:
-    path: "{{ os_migrate_data_dir }}/security_groups.yml"
-    regexp: "    description: OSM security group"
-    replace: "    description: 'OSM security group updated'"
-    backup: yes
-
 - name: scan available security_groups after before test
-  os_migrate.os_migrate.os_security_groups_info:
-    filters: "{{ os_migrate_dst_filters }}"
-    auth: "{{ os_migrate_dst_auth }}"
-    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
-    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
   register: dst_sg_info_before
 
 - name: get original description
-  set_fact:
-    original_desc: |-
-      {{ dst_sg_info_before['openstack_security_groups'] | json_query(
-        "[?name=='osm_security_group'].description") }}
-
-- include_role:
-    name: os_migrate.os_migrate.import_security_groups
-
+- {}
 - name: scan available security_groups after update test
-  os_migrate.os_migrate.os_security_groups_info:
-    filters: "{{ os_migrate_dst_filters }}"
-    auth: "{{ os_migrate_dst_auth }}"
-    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
-    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
   register: dst_sg_info_after
 
 - name: get changed description
-  set_fact:
-    changed_desc: |-
-      {{ dst_sg_info_after['openstack_security_groups'] | json_query(
-        "[?name=='osm_security_group'].description") }}
-
 - name: ensure description for osm_security_group changed
-  assert:
-    that:
-      - original_desc[0] == 'OSM security group'
-      - changed_desc[0] == 'OSM security group updated'
-    fail_msg: |
-      original description: {{ original_desc[0] }}
-      changed_description: {{ changed_desc[0] }}

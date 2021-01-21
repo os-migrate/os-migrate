@@ -3,26 +3,10 @@
 # import_playbook, or spawn an ansible-playbook subprocess? The latter
 # might be actually a more precise way to test the real end-user
 # experience.
-- include_role:
-    name: os_migrate.os_migrate.export_projects
-  vars:
+- vars:
     os_migrate_projects_filter:
       - regex: '^osm_'
 
 - name: load exported data
-  set_fact:
-    project_resources: "{{ (lookup('file',
-                           os_migrate_data_dir +
-                           '/projects.yml') | from_yaml)
-                   ['resources'] }}"
-
 - name: verify data contents
-  assert:
-    that:
-      - (project_resources |
-        json_query("[?params.name ==
-        'osm_project'].params.name")
-        == ['osm_project'])
-
-- include_role:
-    name: os_migrate.os_migrate.import_projects
+- {}

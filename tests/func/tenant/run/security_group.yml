@@ -3,27 +3,10 @@
 # import_playbook, or spawn an ansible-playbook subprocess? The latter
 # might be actually a more precise way to test the real end-user
 # experience.
-- include_role:
-    name: os_migrate.os_migrate.export_security_groups
-  vars:
+- vars:
     os_migrate_security_groups_filter:
       - regex: '^osm_'
 
 - name: load exported data
-  set_fact:
-    security_group_resources: "{{ (lookup('file',
-                                          os_migrate_data_dir +
-                                          '/security_groups.yml') |
-                                          from_yaml)
-                   ['resources'] }}"
-
 - name: verify data contents
-  assert:
-    that:
-      - (security_group_resources |
-        json_query("[?params.name ==
-        'osm_security_group'].params.description")
-        == ['OSM security group'])
-
-- include_role:
-    name: os_migrate.os_migrate.import_security_groups
+- {}

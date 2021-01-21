@@ -1,37 +1,15 @@
 - name: scan available flavors
-  os_flavor_info:
-    auth: "{{ os_migrate_src_auth }}"
-    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
   register: src_flavors_info
 
-- name: create id-name pairs of flavors to export
-  set_fact:
-    export_flavors_ids_names: "{{ (
-      src_flavors_info.openstack_flavors
-        | json_query('[*].{name: name, id: id}')
-        | sort(attribute='id') ) }}"
-
-- name: filter names of flavors to export
-  set_fact:
-    export_flavors_ids_names: "{{ (
-      export_flavors_ids_names
-        | os_migrate.os_migrate.stringfilter(os_migrate_flavors_filter,
-                                             attribute='name') ) }}"
-
-- name: export flavor
-  os_migrate.os_migrate.export_flavor:
+  openstack.cloud.compute_flavor_info:
     auth: "{{ os_migrate_src_auth }}"
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_src_region_name|default(omit) }}"
-    path: "{{ os_migrate_data_dir }}/flavors.yml"
-    name: "{{ item['id'] }}"
     validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+- name: create id-name pairs of flavors to export
+- name: filter names of flavors to export
+- name: export flavor
   loop: "{{ export_flavors_ids_names }}"

@@ -1,9 +1,14 @@
 - name: register and auto-subscribe to available content.
-  redhat_subscription:
+  when:
+    - >-
+      os_migrate_conversion_rhsm_username is defined or
+      os_migrate_conversion_rhsm_org_id is defined
+
+  community.general.redhat_subscription:
     state: present
-    # These params have defaults specified:
+  # These params have defaults specified:
     auto_attach: "{{ os_migrate_conversion_rhsm_auto_attach|default(true) }}"
-    # These params default to omitting:
+  # These params default to omitting:
     activationkey: "{{ os_migrate_conversion_rhsm_activationkey|default(omit) }}"
     consumer_id: "{{ os_migrate_conversion_rhsm_consumer_id|default(omit) }}"
     consumer_name: "{{ os_migrate_conversion_rhsm_consumer_name|default(omit) }}"
@@ -25,21 +30,5 @@
     server_proxy_user: "{{ os_migrate_conversion_rhsm_server_proxy_user|default(omit) }}"
     syspurpose: "{{ os_migrate_conversion_rhsm_syspurpose|default(omit) }}"
     username: "{{ os_migrate_conversion_rhsm_username|default(omit) }}"
-  when:
-    - >-
-      os_migrate_conversion_rhsm_username is defined or
-      os_migrate_conversion_rhsm_org_id is defined
-
 - name: update all packages
-  yum:
-    name: '*'
-    state: latest
-
 - name: install content
-  yum:
-    name:
-      - nbdkit
-      - nbdkit-basic-plugins
-      - qemu-img
-      - libguestfs-tools
-    state: present

@@ -1,5 +1,4 @@
 - name: add conversion hosts to inventory
-  include_tasks: conv_host_inventory.yml
   vars:
     inventory_name: "{{ item.inventory_name }}"
     os_migrate_conversion_auth: "{{ item.os_migrate_conversion_auth }}"

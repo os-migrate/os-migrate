@@ -1,16 +1,16 @@
 os_migrate_src_auth:
-  auth_url: http://192.168.122.234/identity
-  password: password
-  project_domain_id: default
-  project_name: demo
-  user_domain_id: default
-  username: demo
+auth_url: http://192.168.122.234/identity
+password: password
+project_domain_id: default
+project_name: demo
+user_domain_id: default
+username: demo
 os_migrate_src_region_name: RegionOne
 os_migrate_dst_auth:
-  auth_url: http://192.168.122.234/identity
-  password: password
-  project_domain_id: default
-  project_name: alt_demo
-  user_domain_id: default
-  username: alt_demo
+auth_url: http://192.168.122.234/identity
+password: password
+project_domain_id: default
+project_name: alt_demo
+user_domain_id: default
+username: alt_demo
 os_migrate_dst_region_name: RegionOne

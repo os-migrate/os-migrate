@@ -1,29 +1,12 @@
 - name: validate loaded resources
-  os_migrate.os_migrate.validate_resource_files:
-    paths:
-      - "{{ os_migrate_data_dir }}/security_group_rules.yml"
   register: security_group_rules_file_validation
   when: import_security_group_rules_validate_file
 
 - name: stop when errors found
-  fail:
-    msg: "{{ security_group_rules_file_validation.errors|join(' ') }}"
   when: not ( security_group_rules_file_validation.ok | bool )
 
 - name: read security_group_rules resource file
-  os_migrate.os_migrate.read_resources:
-    path: "{{ os_migrate_data_dir }}/security_group_rules.yml"
   register: read_security_group_rules
 
 - name: import security_group_rules
-  os_migrate.os_migrate.import_security_group_rule:
-    auth: "{{ os_migrate_dst_auth }}"
-    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
-    data: "{{ item }}"
-    filters: "{{ os_migrate_dst_filters }}"
-    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
   loop: "{{ read_security_group_rules.resources }}"

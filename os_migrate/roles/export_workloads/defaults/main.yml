@@ -1,7 +1,7 @@
 os_migrate_workloads_filter:
-  - regex: .*
+- regex: .*
 
 # `null` means we let the Server class decide on defaults.
 # In case of boot_disk_copy, the default differs based on whether
 # the server was created as boot-from-volume or not.
-os_migrate_workloads_boot_disk_copy: null
+os_migrate_workloads_boot_disk_copy:
