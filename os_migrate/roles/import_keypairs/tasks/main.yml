@@ -6,7 +6,7 @@
   when: import_keypairs_validate_file
 
 - name: stop when errors found
-  fail:
+  ansible.builtin.fail:
     msg: "{{ keypairs_file_validation.errors|join(' ') }}"
   when: not ( keypairs_file_validation.ok | bool )
 

@@ -1,9 +1,9 @@
 - name: generate os_migrate conversion keypair
-  include_tasks: generate_keypair.yml
+  ansible.builtin.include_tasks: generate_keypair.yml
   when: os_migrate_conversion_keypair_generate
 
 - name: create os_migrate conversion net
-  os_network:
+  openstack.cloud.network:
     name: "{{ os_migrate_conversion_net_name }}"
     mtu: "{{ os_migrate_conversion_net_mtu }}"
     auth: "{{ os_migrate_conversion_auth }}"
@@ -15,7 +15,7 @@
     client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
 
 - name: create os_migrate conversion subnet
-  os_subnet:
+  openstack.cloud.subnet:
     name: "{{ os_migrate_conversion_subnet_name }}"
     network_name: "{{ os_migrate_conversion_net_name }}"
     dns_nameservers: "{{ os_migrate_conversion_subnet_dns_nameservers }}"
@@ -31,7 +31,7 @@
     client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
 
 - name: create os_migrate conversion router
-  os_router:
+  openstack.cloud.router:
     name: "{{ os_migrate_conversion_router_name }}"
     network: "{{ os_migrate_conversion_external_network_name }}"
     interfaces:
@@ -47,7 +47,7 @@
     client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
 
 - name: create os_migrate conversion security group
-  os_security_group:
+  openstack.cloud.security_group:
     name: "{{ os_migrate_conversion_secgroup_name }}"
     auth: "{{ os_migrate_conversion_auth }}"
     auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
@@ -58,7 +58,7 @@
     client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
 
 - name: allow ssh in os_migrate conversion security group
-  os_security_group_rule:
+  openstack.cloud.security_group_rule:
     security_group: "{{ os_migrate_conversion_secgroup_name }}"
     remote_ip_prefix: 0.0.0.0/0
     protocol: tcp
@@ -73,7 +73,7 @@
     client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
 
 - name: allow icmp in os_migrate conversion security group
-  os_security_group_rule:
+  openstack.cloud.security_group_rule:
     security_group: "{{ os_migrate_conversion_secgroup_name }}"
     remote_ip_prefix: 0.0.0.0/0
     protocol: icmp
@@ -86,7 +86,7 @@
     client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
 
 - name: create os_migrate conversion keypair
-  os_keypair:
+  openstack.cloud.keypair:
     name: "{{ os_migrate_conversion_keypair_name }}"
     public_key_file: "{{ os_migrate_conversion_keypair_private_path }}.pub"
     auth: "{{ os_migrate_conversion_auth }}"
@@ -98,7 +98,7 @@
     client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
 
 - name: create os_migrate conversion host
-  os_server:
+  openstack.cloud.server:
     name: "{{ os_migrate_conversion_host_name }}"
     flavor: "{{ os_migrate_conversion_flavor_name }}"
     image: "{{ os_migrate_conversion_image_name }}"

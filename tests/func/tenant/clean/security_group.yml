@@ -1,5 +1,5 @@
 - name: remove osm_security_group
-  os_security_group:
+  openstack.cloud.security_group:
     auth: "{{ item }}"
     name: osm_security_group
     state: absent

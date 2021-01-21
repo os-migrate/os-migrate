@@ -1,5 +1,5 @@
 - name: unregister RHEL hosts from RHSM
-  redhat_subscription:
+  community.general.redhat_subscription:
     state: absent
   vars:
     # Unregistration gets stuck unless we explicitly run the module as root.

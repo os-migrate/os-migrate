@@ -1,6 +1,7 @@
 - hosts: migrator
   tasks:
-    - include_role:
+    - name: deploy the src conversion host inventory
+      ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host
       vars:
         os_migrate_conversion_auth: "{{ os_migrate_src_auth }}"
@@ -20,7 +21,8 @@
           "{{ os_migrate_src_conversion_subnet_dns_nameservers|default(omit) }}"
       when: os_migrate_deploy_src_conversion_host|default(true)|bool
 
-    - include_role:
+    - name: deploy the dst conversion host inventory
+      ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host
       vars:
         os_migrate_conversion_auth: "{{ os_migrate_dst_auth }}"
@@ -40,28 +42,32 @@
           "{{ os_migrate_dst_conversion_subnet_dns_nameservers|default(omit) }}"
       when: os_migrate_deploy_dst_conversion_host|default(true)|bool
 
-    - include_role:
+    - name: prepare the conversion host link
+      ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host
         tasks_from: link_prepare.yml
       when: os_migrate_link_conversion_hosts|default(true)|bool
 
 - hosts: os_migrate_conv_src
   tasks:
-    - include_role:
+    - name: insert the auth keys in src
+      ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host
         tasks_from: link_insert_authorized_key.yml
       when: os_migrate_link_conversion_hosts|default(true)|bool
 
 - hosts: os_migrate_conv_dst
   tasks:
-    - include_role:
+    - name: insert the auth keys in dst
+      ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host
         tasks_from: link_insert_private_key.yml
       when: os_migrate_link_conversion_hosts|default(true)|bool
 
 - hosts: conversion_hosts
   tasks:
-    - include_role:
+    - name: install the conversion host content
+      ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host_content
       when: os_migrate_conversion_host_content_install|default(true)|bool
   vars:

@@ -6,7 +6,7 @@
   when: import_flavors_validate_file
 
 - name: stop when errors found
-  fail:
+  ansible.builtin.fail:
     msg: "{{ flavors_file_validation.errors|join(' ') }}"
   when: not ( flavors_file_validation.ok | bool )
 

@@ -1,5 +1,5 @@
 - name: remove osm_router
-  os_router:
+  openstack.cloud.router:
     auth: "{{ item }}"
     name: osm_router
     state: absent

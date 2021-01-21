@@ -6,7 +6,7 @@
   when: import_projects_validate_file
 
 - name: stop when errors found
-  fail:
+  ansible.builtin.fail:
     msg: "{{ projects_file_validation.errors|join(' ') }}"
   when: not ( projects_file_validation.ok | bool )
 

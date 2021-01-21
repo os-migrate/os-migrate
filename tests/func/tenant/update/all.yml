@@ -1,5 +1,5 @@
 - name: Include router tasks
-  include_tasks: router.yml
+  ansible.builtin.include_tasks: router.yml
   args:
     apply:
       tags:
@@ -7,7 +7,7 @@
   tags: always
 
 - name: Include network tasks
-  include_tasks: network.yml
+  ansible.builtin.include_tasks: network.yml
   args:
     apply:
       tags:
@@ -15,7 +15,7 @@
   tags: always
 
 - name: Include subnet tasks
-  include_tasks: subnet.yml
+  ansible.builtin.include_tasks: subnet.yml
   args:
     apply:
       tags:
@@ -23,7 +23,7 @@
   tags: always
 
 - name: Include security group tasks
-  include_tasks: security_group.yml
+  ansible.builtin.include_tasks: security_group.yml
   args:
     apply:
       tags:
@@ -31,7 +31,7 @@
   tags: always
 
 - name: Include image tasks
-  include_tasks: image.yml
+  ansible.builtin.include_tasks: image.yml
   args:
     apply:
       tags:

@@ -1,5 +1,5 @@
 - name: remove osm_flavor
-  os_nova_flavor:
+  openstack.cloud.compute_flavor:
     auth: "{{ item }}"
     name: osm_flavor
     state: absent

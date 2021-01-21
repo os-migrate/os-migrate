@@ -1,15 +1,15 @@
 - name: install epel release
-  yum:
+  ansible.builtin.yum:
     name: epel-release
     state: present
 
 - name: update all packages
-  yum:
+  ansible.builtin.yum:
     name: '*'
     state: latest
 
 - name: install content
-  yum:
+  ansible.builtin.yum:
     name:
       - nbdkit
       - nbdkit-basic-plugins

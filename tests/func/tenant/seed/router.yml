@@ -1,5 +1,5 @@
 - name: create osm_router
-  os_router:
+  openstack.cloud.router:
     auth: "{{ os_migrate_src_auth }}"
     name: osm_router
     state: present

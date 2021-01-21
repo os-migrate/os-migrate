@@ -1,5 +1,5 @@
 - name: Remove pre-workload test data
-  file:
+  ansible.builtin.file:
     path: "{{ os_migrate_data_dir }}/{{ item }}"
     state: absent
   loop:
@@ -12,7 +12,7 @@
     - subnets.yml
 
 - name: remove osm_image
-  os_image:
+  openstack.cloud.image:
     auth: "{{ item.auth }}"
     name: osm_image
     state: absent
@@ -33,7 +33,7 @@
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
 - name: remove osm_key keypair
-  os_keypair:
+  openstack.cloud.keypair:
     auth: "{{ item.auth }}"
     state: absent
     name: osm_key
@@ -54,7 +54,7 @@
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
 - name: remove osm_router
-  os_router:
+  openstack.cloud.router:
     auth: "{{ item.auth }}"
     name: osm_router
     state: absent
@@ -76,7 +76,7 @@
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
 - name: remove osm_server_port
-  os_port:
+  openstack.cloud.port:
     auth: "{{ item.auth }}"
     name: osm_server_port_0
     network: osm_net
@@ -98,7 +98,7 @@
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
 - name: remove osm_subnet
-  os_subnet:
+  openstack.cloud.subnet:
     auth: "{{ item.auth }}"
     name: osm_subnet
     state: absent
@@ -119,7 +119,7 @@
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
 - name: remove osm_net
-  os_network:
+  openstack.cloud.network:
     auth: "{{ item.auth }}"
     name: osm_net
     state: absent
@@ -140,7 +140,7 @@
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
 - name: remove osm_security_group
-  os_security_group:
+  openstack.cloud.security_group:
     auth: "{{ item.auth }}"
     name: osm_security_group
     state: absent
@@ -161,7 +161,7 @@
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
 - name: remove osm_security_group_rule
-  os_security_group_rule:
+  openstack.cloud.security_group_rule:
     auth: "{{ item.auth }}"
     security_group: osm_security_group
     state: absent

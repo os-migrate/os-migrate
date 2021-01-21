@@ -1,5 +1,5 @@
 - name: remove osm_project
-  os_project:
+  openstack.cloud.project:
     auth: "{{ item }}"
     name: osm_project
     state: absent

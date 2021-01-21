@@ -1,20 +1,20 @@
 ### EXPORT IDEMPOTENCE ###
 
-- include_role:
+- ansible.builtin.include_role:
     name: os_migrate.os_migrate.export_routers
   vars:
     os_migrate_routers_filter:
       - regex: '^osm_'
 
 - name: re-load resources for idempotency test
-  set_fact:
+  ansible.builtin.set_fact:
     router_resources_idem: "{{ (lookup('file',
                                 os_migrate_data_dir +
                                 '/routers.yml') | from_yaml)
                         ['resources'] }}"
 
 - name: verify that export file did not change
-  assert:
+  ansible.builtin.assert:
     that:
       - router_resources_idem == router_resources
     fail_msg: |
@@ -32,7 +32,7 @@
     region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
   register: router_import_idem_before
 
-- include_role:
+- ansible.builtin.include_role:
     name: os_migrate.os_migrate.import_routers
 
 - name: look up osm_router in dst cloud again
@@ -43,7 +43,7 @@
   register: router_import_idem_after
 
 - name: ensure updated_at for osm_router did not change
-  assert:
+  ansible.builtin.assert:
     that:
       - router_import_idem_before['openstack_routers'][0].updated_at != None
       - "router_import_idem_before['openstack_routers'][0]['updated_at'] \

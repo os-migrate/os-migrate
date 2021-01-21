@@ -6,7 +6,7 @@
   when: import_networks_validate_file
 
 - name: stop when errors found
-  fail:
+  ansible.builtin.fail:
     msg: "{{ networks_file_validation.errors|join(' ') }}"
   when: not ( networks_file_validation.ok | bool )
 

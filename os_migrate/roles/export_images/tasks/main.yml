@@ -1,7 +1,7 @@
 # NOTE: os_image_info doesn't support os_migrate_src_filters, we apply
 # the filters manually below.
 - name: scan available images
-  os_image_info:
+  openstack.cloud.image_info:
     auth: "{{ os_migrate_src_auth }}"
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_src_region_name|default(omit) }}"
@@ -12,14 +12,14 @@
   register: src_images_info
 
 - name: create id-name pairs of images to export
-  set_fact:
+  ansible.builtin.set_fact:
     export_images_ids_names: "{{ (
       src_images_info.openstack_image
         | json_query('[*].{name: name, id: id, owner: owner}')
         | sort(attribute='id') ) }}"
 
 - name: filter images to export by project
-  set_fact:
+  ansible.builtin.set_fact:
     export_images_ids_names: "{{ (
       export_images_ids_names
         | json_query(\"[?owner=='\" + os_migrate_src_filters['project_id'] + \"']\")
@@ -29,7 +29,7 @@
     - os_migrate_src_filters['project_id'] is defined
 
 - name: filter names of images to export
-  set_fact:
+  ansible.builtin.set_fact:
     export_images_ids_names: "{{ (
       export_images_ids_names
         | os_migrate.os_migrate.stringfilter(os_migrate_images_filter,
@@ -49,7 +49,7 @@
   loop: "{{ export_images_ids_names }}"
 
 - name: make sure image blob dir exists
-  file:
+  ansible.builtin.file:
     path: "{{ os_migrate_image_blobs_dir }}"
     state: directory
   when: os_migrate_export_images_blobs

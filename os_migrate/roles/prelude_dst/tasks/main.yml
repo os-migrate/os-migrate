@@ -14,7 +14,7 @@
       register: _auth_info
 
     - name: set os_migrate_dst_project_id and os_migrate_dst_filters
-      set_fact:
+      ansible.builtin.set_fact:
         os_migrate_dst_project_id: "{{ _auth_info.auth_info.project_id }}"
         os_migrate_dst_filters:
           project_id: "{{ _auth_info.auth_info.project_id }}"

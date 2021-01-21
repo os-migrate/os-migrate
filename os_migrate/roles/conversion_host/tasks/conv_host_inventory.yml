@@ -1,5 +1,5 @@
 - name: discover conversion host
-  os_server_info:
+  openstack.cloud.server_info:
     server: "{{ os_migrate_conversion_host_name }}*"
     auth: "{{ os_migrate_conversion_auth }}"
     auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
@@ -11,7 +11,7 @@
   register: _server_info
 
 - name: fail when conversion host was not found
-  fail:
+  ansible.builtin.fail:
     msg: >-
       Nova server of name '{{ os_migrate_conversion_host_name }}' not
       found, it was meant to be used as {{ inventory_name }}
@@ -20,7 +20,7 @@
     - not ignore_missing_conversion_hosts|default(false)|bool
 
 - name: add conversion host to inventory
-  add_host:
+  ansible.builtin.add_host:
     name: "{{ inventory_name }}"
     groups:
       - conversion_hosts

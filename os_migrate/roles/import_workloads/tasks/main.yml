@@ -6,7 +6,7 @@
   when: import_workloads_validate_file
 
 - name: stop when errors found
-  fail:
+  ansible.builtin.fail:
     msg: "{{ workloads_file_validation.errors|join(' ') }}"
   when: not ( workloads_file_validation.ok | bool )
 
@@ -16,7 +16,7 @@
   register: read_workloads
 
 - name: create directory for workload migration logs
-  file:
+  ansible.builtin.file:
     path: "{{ os_migrate_data_dir }}/workload_logs"
     state: directory
 
@@ -34,7 +34,7 @@
   register: os_src_conversion_host_info
 
 - name: fail if source conversion host is not active
-  fail:
+  ansible.builtin.fail:
     msg: The source conversion host is not running!
   when: os_src_conversion_host_info.openstack_conversion_host.status != "ACTIVE"
 
@@ -52,7 +52,7 @@
   register: os_dst_conversion_host_info
 
 - name: fail if destination conversion is not active
-  fail:
+  ansible.builtin.fail:
     msg: The destination conversion host is not running!
   when: os_dst_conversion_host_info.openstack_conversion_host.status != "ACTIVE"
 
@@ -61,7 +61,7 @@
 # much time to start.
 
 - name: Wait until the dst conversion host is reachable
-  wait_for:
+  ansible.builtin.wait_for:
     port: 22
     host: '{{ os_dst_conversion_host_info.openstack_conversion_host.address }}'
     search_regex: OpenSSH
@@ -69,7 +69,7 @@
     timeout: 600
 
 - name: Wait until the src conversion host is reachable
-  wait_for:
+  ansible.builtin.wait_for:
     port: 22
     host: '{{ os_src_conversion_host_info.openstack_conversion_host.address }}'
     search_regex: OpenSSH
@@ -77,5 +77,5 @@
     timeout: 600
 
 - name: import workloads
-  include_tasks: workload.yml
+  ansible.builtin.include_tasks: workload.yml
   loop: "{{ read_workloads.resources }}"
