@@ -1,21 +1,22 @@
 - name: validate loaded resources
-  os_migrate.os_migrate.validate_resource_files:
-    paths:
-      - "{{ os_migrate_data_dir }}/routers.yml"
   register: routers_file_validation
   when: import_routers_validate_file
 
+  os_migrate.os_migrate.validate_resource_files:
+    paths:
+      - "{{ os_migrate_data_dir }}/routers.yml"
 - name: stop when errors found
-  fail:
-    msg: "{{ routers_file_validation.errors|join(' ') }}"
   when: not ( routers_file_validation.ok | bool )
 
+  ansible.builtin.fail:
+    msg: "{{ routers_file_validation.errors|join(' ') }}"
 - name: read routers resource file
-  os_migrate.os_migrate.read_resources:
-    path: "{{ os_migrate_data_dir }}/routers.yml"
   register: read_routers
 
+  os_migrate.os_migrate.read_resources:
+    path: "{{ os_migrate_data_dir }}/routers.yml"
 - name: import routers
+  loop: "{{ read_routers.resources }}"
   os_migrate.os_migrate.import_router:
     auth: "{{ os_migrate_dst_auth }}"
     auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
@@ -26,4 +27,3 @@
     ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-  loop: "{{ read_routers.resources }}"

@@ -1,21 +1,22 @@
 - name: validate loaded resources
-  os_migrate.os_migrate.validate_resource_files:
-    paths:
-      - "{{ os_migrate_data_dir }}/networks.yml"
   register: networks_file_validation
   when: import_networks_validate_file
 
+  os_migrate.os_migrate.validate_resource_files:
+    paths:
+      - "{{ os_migrate_data_dir }}/networks.yml"
 - name: stop when errors found
-  fail:
-    msg: "{{ networks_file_validation.errors|join(' ') }}"
   when: not ( networks_file_validation.ok | bool )
 
+  ansible.builtin.fail:
+    msg: "{{ networks_file_validation.errors|join(' ') }}"
 - name: read networks resource file
-  os_migrate.os_migrate.read_resources:
-    path: "{{ os_migrate_data_dir }}/networks.yml"
   register: read_networks
 
+  os_migrate.os_migrate.read_resources:
+    path: "{{ os_migrate_data_dir }}/networks.yml"
 - name: import networks
+  loop: "{{ read_networks.resources }}"
   os_migrate.os_migrate.import_network:
     auth: "{{ os_migrate_dst_auth }}"
     auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
@@ -26,4 +27,3 @@
     ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-  loop: "{{ read_networks.resources }}"

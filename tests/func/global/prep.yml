@@ -1,24 +1,24 @@
 # make sure no artifacts from prevoius test persisted
 - name: delete os_migrate_data_dir
-  file:
+  tags:
+    - always
+    - test_prep
+
+  ansible.builtin.file:
     path: "{{ os_migrate_data_dir }}"
     state: absent
+- name: create os_migrate_tests_tmp_dir
   tags:
     - always
     - test_prep
 
-- name: create os_migrate_tests_tmp_dir
-  file:
+  ansible.builtin.file:
     path: "{{ os_migrate_tests_tmp_dir }}"
     state: directory
+- name: create os_migrate_data_dir
   tags:
     - always
     - test_prep
-
-- name: create os_migrate_data_dir
-  file:
+  ansible.builtin.file:
     path: "{{ os_migrate_data_dir }}"
     state: directory
-  tags:
-    - always
-    - test_prep

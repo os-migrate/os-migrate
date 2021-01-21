@@ -1,7 +1,9 @@
 # NOTE: os_image_info doesn't support os_migrate_src_filters, we apply
 # the filters manually below.
 - name: scan available images
-  os_image_info:
+  register: src_images_info
+
+  openstack.cloud.image_info:
     auth: "{{ os_migrate_src_auth }}"
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_src_region_name|default(omit) }}"
@@ -9,33 +11,24 @@
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  register: src_images_info
-
 - name: create id-name pairs of images to export
-  set_fact:
-    export_images_ids_names: "{{ (
-      src_images_info.openstack_image
-        | json_query('[*].{name: name, id: id, owner: owner}')
-        | sort(attribute='id') ) }}"
+  ansible.builtin.set_fact:
+    export_images_ids_names: "{{ (src_images_info.openstack_image | community.general.json_query('[*].{name: name, id: id, owner: owner}') | sort(attribute='id') ) }}"
 
 - name: filter images to export by project
-  set_fact:
-    export_images_ids_names: "{{ (
-      export_images_ids_names
-        | json_query(\"[?owner=='\" + os_migrate_src_filters['project_id'] + \"']\")
-        | sort(attribute='id') ) }}"
   when:
     - os_migrate_src_filters is defined
     - os_migrate_src_filters['project_id'] is defined
 
+  ansible.builtin.set_fact:
+    export_images_ids_names: "{{ (export_images_ids_names | community.general.json_query(\"[?owner=='\" + os_migrate_src_filters['project_id'] + \"']\") | sort(attribute='id') ) }}"
 - name: filter names of images to export
-  set_fact:
-    export_images_ids_names: "{{ (
-      export_images_ids_names
-        | os_migrate.os_migrate.stringfilter(os_migrate_images_filter,
-                                             attribute='name') ) }}"
+  ansible.builtin.set_fact:
+    export_images_ids_names: "{{ ( export_images_ids_names | os_migrate.os_migrate.stringfilter(os_migrate_images_filter, attribute='name') ) }}"
 
 - name: export image metadata
+  loop: "{{ export_images_ids_names }}"
+
   os_migrate.os_migrate.export_image_meta:
     auth: "{{ os_migrate_src_auth }}"
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
@@ -46,15 +39,15 @@
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  loop: "{{ export_images_ids_names }}"
-
 - name: make sure image blob dir exists
-  file:
-    path: "{{ os_migrate_image_blobs_dir }}"
-    state: directory
   when: os_migrate_export_images_blobs
 
+  ansible.builtin.file:
+    path: "{{ os_migrate_image_blobs_dir }}"
+    state: directory
 - name: export image blobs
+  loop: "{{ export_images_ids_names }}"
+  when: os_migrate_export_images_blobs
   os_migrate.os_migrate.export_image_blob:
     auth: "{{ os_migrate_src_auth }}"
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
@@ -65,5 +58,3 @@
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  loop: "{{ export_images_ids_names }}"
-  when: os_migrate_export_images_blobs

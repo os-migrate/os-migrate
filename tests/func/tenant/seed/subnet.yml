@@ -1,5 +1,5 @@
 - name: Create subnet
-  os_subnet:
+  openstack.cloud.subnet:
     auth: "{{ os_migrate_src_auth }}"
     state: present
     network_name: osm_net
@@ -15,7 +15,7 @@
         nexthop: 192.168.0.1
 
 - name: Create a 2nd subnet for router testing
-  os_subnet:
+  openstack.cloud.subnet:
     auth: "{{ os_migrate_src_auth }}"
     state: present
     network_name: osm_net

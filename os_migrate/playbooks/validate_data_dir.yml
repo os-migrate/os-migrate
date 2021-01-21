@@ -1,3 +1,1 @@
-- hosts: migrator
-  roles:
-    - os_migrate.os_migrate.validate_data_dir
+Can not find: hosts

@@ -1,27 +1,27 @@
 - name: validate valid dir
   changed_when: true
-  shell: |
+  ansible.builtin.shell: |
     OS_MIGRATE="$HOME/.ansible/collections/ansible_collections/os_migrate/os_migrate"
     OS_MIGRATE_DATA="{{ playbook_dir }}/tenant/data/validate_data_dir/valid"
     ansible-playbook -v \
         -i $OS_MIGRATE/localhost_inventory.yml \
         -e "os_migrate_data_dir=$OS_MIGRATE_DATA" \
         $OS_MIGRATE/playbooks/validate_data_dir.yml
-
 - name: validate invalid dir
   changed_when: true
-  shell: |
+  failed_when: false
+  register: validate_data_dir_invalid_result
+
+  ansible.builtin.shell: |
     OS_MIGRATE="$HOME/.ansible/collections/ansible_collections/os_migrate/os_migrate"
     OS_MIGRATE_DATA="{{ playbook_dir }}/tenant/data/validate_data_dir/invalid"
     ansible-playbook -v \
         -i $OS_MIGRATE/localhost_inventory.yml \
         -e "os_migrate_data_dir=$OS_MIGRATE_DATA" \
         $OS_MIGRATE/playbooks/validate_data_dir.yml
-  failed_when: false
-  register: validate_data_dir_invalid_result
-
 - name: assert invalid dir validation failed
-  fail:
+  when: validate_data_dir_invalid_result.rc == 0
+  ansible.builtin.fail:
     msg: |
       =======
       STDOUT:
@@ -31,4 +31,3 @@
       STDERR:
       =======
       {{ validate_data_dir_invalid_result.stderr }}
-  when: validate_data_dir_invalid_result.rc == 0

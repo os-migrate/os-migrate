@@ -1,18 +1,15 @@
 - name: Test preparation
   hosts: migrator
   tasks:
-    - import_tasks: common/prep.yml
-
+    - ansible.builtin.import_tasks: common/prep.yml
 - name: Make sure conversion hosts are cleaned up
-  import_playbook: "{{ lookup('env', 'OS_MIGRATE') }}/playbooks/delete_conversion_hosts.yml"
-
+  ansible.builtin.import_playbook: "{{ lookup('env', 'OS_MIGRATE') }}/playbooks/delete_conversion_hosts.yml"
 - name: Deploy conversion hosts
-  import_playbook: "{{ lookup('env', 'OS_MIGRATE') }}/playbooks/deploy_conversion_hosts.yml"
-
+  ansible.builtin.import_playbook: "{{ lookup('env', 'OS_MIGRATE') }}/playbooks/deploy_conversion_hosts.yml"
 - name: Conversion host inventory
   hosts: migrator
   tasks:
-    - include_role:
+    - ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host
         tasks_from: conv_hosts_inventory.yml
 
@@ -22,15 +19,14 @@
   hosts: conversion_hosts
   ignore_unreachable: true
   tasks:
-    - include_role:
+    - ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host
         tasks_from: unregister.yml
 
 - name: Migration tests
   hosts: migrator
   tasks:
-    - include_tasks: tenant/clean_workload.yml
-      args:
+    - args:
         apply:
           tags:
             - test_clean_before
@@ -38,44 +34,44 @@
             - test_image_workload_boot_copy
             - test_image_workload_boot_nocopy
       tags: always
-    - include_tasks: tenant/clean_pre_workload.yml
-      args:
+      ansible.builtin.include_tasks: tenant/clean_workload.yml
+    - args:
         apply:
           tags:
             - test_clean_before
             - test_pre_workload
       tags: always
 
-    # pre-workload seed & migrate
-    - include_tasks: tenant/seed_pre_workload.yml
-      args:
+  # pre-workload seed & migrate
+      ansible.builtin.include_tasks: tenant/clean_pre_workload.yml
+    - args:
         apply:
           tags: test_pre_workload
       tags: always
-    - include_tasks: tenant/run_pre_workload.yml
-      args:
+      ansible.builtin.include_tasks: tenant/seed_pre_workload.yml
+    - args:
         apply:
           tags: test_pre_workload
       tags: always
 
-    # server from image with attached volume
-    # migration w/o boot volume copy
-    - include_tasks: tenant/seed_workload.yml
-      args:
+  # server from image with attached volume
+  # migration w/o boot volume copy
+      ansible.builtin.include_tasks: tenant/run_pre_workload.yml
+    - args:
         apply:
           tags:
             - test_workload
             - test_image_workload_boot_nocopy
       tags: always
-    - include_tasks: tenant/run_workload.yml
-      args:
+      ansible.builtin.include_tasks: tenant/seed_workload.yml
+    - args:
         apply:
           tags:
             - test_workload
             - test_image_workload_boot_nocopy
       tags: always
-    - include_tasks: tenant/clean_workload.yml
-      args:
+      ansible.builtin.include_tasks: tenant/run_workload.yml
+    - args:
         apply:
           tags:
             - test_workload
@@ -83,17 +79,17 @@
             - test_image_workload_boot_nocopy_clean
       tags: always
 
-    # server from image with attached volume
-    # migration with boot volume copy
-    - include_tasks: tenant/seed_workload.yml
-      args:
+  # server from image with attached volume
+  # migration with boot volume copy
+      ansible.builtin.include_tasks: tenant/clean_workload.yml
+    - args:
         apply:
           tags:
             - test_workload
             - test_image_workload_boot_copy
       tags: always
-    - include_tasks: tenant/run_workload.yml
-      args:
+      ansible.builtin.include_tasks: tenant/seed_workload.yml
+    - args:
         apply:
           tags:
             - test_workload
@@ -101,8 +97,8 @@
       tags: always
       vars:
         set_boot_volume_copy: true
-    - include_tasks: tenant/clean_workload.yml
-      args:
+      ansible.builtin.include_tasks: tenant/run_workload.yml
+    - args:
         apply:
           tags:
             - test_clean_after
@@ -111,17 +107,18 @@
             - test_image_workload_boot_copy_clean
       tags: always
 
-    # pre-workload cleanup
-    - include_tasks: tenant/clean_pre_workload.yml
-      args:
+  # pre-workload cleanup
+      ansible.builtin.include_tasks: tenant/clean_workload.yml
+    - args:
         apply:
           tags:
             - test_clean_after
             - test_pre_workload
       tags: always
+      ansible.builtin.include_tasks: tenant/clean_pre_workload.yml
   tags:
     - test_migration
 
 - name: Delete conversion hosts
-  import_playbook: "{{ lookup('env', 'OS_MIGRATE') }}/playbooks/delete_conversion_hosts.yml"
   when: test_clean_conversion_hosts_after|default(true)|bool
+  ansible.builtin.import_playbook: "{{ lookup('env', 'OS_MIGRATE') }}/playbooks/delete_conversion_hosts.yml"

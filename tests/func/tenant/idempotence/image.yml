@@ -1,20 +1,17 @@
 ### EXPORT IDEMPOTENCE ###
 
-- include_role:
-    name: os_migrate.os_migrate.export_images
-  vars:
+- vars:
     os_migrate_images_filter:
       - regex: '^osm_'
 
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.export_images
 - name: re-load image_resources for idempotency test
-  set_fact:
-    image_resources_idem: "{{ (lookup('file',
-                                  os_migrate_data_dir +
-                                  '/images.yml') | from_yaml)
-                              ['resources'] }}"
+  ansible.builtin.set_fact:
+    image_resources_idem: "{{ (lookup('file', os_migrate_data_dir + '/images.yml') | from_yaml) ['resources'] }}"
 
 - name: verify that export file did not change
-  assert:
+  ansible.builtin.assert:
     that:
       - image_resources_idem == image_resources
     fail_msg: |
@@ -26,26 +23,25 @@
 ### IMPORT IDEMPOTENCE ###
 
 - name: look up osm_image dst cloud
-  os_image_info:
-    auth: "{{ os_migrate_dst_auth }}"
-    image: osm_image
   register: image_import_idem_before
 
-- include_role:
+  openstack.cloud.image_info:
+    auth: "{{ os_migrate_dst_auth }}"
+    image: osm_image
+- ansible.builtin.include_role:
     name: os_migrate.os_migrate.import_images
 
 - name: look up osm_image in dst cloud again
-  os_image_info:
-    auth: "{{ os_migrate_dst_auth }}"
-    image: osm_image
   register: image_import_idem_after
 
+  openstack.cloud.image_info:
+    auth: "{{ os_migrate_dst_auth }}"
+    image: osm_image
 - name: ensure updated_at for osm_image did not change
-  assert:
+  ansible.builtin.assert:
     that:
       - image_import_idem_before['openstack_image'].updated_at != None
-      - "image_import_idem_before['openstack_image']['updated_at'] \
-         == image_import_idem_after['openstack_image']['updated_at']"
+      - "image_import_idem_before['openstack_image']['updated_at'] == image_import_idem_after['openstack_image']['updated_at']"
     fail_msg: |
       image_import_idem_before updated_at:
       {{ image_import_idem_before['openstack_image'].updated_at }}

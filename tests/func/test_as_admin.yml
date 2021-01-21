@@ -1,20 +1,20 @@
 - name: Migration tests
   hosts: migrator
   tasks:
-    - import_tasks: global/prep.yml
-    - include_tasks: admin/clean/all.yml
-      args:
+    - ansible.builtin.import_tasks: global/prep.yml
+    - args:
         apply:
           tags: test_clean_before
       tags: always
-    - import_tasks: admin/seed/all.yml
-    - import_tasks: admin/run/all.yml
-    - import_tasks: admin/idempotence/all.yml
-    - import_tasks: admin/update/all.yml
-    - include_tasks: admin/clean/all.yml
-      args:
+      ansible.builtin.include_tasks: admin/clean/all.yml
+    - ansible.builtin.import_tasks: admin/seed/all.yml
+    - ansible.builtin.import_tasks: admin/run/all.yml
+    - ansible.builtin.import_tasks: admin/idempotence/all.yml
+    - ansible.builtin.import_tasks: admin/update/all.yml
+    - args:
         apply:
           tags: test_clean_after
       tags: always
+      ansible.builtin.include_tasks: admin/clean/all.yml
   tags:
     - test_migration

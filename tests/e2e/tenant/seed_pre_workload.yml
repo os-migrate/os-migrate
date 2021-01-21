@@ -1,18 +1,4 @@
 - name: create osm_net
-  os_network:
-    auth: "{{ item.auth }}"
-    name: osm_net
-    # Apparently description is an unsupported param in Ansible even
-    # though OpenStack supports it.
-    # description: osm_net test network
-    state: present
-    mtu: "{{
-      omit if os_migrate_src_release == 10
-      else 1400 }}"
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
   loop:
     - auth: "{{ os_migrate_src_auth }}"
       validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
@@ -20,8 +6,27 @@
       client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_src_client_key|default(omit) }}"
 
+  openstack.cloud.network:
+    auth: "{{ item.auth }}"
+    name: osm_net
+  # Apparently description is an unsupported param in Ansible even
+  # though OpenStack supports it.
+  # description: osm_net test network
+    state: present
+    mtu: "{{ omit if os_migrate_src_release == 10 else 1400 }}"
+    validate_certs: "{{ item.validate_certs }}"
+    ca_cert: "{{ item.ca_cert }}"
+    client_cert: "{{ item.client_cert }}"
+    client_key: "{{ item.client_key }}"
 - name: Create osm subnet
-  os_subnet:
+  loop:
+    - auth: "{{ os_migrate_src_auth }}"
+      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+
+  openstack.cloud.subnet:
     auth: "{{ item.auth }}"
     state: present
     network_name: osm_net
@@ -36,6 +41,7 @@
     ca_cert: "{{ item.ca_cert }}"
     client_cert: "{{ item.client_cert }}"
     client_key: "{{ item.client_key }}"
+- name: Create security group
   loop:
     - auth: "{{ os_migrate_src_auth }}"
       validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
@@ -43,8 +49,7 @@
       client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_src_client_key|default(omit) }}"
 
-- name: Create security group
-  os_security_group:
+  openstack.cloud.security_group:
     auth: "{{ item.auth }}"
     state: present
     name: osm_security_group
@@ -53,6 +58,7 @@
     ca_cert: "{{ item.ca_cert }}"
     client_cert: "{{ item.client_cert }}"
     client_key: "{{ item.client_key }}"
+- name: Create security group rule
   loop:
     - auth: "{{ os_migrate_src_auth }}"
       validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
@@ -60,8 +66,7 @@
       client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_src_client_key|default(omit) }}"
 
-- name: Create security group rule
-  os_security_group_rule:
+  openstack.cloud.security_group_rule:
     auth: "{{ item.auth }}"
     security_group: osm_security_group
     remote_ip_prefix: 0.0.0.0/0
@@ -69,6 +74,7 @@
     ca_cert: "{{ item.ca_cert }}"
     client_cert: "{{ item.client_cert }}"
     client_key: "{{ item.client_key }}"
+- name: create osm_router
   loop:
     - auth: "{{ os_migrate_src_auth }}"
       validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
@@ -76,8 +82,7 @@
       client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_src_client_key|default(omit) }}"
 
-- name: create osm_router
-  os_router:
+  openstack.cloud.router:
     auth: "{{ item.auth }}"
     name: osm_router
     state: present
@@ -90,35 +95,19 @@
     ca_cert: "{{ item.ca_cert }}"
     client_cert: "{{ item.client_cert }}"
     client_key: "{{ item.client_key }}"
-  loop:
-    - auth: "{{ os_migrate_src_auth }}"
-      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-
 - name: Create the key folder
-  file:
+  ansible.builtin.file:
     path: "{{ '~' | expanduser }}/ssh-ci"
     mode: 0700
     state: directory
 
 - name: Generate a keypair for the migration
-  # This will not regenerate the key if
-  # it already exists
-  openssh_keypair:
+# This will not regenerate the key if
+# it already exists
+  community.crypto.openssh_keypair:
     path: "{{ '~' | expanduser }}/ssh-ci/id_rsa"
 
 - name: Create new keypair as osm_key
-  os_keypair:
-    auth: "{{ item.auth }}"
-    state: present
-    name: osm_key
-    public_key_file: "{{ '~' | expanduser }}/ssh-ci/id_rsa.pub"
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
   loop:
     - auth: "{{ os_migrate_src_auth }}"
       validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
@@ -131,18 +120,27 @@
       client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
+  openstack.cloud.keypair:
+    auth: "{{ item.auth }}"
+    state: present
+    name: osm_key
+    public_key_file: "{{ '~' | expanduser }}/ssh-ci/id_rsa.pub"
+    validate_certs: "{{ item.validate_certs }}"
+    ca_cert: "{{ item.ca_cert }}"
+    client_cert: "{{ item.client_cert }}"
+    client_key: "{{ item.client_key }}"
 - name: make sure test_inputs dir exists
-  file:
+  ansible.builtin.file:
     path: "{{ os_migrate_tests_tmp_dir }}/test_inputs"
     state: directory
 
 - name: fetch cirros image
-  get_url:
+  ansible.builtin.get_url:
     url: https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img
     dest: "{{ os_migrate_tests_tmp_dir }}/test_inputs/cirros.img"
 
 - name: create osm_image
-  os_image:
+  openstack.cloud.image:
     auth: "{{ os_migrate_src_auth }}"
     name: osm_image
     filename: "{{ os_migrate_tests_tmp_dir }}/test_inputs/cirros.img"

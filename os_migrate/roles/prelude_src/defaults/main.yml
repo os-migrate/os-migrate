@@ -1,3 +1,1 @@
-# It is currently not supported to export/import for multiple projects.
-os_migrate_src_filter_current_project: true
-os_migrate_src_filters: {}
+Can not find: os_migrate_src_filter_current_project

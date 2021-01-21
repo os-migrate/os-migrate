@@ -1,3 +1,1 @@
-- hosts: migrator
-  roles:
-    - os_migrate.os_migrate.import_images
+Can not find: hosts

@@ -1,32 +1,32 @@
 - name: Include flavor tasks
-  include_tasks: flavor.yml
   args:
     apply:
       tags:
         - test_flavor
   tags: always
 
+  ansible.builtin.include_tasks: flavor.yml
 - name: Include keypair tasks
-  include_tasks: keypair.yml
   args:
     apply:
       tags:
         - test_keypair
   tags: always
 
+  ansible.builtin.include_tasks: keypair.yml
 - name: Include user tasks
-  include_tasks: user.yml
   args:
     apply:
       tags:
         - test_user
   tags: always
 
+  ansible.builtin.include_tasks: user.yml
 - name: Include project tasks
-  include_tasks: project.yml
   args:
     apply:
       tags:
         - test_project
   tags:
     - always
+  ansible.builtin.include_tasks: project.yml

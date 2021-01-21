@@ -1,39 +1,39 @@
 - name: Include router tasks
-  include_tasks: router.yml
   args:
     apply:
       tags:
         - test_router
   tags: always
 
+  ansible.builtin.include_tasks: router.yml
 - name: Include network tasks
-  include_tasks: network.yml
   args:
     apply:
       tags:
         - test_network
   tags: always
 
+  ansible.builtin.include_tasks: network.yml
 - name: Include subnet tasks
-  include_tasks: subnet.yml
   args:
     apply:
       tags:
         - test_subnet
   tags: always
 
+  ansible.builtin.include_tasks: subnet.yml
 - name: Include security group tasks
-  include_tasks: security_group.yml
   args:
     apply:
       tags:
         - test_security_group
   tags: always
 
+  ansible.builtin.include_tasks: security_group.yml
 - name: Include image tasks
-  include_tasks: image.yml
   args:
     apply:
       tags:
         - test_image
   tags: always
+  ansible.builtin.include_tasks: image.yml

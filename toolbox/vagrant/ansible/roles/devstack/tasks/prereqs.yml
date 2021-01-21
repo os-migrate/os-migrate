@@ -1,5 +1,5 @@
 - name: install packages for devstack
-  package:
+  ansible.builtin.package:
     name:
       - git
       - python2
@@ -8,17 +8,17 @@
     state: present
 
 - name: remove packages which devstack does not like
-  package:
+  ansible.builtin.package:
     name:
       - python3-pyyaml
     state: absent
 
 - name: create stack user
-  user:
+  ansible.builtin.user:
     name: stack
 
 - name: create sudoers entry for stack
-  copy:
+  ansible.builtin.copy:
     dest: /etc/sudoers.d/stack
     content: |
       stack ALL=(ALL) NOPASSWD:ALL

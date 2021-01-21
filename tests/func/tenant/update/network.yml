@@ -1,12 +1,14 @@
 - name: change item in file for update test
-  replace:
+  ansible.builtin.replace:
     path: "{{ os_migrate_data_dir }}/networks.yml"
     regexp: "    description: ''"
     replace: "    description: 'osm_net_updated'"
     backup: yes
 
 - name: scan available networks after before test
-  os_networks_info:
+  register: dst_networks_info_before
+
+  openstack.cloud.networks_info:
     filters: "{{ os_migrate_dst_filters }}"
     auth: "{{ os_migrate_dst_auth }}"
     auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
@@ -15,19 +17,19 @@
     ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-  register: dst_networks_info_before
-
 - name: get original description
-  set_fact:
+  ansible.builtin.set_fact:
     original_desc: |-
-      {{ dst_networks_info_before['openstack_networks'] | json_query(
+      {{ dst_networks_info_before['openstack_networks'] | community.general.json_query(
         "[?name=='osm_net'].description") }}
 
-- include_role:
+- ansible.builtin.include_role:
     name: os_migrate.os_migrate.import_networks
 
 - name: scan available networks after update test
-  os_networks_info:
+  register: dst_networks_info_after
+
+  openstack.cloud.networks_info:
     filters: "{{ os_migrate_dst_filters }}"
     auth: "{{ os_migrate_dst_auth }}"
     auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
@@ -36,16 +38,14 @@
     ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-  register: dst_networks_info_after
-
 - name: get changed description
-  set_fact:
+  ansible.builtin.set_fact:
     changed_desc: |-
-      {{ dst_networks_info_after['openstack_networks'] | json_query(
+      {{ dst_networks_info_after['openstack_networks'] | community.general.json_query(
         "[?name=='osm_net'].description") }}
 
 - name: ensure description for osm_net changed
-  assert:
+  ansible.builtin.assert:
     that:
       - original_desc == ['']
       - changed_desc == ['osm_net_updated']

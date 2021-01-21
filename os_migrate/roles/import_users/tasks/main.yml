@@ -1,21 +1,22 @@
 - name: validate loaded resources
-  os_migrate.os_migrate.validate_resource_files:
-    paths:
-      - "{{ os_migrate_data_dir }}/users.yml"
   register: users_file_validation
   when: import_users_validate_file
 
+  os_migrate.os_migrate.validate_resource_files:
+    paths:
+      - "{{ os_migrate_data_dir }}/users.yml"
 - name: stop when errors found
-  fail:
-    msg: "{{ users_file_validation.errors|join(' ') }}"
   when: not ( users_file_validation.ok | bool )
 
+  ansible.builtin.fail:
+    msg: "{{ users_file_validation.errors|join(' ') }}"
 - name: read users resource file
-  os_migrate.os_migrate.read_resources:
-    path: "{{ os_migrate_data_dir }}/users.yml"
   register: read_users
 
+  os_migrate.os_migrate.read_resources:
+    path: "{{ os_migrate_data_dir }}/users.yml"
 - name: import users
+  loop: "{{ read_users.resources }}"
   os_migrate.os_migrate.import_user:
     auth: "{{ os_migrate_dst_auth }}"
     auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
@@ -25,4 +26,3 @@
     ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-  loop: "{{ read_users.resources }}"

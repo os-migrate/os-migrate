@@ -1,7 +1,7 @@
 - name: Include project tasks
-  include_tasks: project.yml
   args:
     apply:
       tags:
         - test_project
   tags: always
+  ansible.builtin.include_tasks: project.yml

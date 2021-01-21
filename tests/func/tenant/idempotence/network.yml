@@ -1,20 +1,17 @@
 ### EXPORT IDEMPOTENCE ###
 
-- include_role:
-    name: os_migrate.os_migrate.export_networks
-  vars:
+- vars:
     os_migrate_networks_filter:
       - regex: '^osm_'
 
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.export_networks
 - name: re-load network_resources for idempotency test
-  set_fact:
-    network_resources_idem: "{{ (lookup('file',
-                                os_migrate_data_dir +
-                                '/networks.yml') | from_yaml)
-                        ['resources'] }}"
+  ansible.builtin.set_fact:
+    network_resources_idem: "{{ (lookup('file', os_migrate_data_dir + '/networks.yml') | from_yaml) ['resources'] }}"
 
 - name: verify that export file did not change
-  assert:
+  ansible.builtin.assert:
     that:
       - network_resources_idem == network_resources
     fail_msg: |
@@ -26,28 +23,27 @@
 ### IMPORT IDEMPOTENCE ###
 
 - name: look up osm_net dst cloud
-  os_networks_info:
+  register: network_import_idem_before
+
+  openstack.cloud.networks_info:
     auth: "{{ os_migrate_dst_auth }}"
     filters:
       name: osm_net
-  register: network_import_idem_before
-
-- include_role:
+- ansible.builtin.include_role:
     name: os_migrate.os_migrate.import_networks
 
 - name: look up osm_net in dst cloud again
-  os_networks_info:
+  register: network_import_idem_after
+
+  openstack.cloud.networks_info:
     auth: "{{ os_migrate_dst_auth }}"
     filters:
       name: osm_net
-  register: network_import_idem_after
-
 - name: ensure updated_at for osm_net did not change
-  assert:
+  ansible.builtin.assert:
     that:
       - network_import_idem_before['openstack_networks'][0].updated_at != None
-      - "network_import_idem_before['openstack_networks'][0]['updated_at'] \
-         == network_import_idem_after['openstack_networks'][0]['updated_at']"
+      - "network_import_idem_before['openstack_networks'][0]['updated_at'] == network_import_idem_after['openstack_networks'][0]['updated_at']"
     fail_msg: |
       network_import_idem_before updated_at:
       {{ network_import_idem_before['openstack_networks'][0].updated_at }}
