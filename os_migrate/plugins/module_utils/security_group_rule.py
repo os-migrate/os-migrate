@@ -15,7 +15,7 @@ class SecurityGroupRule(resource.Resource):
     info_from_sdk = [
         'id',
         'security_group_id',
-        'remote_group_id',
+        'remote_address_group_id',
         'project_id',
         'created_at',
         'updated_at',
@@ -38,7 +38,7 @@ class SecurityGroupRule(resource.Resource):
 
     sdk_params_from_refs = [
         'security_group_id',
-        'remote_group_id',
+        'remote_address_group_id',
     ]
 
     @classmethod
@@ -65,8 +65,8 @@ class SecurityGroupRule(resource.Resource):
             conn, sdk_res['security_group_id'])
         refs['security_group_id'] = sdk_res['security_group_id']
         refs['remote_group_ref'] = reference.security_group_ref(
-            conn, sdk_res['remote_group_id'])
-        refs['remote_group_id'] = sdk_res['remote_group_id']
+            conn, sdk_res['remote_address_group_id'])
+        refs['remote_address_group_id'] = sdk_res['remote_address_group_id']
         return refs
 
     def _refs_from_ser(self, conn, filters=None):
@@ -75,7 +75,7 @@ class SecurityGroupRule(resource.Resource):
         refs['security_group_id'] = reference.security_group_id(
             conn, self.params()['security_group_ref'])
         refs['remote_group_ref'] = self.params()['remote_group_ref']
-        refs['remote_group_id'] = reference.security_group_id(
+        refs['remote_address_group_id'] = reference.security_group_id(
             conn, self.params()['remote_group_ref'])
 
         return refs

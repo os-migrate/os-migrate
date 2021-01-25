@@ -16,7 +16,7 @@ def security_group_rule_refs():
             'project_name': 'test-project',
             'domain_name': 'Default',
         },
-        'remote_group_id': 'uuid-test-remote-secgroup',
+        'remote_address_group_id': 'uuid-test-remote-secgroup',
         'remote_group_ref': {
             'name': 'test-remote-secgroup',
             'project_name': 'test-project',
@@ -30,7 +30,7 @@ def sdk_security_group_rule():
         id='uuid',
         security_group_id='uuid-sec-group',
         security_group_name='default',
-        remote_group_id='uuid-group',
+        remote_address_group_id='uuid-group',
         remote_group_name='default',
         project_id='uuid-project',
         created_at='2020-01-30T14:49:06Z',
@@ -72,7 +72,7 @@ def serialized_security_group_rule():
             'project_id': 'uuid-project',
             'created_at': '2020-01-30T14:49:06Z',
             'updated_at': '2020-01-30T14:49:06Z',
-            'remote_group_id': 'uuid-test-remote-secgroup',
+            'remote_address_group_id': 'uuid-test-remote-secgroup',
             'revision_number': '0',
             'security_group_id': 'uuid-test-default-secgroup',
         },
@@ -113,7 +113,7 @@ class TestSecurityGroupRule(unittest.TestCase):
         self.assertEqual(info['created_at'], '2020-01-30T14:49:06Z')
         self.assertEqual(info['id'], 'uuid')
         self.assertEqual(info['project_id'], 'uuid-project')
-        self.assertEqual(info['remote_group_id'], 'uuid-group')
+        self.assertEqual(info['remote_address_group_id'], 'uuid-group')
         self.assertEqual(info['security_group_id'], 'uuid-sec-group')
         self.assertEqual(info['updated_at'], '2020-01-30T14:49:06Z')
         self.assertEqual(info['revision_number'], 0)
