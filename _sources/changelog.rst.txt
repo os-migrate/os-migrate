@@ -107,6 +107,18 @@ Fix
 
 Other
 ~~~~~
+- Pin openstacksdk version due to os_security_group_rule module
+  breakage. [Jiri Stransky]
+
+  The pin works around this breakage:
+
+  'BadRequestException: 400: Client Error for url:
+  http://10.0.110.233:9696/v2.0/security-group-rules, Unrecognized
+  attribute(s) ''remote_address_group_id'''
+
+  It seems like remote_address_group_id is fed into the request even
+  though we're not specifying it, which makes the os_security_group_rule
+  module incompatible with Train release and lower.
 - Docs: include information in all roles. [Carlos Camacho]
 - Update packages when deploying conversion hosts. [Jiri Stransky]
 

@@ -287,6 +287,16 @@ container.</p>
 <div class="section" id="other">
 <h3>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Pin openstacksdk version due to os_security_group_rule module
+breakage. [Jiri Stransky]</p>
+<p>The pin works around this breakage:</p>
+<p>‘BadRequestException: 400: Client Error for url:
+<a class="reference external" href="http://10.0.110.233:9696/v2.0/security-group-rules">http://10.0.110.233:9696/v2.0/security-group-rules</a>, Unrecognized
+attribute(s) ‘’remote_address_group_id’’’</p>
+<p>It seems like remote_address_group_id is fed into the request even
+though we’re not specifying it, which makes the os_security_group_rule
+module incompatible with Train release and lower.</p>
+</li>
 <li><p>Docs: include information in all roles. [Carlos Camacho]</p></li>
 <li><p>Update packages when deploying conversion hosts. [Jiri Stransky]</p>
 <p>I ran into a bug when trying to migrate workloads, the volume export
