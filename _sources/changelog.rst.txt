@@ -98,6 +98,15 @@ Changes
 
 Fix
 ~~~
+- Do not look up server image when boot_disk_copy: true. [Jiri Stransky]
+
+  When migrating a server which is boot-from-image in source cloud, and
+  boot-from-volume in destination cloud (due to setting `boot_disk_copy:
+  true`), the server creation would still try to look up `image_ref` in
+  the destination cloud, and fail if the image doesn't exist.
+
+  This is now fixed. With `boot_disk_copy: true` we don't need any
+  images in destination, so we no longer perform an image lookup.
 - Fix building OS Migrate from source. [Jiri Stransky]
 
   The conditional for sourcing virtualenv was incorrect in the script,

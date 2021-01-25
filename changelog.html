@@ -276,6 +276,14 @@ is “SHUTOFF” before attempting to migrate it.</p>
 <div class="section" id="fix">
 <h3>Fix<a class="headerlink" href="#fix" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Do not look up server image when boot_disk_copy: true. [Jiri Stransky]</p>
+<p>When migrating a server which is boot-from-image in source cloud, and
+boot-from-volume in destination cloud (due to setting <cite>boot_disk_copy:
+true</cite>), the server creation would still try to look up <cite>image_ref</cite> in
+the destination cloud, and fail if the image doesn’t exist.</p>
+<p>This is now fixed. With <cite>boot_disk_copy: true</cite> we don’t need any
+images in destination, so we no longer perform an image lookup.</p>
+</li>
 <li><p>Fix building OS Migrate from source. [Jiri Stransky]</p>
 <p>The conditional for sourcing virtualenv was incorrect in the script,
 and virtualenv wasn’t being sourced automatically. This is now fixed
