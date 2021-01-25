@@ -1,6 +1,7 @@
 # runtime
 ansible>=2.9.1,<2.10
-openstacksdk>=0.39.0
+# openstacksdk pin for https://github.com/os-migrate/os-migrate/issues/350
+openstacksdk>=0.39.0,<0.53
 
 # test
 ansible-lint==4.1.0
