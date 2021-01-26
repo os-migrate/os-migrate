@@ -276,6 +276,16 @@ is “SHUTOFF” before attempting to migrate it.</p>
 <div class="section" id="fix">
 <h3>Fix<a class="headerlink" href="#fix" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Fix image lookup for images owned by tenant. [Jiri Stransky]</p>
+<p>The <cite>connection.image.find_image</cite> method doesn’t support filter
+arguments (like project_id), unlike other find methods. This caused
+failures when looking up images to be used for servers, when the image
+was owned by tenant (non-public).</p>
+<p>A custom image lookup method is now implemented in our reference.py
+module, utilizing <cite>images()</cite> rather than <cite>find_image()</cite>.</p>
+<p>End-to-end tests are also amended to test one workload spawned from
+public image, and one from tenant-owned image.</p>
+</li>
 <li><p>Do not look up server image when boot_disk_copy: true. [Jiri Stransky]</p>
 <p>When migrating a server which is boot-from-image in source cloud, and
 boot-from-volume in destination cloud (due to setting <cite>boot_disk_copy:
