@@ -2,7 +2,7 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 import openstack
-from openstack.exceptions import HttpException
+from openstack.exceptions import DuplicateResource, HttpException, ResourceFailure
 
 
 def image_id(conn, ref, required=True):
@@ -12,9 +12,27 @@ def image_id(conn, ref, required=True):
 
     Returns: the ID, or None if not found and not `required`
 
-    Raises: openstack's ResourceNotFound when `required` but not found
+    Raises: openstack's ResourceFailure when `required` but not found,
+    DuplicateResource when more than one image found for a given `ref`.
     """
-    return _fetch_id(conn, conn.image.find_image, ref, required)
+    if ref is None:
+        return None
+
+    filters = {'name': ref['name']}
+    project_id_filters = _project_id_filters(conn, ref)
+    if 'project_id' in project_id_filters:
+        filters['owner'] = project_id_filters['project_id']
+
+    matches = list(conn.image.images(**filters))
+
+    if len(matches) > 1:
+        raise DuplicateResource("More than one image found for query: {0}".format(filters))
+    if len(matches) < 1:
+        if required:
+            raise ResourceFailure("No image found for query: {0}".format(filters))
+        else:
+            return None
+    return matches[0]['id']
 
 
 def image_ref(conn, id_, required=True):
