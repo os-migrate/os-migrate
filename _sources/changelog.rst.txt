@@ -98,6 +98,17 @@ Changes
 
 Fix
 ~~~
+- Always stop on errors in conversion host deployment. [Jiri Stransky]
+
+  Previously when the source or destination conversion host encountered
+  some errror, Ansible would mark that host as failed and not run any
+  other tasks there, but it would continue to run tasks on other hosts,
+  most notably the migrator. This meant that e.g. subscription errors
+  wouldn't stop the playbook immediately, and if conversion host
+  deployment was included into a more complex migration playbook, the
+  migration itself would fail much later with a non-obvious error. This
+  is now fixed: whenever an error during conversion host deployment
+  happens, the playbook stops right away.
 - Fix image lookup for images owned by tenant. [Jiri Stransky]
 
   The `connection.image.find_image` method doesn't support filter
