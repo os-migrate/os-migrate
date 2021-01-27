@@ -1,4 +1,5 @@
 - hosts: migrator
+  any_errors_fatal: true
   tasks:
     - include_role:
         name: os_migrate.os_migrate.conversion_host
@@ -46,6 +47,7 @@
       when: os_migrate_link_conversion_hosts|default(true)|bool
 
 - hosts: os_migrate_conv_src
+  any_errors_fatal: true
   tasks:
     - include_role:
         name: os_migrate.os_migrate.conversion_host
@@ -53,6 +55,7 @@
       when: os_migrate_link_conversion_hosts|default(true)|bool
 
 - hosts: os_migrate_conv_dst
+  any_errors_fatal: true
   tasks:
     - include_role:
         name: os_migrate.os_migrate.conversion_host
@@ -60,6 +63,7 @@
       when: os_migrate_link_conversion_hosts|default(true)|bool
 
 - hosts: conversion_hosts
+  any_errors_fatal: true
   tasks:
     - include_role:
         name: os_migrate.os_migrate.conversion_host_content
