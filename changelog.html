@@ -232,6 +232,12 @@ with the changes.</p>
 <div class="section" id="changes">
 <h3>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Convert to fully qualified collection names. [Carlos Camacho]</p>
+<p>Starting on Ansible 2.9 all tasks can use
+the fully defined collection name the builtin
+runtime is specified in:
+<a class="reference external" href="https://github.com/ansible/ansible/blob/devel/lib/ansible/config/ansible_builtin_runtime.yml">https://github.com/ansible/ansible/blob/devel/lib/ansible/config/ansible_builtin_runtime.yml</a></p>
+</li>
 <li><p>Pass through all RHSM parameters for conversion hosts. [Jiri Stransky]</p>
 <p>All parameters supported by the redhat_subscription Ansible module are
 now exposed as variables for the conversion host content installation.</p>

@@ -54,6 +54,12 @@ New
 
 Changes
 ~~~~~~~
+- Convert to fully qualified collection names. [Carlos Camacho]
+
+  Starting on Ansible 2.9 all tasks can use
+  the fully defined collection name the builtin
+  runtime is specified in:
+  https://github.com/ansible/ansible/blob/devel/lib/ansible/config/ansible_builtin_runtime.yml
 - Pass through all RHSM parameters for conversion hosts. [Jiri Stransky]
 
   All parameters supported by the redhat_subscription Ansible module are
