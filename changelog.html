@@ -276,6 +276,15 @@ is “SHUTOFF” before attempting to migrate it.</p>
 <div class="section" id="fix">
 <h3>Fix<a class="headerlink" href="#fix" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Loosen OpenStack operation timeouts in workload migration. [Jiri
+Stransky]</p>
+<p>The current timeout for OpenStack operations during workload migration
+is 10 minutes. This can be too short when working with large storage
+volumes. We should make the timeout configurable, but as first
+alleviation we increase the timeout to 30 minutes. This should still
+be enough to fail in reasonable time when things get stuck, but it
+shouldn’t produce as many false alarms.</p>
+</li>
 <li><p>Always stop on errors in conversion host deployment. [Jiri Stransky]</p>
 <p>Previously when the source or destination conversion host encountered
 some errror, Ansible would mark that host as failed and not run any

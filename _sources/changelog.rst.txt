@@ -98,6 +98,15 @@ Changes
 
 Fix
 ~~~
+- Loosen OpenStack operation timeouts in workload migration. [Jiri
+  Stransky]
+
+  The current timeout for OpenStack operations during workload migration
+  is 10 minutes. This can be too short when working with large storage
+  volumes. We should make the timeout configurable, but as first
+  alleviation we increase the timeout to 30 minutes. This should still
+  be enough to fail in reasonable time when things get stuck, but it
+  shouldn't produce as many false alarms.
 - Always stop on errors in conversion host deployment. [Jiri Stransky]
 
   Previously when the source or destination conversion host encountered
