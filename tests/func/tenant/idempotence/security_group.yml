@@ -1,20 +1,20 @@
 ### EXPORT IDEMPOTENCE ###
 
-- include_role:
+- ansible.builtin.include_role:
     name: os_migrate.os_migrate.export_security_groups
   vars:
     os_migrate_security_groups_filter:
       - regex: '^osm_'
 
 - name: re-load resources for idempotency test
-  set_fact:
+  ansible.builtin.set_fact:
     sec_group_resources_idem: "{{ (lookup('file',
                                    os_migrate_data_dir +
                                    '/security_groups.yml') | from_yaml)
                                    ['resources'] }}"
 
 - name: verify that export file did not change
-  assert:
+  ansible.builtin.assert:
     that:
       - sec_group_resources_idem == security_group_resources
     fail_msg: |
@@ -32,7 +32,7 @@
       name: osm_security_group
   register: sg_import_idem_before
 
-- include_role:
+- ansible.builtin.include_role:
     name: os_migrate.os_migrate.import_security_groups
 
 - name: look up osm_security_group in dst cloud again
@@ -43,7 +43,7 @@
   register: sg_import_idem_after
 
 - name: ensure updated_at for osm_security_group did not change
-  assert:
+  ansible.builtin.assert:
     that:
       - sg_import_idem_before['openstack_security_groups'][0].updated_at != None
       - "sg_import_idem_before['openstack_security_groups'][0]['updated_at'] \

@@ -1,5 +1,5 @@
 - name: change item in file for update test
-  replace:
+  ansible.builtin.replace:
     path: "{{ os_migrate_data_dir }}/security_groups.yml"
     regexp: "    description: OSM security group"
     replace: "    description: 'OSM security group updated'"
@@ -18,12 +18,12 @@
   register: dst_sg_info_before
 
 - name: get original description
-  set_fact:
+  ansible.builtin.set_fact:
     original_desc: |-
       {{ dst_sg_info_before['openstack_security_groups'] | json_query(
         "[?name=='osm_security_group'].description") }}
 
-- include_role:
+- ansible.builtin.include_role:
     name: os_migrate.os_migrate.import_security_groups
 
 - name: scan available security_groups after update test
@@ -39,13 +39,13 @@
   register: dst_sg_info_after
 
 - name: get changed description
-  set_fact:
+  ansible.builtin.set_fact:
     changed_desc: |-
       {{ dst_sg_info_after['openstack_security_groups'] | json_query(
         "[?name=='osm_security_group'].description") }}
 
 - name: ensure description for osm_security_group changed
-  assert:
+  ansible.builtin.assert:
     that:
       - original_desc[0] == 'OSM security group'
       - changed_desc[0] == 'OSM security group updated'

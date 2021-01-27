@@ -15,7 +15,7 @@
       data: "{{ item }}"
     register: prelim
 
-  - debug:
+  - ansible.builtin.debug:
       msg:
         - "{{ prelim.server_name }} log file: {{ prelim.log_file }}"
         - "{{ prelim.server_name }} progress file: {{ prelim.state_file }}"
@@ -99,8 +99,7 @@
       client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_src_client_key|default(omit) }}"
       data: "{{ item }}"
-      conversion_host:
-        "{{ os_src_conversion_host_info.openstack_conversion_host }}"
+      conversion_host: "{{ os_src_conversion_host_info.openstack_conversion_host }}"
       ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
       ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
       transfer_uuid: "{{ exports.transfer_uuid }}"
@@ -110,5 +109,5 @@
     when: prelim.changed
 
   rescue:
-    - fail:
+    - ansible.builtin.fail:
         msg: "Failed to import {{ item.params.name }}!"

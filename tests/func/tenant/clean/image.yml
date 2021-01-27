@@ -1,5 +1,5 @@
 - name: remove osm_image
-  os_image:
+  openstack.cloud.image:
     auth: "{{ item }}"
     name: osm_image
     state: absent

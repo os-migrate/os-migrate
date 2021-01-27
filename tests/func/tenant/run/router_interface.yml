@@ -3,21 +3,21 @@
 # import_playbook, or spawn an ansible-playbook subprocess? The latter
 # might be actually a more precise way to test the real end-user
 # experience.
-- include_role:
+- ansible.builtin.include_role:
     name: os_migrate.os_migrate.export_router_interfaces
   vars:
     os_migrate_routers_filter:
       - regex: '^osm_'
 
 - name: load exported data
-  set_fact:
+  ansible.builtin.set_fact:
     router_interface_resources: "{{ (lookup('file',
                                      os_migrate_data_dir +
                                      '/router_interfaces.yml') | from_yaml)
                                      ['resources'] }}"
 
 - name: verify data contents
-  assert:
+  ansible.builtin.assert:
     that:
       - "(router_interface_resources |
           json_query(\"[?params.device_ref.name ==
@@ -28,5 +28,5 @@
           'osm_router'].params.fixed_ips_refs[].subnet_ref.name\")) | sort ==
           ['osm_router_subnet', 'osm_subnet']"
 
-- include_role:
+- ansible.builtin.include_role:
     name: os_migrate.os_migrate.import_router_interfaces

@@ -1,6 +1,7 @@
 - hosts: migrator
   tasks:
-    - include_role:
+    - name: delete the conversion hosts inventory
+      ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host
         tasks_from: conv_hosts_inventory.yml
       vars:
@@ -12,13 +13,15 @@
   # fail too.
   ignore_unreachable: true
   tasks:
-    - include_role:
+    - name: unregister the conversion hosts
+      ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host
         tasks_from: unregister.yml
 
 - hosts: migrator
   tasks:
-    - include_role:
+    - name: delete the src conversion host
+      ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host
         tasks_from: delete.yml
       vars:
@@ -31,7 +34,8 @@
         os_migrate_conversion_client_key: "{{ os_migrate_src_client_key|default(omit) }}"
       when: os_migrate_delete_src_conversion_host|default(true)|bool
 
-    - include_role:
+    - name: delete the dst conversion host
+      ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host
         tasks_from: delete.yml
       vars:

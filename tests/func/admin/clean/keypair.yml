@@ -1,5 +1,5 @@
 - name: remove osm_keypair
-  os_keypair:
+  openstack.cloud.keypair:
     auth: "{{ item }}"
     name: osm_keypair
     state: absent

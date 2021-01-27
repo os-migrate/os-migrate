@@ -1,5 +1,5 @@
 - name: change item in file for update test
-  replace:
+  ansible.builtin.replace:
     path: "{{ os_migrate_data_dir }}/routers.yml"
     regexp: "    description: ''"
     replace: "    description: 'osm_router_updated'"
@@ -17,7 +17,7 @@
     client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
   register: dst_routers_info_before
 
-- include_role:
+- ansible.builtin.include_role:
     name: os_migrate.os_migrate.import_routers
 
 - name: scan available routers after update test
@@ -33,7 +33,7 @@
   register: dst_routers_info_after
 
 - name: ensure description for osm_router changed
-  assert:
+  ansible.builtin.assert:
     that:
       - dst_routers_info_before['openstack_routers'][0].description != None
       - "dst_routers_info_before['openstack_routers'][0]['description'] \

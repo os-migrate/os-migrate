@@ -1,5 +1,5 @@
 - name: register and auto-subscribe to available content.
-  redhat_subscription:
+  community.general.redhat_subscription:
     state: present
     # These params have defaults specified:
     auto_attach: "{{ os_migrate_conversion_rhsm_auto_attach|default(true) }}"
@@ -31,12 +31,12 @@
       os_migrate_conversion_rhsm_org_id is defined
 
 - name: update all packages
-  yum:
+  ansible.builtin.yum:
     name: '*'
     state: latest
 
 - name: install content
-  yum:
+  ansible.builtin.yum:
     name:
       - nbdkit
       - nbdkit-basic-plugins

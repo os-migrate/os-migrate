@@ -6,7 +6,7 @@
   when: import_router_interfaces_validate_file
 
 - name: stop when errors found
-  fail:
+  ansible.builtin.fail:
     msg: "{{ router_interfaces_file_validation.errors|join(' ') }}"
   when: not ( router_interfaces_file_validation.ok | bool )
 

@@ -3,14 +3,14 @@
 # import_playbook, or spawn an ansible-playbook subprocess? The latter
 # might be actually a more precise way to test the real end-user
 # experience.
-- include_role:
+- ansible.builtin.include_role:
     name: os_migrate.os_migrate.export_security_group_rules
   vars:
     os_migrate_security_groups_filter:
       - regex: '^osm_'
 
 - name: load exported data
-  set_fact:
+  ansible.builtin.set_fact:
     security_group_rule_resources: "{{ (lookup('file',
                                                os_migrate_data_dir +
                                                '/security_group_rules.yml') |
@@ -18,12 +18,12 @@
                    ['resources'] }}"
 
 - name: verify data contents
-  assert:
+  ansible.builtin.assert:
     that:
       - (security_group_rule_resources |
         json_query("[?params.security_group_ref.name ==
         'osm_security_group'].params.protocol")
         == ['tcp'])
 
-- include_role:
+- ansible.builtin.include_role:
     name: os_migrate.os_migrate.import_security_group_rules

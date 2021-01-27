@@ -1,3 +1,6 @@
-- include: prereqs.yml
-- include: config.yml
-- include: start.yml
+- name: install prereqs
+  ansible.builtin.include: prereqs.yml
+- name: config
+  ansible.builtin.include: config.yml
+- name: start
+  ansible.builtin.include: start.yml

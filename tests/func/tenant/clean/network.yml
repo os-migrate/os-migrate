@@ -1,5 +1,5 @@
 - name: remove osm_net
-  os_network:
+  openstack.cloud.network:
     auth: "{{ item }}"
     name: osm_net
     state: absent

@@ -6,7 +6,7 @@
   when: import_security_group_rules_validate_file
 
 - name: stop when errors found
-  fail:
+  ansible.builtin.fail:
     msg: "{{ security_group_rules_file_validation.errors|join(' ') }}"
   when: not ( security_group_rules_file_validation.ok | bool )
 

@@ -1,5 +1,5 @@
 - name: Include flavor tasks
-  include_tasks: flavor.yml
+  ansible.builtin.include_tasks: flavor.yml
   args:
     apply:
       tags:
@@ -7,7 +7,7 @@
   tags: always
 
 - name: Include keypair tasks
-  include_tasks: keypair.yml
+  ansible.builtin.include_tasks: keypair.yml
   args:
     apply:
       tags:
@@ -15,7 +15,7 @@
   tags: always
 
 - name: Include user tasks
-  include_tasks: user.yml
+  ansible.builtin.include_tasks: user.yml
   args:
     apply:
       tags:
@@ -23,7 +23,7 @@
   tags: always
 
 - name: Include project tasks
-  include_tasks: project.yml
+  ansible.builtin.include_tasks: project.yml
   args:
     apply:
       tags:
