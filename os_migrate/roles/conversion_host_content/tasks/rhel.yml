@@ -40,6 +40,7 @@
     name:
       - nbdkit
       - nbdkit-basic-plugins
+      - nmap-ncat
       - qemu-img
       - libguestfs-tools
     state: present
