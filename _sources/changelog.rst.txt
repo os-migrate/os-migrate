@@ -179,6 +179,83 @@ Other
   when deploying the conversion hosts.
 
 
+0.6.2 (2021-01-28)
+------------------
+
+Fix
+~~~
+- Always stop on errors in conversion host deployment. [Jiri Stransky]
+
+  Previously when the source or destination conversion host encountered
+  some errror, Ansible would mark that host as failed and not run any
+  other tasks there, but it would continue to run tasks on other hosts,
+  most notably the migrator. This meant that e.g. subscription errors
+  wouldn't stop the playbook immediately, and if conversion host
+  deployment was included into a more complex migration playbook, the
+  migration itself would fail much later with a non-obvious error. This
+  is now fixed: whenever an error during conversion host deployment
+  happens, the playbook stops right away.
+
+  (cherry picked from commit e867b359371d3bfc250b45e4c9e176b3d020d37c)
+- Loosen OpenStack operation timeouts in workload migration. [Jiri
+  Stransky]
+
+  The current timeout for OpenStack operations during workload migration
+  is 10 minutes. This can be too short when working with large storage
+  volumes. We should make the timeout configurable, but as first
+  alleviation we increase the timeout to 30 minutes. This should still
+  be enough to fail in reasonable time when things get stuck, but it
+  shouldn't produce as many false alarms.
+
+  (cherry picked from commit 790a44059e15632c4ac008ba3639700238c4b98f)
+- Fix image lookup for images owned by tenant. [Jiri Stransky]
+
+  The `connection.image.find_image` method doesn't support filter
+  arguments (like project_id), unlike other find methods. This caused
+  failures when looking up images to be used for servers, when the image
+  was owned by tenant (non-public).
+
+  A custom image lookup method is now implemented in our reference.py
+  module, utilizing `images()` rather than `find_image()`.
+
+  End-to-end tests are also amended to test one workload spawned from
+  public image, and one from tenant-owned image.
+
+  Resolves: https://github.com/os-migrate/os-migrate/issues/346
+  (cherry picked from commit 24d383dd1373bc4e09210f56b85052c57338583c)
+- Do not look up server image when boot_disk_copy: true. [Jiri Stransky]
+
+  When migrating a server which is boot-from-image in source cloud, and
+  boot-from-volume in destination cloud (due to setting `boot_disk_copy:
+  true`), the server creation would still try to look up `image_ref` in
+  the destination cloud, and fail if the image doesn't exist.
+
+  This is now fixed. With `boot_disk_copy: true` we don't need any
+  images in destination, so we no longer perform an image lookup.
+
+  Resolves: https://github.com/os-migrate/os-migrate/issues/347
+  (cherry picked from commit 5a57a52778a8668b5ca1b2787b5cc89d221d4449)
+
+Other
+~~~~~
+- Prepare release 0.6.2. [Jiri Stransky]
+- Pin openstacksdk version due to os_security_group_rule module
+  breakage. [Jiri Stransky]
+
+  The pin works around this breakage:
+
+  'BadRequestException: 400: Client Error for url:
+  http://10.0.110.233:9696/v2.0/security-group-rules, Unrecognized
+  attribute(s) ''remote_address_group_id'''
+
+  It seems like remote_address_group_id is fed into the request even
+  though we're not specifying it, which makes the os_security_group_rule
+  module incompatible with Train release and lower.
+
+  Resolves: https://github.com/os-migrate/os-migrate/issues/350
+  (cherry picked from commit 9e1109c57326c728486d85f4c6774f89bfef7710)
+
+
 0.6.1 (2020-12-10)
 ------------------
 - Update packages when deploying conversion hosts. [Jiri Stransky]
