@@ -8,7 +8,7 @@ import subprocess
 import time
 
 # Default timeout for OpenStack operations
-DEFAULT_TIMEOUT = 600
+DEFAULT_TIMEOUT = 1800
 
 # Lock to serialize volume attachments. This helps prevent device path
 # mismatches between the OpenStack SDK and /dev in the VM.

@@ -41,7 +41,7 @@
           tags: test_pre_workload
       tags: always
 
-    # server from image with attached volume
+    # server from tenant-owned image with attached volume,
     # migration w/o boot volume copy
     - include_tasks: tenant/seed_workload.yml
       args:
@@ -50,6 +50,8 @@
             - test_workload
             - test_image_workload_boot_nocopy
       tags: always
+      vars:
+        workload_image: osm_image
     - include_tasks: tenant/run_workload.yml
       args:
         apply:
@@ -66,7 +68,7 @@
             - test_image_workload_boot_nocopy_clean
       tags: always
 
-    # server from image with attached volume
+    # server from public image with attached volume,
     # migration with boot volume copy
     - include_tasks: tenant/seed_workload.yml
       args:
@@ -75,6 +77,8 @@
             - test_workload
             - test_image_workload_boot_copy
       tags: always
+      vars:
+        workload_image: "{{ os_migrate_src_osm_server_image }}"
     - include_tasks: tenant/run_workload.yml
       args:
         apply:

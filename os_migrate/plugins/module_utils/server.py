@@ -132,8 +132,8 @@ class Server(resource.Resource):
                      "Block device mapping: {2}").format(
                          params['name'], info['id'], block_device_mapping)
                 )
-        else:
-            sdk_params.pop('image_id')
+        elif 'image_id' in sdk_params:
+            del sdk_params['image_id']
 
     def update_sdk_params_networks_simple(self, conn, sdk_params):
         sdk_params['networks'] = []
@@ -194,7 +194,10 @@ class Server(resource.Resource):
             conn, params['flavor_ref'])
 
         refs['image_ref'] = params['image_ref']
-        refs['image_id'] = reference.image_id(conn, params['image_ref'])
+        if self.migration_params()['boot_disk_copy']:
+            refs['image_id'] = None
+        else:
+            refs['image_id'] = reference.image_id(conn, params['image_ref'])
 
         refs['security_group_refs'] = params['security_group_refs']
         refs['security_group_ids'] = [

@@ -14,7 +14,7 @@
     state: present
     flavor: "{{ os_migrate_src_osm_server_flavor|default(m1.small) }}"
     key_name: osm_key
-    image: "{{ os_migrate_src_osm_server_image|default(omit) }}"
+    image: "{{ workload_image }}"
     network: osm_net
     security_groups: osm_security_group
     volumes:
