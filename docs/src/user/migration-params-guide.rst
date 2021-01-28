@@ -14,19 +14,40 @@ there is another editable section in resource serializations, called
 ``_migration_params``. The descriptions of the most important ones are
 in this guide.
 
-Workloads
----------
+Workload migration parameters
+-----------------------------
 
-- ``boot_disk_copy`` controls how if the boot disk of the destination
+-  ``boot_disk_copy`` controls how if the boot disk of the destination
    server is copied or re-imaged:
 
-   -  ``false`` means that the destination server will be booted from a
+   -  ``false``: The destination server will be booted from a
       Glance image of the same name as the source server. (This is the
       default for servers which were booted from an image in the
       source cloud.)
 
-   -  ``true`` means that the source server's boot disk will be copied
+   -  ``true``: The source server's boot disk will be copied
       into the destination as a volume, and the destination server
       will be created as boot-from-volume. (For servers which are
       already boot-from-volume in the source cloud, this is the
       default and the only possible path.)
+
+-  ``floating_ip_mode`` controls whether floating IPs should be created
+   for workloads:
+
+   -  ``auto`` (default): Create floating IP(s) on the same
+      interface(s) of destination server where the exported source
+      server had its floating IP(s).
+
+      In the ``workloads.yml`` export, each serialized floating IP
+      contains a ``fixed_ip_address`` property, so a floating IP will
+      be created on the port with this address. (When editing
+      ports/fixed addresses of a workload, make sure to also edit the
+      ``fixed_ip_address`` properties of its floating IPs accordingly.)
+
+      It is important to note that the floating IP address will be
+      automatically selected by the cloud, it will not match the
+      floating IP address of the source server. (In most cases, the
+      floating IP ranges of src/dst clouds don't overlap anyway.)
+
+   -  ``skip``: Do not create any floating IPs on the destination
+      server.
