@@ -154,6 +154,8 @@ Fix
 
 Other
 ~~~~~
+- Oth: Documentation for 'floating_ip_mode' workload migration
+  parameter. [Jiri Stransky]
 - Pin openstacksdk version due to os_security_group_rule module
   breakage. [Jiri Stransky]
 

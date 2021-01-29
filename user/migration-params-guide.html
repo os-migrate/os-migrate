@@ -92,7 +92,7 @@
 <li class="toctree-l2"><a class="reference internal" href="variables-guide.html">Variables Guide</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Migration Parameters Guide</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#what-are-migration-parameters">What are migration parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#workloads">Workloads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#workload-migration-parameters">Workload migration parameters</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="README.html#general-usage-notes">General usage notes</a></li>
@@ -185,24 +185,42 @@ there is another editable section in resource serializations, called
 <code class="docutils literal notranslate"><span class="pre">_migration_params</span></code>. The descriptions of the most important ones are
 in this guide.</p>
 </div>
-<div class="section" id="workloads">
-<h2>Workloads<a class="headerlink" href="#workloads" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">boot_disk_copy</span></code> controls how if the boot disk of the destination</dt><dd><p>server is copied or re-imaged:</p>
+<div class="section" id="workload-migration-parameters">
+<h2>Workload migration parameters<a class="headerlink" href="#workload-migration-parameters" title="Permalink to this headline">¶</a></h2>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">false</span></code> means that the destination server will be booted from a
+<li><p><code class="docutils literal notranslate"><span class="pre">boot_disk_copy</span></code> controls how if the boot disk of the destination
+server is copied or re-imaged:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">false</span></code>: The destination server will be booted from a
 Glance image of the same name as the source server. (This is the
 default for servers which were booted from an image in the
 source cloud.)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">true</span></code> means that the source server’s boot disk will be copied
+<li><p><code class="docutils literal notranslate"><span class="pre">true</span></code>: The source server’s boot disk will be copied
 into the destination as a volume, and the destination server
 will be created as boot-from-volume. (For servers which are
 already boot-from-volume in the source cloud, this is the
 default and the only possible path.)</p></li>
 </ul>
-</dd>
-</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">floating_ip_mode</span></code> controls whether floating IPs should be created
+for workloads:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">auto</span></code> (default): Create floating IP(s) on the same
+interface(s) of destination server where the exported source
+server had its floating IP(s).</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">workloads.yml</span></code> export, each serialized floating IP
+contains a <code class="docutils literal notranslate"><span class="pre">fixed_ip_address</span></code> property, so a floating IP will
+be created on the port with this address. (When editing
+ports/fixed addresses of a workload, make sure to also edit the
+<code class="docutils literal notranslate"><span class="pre">fixed_ip_address</span></code> properties of its floating IPs accordingly.)</p>
+<p>It is important to note that the floating IP address will be
+automatically selected by the cloud, it will not match the
+floating IP address of the source server. (In most cases, the
+floating IP ranges of src/dst clouds don’t overlap anyway.)</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">skip</span></code>: Do not create any floating IPs on the destination
+server.</p></li>
+</ul>
 </li>
 </ul>
 </div>
