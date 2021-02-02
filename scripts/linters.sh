@@ -94,3 +94,5 @@ if [ "$modules_docs_number" -ne "$modules_number" ];then
     echo "do not match with the number of existing modules";
     exit 1;
 fi
+
+python ./scripts/check_fqcn.py
