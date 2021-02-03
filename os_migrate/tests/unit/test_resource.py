@@ -178,20 +178,24 @@ class TestResource(unittest.TestCase):
         # _find_sdk_res returns stale resource
         res._find_sdk_res = mock.Mock(return_value=stale)
         res._create_sdk_res = mock.Mock()
-        res._update_sdk_res = mock.Mock()
+        res._update_sdk_res = mock.Mock(return_value='mock resource')
+        res._hook_after_update = mock.Mock()
         self.assertTrue(res.create_or_update(None))
         res._create_sdk_res.assert_not_called()
         res._update_sdk_res.assert_called_once()
+        res._hook_after_update.assert_called_once_with(None, 'mock resource', False)
 
     def test_create_and_update_needs_create(self):
         res = FakeResource.from_data(valid_fakeresource_data())
         # _find_sdk_res returns None - not found
         res._find_sdk_res = mock.Mock(return_value=None)
-        res._create_sdk_res = mock.Mock()
+        res._create_sdk_res = mock.Mock(return_value='mock resource')
         res._update_sdk_res = mock.Mock()
+        res._hook_after_update = mock.Mock()
         self.assertTrue(res.create_or_update(None))
         res._create_sdk_res.assert_called_once()
         res._update_sdk_res.assert_not_called()
+        res._hook_after_update.assert_called_once_with(None, 'mock resource', True)
 
     def test_is_same_resource(self):
         r1 = FakeResource.from_data(valid_fakeresource_data())
