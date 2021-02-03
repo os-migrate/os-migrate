@@ -63,6 +63,7 @@ def serialized_network():
                 'domain_name': 'Default',
             },
             'segments': [],
+            'tags': [],
         },
         const.RES_INFO: {
             'availability_zones': ['nova', 'zone3'],
@@ -125,6 +126,7 @@ class TestNetwork(unittest.TestCase):
         self.assertEqual(params['provider_segmentation_id'], '456')
         self.assertEqual(params['qos_policy_ref']['name'], 'test-qos-policy')
         self.assertEqual(params['segments'], [])
+        self.assertEqual(params['tags'], [])
 
         self.assertEqual(info['availability_zones'], ['nova', 'zone3'])
         self.assertEqual(info['created_at'], '2020-01-06T15:50:55Z')

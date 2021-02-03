@@ -4,7 +4,7 @@ __metaclass__ = type
 import openstack
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
-    import const, reference, resource
+    import common, const, reference, resource
 
 
 class Network(resource.Resource):
@@ -39,7 +39,9 @@ class Network(resource.Resource):
         'provider_physical_network',
         'provider_segmentation_id',
         'segments',
+        'tags',
     ]
+    sdk_params_from_params = [x for x in params_from_sdk if x not in ['tags']]
     params_from_refs = [
         'qos_policy_ref',
     ]
@@ -64,6 +66,9 @@ class Network(resource.Resource):
     @staticmethod
     def _find_sdk_res(conn, name_or_id, filters=None):
         return conn.network.find_network(name_or_id, **(filters or {}))
+
+    def _hook_after_update(self, conn, sdk_res, is_create):
+        common.neutron_set_tags(conn, sdk_res, self.params()['tags'])
 
     @staticmethod
     def _refs_from_sdk(conn, sdk_res):
