@@ -29,7 +29,7 @@ set -x
 pip install --upgrade pip
 pip install --upgrade virtualenv
 pip install --upgrade setuptools
-pip install -r /build/venv-requirements.txt
+pip install --upgrade -r /build/venv-requirements.txt
 
 cp /build/venv-wrapper /usr/local/bin/venv-wrapper
 chmod a+x /usr/local/bin/venv-wrapper

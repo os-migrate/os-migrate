@@ -5,6 +5,11 @@ if [ -z "${VIRTUAL_ENV:-}" ]; then
 fi
 set -euxo pipefail
 
+# Apply virtualenv version overrides if defined
+if [ -n "${OS_MIGRATE_REQUIREMENTS_OVERRIDE:-}" ]; then
+    pip install -r "$OS_MIGRATE_REQUIREMENTS_OVERRIDE"
+fi
+
 # update version in const.py based on galaxy.yml
 VERSION=$(grep '^version: ' os_migrate/galaxy.yml | awk '{print $2}')
 sed -i -e "s/^OS_MIGRATE_VERSION = .*$/OS_MIGRATE_VERSION = '$VERSION'  # updated by build.sh/" \
