@@ -9,7 +9,7 @@ if [ -e /.os-migrate-toolbox ]; then
 fi
 
 DIR=$(dirname $(realpath $0))
-OS_MIGRATE_DIR=$(realpath "$DIR/..")
+OSM_DIR=$(realpath "$DIR/..")
 if [ -t 1 ]; then
     CONTAINER_TTY="${CONTAINER_TTY:--ti}"
 else
@@ -17,7 +17,7 @@ else
 fi
 
 if ! podman images | grep -q '^localhost/os_migrate_toolbox \+latest '; then
-    pushd "$OS_MIGRATE_DIR"
+    pushd "$OSM_DIR"
     make toolbox-build
     popd
 fi
@@ -27,6 +27,8 @@ while podman inspect os_migrate_$IDX &> /dev/null; do
     ((IDX++))
 done || true
 
+PASS_THROUGH_VARS=$(compgen -A variable | grep '^OS_MIGRATE_' | awk '{ print "-e " $0; }' | tr '\n' ' ' || true)
+
 podman run \
        --name os_migrate_$IDX \
        --detach-keys='ctrl-^' \
@@ -34,7 +36,8 @@ podman run \
        --rm \
        --net host \
        --security-opt label=disable \
-       -v "$OS_MIGRATE_DIR:/root/os_migrate:z" \
+       $PASS_THROUGH_VARS \
+       -v "$OSM_DIR:/root/os_migrate:z" \
        ${OS_MIGRATE_TOOLBOX_ARGS:-} \
        localhost/os_migrate_toolbox:latest \
        "$@"
