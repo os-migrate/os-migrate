@@ -220,10 +220,12 @@ class Resource():
         if existing:
             if self._needs_update(self.from_sdk(conn, existing)):
                 self._remove_readonly_params(sdk_params)
-                self._update_sdk_res(conn, existing, sdk_params)
+                sdk_res = self._update_sdk_res(conn, existing, sdk_params)
+                self._hook_after_update(conn, sdk_res, False)
                 return True
         else:
-            self._create_sdk_res(conn, sdk_params)
+            sdk_res = self._create_sdk_res(conn, sdk_params)
+            self._hook_after_update(conn, sdk_res, True)
             return True
         return False  # no change done
 
@@ -314,6 +316,15 @@ class Resource():
         # the specific subclass
         return (self.data[const.RES_INFO].get('id', '__undefined1__') ==
                 target_data[const.RES_INFO].get('id', '__undefined2__'))
+
+    # Meant to be overriden in some subclasses.
+    def _hook_after_update(self, conn, sdk_res, is_create):
+        """Hook method which runs after the resource has been created or
+        updated in the destination cloud. `conn` is SDK connection,
+        `sdk_res` is the just created or updated SDK representation of
+        the resource, `is_create` tells whether the resource was newly created.
+        """
+        pass
 
     # Not meant to be overriden in majority of subclasses.
     def _needs_update(self, target):

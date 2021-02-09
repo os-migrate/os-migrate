@@ -142,6 +142,7 @@ class TestRouter(unittest.TestCase):
             'enable_snat': True,
         })
         self.assertEqual(params['flavor_ref']['name'], 'test-network-flavor')
+        self.assertEqual(params['tags'], [])
 
         self.assertEqual(info['availability_zones'], ['nova', 'zone3'])
         self.assertEqual(info['created_at'], '2020-02-26T15:50:55Z')

@@ -151,6 +151,7 @@ class TestSubnet(unittest.TestCase):
         self.assertEqual(params['subnet_pool_ref']['name'], 'test-subnet-pool')
         self.assertEqual(params['subnet_pool_ref']['project_name'], 'test-project')
         self.assertEqual(params['subnet_pool_ref']['domain_name'], 'Default')
+        self.assertEqual(params['tags'], [])
         self.assertEqual(params['use_default_subnet_pool'], None)
 
         self.assertEqual(info['created_at'], '2020-02-21T17:34:54Z')
@@ -161,7 +162,6 @@ class TestSubnet(unittest.TestCase):
         self.assertEqual(info['revision_number'], 0)
         self.assertEqual(info['segment_id'], 'uuid-test-segment')
         self.assertEqual(info['subnet_pool_id'], 'uuid-test-subnet-pool')
-        self.assertEqual(info['tags'], [])
         self.assertEqual(info['updated_at'], None)
 
     def test_deserialize_subnet(self):
