@@ -237,6 +237,13 @@ with the changes.</p>
 <div class="section" id="changes">
 <h3>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Preserve tags during migration of routers, networks, subnets. [Jiri
+Stransky]</p>
+<p>The tags on networking resources cannot be set during the initial
+creation request. Previously we weren’t setting tags at all during
+migration of networking resources. We are now migrating tags correctly
+on routers, networks and subnets using a post-create/update hook.</p>
+</li>
 <li><p>Convert to fully qualified collection names. [Carlos Camacho]</p>
 <p>Starting on Ansible 2.9 all tasks can use
 the fully defined collection name the builtin

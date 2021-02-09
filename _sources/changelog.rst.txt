@@ -54,6 +54,13 @@ New
 
 Changes
 ~~~~~~~
+- Preserve tags during migration of routers, networks, subnets. [Jiri
+  Stransky]
+
+  The tags on networking resources cannot be set during the initial
+  creation request. Previously we weren't setting tags at all during
+  migration of networking resources. We are now migrating tags correctly
+  on routers, networks and subnets using a post-create/update hook.
 - Convert to fully qualified collection names. [Carlos Camacho]
 
   Starting on Ansible 2.9 all tasks can use
