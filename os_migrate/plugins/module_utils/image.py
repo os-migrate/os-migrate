@@ -131,7 +131,7 @@ class Image(resource.Resource):
 
     @staticmethod
     def _find_sdk_res(conn, name_or_id, filters=None):
-        # Glance requires owner_id instead of project_id.
+        # Glance filter require owner instead of project_id.
         glance_filters = dict(filters or {})
         if 'project_id' in glance_filters:
             glance_filters['owner'] = glance_filters.pop('project_id')
