@@ -300,7 +300,7 @@ def _fetch_ref(conn, get_method, id_, required=True, get_project_info=True):
     if get_project_info:
         if isinstance(resource, openstack.image.v2.image.Image):
             project_name, domain_name = _fetch_project_name_and_domain_name(
-                conn, resource.owner)
+                conn, resource.owner_id)
         else:
             project_name, domain_name = _fetch_project_name_and_domain_name(
                 conn, resource.project_id)
