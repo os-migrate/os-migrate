@@ -190,6 +190,15 @@
 <div class="section" id="new">
 <h3>New<a class="headerlink" href="#new" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Testing with lower bound requirements. [Jiri Stransky]</p>
+<p>We started testing with two OpenStack SDK versions:</p>
+<ul class="simple">
+<li><p>0.52.x which is close to latest but not yet affected by a security
+group rules bug [1].</p></li>
+<li><p>0.36.x which is in Train release (OSP 16).</p></li>
+</ul>
+<p>[1] <a class="reference external" href="https://storyboard.openstack.org/#!/story/2008577">https://storyboard.openstack.org/#!/story/2008577</a></p>
+</li>
 <li><p>Adds Logic to Unsubscribe RHEL Conversion Hosts. [Ryan Brady]</p>
 <p>This patch adds logic to unsubscribe systems from RHSM when using
 RHEL as the OS for a conversion host.  The unsubscribe is called
@@ -294,6 +303,14 @@ is “SHUTOFF” before attempting to migrate it.</p>
 <div class="section" id="fix">
 <h3>Fix<a class="headerlink" href="#fix" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Compatibility with OpenStack SDK 0.36.x. [Jiri Stransky]</p>
+<p>It seems like the only place we’re hitting problems is using ‘owner’
+property of an image resource. Both 0.36 and 0.52 SDK support the
+‘owner_id’ property there, so let’s just use that.</p>
+<p>Interestingly enough, this is not the case for the query parameters in
+<cite>conn.image.images()</cite>. There <cite>image_id</cite> is not working anywhere, it
+has to be <cite>image</cite> in both 0.36 and 0.52, so we’ll stick to that.</p>
+</li>
 <li><p>Loosen OpenStack operation timeouts in workload migration. [Jiri
 Stransky]</p>
 <p>The current timeout for OpenStack operations during workload migration
