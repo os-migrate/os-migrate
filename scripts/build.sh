@@ -7,7 +7,7 @@ set -euxo pipefail
 
 # Apply virtualenv version overrides if defined
 if [ -n "${OS_MIGRATE_REQUIREMENTS_OVERRIDE:-}" ]; then
-    pip install -r "$OS_MIGRATE_REQUIREMENTS_OVERRIDE"
+    pip install --upgrade -r "$OS_MIGRATE_REQUIREMENTS_OVERRIDE"
 fi
 
 # update version in const.py based on galaxy.yml
