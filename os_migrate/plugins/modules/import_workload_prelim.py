@@ -217,10 +217,12 @@ def run_module():
                          **result)
 
     # Assume an existing VM with the same name means it was already migrated.
-    # Not necessarily true, but force the operator to delete it if needed.
-
-    if len(list(conn.compute.servers(details=False, name=server_name, **module.params['dst_filters']))) > 0:
-        module.exit_json(msg='VM already exists on destination!', **result)
+    # With Nova, the 'name' parameter for list request is a regular expression.
+    server_name_regex = "^{0}$".format(server_name)
+    if len(list(conn.compute.servers(
+            details=False, name=server_name_regex, **module.params['dst_filters']))) > 0:
+        module.exit_json(
+            msg="VM '{0}' already exists on destination, skipping.".format(server_name), **result)
 
     result['log_file'] = os.path.join(log_dir, server_name) + '.log'
     result['state_file'] = os.path.join(log_dir, server_name) + '.state'
