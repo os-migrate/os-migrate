@@ -121,6 +121,18 @@ Changes
 
 Fix
 ~~~
+- Exact name match on idempotency check during workload migration. [Jiri
+  Stransky]
+
+  Previously we just fed the desired server_name into the
+  `compute.servers()` query when checking whether a server has already
+  been migrated. However, Nova API performs a regular expression search,
+  so this condition matched on any substring occurence. This is now
+  fixed by wrapping the search term between ^ and $.
+
+  Note: We use Glance API in a similar way due to it also not having a
+  find method with project filters. Glance API seems to do exact
+  matching on the name query.
 - Compatibility with OpenStack SDK 0.36.x. [Jiri Stransky]
 
   It seems like the only place we're hitting problems is using 'owner'

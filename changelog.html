@@ -303,6 +303,17 @@ is “SHUTOFF” before attempting to migrate it.</p>
 <div class="section" id="fix">
 <h3>Fix<a class="headerlink" href="#fix" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Exact name match on idempotency check during workload migration. [Jiri
+Stransky]</p>
+<p>Previously we just fed the desired server_name into the
+<cite>compute.servers()</cite> query when checking whether a server has already
+been migrated. However, Nova API performs a regular expression search,
+so this condition matched on any substring occurence. This is now
+fixed by wrapping the search term between ^ and $.</p>
+<p>Note: We use Glance API in a similar way due to it also not having a
+find method with project filters. Glance API seems to do exact
+matching on the name query.</p>
+</li>
 <li><p>Compatibility with OpenStack SDK 0.36.x. [Jiri Stransky]</p>
 <p>It seems like the only place we’re hitting problems is using ‘owner’
 property of an image resource. Both 0.36 and 0.52 SDK support the
