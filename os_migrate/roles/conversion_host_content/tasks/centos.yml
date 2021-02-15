@@ -15,4 +15,11 @@
       - nbdkit-basic-plugins
       - qemu-img
       - libguestfs-tools
+      - libvirt
     state: present
+
+- name: start libvirtd
+  ansible.builtin.service:
+    name: libvirtd
+    state: started
+    enabled: yes
