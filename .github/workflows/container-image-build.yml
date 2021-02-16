@@ -15,10 +15,7 @@ jobs:
           sudo dpkg-reconfigure locales
           sudo python -m pip install --upgrade pip
           sudo pip install tox
-          sudo apt install software-properties-common -y
-          sudo add-apt-repository -y ppa:projectatomic/ppa
-          sudo apt update -y
-          sudo apt install build-essential findutils -y
+          sudo apt install software-properties-common build-essential findutils -y
           sudo apt install podman -y
       - name: Build os-migrate image
         run: |
