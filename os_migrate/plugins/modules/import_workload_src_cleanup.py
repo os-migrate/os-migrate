@@ -12,7 +12,7 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = '''
 ---
-module: import_workload_cleanup
+module: import_workload_src_cleanup
 
 short_description: Clean up temporary volumes after a workload migration
 
@@ -224,7 +224,7 @@ workload.yml:
     when: prelim.changed
 
   - name: clean up after migration
-    os_migrate.os_migrate.import_workload_cleanup:
+    os_migrate.os_migrate.import_workload_src_cleanup:
       auth: "{{ os_migrate_src_auth }}"
       auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
       region_name: "{{ os_migrate_src_region_name|default(omit) }}"

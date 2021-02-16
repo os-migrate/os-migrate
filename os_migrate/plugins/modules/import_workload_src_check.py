@@ -12,7 +12,7 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = '''
 ---
-module: import_workload_source_check
+module: import_workload_src_check
 
 short_description: Export OpenStack instance information
 
@@ -65,7 +65,7 @@ options:
 
 EXAMPLES = '''
 - name: ensure workload in source cloud is ready to continue
-  os_migrate.os_migrate.import_workload_source_check:
+  os_migrate.os_migrate.import_workload_src_check:
     auth: "{{ os_migrate_src_auth }}"
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_src_region_name|default(omit) }}"
