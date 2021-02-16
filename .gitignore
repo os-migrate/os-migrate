@@ -11,3 +11,4 @@
 /tests/func/tmp
 /toolbox/vagrant/.vagrant
 /toolbox/vagrant/env
+/toolbox/build/galaxy.yml

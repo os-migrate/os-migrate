@@ -34,5 +34,12 @@ pip install --upgrade -r /build/venv-requirements.txt
 cp /build/venv-wrapper /usr/local/bin/venv-wrapper
 chmod a+x /usr/local/bin/venv-wrapper
 
+cat /build/galaxy.yml | shyaml get-value dependencies | \
+    while read -r value; do
+        depname=$(echo $value | cut -f1 -d':' | sed "s/'//g" | sed "s/ //g")
+        depver=$(echo $value | cut -f2 -d':' | sed "s/'//g" | sed "s/ //g")
+        ansible-galaxy collection install $depname:$depver
+    done
+
 touch /.os-migrate-toolbox
 chmod 0444 /.os-migrate-toolbox
