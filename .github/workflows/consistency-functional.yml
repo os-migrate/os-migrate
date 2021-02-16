@@ -28,11 +28,7 @@ jobs:
           sudo dpkg-reconfigure locales
           sudo python -m pip install --upgrade pip
           sudo pip install tox
-          sudo apt install software-properties-common -y
-          sudo add-apt-repository -y ppa:projectatomic/ppa
-          sudo apt update -y
-          sudo apt install build-essential findutils -y
-          sudo apt install podman -y
+          sudo apt install software-properties-common build-essential findutils -y
       - name: Print podman version
         run: |
           podman -v
@@ -109,9 +105,6 @@ jobs:
         run: |
           sudo locale-gen en_US.UTF-8
           sudo dpkg-reconfigure locales
-          # We use ppa:projectatomic repo to install podman
-          sudo add-apt-repository -y ppa:projectatomic/ppa
-          sudo apt install podman -y
           sudo apt remove mysql-server mysql-server -y
           # MySQL requirements
           sudo apt install python3-mysqldb libmysqlclient-dev mysql-client -y
@@ -248,33 +241,33 @@ jobs:
           RABBIT_USERID=guest
           RABBIT_PASSWORD=guest
           VIRT_DRIVER=fake
-          CELLSV2_SETUP="singleconductor"
-          OS_PLACEMENT_CONFIG_DIR=/etc/nova
+          # CELLSV2_SETUP="singleconductor"
+          # OS_PLACEMENT_CONFIG_DIR=/etc/nova
           # Pre-requisite
           ENABLED_SERVICES=mysql,key
           # Neutron
           ENABLED_SERVICES+=,q-svc,q-dhcp,q-meta,q-l3,q-agt
           # Nova
-          ENABLED_SERVICES+=,n-sproxy,n-api,n-cond
+          # ENABLED_SERVICES+=,n-sproxy,n-api,n-cond
           # Placement
-          ENABLED_SERVICES+=,placement,placement-api,placement-client
+          # ENABLED_SERVICES+=,placement,placement-api,placement-client
           # Glance
           ENABLED_SERVICES+=,g-api
-          [[post-config|/etc/nova/nova.conf]]
-          [placement]
-          auth_type = password
-          auth_url = http://127.0.0.1/identity
-          password = devstack
-          project_domain_name = Default
-          project_name = service
-          user_domain_name = Default
-          username = nova
-          [compute]
-          live_migration_wait_for_vif_plug=True
-          [libvirt]
-          live_migration_uri = qemu+ssh://root@%s/system
-          cpu_mode = host-passthrough
-          virt_type = qemu
+          # [[post-config|/etc/nova/nova.conf]]
+          # [placement]
+          # auth_type = password
+          # auth_url = http://127.0.0.1/identity
+          # password = devstack
+          # project_domain_name = Default
+          # project_name = service
+          # user_domain_name = Default
+          # username = nova
+          # [compute]
+          # live_migration_wait_for_vif_plug=True
+          # [libvirt]
+          # live_migration_uri = qemu+ssh://root@%s/system
+          # cpu_mode = host-passthrough
+          # virt_type = qemu
           EOF
           cat local.conf
           sudo ./tools/create-stack-user.sh
