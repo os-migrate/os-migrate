@@ -19,7 +19,7 @@
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
   loop:
     - server: os_migrate_conv
-      volume: rhosp-migration-root-osm_server
+      volume: os-migrate-osm_server
     - server: os_migrate_conv
       volume: osm_volume
     - server: osm_server
@@ -39,7 +39,7 @@
     client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
   loop:
     - server: os_migrate_conv
-      volume: rhosp-migration-root-osm_server
+      volume: os-migrate-osm_server
     - server: os_migrate_conv
       volume: osm_volume
     - server: osm_server
@@ -72,7 +72,7 @@
 
 - name: Remove osm_server boot volume
   openstack.cloud.volume:
-    display_name: rhosp-migration-root-osm_server
+    display_name: os-migrate-osm_server
     state: absent
     auth: "{{ item.auth }}"
     validate_certs: "{{ item.validate_certs }}"

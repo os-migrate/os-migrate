@@ -39,6 +39,7 @@
       auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
       region_name: "{{ os_migrate_src_region_name|default(omit) }}"
       validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+      boot_volume_prefix: "{{ os_migrate_workload_boot_volume_prefix }}"
       ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
       client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_src_client_key|default(omit) }}"
@@ -128,7 +129,7 @@
         state_file: "{{ prelim.state_file }}"
       when:
         - prelim.changed
-        - os_migrate_conversion_cleanup_on_failure
+        - os_migrate_workload_cleanup_on_failure
 
     - ansible.builtin.fail:
         msg: "Failed to import {{ item.params.name }}."
