@@ -489,7 +489,7 @@ class OpenStackDestinationHost(OpenStackHostBase):
                 environment['LIBGUESTFS_BACKEND'] = 'direct'
 
                 cmd = ['sudo', 'qemu-img', 'create', '-f', 'qcow2', '-b',
-                       mapping['url'], overlay]
+                       mapping['url'], '-F', 'raw', overlay]
                 out = self.shell.cmd_out(cmd)
                 self.log.info('Overlay output: %s', out)
 
