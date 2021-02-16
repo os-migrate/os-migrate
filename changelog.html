@@ -303,6 +303,14 @@ is “SHUTOFF” before attempting to migrate it.</p>
 <div class="section" id="fix">
 <h3>Fix<a class="headerlink" href="#fix" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Sparsification of volumes. [Jiri Stransky]</p>
+<p>To have the volume sparsification work, two things have changed:</p>
+<ul class="simple">
+<li><p>We install and start libvirt in the conversion hosts.</p></li>
+<li><p>We specify that the NBD backends of volume qcow2 images are of raw
+format.</p></li>
+</ul>
+</li>
 <li><p>Exact name match on idempotency check during workload migration. [Jiri
 Stransky]</p>
 <p>Previously we just fed the desired server_name into the

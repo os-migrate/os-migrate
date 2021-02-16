@@ -121,6 +121,14 @@ Changes
 
 Fix
 ~~~
+- Sparsification of volumes. [Jiri Stransky]
+
+  To have the volume sparsification work, two things have changed:
+
+  * We install and start libvirt in the conversion hosts.
+
+  * We specify that the NBD backends of volume qcow2 images are of raw
+    format.
 - Exact name match on idempotency check during workload migration. [Jiri
   Stransky]
 
