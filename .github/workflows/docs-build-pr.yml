@@ -18,9 +18,6 @@ jobs:
         run: |
           sudo locale-gen en_US.UTF-8
           sudo dpkg-reconfigure locales
-          sudo add-apt-repository -y ppa:projectatomic/ppa
-          sudo apt update -y
-          sudo apt install podman -y
       - name: Fetch toolbox image
         run: |
           REUSE_TOOLBOX=1 NO_VAGRANT=1 make toolbox-build
