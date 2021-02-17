@@ -336,7 +336,7 @@ class OpenStackSourceHostCleanup(OpenStackHostBase):
     @use_lock(ATTACH_LOCK_FILE_SOURCE)
     def _detach_volumes_from_converter(self):
         """ Detach volumes from conversion host. """
-        self.log.info('Removing volumes from conversion host.')
+        self.log.info('Detaching volumes from the source conversion host.')
         converter = self._converter()
         for path, mapping in self.volume_map.items():
             volume = self.conn.get_volume_by_id(mapping['source_id'])
