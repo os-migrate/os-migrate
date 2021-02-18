@@ -26,7 +26,7 @@ of the list items.
    os_migrate_networks_filter:
      - my_net
      - other_net
-     - regex: myprefix_.*
+     - regex: ^myprefix_.*
 
 The above example says: Export only networks named ``my_net`` **or**
 ``other_net`` **or** starting with ``myprefix_``.
