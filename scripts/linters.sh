@@ -30,7 +30,7 @@ find ./ \
      -and -name "*.sh" -print0 \
     | xargs -0 bashate -v --ignore E006
 
-#Yaml lint
+# Yaml lint
 find ./ \
      -not -wholename ".tox/*" \
      -and -not -wholename "./local/*" \
@@ -44,14 +44,6 @@ find ./ \
             line-length: { max: 100 },
         }
     }' {}
-
-# Ansible lint
-find ./ \
-     -not -wholename ".tox/*" \
-     -and -not -wholename "./local/*" \
-     -and -not -wholename "./tests/func/tmp/*" \
-     -and -name "*.yml" -print0 \
-    | xargs -0 ansible-lint
 
 # Match both docs and modules/roles
 
@@ -95,4 +87,13 @@ if [ "$modules_docs_number" -ne "$modules_number" ];then
     exit 1;
 fi
 
+# Fully qualified collection names check
 python ./scripts/check_fqcn.py
+
+# Ansible lint
+find ./ \
+     -not -wholename ".tox/*" \
+     -and -not -wholename "./local/*" \
+     -and -not -wholename "./tests/func/tmp/*" \
+     -and -name "*.yml" -print0 \
+    | xargs -0 ansible-lint
