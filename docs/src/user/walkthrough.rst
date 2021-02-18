@@ -289,11 +289,11 @@ user’s point of view:
 
    Workload migration (workflow)
 
-The process involves the deployment of a “conversion host” on source and
-destination clouds. A conversion host is an OpenStack server which
+The process involves the deployment of a “conversion host” on source
+and destination clouds. A conversion host is an OpenStack server which
 will be used to transfer binary volume data from the source to the
-destination cloud. Currently, CentOS 8 is expected to be the image from
-which conversion hosts are created.
+destination cloud. The conversion hosts are expected to be created
+from CentOS 8 or RHEL 8 cloud images.
 
 The following diagram helps explain the need for a conversion host VM:
 
@@ -353,8 +353,12 @@ conversion hosts.
 
 By default the migration will use an image named ``os_migrate_conv`` for
 conversion hosts. Make sure this image exists in Glance on both clouds.
-Currently it should be a `CentOS 8 cloud
-image <https://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.qcow2>`__.
+Currently it should be a
+`CentOS 8 Cloud Image <https://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.qcow2>`_
+or
+`RHEL 8 KVM Guest Image <https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.3/x86_64/product-software>`_.
+
+When using RHEL as conversion host, make sure to set the necessary `RHEL variables <https://os-migrate.github.io/os-migrate/user/variables-guide.html#conversion-host-rhel-variables>`_.
 
 Conversion host deployment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
