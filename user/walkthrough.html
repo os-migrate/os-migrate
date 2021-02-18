@@ -119,10 +119,10 @@
 <li class="toctree-l2"><a class="reference internal" href="README.html#general-usage-notes">General usage notes</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../devel/README.html">OS Migrate Developer Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../roles.html">Documented roles in os-migrate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules.html">Documented modules in os-migrate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devel/README.html">OS Migrate Developer Documentation</a></li>
 </ul>
 
             
@@ -439,11 +439,11 @@ user’s point of view:</p>
 <a class="reference internal image-reference" href="https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig4.png?raw=true"><img alt="Workload migration (workflow)" src="https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig4.png?raw=true" style="width: 50%;" /></a>
 <p class="caption"><span class="caption-text">Workload migration (workflow)</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
 </div>
-<p>The process involves the deployment of a “conversion host” on source and
-destination clouds. A conversion host is an OpenStack server which
+<p>The process involves the deployment of a “conversion host” on source
+and destination clouds. A conversion host is an OpenStack server which
 will be used to transfer binary volume data from the source to the
-destination cloud. Currently, CentOS 8 is expected to be the image from
-which conversion hosts are created.</p>
+destination cloud. The conversion hosts are expected to be created
+from CentOS 8 or RHEL 8 cloud images.</p>
 <p>The following diagram helps explain the need for a conversion host VM:</p>
 <div class="figure align-default" id="id6">
 <a class="reference internal image-reference" href="https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig5.png?raw=true"><img alt="Workload migration (data flow)" src="https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig5.png?raw=true" style="width: 75%;" /></a>
@@ -488,8 +488,11 @@ total data transfer.</p>
 conversion hosts.</p>
 <p>By default the migration will use an image named <code class="docutils literal notranslate"><span class="pre">os_migrate_conv</span></code> for
 conversion hosts. Make sure this image exists in Glance on both clouds.
-Currently it should be a <a class="reference external" href="https://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.qcow2">CentOS 8 cloud
-image</a>.</p>
+Currently it should be a
+<a class="reference external" href="https://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.qcow2">CentOS 8 Cloud Image</a>
+or
+<a class="reference external" href="https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.3/x86_64/product-software">RHEL 8 KVM Guest Image</a>.</p>
+<p>When using RHEL as conversion host, make sure to set the necessary <a class="reference external" href="https://os-migrate.github.io/os-migrate/user/variables-guide.html#conversion-host-rhel-variables">RHEL variables</a>.</p>
 </div>
 <div class="section" id="conversion-host-deployment">
 <h3>Conversion host deployment<a class="headerlink" href="#conversion-host-deployment" title="Permalink to this headline">¶</a></h3>
