@@ -39,7 +39,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Module - import_workload_prelim" href="module-import_workload_prelim.html" />
-    <link rel="prev" title="Module - import_workload_create_instance" href="module-import_workload_create_instance.html" /> 
+    <link rel="prev" title="Module - import_workload_dst_failure_cleanup" href="module-import_workload_dst_failure_cleanup.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -114,8 +114,8 @@
 <li class="toctree-l2"><a class="reference internal" href="module-import_security_group_rule.html">Module - import_security_group_rule</a></li>
 <li class="toctree-l2"><a class="reference internal" href="module-import_subnet.html">Module - import_subnet</a></li>
 <li class="toctree-l2"><a class="reference internal" href="module-import_user.html">Module - import_user</a></li>
-<li class="toctree-l2"><a class="reference internal" href="module-import_workload_cleanup.html">Module - import_workload_cleanup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="module-import_workload_create_instance.html">Module - import_workload_create_instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-import_workload_dst_failure_cleanup.html">Module - import_workload_dst_failure_cleanup</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Module - import_workload_export_volumes</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#m-o-d-u-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">Module Documentation</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#o-p-t-i-o-n-s">Options</a></li>
@@ -126,7 +126,8 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="module-import_workload_prelim.html">Module - import_workload_prelim</a></li>
-<li class="toctree-l2"><a class="reference internal" href="module-import_workload_source_check.html">Module - import_workload_source_check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-import_workload_src_check.html">Module - import_workload_src_check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-import_workload_src_cleanup.html">Module - import_workload_src_cleanup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="module-import_workload_transfer_volumes.html">Module - import_workload_transfer_volumes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="module-os_conversion_host_info.html">Module - os_conversion_host_info</a></li>
 <li class="toctree-l2"><a class="reference internal" href="module-os_keypairs_info.html">Module - os_keypairs_info</a></li>
@@ -239,26 +240,29 @@
 <dt class="field-even">validate_certs</dt>
 <dd class="field-even"><p>Validate HTTPS certificates when logging in to OpenStack.</p>
 </dd>
-<dt class="field-odd">conversion_host</dt>
-<dd class="field-odd"><p>Dictionary with information about the source conversion host (address, status, name, id)</p>
+<dt class="field-odd">boot_volume_prefix</dt>
+<dd class="field-odd"><p>Name prefix to apply when server boot volume copies are created.</p>
 </dd>
-<dt class="field-even">data</dt>
-<dd class="field-even"><p>Data structure with server parameters as loaded from OS-Migrate workloads YAML file.</p>
+<dt class="field-even">conversion_host</dt>
+<dd class="field-even"><p>Dictionary with information about the source conversion host (address, status, name, id)</p>
 </dd>
-<dt class="field-odd">log_file</dt>
-<dd class="field-odd"><p>Path to store a log file for this conversion process.</p>
+<dt class="field-odd">data</dt>
+<dd class="field-odd"><p>Data structure with server parameters as loaded from OS-Migrate workloads YAML file.</p>
 </dd>
-<dt class="field-even">state_file</dt>
-<dd class="field-even"><p>Path to store a transfer progress file for this conversion process.</p>
+<dt class="field-even">log_file</dt>
+<dd class="field-even"><p>Path to store a log file for this conversion process.</p>
 </dd>
-<dt class="field-odd">src_conversion_host_address</dt>
-<dd class="field-odd"><p>Optional IP address of the source conversion host. Without this, the plugin will use the 'accessIPv4' property of the conversion host instance.</p>
+<dt class="field-odd">state_file</dt>
+<dd class="field-odd"><p>Path to store a transfer progress file for this conversion process.</p>
 </dd>
-<dt class="field-even">ssh_key_path</dt>
-<dd class="field-even"><p>Path to an SSH private key authorized on the source cloud.</p>
+<dt class="field-even">src_conversion_host_address</dt>
+<dd class="field-even"><p>Optional IP address of the source conversion host. Without this, the plugin will use the 'accessIPv4' property of the conversion host instance.</p>
 </dd>
-<dt class="field-odd">ssh_user</dt>
-<dd class="field-odd"><p>The SSH user to connect to the conversion hosts.</p>
+<dt class="field-odd">ssh_key_path</dt>
+<dd class="field-odd"><p>Path to an SSH private key authorized on the source cloud.</p>
+</dd>
+<dt class="field-even">ssh_user</dt>
+<dd class="field-even"><p>The SSH user to connect to the conversion hosts.</p>
 </dd>
 </dl>
 </div>
@@ -289,7 +293,7 @@
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="module-import_workload_prelim.html" class="btn btn-neutral float-right" title="Module - import_workload_prelim" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="module-import_workload_create_instance.html" class="btn btn-neutral float-left" title="Module - import_workload_create_instance" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="module-import_workload_dst_failure_cleanup.html" class="btn btn-neutral float-left" title="Module - import_workload_dst_failure_cleanup" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

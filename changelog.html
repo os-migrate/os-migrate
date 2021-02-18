@@ -246,6 +246,13 @@ with the changes.</p>
 <div class="section" id="changes">
 <h3>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Make boot volume prefix configurable, default to ‘os-migrate-‘ [Jiri
+Stransky]</p>
+<p>The boot volume prefix has previously been hard-coded to
+‘rhosp-migration-‘ and ‘rhosp-migration-root-‘, we now make the prefix
+configurable via <cite>os_migrate_workload_boot_volume_prefix</cite> variable and
+it is defaulted to ‘os-migrate-‘.</p>
+</li>
 <li><p>Preserve tags during migration of routers, networks, subnets. [Jiri
 Stransky]</p>
 <p>The tags on networking resources cannot be set during the initial
@@ -303,6 +310,30 @@ is “SHUTOFF” before attempting to migrate it.</p>
 <div class="section" id="fix">
 <h3>Fix<a class="headerlink" href="#fix" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Clean up in the destination cloud after a failed migration. [Jiri
+Stransky]</p>
+<p>After a workload migration fails, we now clean up any migrated volumes
+that are in the destination cloud but weren’t in fact used in creation
+of a new server.</p>
+</li>
+<li><p>Clean up in the source cloud after a failed migration. [Jiri Stransky]</p>
+<p>Previously when a migration would fail, the volumes in the source
+cloud would remain in incorrect state: boot volume copies still
+existing, and all VM’s volumes still attached to conversion host.</p>
+<p>This is now fixed - source cloud cleanup is called the same way as
+after a successful migration. NBD exports are closed, the duplicated
+boot volume is detached from the conversion host and deleted, and any
+additional volumes are detached from the conversion host and
+re-attached to the source server.</p>
+<p>This change also results in module renames:</p>
+<ul class="simple">
+<li><p><cite>import_workload_source_check</cite> to <cite>import_workload_src_check</cite></p></li>
+<li><p><cite>import_workload_cleanup</cite> to <cite>import_workload_src_cleanup</cite></p></li>
+</ul>
+<p>This is to keep consistent naming of decent length, as src/dst
+prefixes are already used elsewhere, and likely we will also introduce
+<cite>import_workload_dst_cleanup</cite> module in the future.</p>
+</li>
 <li><p>Sparsification of volumes. [Jiri Stransky]</p>
 <p>To have the volume sparsification work, two things have changed:</p>
 <ul class="simple">

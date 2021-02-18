@@ -64,6 +64,13 @@ New
 
 Changes
 ~~~~~~~
+- Make boot volume prefix configurable, default to 'os-migrate-' [Jiri
+  Stransky]
+
+  The boot volume prefix has previously been hard-coded to
+  'rhosp-migration-' and 'rhosp-migration-root-', we now make the prefix
+  configurable via `os_migrate_workload_boot_volume_prefix` variable and
+  it is defaulted to 'os-migrate-'.
 - Preserve tags during migration of routers, networks, subnets. [Jiri
   Stransky]
 
@@ -121,6 +128,33 @@ Changes
 
 Fix
 ~~~
+- Clean up in the destination cloud after a failed migration. [Jiri
+  Stransky]
+
+  After a workload migration fails, we now clean up any migrated volumes
+  that are in the destination cloud but weren't in fact used in creation
+  of a new server.
+- Clean up in the source cloud after a failed migration. [Jiri Stransky]
+
+  Previously when a migration would fail, the volumes in the source
+  cloud would remain in incorrect state: boot volume copies still
+  existing, and all VM's volumes still attached to conversion host.
+
+  This is now fixed - source cloud cleanup is called the same way as
+  after a successful migration. NBD exports are closed, the duplicated
+  boot volume is detached from the conversion host and deleted, and any
+  additional volumes are detached from the conversion host and
+  re-attached to the source server.
+
+  This change also results in module renames:
+
+  * `import_workload_source_check` to `import_workload_src_check`
+
+  * `import_workload_cleanup` to `import_workload_src_cleanup`
+
+  This is to keep consistent naming of decent length, as src/dst
+  prefixes are already used elsewhere, and likely we will also introduce
+  `import_workload_dst_cleanup` module in the future.
 - Sparsification of volumes. [Jiri Stransky]
 
   To have the volume sparsification work, two things have changed:
