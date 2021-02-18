@@ -30,7 +30,7 @@ find ./ \
      -and -name "*.sh" -print0 \
     | xargs -0 bashate -v --ignore E006
 
-#Yaml lint
+# Yaml lint
 find ./ \
      -not -wholename ".tox/*" \
      -and -not -wholename "./local/*" \
@@ -45,14 +45,6 @@ find ./ \
         }
     }' {}
 
-# Ansible lint
-find ./ \
-     -not -wholename ".tox/*" \
-     -and -not -wholename "./local/*" \
-     -and -not -wholename "./tests/func/tmp/*" \
-     -and -name "*.yml" -print0 \
-    | xargs -0 ansible-lint
-
 # Match both docs and modules/roles
 
 roles_docs_number=`ls docs/src/roles | wc -l`
@@ -60,7 +52,7 @@ roles_readmes_number=`find os_migrate/roles/ -name README.md | wc -l`
 roles_number=`ls os_migrate/roles/ | wc -l`
 
 modules_docs_number=`ls docs/src/modules | wc -l`
-modules_number=`ls os_migrate/plugins/modules/ | wc -l`
+modules_number=`ls os_migrate/plugins/modules/ | grep -v __pycache__ | wc -l`
 
 pending_readmes=`grep -R role_description_goes_here . | wc -l`
 
@@ -95,4 +87,13 @@ if [ "$modules_docs_number" -ne "$modules_number" ];then
     exit 1;
 fi
 
+# Fully qualified collection names check
 python ./scripts/check_fqcn.py
+
+# Ansible lint
+find ./ \
+     -not -wholename ".tox/*" \
+     -and -not -wholename "./local/*" \
+     -and -not -wholename "./tests/func/tmp/*" \
+     -and -name "*.yml" -print0 \
+    | xargs -0 ansible-lint

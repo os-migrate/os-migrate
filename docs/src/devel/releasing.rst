@@ -5,8 +5,10 @@ Set env vars with old and new versions:
 
 ::
 
-   OLD_VERSION=0.0.2
-   NEW_VERSION=0.3.0
+   OLD_VERSION=$(./toolbox/run bash -c 'cat os_migrate/galaxy.yml | shyaml get-value version')
+   echo "OLD_VERSION=$OLD_VERSION"
+
+   NEW_VERSION="SOME.NEW.VERSION"
 
 Edit the version in galaxy.yml and any hardcoded values in functional
 tests:
@@ -20,7 +22,7 @@ Test that the changes didn’t break tests:
 
 ::
 
-   ./toolbox/run make test
+   ./toolbox/run make test-fast
 
 Create a pull request with these changes. Once it’s merged, check out
 the merge commit and release to galaxy:
