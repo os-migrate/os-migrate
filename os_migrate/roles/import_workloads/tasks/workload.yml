@@ -22,7 +22,7 @@
     when: prelim.changed
 
   - name: perform required checks to ensure source workload is ready
-    os_migrate.os_migrate.import_workload_source_check:
+    os_migrate.os_migrate.import_workload_src_check:
       auth: "{{ os_migrate_src_auth }}"
       auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
       region_name: "{{ os_migrate_src_region_name|default(omit) }}"
@@ -39,6 +39,7 @@
       auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
       region_name: "{{ os_migrate_src_region_name|default(omit) }}"
       validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+      boot_volume_prefix: "{{ os_migrate_workload_boot_volume_prefix }}"
       ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
       client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_src_client_key|default(omit) }}"
@@ -89,8 +90,8 @@
     register: os_migrate_destination_instance
     when: prelim.changed
 
-  - name: clean up after migration
-    os_migrate.os_migrate.import_workload_cleanup:
+  - name: clean up in the source cloud after migration
+    os_migrate.os_migrate.import_workload_src_cleanup:
       auth: "{{ os_migrate_src_auth }}"
       auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
       region_name: "{{ os_migrate_src_region_name|default(omit) }}"
@@ -109,5 +110,47 @@
     when: prelim.changed
 
   rescue:
+    - name: clean up in the source cloud after migration failure
+      os_migrate.os_migrate.import_workload_src_cleanup:
+        auth: "{{ os_migrate_src_auth }}"
+        auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+        region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+        validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+        data: "{{ item }}"
+        conversion_host: "{{ os_src_conversion_host_info.openstack_conversion_host }}"
+        ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
+        ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
+        transfer_uuid: "{{ exports.transfer_uuid }}"
+        volume_map: "{{ exports.volume_map }}"
+        log_file: "{{ prelim.log_file }}"
+        state_file: "{{ prelim.state_file }}"
+      when:
+        - prelim.changed
+        - os_migrate_workload_cleanup_on_failure
+
+    - name: clean up in the destination cloud after migration failure
+      os_migrate.os_migrate.import_workload_dst_failure_cleanup:
+        auth: "{{ os_migrate_dst_auth }}"
+        auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+        region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+        validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+        data: "{{ item }}"
+        conversion_host: "{{ os_dst_conversion_host_info.openstack_conversion_host }}"
+        ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
+        ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
+        transfer_uuid: "{{ exports.transfer_uuid }}"
+        volume_map: "{{ transfer.volume_map }}"
+        log_file: "{{ prelim.log_file }}"
+        state_file: "{{ prelim.state_file }}"
+      when:
+        - prelim.changed
+        - os_migrate_workload_cleanup_on_failure
+
     - ansible.builtin.fail:
-        msg: "Failed to import {{ item.params.name }}!"
+        msg: "Failed to import {{ item.params.name }}."

@@ -12,7 +12,7 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = '''
 ---
-module: import_workload_cleanup
+module: import_workload_src_cleanup
 
 short_description: Clean up temporary volumes after a workload migration
 
@@ -224,7 +224,7 @@ workload.yml:
     when: prelim.changed
 
   - name: clean up after migration
-    os_migrate.os_migrate.import_workload_cleanup:
+    os_migrate.os_migrate.import_workload_src_cleanup:
       auth: "{{ os_migrate_src_auth }}"
       auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
       region_name: "{{ os_migrate_src_region_name|default(omit) }}"
@@ -336,7 +336,7 @@ class OpenStackSourceHostCleanup(OpenStackHostBase):
     @use_lock(ATTACH_LOCK_FILE_SOURCE)
     def _detach_volumes_from_converter(self):
         """ Detach volumes from conversion host. """
-        self.log.info('Removing volumes from conversion host.')
+        self.log.info('Detaching volumes from the source conversion host.')
         converter = self._converter()
         for path, mapping in self.volume_map.items():
             volume = self.conn.get_volume_by_id(mapping['source_id'])

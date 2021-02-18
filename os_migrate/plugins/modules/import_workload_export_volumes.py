@@ -56,6 +56,11 @@ options:
       - Validate HTTPS certificates when logging in to OpenStack.
     required: false
     type: bool
+  boot_volume_prefix:
+    description:
+      - Name prefix to apply when server boot volume copies are created.
+    required: false
+    type: str
   conversion_host:
     description:
       - Dictionary with information about the source conversion host (address, status, name, id)
@@ -246,7 +251,8 @@ class OpenStackSourceHost(OpenStackHostBase):
 
     def __init__(self, openstack_connection, source_conversion_host_id,
                  ssh_key_path, ssh_user, source_instance_id, state_file=None,
-                 log_file=None, source_conversion_host_address=None):
+                 log_file=None, source_conversion_host_address=None,
+                 boot_volume_prefix=None):
         # UUID marker for child processes on conversion hosts.
         transfer_uuid = str(uuid.uuid4())
 
@@ -268,6 +274,11 @@ class OpenStackSourceHost(OpenStackHostBase):
         # Optional parameters:
         # source_disks: (TODO) List of disks to migrate, otherwise all of them
         self.source_disks = None
+
+        if boot_volume_prefix is not None:
+            self.boot_volume_prefix = boot_volume_prefix
+        else:
+            self.boot_volume_prefix = "os-migrate-"
 
         # Build up a list of VolumeMappings keyed by the original device path
         # provided by the OpenStack API. Details:
@@ -349,13 +360,13 @@ class OpenStackSourceHost(OpenStackHostBase):
             self.log.info('Boot-from-volume instance, creating boot volume snapshot')
             root_snapshot = self.conn.create_volume_snapshot(
                 force=True, wait=True, volume_id=volume_id,
-                name='rhosp-migration-{0}'.format(volume_id),
+                name='{0}{1}'.format(self.boot_volume_prefix, volume_id),
                 timeout=DEFAULT_TIMEOUT)
 
             # Create a new volume from the snapshot
             self.log.info('Creating new volume from boot volume snapshot')
             root_volume_copy = self.conn.create_volume(
-                wait=True, name='rhosp-migration-{0}'.format(volume_id),
+                wait=True, name='{0}{1}'.format(self.boot_volume_prefix, volume_id),
                 snapshot_id=root_snapshot.id, size=root_snapshot.size,
                 timeout=DEFAULT_TIMEOUT)
 
@@ -365,7 +376,7 @@ class OpenStackSourceHost(OpenStackHostBase):
         elif sourcevm.image and ser_srv.migration_params()['boot_disk_copy']:
             self.log.info('Image-based instance, boot_disk_copy enabled: creating snapshot')
             image = self.conn.compute.create_server_image(
-                name='rhosp-migration-root-{0}'.format(sourcevm.name),
+                name='{0}{1}'.format(self.boot_volume_prefix, sourcevm.name),
                 server=sourcevm.id,
                 wait=True,
                 timeout=DEFAULT_TIMEOUT)
@@ -480,6 +491,7 @@ class OpenStackSourceHost(OpenStackHostBase):
 def run_module():
     argument_spec = openstack_full_argument_spec(
         data=dict(type='dict', required=True),
+        boot_volume_prefix=dict(type='str', default=None),
         conversion_host=dict(type='dict', required=True),
         ssh_key_path=dict(type='str', required=True),
         ssh_user=dict(type='str', required=True),
@@ -511,6 +523,7 @@ def run_module():
         module.params.get('src_conversion_host_address', None)
     state_file = module.params.get('state_file', None)
     log_file = module.params.get('log_file', None)
+    boot_volume_prefix = module.params.get('boot_volume_prefix', None)
 
     source_host = OpenStackSourceHost(
         conn,
@@ -520,7 +533,8 @@ def run_module():
         source_instance_id,
         source_conversion_host_address=source_conversion_host_address,
         state_file=state_file,
-        log_file=log_file
+        log_file=log_file,
+        boot_volume_prefix=boot_volume_prefix,
     )
     source_host.prepare_exports(ser_srv)
     result['transfer_uuid'] = source_host.transfer_uuid
