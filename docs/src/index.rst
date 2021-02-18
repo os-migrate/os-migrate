@@ -25,17 +25,30 @@ utilize direct database access or other methods to export or import
 data. The Ansible playbooks contained in OS Migrate are idempotent.
 If a command fails, you can retry with the same command.
 
-The `source code of OS Migrate <https://github.com/os-migrate/os-migrate/>`_
-is hosted in GitHub.
+Community
+~~~~~~~~~
 
-Content
-=======
+The `source code of OS Migrate <https://github.com/os-migrate/os-migrate>`_
+is hosted on GitHub.
+
+For issue reports please use the GitHub
+`OS Migrate issue tracker <https://github.com/os-migrate/os-migrate/issues>`_.
+
+To get help, feel free to also create an
+`issue <https://github.com/os-migrate/os-migrate/issues>`_
+on GitHub with your question.
+
+If you want to contribute to the project (code, docs, ...), please
+refer to the `developer docs <devel/README.html>`_.
+
+Contents
+========
 
 .. toctree::
    :maxdepth: 2
 
    user/README.rst
-   devel/README.rst
    roles
    modules
    changelog
+   devel/README.rst

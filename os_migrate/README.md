@@ -49,6 +49,21 @@ a command fails, you can retry with the same command.
 ## Documentation
 
 Refer to the official [documentation website](https://os-migrate.github.io/os-migrate/)
-for both
-[usage](https://os-migrate.github.io/os-migrate/user/README.html) and
-[developer](https://os-migrate.github.io/os-migrate/devel/README.html) documentation.
+for
+[usage docs](https://os-migrate.github.io/os-migrate/user/README.html).
+
+## Reporting issues
+
+Please report any issues into the
+[GitHub issue tracker](https://github.com/os-migrate/os-migrate/issues).
+
+## Getting help
+
+Feel free to create a
+[GitHub issue](https://github.com/os-migrate/os-migrate/issues)
+with your question.
+
+## Contributing
+
+See the
+[OS Migrate developer documentation](https://os-migrate.github.io/os-migrate/devel/README.html).
