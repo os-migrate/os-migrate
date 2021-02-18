@@ -60,7 +60,7 @@ roles_readmes_number=`find os_migrate/roles/ -name README.md | wc -l`
 roles_number=`ls os_migrate/roles/ | wc -l`
 
 modules_docs_number=`ls docs/src/modules | wc -l`
-modules_number=`ls os_migrate/plugins/modules/ | wc -l`
+modules_number=`ls os_migrate/plugins/modules/ | grep -v __pycache__ | wc -l`
 
 pending_readmes=`grep -R role_description_goes_here . | wc -l`
 
