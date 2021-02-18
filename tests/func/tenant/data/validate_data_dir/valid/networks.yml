@@ -1,4 +1,4 @@
-os_migrate_version: 0.6.0
+os_migrate_version: 0.7.0
 resources:
   - _info:
       availability_zones: []
