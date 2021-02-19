@@ -38,6 +38,9 @@ To get help, feel free to also create an
 `issue <https://github.com/os-migrate/os-migrate/issues>`_
 on GitHub with your question.
 
+For a more interactive chat, join the Matrix room
+`#os-migrate:matrix.org <https://app.element.io/#/room/#os-migrate:matrix.org>`_.
+
 If you want to contribute to the project (code, docs, ...), please
 refer to the `developer docs <devel/README.html>`_.
 
