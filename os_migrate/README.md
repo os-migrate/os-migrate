@@ -63,6 +63,9 @@ Feel free to create a
 [GitHub issue](https://github.com/os-migrate/os-migrate/issues)
 with your question.
 
+For a more interactive chat, join the Matrix room
+[#os-migrate:matrix.org](https://app.element.io/#/room/#os-migrate:matrix.org).
+
 ## Contributing
 
 See the
