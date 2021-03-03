@@ -15,6 +15,13 @@
     path: "{{ os_migrate_data_dir }}/workloads.yml"
   register: read_workloads
 
+- name: filter workloads to import
+  ansible.builtin.set_fact:
+    filtered_workloads: "{{ (
+      read_workloads.resources
+        | os_migrate.os_migrate.stringfilter(os_migrate_workloads_filter,
+                                             attribute='params.name') ) }}"
+
 - name: create directory for workload migration logs
   ansible.builtin.file:
     path: "{{ os_migrate_data_dir }}/workload_logs"
@@ -78,4 +85,4 @@
 
 - name: import workloads
   ansible.builtin.include_tasks: workload.yml
-  loop: "{{ read_workloads.resources }}"
+  loop: "{{ filtered_workloads }}"

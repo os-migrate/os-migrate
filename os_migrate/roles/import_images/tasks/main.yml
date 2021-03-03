@@ -15,6 +15,13 @@
     path: "{{ os_migrate_data_dir }}/images.yml"
   register: read_images
 
+- name: filter images to import
+  ansible.builtin.set_fact:
+    filtered_images: "{{ (
+      read_images.resources
+        | os_migrate.os_migrate.stringfilter(os_migrate_images_filter,
+                                             attribute='params.name') ) }}"
+
 - name: import images
   os_migrate.os_migrate.import_image:
     auth: "{{ os_migrate_dst_auth }}"
@@ -28,4 +35,4 @@
     ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-  loop: "{{ read_images.resources }}"
+  loop: "{{ filtered_images }}"

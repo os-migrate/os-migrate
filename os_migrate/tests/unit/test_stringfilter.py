@@ -49,14 +49,20 @@ class TestStringfilter(unittest.TestCase):
             [],
         )
 
+    def test_stringfilter_problems(self):
         with self.assertRaises(TypeError):
             stringfilter(None, [])
 
         with self.assertRaises(TypeError):
-            stringfilter(strings, None)
+            stringfilter(['one'], None)
 
+        # 'regexp' instead of 'regex'
         with self.assertRaises(ansible.errors.AnsibleFilterError):
-            stringfilter(strings, [{'regexp': 'one'}])
+            stringfilter(['one'], [{'regexp': 'one'}])
+
+        # value not a string
+        with self.assertRaises(ansible.errors.AnsibleFilterError):
+            stringfilter(['one', 1], [{'regexp': 'one'}])
 
     def test_stringfilter_dicts(self):
         items = [
@@ -114,3 +120,65 @@ class TestStringfilter(unittest.TestCase):
         # no 'attribute' provided but iterating over dicts
         with self.assertRaises(ansible.errors.AnsibleFilterError):
             stringfilter(items, [{'regexp': 'one'}])
+
+    def test_stringfilter_nested_dicts(self):
+        items = [
+            {'outer': {'a': 'one', 'b': 'another one'}},
+            {'outer': {'a': 'two', 'b': 'another two'}},
+            {'outer': {'a': 'three', 'b': 'another three'}},
+            {'outer': {'a': 'prefixed-one', 'b': 'another prefixed-one'}},
+            {'outer': {'a': 'prefixed-two', 'b': 'another prefixed-two'}},
+            {'outer': {'a': 'prefixed-three', 'b': 'another prefixed-three'}},
+            {'outer': {'a': 'one-suffixed', 'b': 'another one-suffixed'}},
+            {'outer': {'a': 'two-suffixed', 'b': 'another two-suffixed'}},
+            {'outer': {'a': 'three-suffixed', 'b': 'another three-suffixed'}},
+        ]
+
+        self.assertEqual(
+            stringfilter(items, ['one', 'prefixed'], attribute='outer.a'),
+            [{'outer': {'a': 'one', 'b': 'another one'}}],
+        )
+
+        self.assertEqual(
+            stringfilter(items,
+                         ['one', {'regex': '^prefixed'}],
+                         attribute='outer.a'),
+            [
+                {'outer': {'a': 'one', 'b': 'another one'}},
+                {'outer': {'a': 'prefixed-one', 'b': 'another prefixed-one'}},
+                {'outer': {'a': 'prefixed-two', 'b': 'another prefixed-two'}},
+                {'outer': {'a': 'prefixed-three', 'b': 'another prefixed-three'}},
+            ],
+        )
+
+        self.assertEqual(
+            stringfilter(items, [{'regex': 'xed$'}], attribute='outer.a'),
+            [
+                {'outer': {'a': 'one-suffixed', 'b': 'another one-suffixed'}},
+                {'outer': {'a': 'two-suffixed', 'b': 'another two-suffixed'}},
+                {'outer': {'a': 'three-suffixed', 'b': 'another three-suffixed'}},
+            ],
+        )
+
+        self.assertEqual(
+            stringfilter(items, [{'regex': 'one'}], attribute='outer.a'),
+            [
+                {'outer': {'a': 'one', 'b': 'another one'}},
+                {'outer': {'a': 'prefixed-one', 'b': 'another prefixed-one'}},
+                {'outer': {'a': 'one-suffixed', 'b': 'another one-suffixed'}},
+            ],
+        )
+
+        self.assertEqual(
+            stringfilter(items, [], attribute='outer.a'),
+            [],
+        )
+
+    def test_stringfilter_nested_dict_problems(self):
+        # invalid attribute path
+        with self.assertRaises(ansible.errors.AnsibleFilterError):
+            stringfilter([{'outer': {'b': 'no "a" in here'}}], [{'regexp': 'one'}], attribute='outer.a')
+
+        # value not a string
+        with self.assertRaises(ansible.errors.AnsibleFilterError):
+            stringfilter([{'outer': {'a': 1}}], [{'regexp': 'one'}], attribute='outer.a')

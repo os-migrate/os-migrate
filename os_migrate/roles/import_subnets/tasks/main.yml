@@ -13,7 +13,14 @@
 - name: read subnets resource file
   os_migrate.os_migrate.read_resources:
     path: "{{ os_migrate_data_dir }}/subnets.yml"
-  register: read_networks
+  register: read_subnets
+
+- name: filter subnets to import
+  ansible.builtin.set_fact:
+    filtered_subnets: "{{ (
+      read_subnets.resources
+        | os_migrate.os_migrate.stringfilter(os_migrate_subnets_filter,
+                                             attribute='params.name') ) }}"
 
 - name: import subnets
   os_migrate.os_migrate.import_subnet:
@@ -26,4 +33,4 @@
     ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-  loop: "{{ read_networks.resources }}"
+  loop: "{{ filtered_subnets }}"
