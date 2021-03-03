@@ -4,4 +4,8 @@ set -euo pipefail
 
 source /root/venv/bin/activate
 
-"$@"
+if [ "$#" = "0" ]; then
+    bash
+else
+    "$@"
+fi
