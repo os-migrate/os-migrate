@@ -16,7 +16,6 @@ jobs:
           sudo python -m pip install --upgrade pip
           sudo pip install tox
           sudo apt install software-properties-common build-essential findutils -y
-          sudo apt install podman -y
       - name: Build os-migrate image
         run: |
           # The default tag is localhost/os_migrate_toolbox:latest
