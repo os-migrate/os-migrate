@@ -2,6 +2,21 @@ Changelog
 =========
 
 
+(unreleased)
+------------
+
+New
+~~~
+- Filters in import playbooks. [Jiri Stransky]
+
+  The `os_migrate_<resources>_filter` variables that are already used to
+  filter resources during export, are now respected during import
+  too. That means user can choose whether they want to filter during
+  export or during import, or even combine the approaches to export a
+  subset of the existing resources, and further limit them into smaller
+  chunks during import.
+
+
 0.7.0 (2021-02-18)
 ------------------
 

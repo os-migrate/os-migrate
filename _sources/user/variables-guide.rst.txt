@@ -13,8 +13,13 @@ Resource filters
 ~~~~~~~~~~~~~~~~
 
 Resource filters allow the user to control which resources will be
-exported (and thus which resources will be migrated). The filters
-match against resource **names**.
+migrated. The filters match against resource **names**.
+
+The filters work **both during export and during import**, and it is
+not required that the same value is used during export and
+import. This feature can be used e.g. to export a subset of the
+existing resources, and then during import further limit the subset of
+resources being imported into batches.
 
 The value of a filter variable is a list, where each item can be a
 string (exact match) or a dictionary with ``regex`` key (regular

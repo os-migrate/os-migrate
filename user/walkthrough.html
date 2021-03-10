@@ -107,6 +107,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-deployment">Conversion host deployment</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#export">Export</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#migration-parameters">Migration parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ansible-variables">Ansible Variables</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#migration">Migration</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#cleanup-of-conversion-hosts">Cleanup of conversion hosts</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id1">Demo</a></li>
@@ -585,6 +586,14 @@ cloud during migration. You can also edit migration parameters to
 control how a workload should be migrated. Refer to
 <a class="reference external" href="migration-params-guide.rst">Migration Parameters Guide</a>
 for more information.</p>
+</div>
+<div class="section" id="ansible-variables">
+<h3>Ansible Variables<a class="headerlink" href="#ansible-variables" title="Permalink to this headline">¶</a></h3>
+<p>In addition to the migration parameters in the resource YAML files,
+you can alter the behavior of OS Migrate via Ansible variables,
+e.g. to specify a subset of resources/workloads that will be exported
+or imported. Refer to the <a class="reference external" href="variables-guide.rst">Variables Guide</a> for
+details.</p>
 </div>
 <div class="section" id="migration">
 <h3>Migration<a class="headerlink" href="#migration" title="Permalink to this headline">¶</a></h3>

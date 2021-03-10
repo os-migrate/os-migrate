@@ -460,6 +460,15 @@ control how a workload should be migrated. Refer to
 `Migration Parameters Guide <migration-params-guide.rst>`_
 for more information.
 
+Ansible Variables
+~~~~~~~~~~~~~~~~~
+
+In addition to the migration parameters in the resource YAML files,
+you can alter the behavior of OS Migrate via Ansible variables,
+e.g. to specify a subset of resources/workloads that will be exported
+or imported. Refer to the `Variables Guide <variables-guide.rst>`_ for
+details.
+
 Migration
 ~~~~~~~~~
 

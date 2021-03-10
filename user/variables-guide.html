@@ -191,8 +191,12 @@ documentation of the individual roles.</p>
 <div class="section" id="resource-filters">
 <h3>Resource filters<a class="headerlink" href="#resource-filters" title="Permalink to this headline">¶</a></h3>
 <p>Resource filters allow the user to control which resources will be
-exported (and thus which resources will be migrated). The filters
-match against resource <strong>names</strong>.</p>
+migrated. The filters match against resource <strong>names</strong>.</p>
+<p>The filters work <strong>both during export and during import</strong>, and it is
+not required that the same value is used during export and
+import. This feature can be used e.g. to export a subset of the
+existing resources, and then during import further limit the subset of
+resources being imported into batches.</p>
 <p>The value of a filter variable is a list, where each item can be a
 string (exact match) or a dictionary with <code class="docutils literal notranslate"><span class="pre">regex</span></code> key (regular
 expression match). A resource is exported if it matches at least one
