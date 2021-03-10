@@ -229,8 +229,23 @@ class Resource():
             return True
         return False  # no change done
 
+    def data_errors(self):
+        errors = self._validation_id_errors()
+        errors.extend(self._validation_migration_params_errors())
+        errors.extend(self._validation_params_errors())
+        return errors
+
+    def debug_id(self):
+        params, info = self.params_and_info()
+        name = params.get('name', '')
+        id_ = info.get('id', '')
+        return "{0}:{1}:{2}".format(self.resource_type, name, id_)
+
     def info(self):
         return self.data[const.RES_INFO]
+
+    def is_data_valid(self):
+        return self.data_errors() == []
 
     # Not meant to be overriden in majority of subclasses.
     def is_same_resource(self, target):
@@ -275,8 +290,6 @@ class Resource():
                 self.data[const.RES_MIGRATION_PARAMS][k] = v
 
     # TODO add validation
-    # def is_data_valid(self):
-    # def data_errors(self):
     # def are_prerequisites_met(self, conn):
 
     # === PRIVATE INSTANCE METHODS (alphabetic sort) ===
@@ -302,6 +315,32 @@ class Resource():
         self._set_ser_params_same_name(params, refs, self.params_from_refs)
         self._set_ser_params_same_name(info, sdk_res, self.info_from_sdk)
         self._set_ser_params_same_name(info, refs, self.info_from_refs)
+
+    # Not meant to be overriden in majority of subclasses.
+    def _data_without_info(self):
+        """Returns: serialized `self.data` with all the '_info' and
+        '_migration_params' keys removed, even from nested resources. The
+        original `self.data` structure is untouched, but the returned
+        structure does reuse data contents to save memory (it is not a
+        deep copy). Only lists and dicts are fresh instances.
+        """
+        def _recursive_trim(obj):
+            if isinstance(obj, dict):
+                result_dict = {}
+                for k, v in obj.items():
+                    if k == const.RES_INFO or k == const.RES_MIGRATION_PARAMS:
+                        continue
+                    result_dict[k] = _recursive_trim(v)
+                return result_dict
+            elif isinstance(obj, list):
+                result_list = []
+                for item in obj:
+                    result_list.append(_recursive_trim(item))
+                return result_list
+            else:
+                return obj
+
+        return _recursive_trim(self.data)
 
     # May be overridden in subclasses as needed.  The public instance method of
     # the same name without the leading underscore also provides a type
@@ -400,28 +439,27 @@ class Resource():
         self._sdk_params_from_params_and_refs(sdk_params, refs)
         return sdk_params
 
-    # Not meant to be overriden in majority of subclasses.
-    def _data_without_info(self):
-        """Returns: serialized `self.data` with all the '_info' and
-        '_migration_params' keys removed, even from nested resources. The
-        original `self.data` structure is untouched, but the returned
-        structure does reuse data contents to save memory (it is not a
-        deep copy). Only lists and dicts are fresh instances.
-        """
-        def _recursive_trim(obj):
-            if isinstance(obj, dict):
-                result_dict = {}
-                for k, v in obj.items():
-                    if k == const.RES_INFO or k == const.RES_MIGRATION_PARAMS:
-                        continue
-                    result_dict[k] = _recursive_trim(v)
-                return result_dict
-            elif isinstance(obj, list):
-                result_list = []
-                for item in obj:
-                    result_list.append(_recursive_trim(item))
-                return result_list
-            else:
-                return obj
+    # Can be overriden in some subclasses.
+    def _validation_id_errors(self):
+        errors = []
+        if 'id' not in self.info():
+            errors.append('Missing _info.id.')
+        return errors
 
-        return _recursive_trim(self.data)
+    # Can be overriden in some subclasses.
+    def _validation_migration_params_errors(self):
+        errors = []
+        mig_params = self.migration_params()
+        for mig_param in self.migration_param_defaults.keys():
+            if mig_param not in mig_params:
+                errors.append('Missing _migration_params.{0}.'.format(mig_param))
+        return errors
+
+    # Can be overriden in some subclasses.
+    def _validation_params_errors(self):
+        errors = []
+        params = self.params()
+        for param in self.params_from_sdk + self.params_from_refs:
+            if param not in params:
+                errors.append('Missing params.{0}.'.format(param))
+        return errors

@@ -25,6 +25,9 @@ resources:
       provider_network_type: null
       provider_physical_network: null
       provider_segmentation_id: null
-      qos_policy_name: null
+      qos_policy_ref: null
       segments: null
+      tags:
+        - test_tag_1
+        - test_tag_2
     type: openstack.network.Network
