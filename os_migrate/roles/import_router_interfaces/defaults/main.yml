@@ -1,1 +1,3 @@
 import_router_interfaces_validate_file: true
+os_migrate_routers_filter:
+  - regex: .*

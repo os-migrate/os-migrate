@@ -1,1 +1,3 @@
 import_projects_validate_file: true
+os_migrate_projects_filter:
+  - regex: .*

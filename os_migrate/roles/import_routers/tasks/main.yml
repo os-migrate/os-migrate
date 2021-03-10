@@ -15,6 +15,13 @@
     path: "{{ os_migrate_data_dir }}/routers.yml"
   register: read_routers
 
+- name: filter routers to import
+  ansible.builtin.set_fact:
+    filtered_routers: "{{ (
+      read_routers.resources
+        | os_migrate.os_migrate.stringfilter(os_migrate_routers_filter,
+                                             attribute='params.name') ) }}"
+
 - name: import routers
   os_migrate.os_migrate.import_router:
     auth: "{{ os_migrate_dst_auth }}"
@@ -26,4 +33,4 @@
     ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-  loop: "{{ read_routers.resources }}"
+  loop: "{{ filtered_routers }}"

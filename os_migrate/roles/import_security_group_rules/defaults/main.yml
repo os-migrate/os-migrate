@@ -1,1 +1,3 @@
 import_security_group_rules_validate_file: true
+os_migrate_security_groups_filter:
+  - regex: .*

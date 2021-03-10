@@ -18,6 +18,9 @@ def stringfilter(items, queries, attribute=None):
     assumed that `items` is a list of dicts, and `queries` will tested
     against value under `attribute` key in each dict.
 
+    `attribute` can point into a nested dictionary, individual keys of
+    the nested key path are separated by '.' character.
+
     `queries` is a list where each item can be:
 
     - string: String equality match is performed.
@@ -30,20 +33,19 @@ def stringfilter(items, queries, attribute=None):
 
     """
     result = []
+    if attribute is not None:
+        key_path = attribute.split('.')
+    else:
+        key_path = None
+
     for item in items:
-        if attribute is not None:
-            if not isinstance(item, dict):
+        if key_path is not None:
+            string = _get_nested_value(item, key_path)
+            if not isinstance(string, str):
                 raise errors.AnsibleFilterError(
-                    "stringfilter: 'attribute' parameter provided "
-                    "but list item is not dict: {0}".format(pformat(item))
+                    "stringfilter: value under '{0}' in '{1}' is not string: {2}"
+                    .format(attribute, pformat(item), pformat(string))
                 )
-            if attribute not in item:
-                raise errors.AnsibleFilterError(
-                    "stringfilter: 'attribute' is {0} "
-                    "but it was not found in list item: {1}"
-                    .format(pformat(attribute), pformat(item))
-                )
-            string = item[attribute]
         else:
             if not isinstance(item, str):
                 raise errors.AnsibleFilterError(
@@ -67,6 +69,31 @@ def stringfilter(items, queries, attribute=None):
                     .format(pformat(query))
                 )
     return result
+
+
+def _get_nested_value(dct, key_path):
+    """Get value under `key_path` key in `dct` dictionary.
+
+    `key_path` is a list of keys to be traversed into a potentially
+    nested `dct` dictionary.
+    """
+    key = key_path[0]
+    if not isinstance(dct, dict):
+        raise errors.AnsibleFilterError(
+            "stringfilter: looking for key '{0}' "
+            "but list item is not dict: {1}".format(key, pformat(dct))
+        )
+    if key not in dct:
+        raise errors.AnsibleFilterError(
+            "stringfilter: key is '{0}' "
+            "but it was not found in dict: {1}"
+            .format(key, pformat(dct))
+        )
+    value = dct[key]
+    if len(key_path) > 1:
+        return _get_nested_value(value, key_path[1:])
+    else:
+        return value
 
 
 class FilterModule(object):
