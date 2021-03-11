@@ -2,6 +2,7 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 from copy import deepcopy
+from openstack import exceptions as os_exc
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import const, exc
 
@@ -230,21 +231,49 @@ class Resource():
         return False  # no change done
 
     def data_errors(self):
+        """Get errors in the data structure of a resource, e.g. missing
+        fields.
+
+        Returns: list of strings (error messages), empty when the resource is
+        well-formed
+        """
         errors = self._validation_id_errors()
         errors.extend(self._validation_migration_params_errors())
         errors.extend(self._validation_params_errors())
         return errors
 
     def debug_id(self):
+        """Get best-effort identification of the resource, a string in the
+        format 'type:name:id'. Name and id parts can be empty if the
+        resource is missing these.
+
+        Returns: string of format 'type:name:id'
+        """
         params, info = self.params_and_info()
         name = params.get('name', '')
         id_ = info.get('id', '')
         return "{0}:{1}:{2}".format(self.resource_type, name, id_)
 
+    def dst_prerequisites_errors(self, conn, filters=None):
+        """Get messages for unmet destination cloud prerequisites.
+
+        Returns: list of strings (error messages), empty when prerequisites
+        are met
+        """
+        errors = []
+        try:
+            self._refs_from_ser(conn, filters)
+        except (os_exc.ResourceFailure, os_exc.ResourceNotFound, os_exc.DuplicateResource) as e:
+            errors.append("Destination prerequisites not met: {0}".format(e))
+        return errors
+
     def info(self):
         return self.data[const.RES_INFO]
 
     def is_data_valid(self):
+        """
+        Returns: True if resource data is well-formed, False otherwise
+        """
         return self.data_errors() == []
 
     # Not meant to be overriden in majority of subclasses.
@@ -288,9 +317,6 @@ class Resource():
             # None means we leave the resource class defaults
             if v is not None:
                 self.data[const.RES_MIGRATION_PARAMS][k] = v
-
-    # TODO add validation
-    # def are_prerequisites_met(self, conn):
 
     # === PRIVATE INSTANCE METHODS (alphabetic sort) ===
 
@@ -441,6 +467,10 @@ class Resource():
 
     # Can be overriden in some subclasses.
     def _validation_id_errors(self):
+        """Validate id being present in the resource.
+
+        Returns: list of strings (error messages)
+        """
         errors = []
         if 'id' not in self.info():
             errors.append('Missing _info.id.')
@@ -448,6 +478,10 @@ class Resource():
 
     # Can be overriden in some subclasses.
     def _validation_migration_params_errors(self):
+        """Validate migration params being present in the resource.
+
+        Returns: list of strings (error messages)
+        """
         errors = []
         mig_params = self.migration_params()
         for mig_param in self.migration_param_defaults.keys():
@@ -457,6 +491,10 @@ class Resource():
 
     # Can be overriden in some subclasses.
     def _validation_params_errors(self):
+        """Validate params being present in the resource.
+
+        Returns: list of strings (error messages)
+        """
         errors = []
         params = self.params()
         for param in self.params_from_sdk + self.params_from_refs:
