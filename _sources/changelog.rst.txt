@@ -7,6 +7,13 @@ Changelog
 
 New
 ~~~
+- Validate resource data structure. [Jiri Stransky]
+
+  When resources are being loaded, we now validate that the resource has
+  all the expected `params` and `_migration_params` and `_info.id`.
+  Errors are reported for resources that cannot be parsed. The resources
+  in error messages are identified by type+name+id tuple, if those
+  attributes of the resource aren't missing.
 - Filters in import playbooks. [Jiri Stransky]
 
   The `os_migrate_<resources>_filter` variables that are already used to
@@ -15,6 +22,16 @@ New
   export or during import, or even combine the approaches to export a
   subset of the existing resources, and further limit them into smaller
   chunks during import.
+
+Fix
+~~~
+- Project sameness handling consistent with other resources. [Jiri
+  Stransky]
+
+  We were missing 'id' in project resource and the sameness was
+  determined by 'name'. This could run into issues in multi-domain
+  setups. The sameness check is now consistent with other resources and
+  is based on 'id'.
 
 
 0.7.0 (2021-02-18)
