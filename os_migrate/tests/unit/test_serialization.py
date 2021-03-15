@@ -129,6 +129,28 @@ class TestSerialization(unittest.TestCase):
             },
         ])
 
+    def test_create_resources_from_struct(self):
+        cls_map = {'openstack.Minimal': MinimalResource}
+        file_struct = fixtures.minimal_resource_file_struct()
+        resources, errors = serialization.create_resources_from_struct(
+            file_struct['resources'], cls_map)
+        self.assertEqual(errors, [])
+        self.assertTrue(isinstance(resources[0], MinimalResource))
+
+        file_struct = fixtures.minimal_resource_file_struct()
+        del file_struct['resources'][0]['type']
+        resources, errors = serialization.create_resources_from_struct(
+            file_struct['resources'], cls_map)
+        self.assertEqual(errors, ["Cannot parse resource due to missing 'type'."])
+        self.assertEqual(resources, [])
+
+        file_struct = fixtures.minimal_resource_file_struct()
+        file_struct['resources'][0]['type'] = 'asdf'
+        resources, errors = serialization.create_resources_from_struct(
+            file_struct['resources'], cls_map)
+        self.assertEqual(errors, ["Unknown resource type 'asdf'."])
+        self.assertEqual(resources, [])
+
     def test_resource_needs_update_minimal(self):
         current = fixtures.minimal_resource()
         target = fixtures.minimal_resource()

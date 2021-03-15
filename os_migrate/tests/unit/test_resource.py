@@ -232,3 +232,38 @@ class TestResource(unittest.TestCase):
         del r1.info()['id']
         del r2['_info']['id']
         self.assertFalse(r1.is_same_resource(r2))
+
+    def test_data_validation(self):
+        res = FakeResource.from_data(valid_fakeresource_data())
+        self.assertTrue(res.is_data_valid())
+        self.assertEqual(res.data_errors(), [])
+
+        data = valid_fakeresource_data()
+        del data['_info']['id']
+        res = FakeResource.from_data(data)
+        self.assertFalse(res.is_data_valid())
+        self.assertEqual(res.data_errors(), ["Missing _info.id."])
+
+        data = valid_fakeresource_data()
+        del data['_info']['id']
+        del data['params']['param1']
+        res = FakeResource.from_data(data)
+        self.assertFalse(res.is_data_valid())
+        self.assertEqual(res.data_errors(), ["Missing _info.id.", "Missing params.param1."])
+
+        data = valid_fakeresource_data()
+        del data['_migration_params']['migparam1']
+        res = FakeResource.from_data(data)
+        self.assertFalse(res.is_data_valid())
+        self.assertEqual(res.data_errors(), ["Missing _migration_params.migparam1."])
+
+    def test_debug_id(self):
+        res = FakeResource.from_data(valid_fakeresource_data())
+        self.assertEqual(res.debug_id(), "some.FakeResource:nameval:idval")
+
+        # do not crash on missing data
+        data = valid_fakeresource_data()
+        del data['_info']['id']
+        del data['params']['name']
+        res = FakeResource.from_data(data)
+        self.assertEqual(res.debug_id(), "some.FakeResource::")

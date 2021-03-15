@@ -1,20 +1,37 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import \
+    resource_map, serialization
 
-def get_errors_in_file_structs(file_structs):
+
+def get_errors_in_file_structs(file_structs, resrc_map=None):
     """Validate a list of `file_structs` resources file
     structures. Validates unique resource naming, in the future should
     also validate internal format of resources.
 
     Returns: A list of validation error messages. Empty if all is ok.
     """
-    all_resources = []
-    for file_struct in file_structs:
-        all_resources.extend(file_struct['resources'])
+    if resrc_map is None:
+        resrc_map = resource_map.RESOURCE_MAP
 
-    errors = _resource_duplicate_name_errors(all_resources)
-    # TOOD: errors.extend(...) with additional checks for resource format
+    all_resource_structs = []
+    for file_struct in file_structs:
+        all_resource_structs.extend(file_struct['resources'])
+    all_resources, errors = serialization.create_resources_from_struct(
+        all_resource_structs, resrc_map)
+
+    errors.extend(_resource_duplicate_name_errors(all_resource_structs))
+    errors.extend(_resource_data_errors(all_resources))
+    return errors
+
+
+def _resource_data_errors(resources):
+    errors = []
+    for resource in resources:
+        res_data_errors = resource.data_errors()
+        if res_data_errors:
+            errors.append("{0}: {1}".format(resource.debug_id(), ' '.join(res_data_errors)))
     return errors
 
 

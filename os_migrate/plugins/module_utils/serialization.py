@@ -34,6 +34,21 @@ def add_or_replace_resource(resources, resource):
     return True
 
 
+def create_resources_from_struct(struct_resources, cls_map):
+    resources = []
+    errors = []
+    for struct_res in struct_resources:
+        if not struct_res.get('type'):
+            errors.append("Cannot parse resource due to missing 'type'.")
+            continue
+        if not cls_map.get(struct_res['type']):
+            errors.append("Unknown resource type '{0}'.".format(struct_res['type']))
+            continue
+        resources.append(cls_map[struct_res['type']].from_data(struct_res))
+
+    return resources, errors
+
+
 # TODO: Remove when everything is a Resource
 def resource_needs_update(current, target):
     """Having two serialized resources, `current` and `target`, check if
