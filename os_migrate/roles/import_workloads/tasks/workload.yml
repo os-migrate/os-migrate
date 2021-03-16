@@ -143,6 +143,7 @@
       when:
         - prelim.changed
         - os_migrate_workload_cleanup_on_failure
+        - exports is defined
 
     - name: clean up in the destination cloud after migration failure
       os_migrate.os_migrate.import_workload_dst_failure_cleanup:
@@ -164,6 +165,8 @@
       when:
         - prelim.changed
         - os_migrate_workload_cleanup_on_failure
+        - exports is defined
+        - transfer is defined
 
     - ansible.builtin.fail:
         msg: "Failed to import {{ item.params.name }}."
