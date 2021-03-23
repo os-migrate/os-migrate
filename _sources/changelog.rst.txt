@@ -7,6 +7,15 @@ Changelog
 
 New
 ~~~
+- Validate destination prerequisites before migrating a workload. [Jiri
+  Stransky]
+
+  Before workload storage migration is started, it is now validated that
+  the server's references to resources like flavor, image, security
+  group, network, or subnet can be properly resolved in the destination
+  cloud. This aims to avoid situations where the block storage is first
+  successfully copied and then the server creation fails due to a
+  trivial problem.
 - Validate resource data structure. [Jiri Stransky]
 
   When resources are being loaded, we now validate that the resource has
@@ -25,6 +34,15 @@ New
 
 Fix
 ~~~
+- Skip migration failure cleanup when there is nothing to clean up.
+  [Jiri Stransky]
+
+  Previously the source/destination cleanup would be attempted on a
+  failed migration, even though the migration didn't progress far enough
+  to create the variables that are needed for cleanup. This would then
+  produce a false alarm error during the cleanup. Now it's fixed, the
+  cleanups are attempted only if there is necessary info available (if
+  the migration progressed far enough for the cleanup to be necessary).
 - Project sameness handling consistent with other resources. [Jiri
   Stransky]
 
