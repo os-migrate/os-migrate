@@ -4,6 +4,7 @@ __metaclass__ = type
 import unittest
 from unittest import mock
 
+from openstack.exceptions import ResourceFailure
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import exc
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import resource
@@ -267,3 +268,13 @@ class TestResource(unittest.TestCase):
         del data['params']['name']
         res = FakeResource.from_data(data)
         self.assertEqual(res.debug_id(), "some.FakeResource::")
+
+    def test_dst_prerequisites_errors(self):
+        res = FakeResource.from_data(valid_fakeresource_data())
+        self.assertEqual(res.dst_prerequisites_errors(None), [])
+
+        def exception_refs_from_ser(_self, conn, filters=None):
+            raise ResourceFailure("Image 'asdf' not found.")
+        res._refs_from_ser = exception_refs_from_ser
+        self.assertEqual(res.dst_prerequisites_errors(None),
+                         ["Destination prerequisites not met: Image 'asdf' not found."])
