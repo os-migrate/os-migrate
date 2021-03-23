@@ -113,9 +113,9 @@ jobs:
           # installer will crash as pip is not able to determine if its
           # installed or not
           sudo apt install python3-httplib2 -y
-          # We need to be sure we use the latest versions of
-          # pip, virtualenv and setuptools
-          sudo python -m pip install --upgrade pip
+          # We keep pinning pip due to:
+          # https://bugs.launchpad.net/devstack/+bug/1906367
+          sudo python -m pip install --upgrade 'pip<20.3'
           sudo python -m pip install --upgrade virtualenv
           sudo python -m pip install --upgrade setuptools
       - name: Verify MySQL connection from container
@@ -277,6 +277,13 @@ jobs:
           sudo chown -R stack: /opt/stack/devstack
       - name: Start devstack
         run: |
+          # Hacks to make Devstack install fine. See also:
+          # https://github.com/openstack/devstack/blob/83821a11ac1d6738b63cb10878b8aaa02e153374/tools/fixup_stuff.sh#L88-L96
+          sudo rm -rf /usr/lib/python3/dist-packages/httplib2-*.egg-info
+          sudo rm -rf /usr/lib/python3/dist-packages/pyasn1_modules-*.egg-info
+          sudo rm -rf /usr/lib/python3/dist-packages/PyYAML-*.egg-info
+          sudo rm -rf /usr/lib/python3/dist-packages/simplejson-*.egg-info
+
           sudo -iu stack bash -c 'cd /opt/stack/devstack; ./stack.sh'
       - name: Get debug data
         if: failure()
