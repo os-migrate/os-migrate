@@ -89,6 +89,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Installation from Galaxy (recommended)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-virtualenv">Using virtualenv</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="install-from-source.html">Installation from source (when customizing)</a></li>
@@ -179,9 +180,12 @@ source</a>.</p>
 <div class="section" id="prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>Ansible &gt;= 2.9</p></li>
+<li><p>Ansible 2.9</p></li>
 <li><p>Additional package requirements from Ansible modules:
 <code class="docutils literal notranslate"><span class="pre">iputils</span> <span class="pre">python3-openstackclient</span> <span class="pre">python3-openstacksdk</span></code></p></li>
+<li><p>OpenStack SDK version should be 0.36 or newer.  (There is a <a class="reference external" href="https://storyboard.openstack.org/#!/story/2008577">bug in
+0.53</a>. For this
+reason we currently test with SDK 0.36 and 0.52.)</p></li>
 </ul>
 </div>
 <div class="section" id="installation">
@@ -195,6 +199,17 @@ source</a>.</p>
 </pre></div>
 </div>
 <p>You can find available releases at <a class="reference external" href="https://galaxy.ansible.com/os_migrate/os_migrate">OS Migrate Galaxy page</a>.</p>
+</div>
+<div class="section" id="using-virtualenv">
+<h2>Using virtualenv<a class="headerlink" href="#using-virtualenv" title="Permalink to this headline">¶</a></h2>
+<p>If your distribution doesn’t ship the required dependency versions,
+you can use virtualenv, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>python3 -m venv $HOME/os_migrate_venv
+source $HOME/os_migrate_venv/bin/activate
+pip install --upgrade &#39;openstacksdk&gt;=0.36,&lt;0.53&#39;
+pip install --upgrade &#39;ansible&gt;=2.9.1,&lt;2.10&#39;
+</pre></div>
+</div>
 </div>
 </div>
 
