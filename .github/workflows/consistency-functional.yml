@@ -118,6 +118,16 @@ jobs:
           sudo python -m pip install --upgrade pip
           sudo python -m pip install --upgrade virtualenv
           sudo python -m pip install --upgrade setuptools
+          sudo rm -rf /usr/lib/python3/dist-packages/yaml
+          sudo rm -rf /usr/lib/python3/dist-packages/PyYAML-*
+          sudo python -m pip install \
+              --no-cache-dir \
+              --force-reinstall \
+              --upgrade \
+              --ignore-installed \
+              --only-binary=PyYAML \
+              PyYAML
+
       - name: Verify MySQL connection from container
         run: >-
           mysql \
