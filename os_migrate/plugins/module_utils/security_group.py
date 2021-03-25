@@ -30,12 +30,27 @@ class SecurityGroup(resource.Resource):
         return obj
 
     @staticmethod
+    def _clean_all_rules(conn, sdk_res):
+        rules = list(conn.network.security_group_rules(security_group_id=sdk_res['id']))
+        for rule in rules:
+            conn.network.delete_security_group_rule(rule['id'])
+
+    @staticmethod
     def _create_sdk_res(conn, sdk_params):
         return conn.network.create_security_group(**sdk_params)
 
     @staticmethod
     def _find_sdk_res(conn, name_or_id, filters=None):
         return conn.network.find_security_group(name_or_id, **(filters or {}))
+
+    def _hook_after_update(self, conn, sdk_res, is_create):
+        if is_create:
+            # Security groups are auto-created with default rules. This is
+            # nice when creating them from scratch, but undesirable when
+            # migrating. If the user kept the default rules in the source
+            # security group, they got exported and will get imported, but
+            # we want an empty group to start with.
+            self._clean_all_rules(conn, sdk_res)
 
     @staticmethod
     def _update_sdk_res(conn, sdk_res, sdk_params):
