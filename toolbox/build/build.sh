@@ -9,7 +9,18 @@ OS_MIGRATE_DIR=$(realpath "$DIR/../..")
 
 dnf clean all
 dnf -y update
-dnf -y install findutils ansible gcc make python3-devel python3-openstackclient jq shyaml iputils
+dnf -y install \
+    ansible \
+    cargo \
+    findutils \
+    gcc \
+    iputils \
+    jq \
+    make \
+    python3-devel \
+    python3-openstackclient \
+    shyaml \
+
 # The below packages are for vagrant-libvirt and take a lot of deps,
 # build with `NO_VAGRANT=1 make toolbox-build` if Vagrant isn't required.
 if [ "${NO_VAGRANT:-}" != "1" ]; then
