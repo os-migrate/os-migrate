@@ -34,19 +34,6 @@ New
 
 Fix
 ~~~
-- Ensure new security groups don't have auto-created rules. [Jiri
-  Stransky]
-
-  When creating a security group, OpenStack automatically inserts 2
-  basic rules to allow all egress traffic (one for IPv4, one for
-  IPv6). Creating these blanket-allow rules automatically in destination
-  is undesirable, as the user may have replaced the default rules with
-  some more restrictive ones in the source security group.
-
-  When creating a new destination security group, we now immediately
-  delete the auto-created rules. If the source security group kept the
-  default rules, they got exported like any other rules, and will be
-  imported into destination during rule import.
 - Skip migration failure cleanup when there is nothing to clean up.
   [Jiri Stransky]
 
