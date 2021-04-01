@@ -239,10 +239,15 @@ def run_module():
 
     ser_server = server.Server.from_data(module.params['data'])
     sdk_server = ser_server.create(conn, block_device_mapping)
+    # Some info (e.g. flavor ID) will only become available after the
+    # server is in ACTIVE state, we need to wait for it.
+    sdk_server = conn.compute.wait_for_server(sdk_server, failures=['ERROR'], wait=600)
+    dst_ser_server = server.Server.from_sdk(conn, sdk_server)
 
     if sdk_server:
-        result['server_id'] = sdk_server.id
         result['changed'] = True
+        result['server'] = dst_ser_server.data
+        result['server_id'] = sdk_server.id
 
     module.exit_json(**result)
 
