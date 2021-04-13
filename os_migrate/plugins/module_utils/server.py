@@ -22,6 +22,7 @@ class Server(resource.Resource):
         'created_at',
         'id',
         'launched_at',
+        'project_id',
         'status',
         'updated_at',
         'user_id',
@@ -29,6 +30,7 @@ class Server(resource.Resource):
     info_from_refs = [
         'flavor_id',
         'security_group_ids',
+        'volume_attachments_info',
     ]
     params_from_sdk = [
         'availability_zone',
@@ -208,6 +210,9 @@ class Server(resource.Resource):
         ser_fips = map(lambda fip: ServerFloatingIP.from_sdk(conn, fip), sdk_fips)
         refs['floating_ips'] = list(map(lambda fip: fip.data, ser_fips))
 
+        # For _info only, not for usage within migration.
+        refs['volume_attachments_info'] = _volume_attachments_info(conn, sdk_res)
+
         return refs
 
     def _refs_from_ser(self, conn, filters=None):
@@ -232,4 +237,24 @@ class Server(resource.Resource):
         refs['ports'] = params['ports']
         refs['floating_ips'] = params['floating_ips']
 
+        # For _info only, we don't need it when deserializing.
+        refs['volume_attachments_info'] = None
+
         return refs
+
+
+def _volume_attachments_info(conn, sdk_res):
+    """Return information about volume attachments. For debugging (_info)
+    purposes only, not intended for use within migration.
+    """
+    attachments = []
+    for attachment in conn.compute.volume_attachments(sdk_res):
+        volume = conn.block_storage.get_volume(attachment['volume_id'])
+        attachments.append({
+            'device': attachment['device'],
+            'id': attachment['id'],
+            'volume_id': attachment['volume_id'],
+            'volume_name': volume['name'],
+            'volume_project_id': volume['project_id'],
+        })
+    return attachments
