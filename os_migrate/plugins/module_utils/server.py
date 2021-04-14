@@ -179,7 +179,7 @@ class Server(resource.Resource):
 
         # There are multiple representations of server in SDK, some of
         # them don't have flavor ID info.
-        flavor_id = sdk_res['flavor'].get('id')
+        flavor_id = (sdk_res.get('flavor') or {}).get('id')
         if flavor_id is None:
             flavor_id = conn.get_server_by_id(sdk_res['id'])['flavor']['id']
 
