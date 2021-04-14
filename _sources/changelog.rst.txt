@@ -7,6 +7,29 @@ Changelog
 
 New
 ~~~
+- Add volume attachements info to workload exports. [Jiri Stransky]
+
+  In the workloads YAML file we now write information about volume
+  attachments into the _info section. The actual volumes to migrate are
+  looked up again during the import phase, so this new serialized
+  information does not have any effect on the migration, but it can be
+  helpful when debugging.
+- Ensure Nova server creation is successful and emit detailed info.
+  [Jiri Stransky]
+
+  The import_workload_create_instance module now outputs a full workload
+  serialization of the server created in the destination cloud. When
+  running Ansible in verbose mode, it can be used as debugging
+  information, and allows for direct comparison of the destination
+  workload to the contents of workloads.yml file.
+
+  This requires that the import_workload_create_instance module waits
+  for the Nova server to enter ACTIVE state, to have full information
+  available. Typically this only adds several seconds to the workload
+  migration time, which is negligible in the full picture. By waiting,
+  we can also make sure the server indeed does go ACTIVE and not into
+  ERROR state, which may have previously gone unnoticed with the "fire
+  and forget" server creation approach.
 - Validate destination prerequisites before migrating a workload. [Jiri
   Stransky]
 
@@ -34,6 +57,19 @@ New
 
 Fix
 ~~~
+- Ensure new security groups don't have auto-created rules. [Jiri
+  Stransky]
+
+  When creating a security group, OpenStack automatically inserts 2
+  basic rules to allow all egress traffic (one for IPv4, one for
+  IPv6). Creating these blanket-allow rules automatically in destination
+  is undesirable, as the user may have replaced the default rules with
+  some more restrictive ones in the source security group.
+
+  When creating a new destination security group, we now immediately
+  delete the auto-created rules. If the source security group kept the
+  default rules, they got exported like any other rules, and will be
+  imported into destination during rule import.
 - Skip migration failure cleanup when there is nothing to clean up.
   [Jiri Stransky]
 
