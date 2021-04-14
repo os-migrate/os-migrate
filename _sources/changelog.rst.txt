@@ -7,13 +7,6 @@ Changelog
 
 New
 ~~~
-- Add volume attachements info to workload exports. [Jiri Stransky]
-
-  In the workloads YAML file we now write information about volume
-  attachments into the _info section. The actual volumes to migrate are
-  looked up again during the import phase, so this new serialized
-  information does not have any effect on the migration, but it can be
-  helpful when debugging.
 - Ensure Nova server creation is successful and emit detailed info.
   [Jiri Stransky]
 
