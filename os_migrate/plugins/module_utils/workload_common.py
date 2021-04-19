@@ -67,7 +67,7 @@ def use_lock(lock_file):
 class OpenStackHostBase():
     def __init__(self, openstack_connection, conversion_host_id, ssh_key_path,
                  ssh_user, transfer_uuid, conversion_host_address=None,
-                 state_file=None, log_file=None):
+                 state_file=None, log_file=None, timeout=DEFAULT_TIMEOUT):
         # Required common parameters:
         # openstack_connection: OpenStack connection object
         # conversion_host_id: ID of conversion host instance
@@ -87,6 +87,7 @@ class OpenStackHostBase():
         self.conversion_host_address = conversion_host_address
         self.state_file = state_file
         self.log_file = log_file
+        self.timeout = timeout
 
         # Configure logging
         self.log = logging.getLogger('osp-osp')
@@ -153,10 +154,10 @@ class OpenStackHostBase():
             self.log.debug('Initial disk list: %s', disks_before)
 
             conn.attach_volume(volume=volume, wait=True, server=host_func(),
-                               timeout=DEFAULT_TIMEOUT)
+                               timeout=self.timeout)
             self.log.info('Waiting for volume to appear in %s wrapper', name)
             self._wait_for_volume_dev_path(conn, volume, host_func(),
-                                           DEFAULT_TIMEOUT)
+                                           self.timeout)
 
             disks_after = ssh_func(['lsblk', '--noheadings', '--list',
                                     '--paths', '--nodeps', '--output NAME'])

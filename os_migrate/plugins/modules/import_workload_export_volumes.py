@@ -97,6 +97,11 @@ options:
       - The SSH user to connect to the conversion hosts.
     required: true
     type: str
+  timeout:
+    description:
+      - Timeout for long running operations, in seconds.
+    required: false
+    type: int
 '''
 
 EXAMPLES = '''
@@ -252,7 +257,7 @@ class OpenStackSourceHost(OpenStackHostBase):
     def __init__(self, openstack_connection, source_conversion_host_id,
                  ssh_key_path, ssh_user, source_instance_id, state_file=None,
                  log_file=None, source_conversion_host_address=None,
-                 boot_volume_prefix=None):
+                 boot_volume_prefix=None, timeout=DEFAULT_TIMEOUT):
         # UUID marker for child processes on conversion hosts.
         transfer_uuid = str(uuid.uuid4())
 
@@ -264,7 +269,8 @@ class OpenStackSourceHost(OpenStackHostBase):
             transfer_uuid,
             conversion_host_address=source_conversion_host_address,
             state_file=state_file,
-            log_file=log_file
+            log_file=log_file,
+            timeout=timeout,
         )
 
         # Required unique parameters:
@@ -361,14 +367,14 @@ class OpenStackSourceHost(OpenStackHostBase):
             root_snapshot = self.conn.create_volume_snapshot(
                 force=True, wait=True, volume_id=volume_id,
                 name='{0}{1}'.format(self.boot_volume_prefix, volume_id),
-                timeout=DEFAULT_TIMEOUT)
+                timeout=self.timeout)
 
             # Create a new volume from the snapshot
             self.log.info('Creating new volume from boot volume snapshot')
             root_volume_copy = self.conn.create_volume(
                 wait=True, name='{0}{1}'.format(self.boot_volume_prefix, volume_id),
                 snapshot_id=root_snapshot.id, size=root_snapshot.size,
-                timeout=DEFAULT_TIMEOUT)
+                timeout=self.timeout)
 
             # Update the volume map with the new volume ID
             self.volume_map['/dev/vda']['source_id'] = root_volume_copy.id
@@ -379,14 +385,14 @@ class OpenStackSourceHost(OpenStackHostBase):
                 name='{0}{1}'.format(self.boot_volume_prefix, sourcevm.name),
                 server=sourcevm.id,
                 wait=True,
-                timeout=DEFAULT_TIMEOUT)
+                timeout=self.timeout)
             image = self.conn.get_image_by_id(image.id)  # refresh
             if image.status != 'active':
                 raise RuntimeError(
                     'Could not create new image of image-based instance!')
             volume = self.conn.create_volume(
                 image=image.id, bootable=True, wait=True, name=image.name,
-                timeout=DEFAULT_TIMEOUT, size=image.min_disk)
+                timeout=self.timeout, size=image.min_disk)
             self.volume_map['/dev/vda'] = dict(
                 source_dev=None, source_id=volume.id, dest_dev=None,
                 dest_id=None, snap_id=None, image_id=image.id, name=volume.name,
@@ -404,7 +410,7 @@ class OpenStackSourceHost(OpenStackHostBase):
                 volume = self.conn.get_volume_by_id(volume_id)
                 self.log.info('Detaching %s from %s', volume.id, sourcevm.id)
                 self.conn.detach_volume(server=sourcevm, volume=volume,
-                                        wait=True, timeout=DEFAULT_TIMEOUT)
+                                        wait=True, timeout=self.timeout)
 
     # Lock this part to have a better chance of the OpenStack device path
     # matching the device path seen inside the conversion host.
@@ -468,7 +474,7 @@ class OpenStackSourceHost(OpenStackHostBase):
 
             # Check qemu-img info on this disk to make sure it is ready
             self.log.info('Waiting for valid qemu-img info on all exports...')
-            for second in range(DEFAULT_TIMEOUT):
+            for second in range(self.timeout):
                 try:
                     cmd = ['qemu-img', 'info', 'nbd://localhost:' + str(port) +
                            '/' + self.transfer_uuid]
@@ -498,6 +504,7 @@ def run_module():
         src_conversion_host_address=dict(type='str', default=None),
         state_file=dict(type='str', default=None),
         log_file=dict(type='str', default=None),
+        timeout=dict(type='int', default=DEFAULT_TIMEOUT),
     )
 
     result = dict(
@@ -524,6 +531,7 @@ def run_module():
     state_file = module.params.get('state_file', None)
     log_file = module.params.get('log_file', None)
     boot_volume_prefix = module.params.get('boot_volume_prefix', None)
+    timeout = module.params['timeout']
 
     source_host = OpenStackSourceHost(
         conn,
@@ -535,6 +543,7 @@ def run_module():
         state_file=state_file,
         log_file=log_file,
         boot_volume_prefix=boot_volume_prefix,
+        timeout=timeout,
     )
     source_host.prepare_exports(ser_srv)
     result['transfer_uuid'] = source_host.transfer_uuid

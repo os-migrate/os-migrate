@@ -98,6 +98,11 @@ options:
       - Provided by the import_workloads_export_volumes module.
     required: true
     type: dict
+  timeout:
+    description:
+      - Timeout for long running operations, in seconds.
+    required: false
+    type: int
 '''
 
 EXAMPLES = '''
@@ -148,7 +153,7 @@ class OpenStackDstFailureCleanup(OpenStackHostBase):
 
     def __init__(self, openstack_connection, destination_conversion_host_id,
                  ssh_key_path, ssh_user, transfer_uuid, volume_map,
-                 state_file=None, log_file=None):
+                 state_file=None, log_file=None, timeout=DEFAULT_TIMEOUT):
 
         super().__init__(
             openstack_connection,
@@ -158,6 +163,7 @@ class OpenStackDstFailureCleanup(OpenStackHostBase):
             transfer_uuid,
             state_file=state_file,
             log_file=log_file,
+            timeout=timeout,
         )
         self.volume_map = volume_map
 
@@ -195,8 +201,8 @@ class OpenStackDstFailureCleanup(OpenStackHostBase):
 
             self.log.info('Detaching volume %s.', volume['id'])
             self.conn.detach_volume(server=converter, volume=volume,
-                                    timeout=DEFAULT_TIMEOUT, wait=True)
-            for second in range(DEFAULT_TIMEOUT):
+                                    timeout=self.timeout, wait=True)
+            for second in range(self.timeout):
                 converter = self._converter()
                 volume = self.conn.get_volume_by_id(mapping['dest_id'])
                 if not self._volume_still_attached(volume, converter):
@@ -219,7 +225,7 @@ class OpenStackDstFailureCleanup(OpenStackHostBase):
                 continue
 
             self.log.info('Deleting volume %s.', volume['id'])
-            self.conn.delete_volume(volume['id'], timeout=DEFAULT_TIMEOUT, wait=True)
+            self.conn.delete_volume(volume['id'], timeout=self.timeout, wait=True)
 
 
 def run_module():
@@ -232,6 +238,7 @@ def run_module():
         volume_map=dict(type='dict', required=True),
         state_file=dict(type='str', default=None),
         log_file=dict(type='str', default=None),
+        timeout=dict(type='int', default=DEFAULT_TIMEOUT),
     )
 
     result = dict(
@@ -256,6 +263,7 @@ def run_module():
     # Optional parameters
     state_file = module.params.get('state_file', None)
     log_file = module.params.get('log_file', None)
+    timeout = module.params['timeout']
 
     failure_cleanup = OpenStackDstFailureCleanup(
         conn,
@@ -265,7 +273,8 @@ def run_module():
         transfer_uuid,
         volume_map,
         state_file=state_file,
-        log_file=log_file
+        log_file=log_file,
+        timeout=timeout,
     )
     failure_cleanup.delete_migrated_volumes()
 
