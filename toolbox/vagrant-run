@@ -29,7 +29,7 @@ ROOTLESS_IMAGE_ID=$(podman inspect -f '{{.Id}}' $CONTAINER_IMAGE || true)
 ROOTFUL_IMAGE_ID=$(sudo podman inspect -f '{{.Id}}' $CONTAINER_IMAGE || true)
 if [ "$ROOTLESS_IMAGE_ID" != "$ROOTFUL_IMAGE_ID" ]; then
     echo "Refreshing rootful image $CONTAINER_IMAGE..."
-    podman save $CONTAINER_IMAGE | sudo podman load $CONTAINER_IMAGE
+    podman save $CONTAINER_IMAGE | sudo podman load
 fi
 
 [ -e /usr/lib/passwd ] && USR_LIB_PASSWD="-v /usr/lib/passwd:/usr/lib/passwd:ro" || USR_LIB_PASSWD=""

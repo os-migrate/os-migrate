@@ -1,13 +1,6 @@
 libvirt:
-  # vagrant box add \
-  #   --name fedora30 \
-  #   https://download.fedoraproject.org/ \
-  #           pub/fedora/linux/releases/30/ \
-  #           Cloud/x86_64/images/ \
-  #           Fedora-Cloud-Base-Vagrant-30-1.2.x86_64.vagrant-libvirt.box
-  box: fedora30
-  default_prefix: os_migrate
-  private_net_name: os_migrate
+  box: fedora32
+  default_prefix: os_migrate_
   storage_pool_name: vagrant
   suspend_mode: managedsave
   qemu_use_session: true
@@ -15,6 +8,3 @@ libvirt:
   system_uri: qemu:///system
   storage_pool_path: ~/.local/share/libvirt/images
   management_network_device: virbr0
-
-devstack:
-  ip: 192.168.10.10
