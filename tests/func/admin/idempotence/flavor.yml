@@ -6,6 +6,12 @@
     os_migrate_flavors_filter:
       - regex: '^osm_'
 
+- name: set destination flavor name
+  ansible.builtin.replace:
+    path: "{{ os_migrate_data_dir }}/flavors.yml"
+    regexp: "name: osm_flavor"
+    replace: "name: osmdst_flavor"
+
 - name: re-load resources for idempotency test
   ansible.builtin.set_fact:
     flavor_resources_idem: "{{ (lookup('file',
@@ -25,29 +31,29 @@
 
 ### IMPORT IDEMPOTENCE ###
 
-- name: look up osm_flavor dst cloud
+- name: look up osmdst_flavor dst cloud
   openstack.cloud.compute_flavor_info:
     auth: "{{ os_migrate_dst_auth }}"
-    name: "osm_flavor"
+    name: "osmdst_flavor"
   register: flavor_import_idem_before
 
 - ansible.builtin.include_role:
     name: os_migrate.os_migrate.import_flavors
 
-- name: look up osm_flavor in dst cloud again
+- name: look up osmdst_flavor in dst cloud again
   openstack.cloud.compute_flavor_info:
     auth: "{{ os_migrate_dst_auth }}"
-    name: "osm_flavor"
+    name: "osmdst_flavor"
   register: flavor_import_idem_after
 
-- name: ensure ram for osm_flavor did not change
+- name: ensure extra_specs for osmdst_flavor did not change
   ansible.builtin.assert:
     that:
       - flavor_import_idem_before['openstack_flavors'][0].ram != None
-      - "flavor_import_idem_before['openstack_flavors'][0]['ram'] \
-         == flavor_import_idem_after['openstack_flavors'][0]['ram']"
+      - "flavor_import_idem_before['openstack_flavors'][0]['extra_specs'] \
+         == flavor_import_idem_after['openstack_flavors'][0]['extra_specs']"
     fail_msg: |
-      flavor_import_idem_before ram:
-      {{ flavor_import_idem_before['openstack_flavors'][0].ram }}
-      flavor_import_idem_after ram:
-      {{ flavor_import_idem_after['openstack_flavors'][0].ram }}
+      flavor_import_idem_before extra_specs:
+      {{ flavor_import_idem_before['openstack_flavors'][0].extra_specs }}
+      flavor_import_idem_after extra_specs:
+      {{ flavor_import_idem_after['openstack_flavors'][0].extra_specs }}

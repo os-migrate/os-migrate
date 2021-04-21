@@ -4,6 +4,12 @@
     os_migrate_flavors_filter:
       - regex: '^osm_'
 
+- name: set destination flavor name
+  ansible.builtin.replace:
+    path: "{{ os_migrate_data_dir }}/flavors.yml"
+    regexp: "name: osm_flavor"
+    replace: "name: osmdst_flavor"
+
 - name: load exported data
   ansible.builtin.set_fact:
     flavor_resources: "{{ (lookup('file',
@@ -16,8 +22,8 @@
     that:
       - (flavor_resources |
         json_query("[?params.name ==
-        'osm_flavor'].params.name")
-        == ['osm_flavor'])
+        'osmdst_flavor'].params.ram")
+        == [1024])
 
 - ansible.builtin.include_role:
     name: os_migrate.os_migrate.import_flavors

@@ -13,6 +13,8 @@ class Flavor(resource.Resource):
 
     info_from_sdk = [
         'id',
+        # There doesn't seem to be an API for disabling a flavor.
+        'is_disabled',
     ]
 
     params_from_sdk = [
@@ -20,15 +22,33 @@ class Flavor(resource.Resource):
         'disk',
         'ephemeral',
         'extra_specs',
-        'is_disabled',
         'is_public',
-        'links',
         'name',
         'ram',
         'rxtx_factor',
         'swap',
         'vcpus',
     ]
+    sdk_params_from_params = [x for x in params_from_sdk if x not in ['extra_specs']]
+
+    def _data_from_sdk_and_refs(self, sdk_res, refs):
+        super()._data_from_sdk_and_refs(sdk_res, refs)
+        params = self.params()
+        # APIs before microversion 2.75 return '' instead of 0, but
+        # only 0 is accepted when creating a flavor.
+        if params['swap'] == '':
+            params['swap'] = 0
+
+    def _hook_after_update(self, conn, sdk_res, is_create):
+        params = self.params()
+        delete_extra_specs = list(set(sdk_res['extra_specs'].keys()) -
+                                  set(params['extra_specs'].keys()))
+        for prop_name in delete_extra_specs:
+            conn.compute.delete_flavor_extra_specs_property(sdk_res, prop_name)
+        for prop_name in params['extra_specs'].keys():
+            if sdk_res['extra_specs'].get(prop_name) != params['extra_specs'][prop_name]:
+                conn.compute.update_flavor_extra_specs_property(
+                    sdk_res, prop_name, params['extra_specs'][prop_name])
 
     @staticmethod
     def _create_sdk_res(conn, sdk_params):
@@ -40,4 +60,4 @@ class Flavor(resource.Resource):
 
     @staticmethod
     def _update_sdk_res(conn, sdk_res, sdk_params):
-        return
+        return sdk_res

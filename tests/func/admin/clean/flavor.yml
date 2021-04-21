@@ -1,8 +1,10 @@
-- name: remove osm_flavor
+- name: remove src/dst flavors
   openstack.cloud.compute_flavor:
-    auth: "{{ item }}"
-    name: osm_flavor
+    auth: "{{ item['auth'] }}"
+    name: "{{ item['flavor'] }}"
     state: absent
   loop:
-    - "{{ os_migrate_src_auth }}"
-    - "{{ os_migrate_dst_auth }}"
+    - auth: "{{ os_migrate_src_auth }}"
+      flavor: osm_flavor
+    - auth: "{{ os_migrate_dst_auth }}"
+      flavor: osmdst_flavor

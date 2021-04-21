@@ -7,3 +7,6 @@
     vcpus: 1
     disk: 10
     ephemeral: 10
+    extra_specs:
+      os_migrate:some_property: asdf
+      os_migrate:other_property: ghij
