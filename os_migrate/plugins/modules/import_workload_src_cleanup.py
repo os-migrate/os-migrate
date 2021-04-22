@@ -104,6 +104,11 @@ options:
       - Provided by the import_workloads_export_volumes module.
     required: true
     type: dict
+  timeout:
+    description:
+      - Timeout for long running operations, in seconds.
+    required: false
+    type: int
 '''
 
 EXAMPLES = '''
@@ -270,7 +275,7 @@ class OpenStackSourceHostCleanup(OpenStackHostBase):
     def __init__(self, openstack_connection, source_conversion_host_id,
                  ssh_key_path, ssh_user, source_instance_id, transfer_uuid,
                  volume_map, source_conversion_host_address=None, state_file=None,
-                 log_file=None):
+                 log_file=None, timeout=DEFAULT_TIMEOUT):
 
         super().__init__(
             openstack_connection,
@@ -280,7 +285,8 @@ class OpenStackSourceHostCleanup(OpenStackHostBase):
             transfer_uuid,
             conversion_host_address=source_conversion_host_address,
             state_file=state_file,
-            log_file=log_file
+            log_file=log_file,
+            timeout=timeout,
         )
 
         # Required unique parameters:
@@ -346,8 +352,8 @@ class OpenStackSourceHostCleanup(OpenStackHostBase):
                               'skipping detach.')
                 continue
             self.conn.detach_volume(server=converter, volume=volume,
-                                    timeout=DEFAULT_TIMEOUT, wait=True)
-            for second in range(DEFAULT_TIMEOUT):
+                                    timeout=self.timeout, wait=True)
+            for second in range(self.timeout):
                 converter = self._converter()
                 volume = self.conn.get_volume_by_id(mapping['source_id'])
                 if not self._volume_still_attached(volume, converter):
@@ -365,20 +371,20 @@ class OpenStackSourceHostCleanup(OpenStackHostBase):
                 # Delete the temporary copy of the source root disk
                 self.log.info('Removing copy of root volume')
                 self.conn.delete_volume(name_or_id=mapping['source_id'],
-                                        wait=True, timeout=DEFAULT_TIMEOUT)
+                                        wait=True, timeout=self.timeout)
 
                 # Remove the root volume snapshot
                 if mapping['snap_id']:
                     self.log.info('Deleting temporary root device snapshot')
                     self.conn.delete_volume_snapshot(
-                        timeout=DEFAULT_TIMEOUT, wait=True,
+                        timeout=self.timeout, wait=True,
                         name_or_id=mapping['snap_id'])
 
                 # Remove root image copy, for image-launched instances
                 if mapping['image_id']:
                     self.log.info('Deleting temporary root device image')
                     self.conn.delete_image(
-                        timeout=DEFAULT_TIMEOUT, wait=True,
+                        timeout=self.timeout, wait=True,
                         name_or_id=mapping['image_id'])
             else:
                 # Attach data volumes back to source VM
@@ -389,7 +395,7 @@ class OpenStackSourceHostCleanup(OpenStackHostBase):
                 except RuntimeError:
                     self.log.info('Attaching %s back to source VM', volume.id)
                     self.conn.attach_volume(volume=volume, server=sourcevm,
-                                            wait=True, timeout=DEFAULT_TIMEOUT)
+                                            wait=True, timeout=self.timeout)
                 else:
                     self.log.info('Volume %s is already attached to source VM',
                                   volume.id)
@@ -407,6 +413,7 @@ def run_module():
         src_conversion_host_address=dict(type='str', default=None),
         state_file=dict(type='str', default=None),
         log_file=dict(type='str', default=None),
+        timeout=dict(type='int', default=DEFAULT_TIMEOUT),
     )
 
     result = dict(
@@ -434,6 +441,7 @@ def run_module():
         module.params.get('src_conversion_host_address', None)
     state_file = module.params.get('state_file', None)
     log_file = module.params.get('log_file', None)
+    timeout = module.params['timeout']
 
     host_cleanup = OpenStackSourceHostCleanup(
         conn,
@@ -445,7 +453,8 @@ def run_module():
         volume_map,
         source_conversion_host_address=source_conversion_host_address,
         state_file=state_file,
-        log_file=log_file
+        log_file=log_file,
+        timeout=timeout,
     )
     host_cleanup.close_exports()
 

@@ -63,6 +63,7 @@
       state_file: "{{ prelim.state_file }}"
       ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
       ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
+      timeout: "{{ os_migrate_timeout }}"
     register: exports
     when: prelim.changed
 
@@ -86,6 +87,7 @@
       volume_map: "{{ exports.volume_map }}"
       log_file: "{{ prelim.log_file }}"
       state_file: "{{ prelim.state_file }}"
+      timeout: "{{ os_migrate_timeout }}"
     register: transfer
     when: prelim.changed
 
@@ -120,6 +122,7 @@
       volume_map: "{{ exports.volume_map }}"
       log_file: "{{ prelim.log_file }}"
       state_file: "{{ prelim.state_file }}"
+      timeout: "{{ os_migrate_timeout }}"
     when: prelim.changed
 
   rescue:
@@ -140,6 +143,7 @@
         volume_map: "{{ exports.volume_map }}"
         log_file: "{{ prelim.log_file }}"
         state_file: "{{ prelim.state_file }}"
+        timeout: "{{ os_migrate_timeout }}"
       when:
         - prelim.changed
         - os_migrate_workload_cleanup_on_failure
@@ -162,6 +166,7 @@
         volume_map: "{{ transfer.volume_map }}"
         log_file: "{{ prelim.log_file }}"
         state_file: "{{ prelim.state_file }}"
+        timeout: "{{ os_migrate_timeout }}"
       when:
         - prelim.changed
         - os_migrate_workload_cleanup_on_failure

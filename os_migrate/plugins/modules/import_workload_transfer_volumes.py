@@ -111,6 +111,11 @@ options:
       - Provided by the import_workloads_export_volumes module.
     required: true
     type: dict
+  timeout:
+    description:
+      - Timeout for long running operations, in seconds.
+    required: false
+    type: int
 '''
 
 EXAMPLES = '''
@@ -292,7 +297,7 @@ class OpenStackDestinationHost(OpenStackHostBase):
     def __init__(self, openstack_connection, destination_conversion_host_id,
                  ssh_key_path, ssh_user, transfer_uuid, source_conversion_host_address,
                  volume_map, destination_conversion_host_address=None,
-                 state_file=None, log_file=None):
+                 state_file=None, log_file=None, timeout=DEFAULT_TIMEOUT):
 
         super().__init__(
             openstack_connection,
@@ -302,7 +307,8 @@ class OpenStackDestinationHost(OpenStackHostBase):
             transfer_uuid,
             conversion_host_address=destination_conversion_host_address,
             state_file=state_file,
-            log_file=log_file
+            log_file=log_file,
+            timeout=timeout,
         )
 
         # Required unique parameters:
@@ -355,7 +361,7 @@ class OpenStackDestinationHost(OpenStackHostBase):
         # Check qemu-img info on all the disks to make sure everything is ready
         self.log.info('Waiting for valid qemu-img info on all exports...')
         pending_disks = set(self.volume_map.keys())
-        for second in range(DEFAULT_TIMEOUT):
+        for second in range(self.timeout):
             try:
                 for disk in pending_disks.copy():
                     mapping = self.volume_map[disk]
@@ -406,7 +412,7 @@ class OpenStackDestinationHost(OpenStackHostBase):
             new_volume = self.conn.create_volume(
                 name=mapping['name'], bootable=mapping['bootable'],
                 description=mapping['description'], size=mapping['size'],
-                wait=True, timeout=DEFAULT_TIMEOUT)
+                wait=True, timeout=self.timeout)
             self.volume_map[path]['dest_id'] = new_volume.id
 
     @use_lock(ATTACH_LOCK_FILE_DESTINATION)
@@ -520,7 +526,7 @@ class OpenStackDestinationHost(OpenStackHostBase):
             volume_id = mapping['dest_id']
             volume = self.conn.get_volume_by_id(volume_id)
             self.conn.detach_volume(server=self._converter(),
-                                    timeout=DEFAULT_TIMEOUT,
+                                    timeout=self.timeout,
                                     volume=volume,
                                     wait=True)
 
@@ -537,6 +543,7 @@ def run_module():
         dst_conversion_host_address=dict(type='str', default=None),
         state_file=dict(type='str', default=None),
         log_file=dict(type='str', default=None),
+        timeout=dict(type='int', default=DEFAULT_TIMEOUT),
     )
 
     result = dict(
@@ -565,6 +572,7 @@ def run_module():
         module.params.get('dst_conversion_host_address', None)
     state_file = module.params.get('state_file', None)
     log_file = module.params.get('log_file', None)
+    timeout = module.params['timeout']
 
     destination_host = OpenStackDestinationHost(
         conn,
@@ -576,7 +584,8 @@ def run_module():
         volume_map,
         destination_conversion_host_address=destination_conversion_host_address,
         state_file=state_file,
-        log_file=log_file
+        log_file=log_file,
+        timeout=timeout,
     )
     destination_host.transfer_exports()
 
