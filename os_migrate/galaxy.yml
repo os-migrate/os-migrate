@@ -1,6 +1,6 @@
 namespace: os_migrate
 name: os_migrate
-version: 0.7.0
+version: 0.8.0
 readme: README.md
 authors:
   - Jiri Stransky <jistr@redhat.com>
