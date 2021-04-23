@@ -7,6 +7,19 @@ Changelog
 
 New
 ~~~
+- Configurable timeout for non-immediate actions. [Jiri Stransky]
+
+  Until now, non-immediate actions and blocking calls to OpenStack SDK
+  within workload migration have used a hard-coded timeout of 30
+  minutes. New variable `os_migrate_timeout` has been introduced for
+  setting the timeout (in seconds), the value is 1800 (= 30 minutes).
+- Add volume attachements info to workload exports. [Jiri Stransky]
+
+  In the workloads YAML file we now write information about volume
+  attachments into the _info section. The actual volumes to migrate are
+  looked up again during the import phase, so this new serialized
+  information does not have any effect on the migration, but it can be
+  helpful when debugging.
 - Ensure Nova server creation is successful and emit detailed info.
   [Jiri Stransky]
 
@@ -50,6 +63,11 @@ New
 
 Fix
 ~~~
+- Flavor export/import. [Jiri Stransky]
+
+  Flavors were prevented from importing due to several issues around
+  parameters passed into the flavor creation API request, this is now
+  fixed. Extra specs are now being set after the flavor is created.
 - Ensure new security groups don't have auto-created rules. [Jiri
   Stransky]
 
