@@ -12,7 +12,7 @@
   ansible.builtin.assert:
     that:
       - (keypair_resources | json_query("[?params.name ==
-                            'osm_keypair']._info.type") == ['ssh'])
+                            'osm_keypair'].params.type") == ['ssh'])
 
 - ansible.builtin.include_role:
     name: os_migrate.os_migrate.import_keypairs
