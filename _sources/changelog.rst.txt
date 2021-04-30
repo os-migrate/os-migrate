@@ -2,6 +2,22 @@ Changelog
 =========
 
 
+(unreleased)
+------------
+
+Fix
+~~~
+- Preserve keypair type on migration. [Jiri Stransky]
+
+  Type can be 'ssh' or 'x509', let's preserve the value.
+
+  The 'private_key' param is removed since it is always null for
+  exports/imports (it is only used when Nova auto-generates a new key).
+
+  The keypair migration test is moved from as-admin test suite into
+  as-tenant test suite.
+
+
 0.8.0 (2021-04-23)
 ------------------
 
