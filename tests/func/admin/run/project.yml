@@ -9,6 +9,12 @@
     os_migrate_projects_filter:
       - regex: '^osm_'
 
+- name: set destination project name
+  ansible.builtin.replace:
+    path: "{{ os_migrate_data_dir }}/projects.yml"
+    regexp: "name: osm_project"
+    replace: "name: osmdst_project"
+
 - name: load exported data
   ansible.builtin.set_fact:
     project_resources: "{{ (lookup('file',
@@ -21,8 +27,8 @@
     that:
       - (project_resources |
         json_query("[?params.name ==
-        'osm_project'].params.name")
-        == ['osm_project'])
+        'osmdst_project'].params.name")
+        == ['osmdst_project'])
 
 - ansible.builtin.include_role:
     name: os_migrate.os_migrate.import_projects

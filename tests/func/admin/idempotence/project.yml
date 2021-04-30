@@ -6,6 +6,12 @@
     os_migrate_projects_filter:
       - regex: '^osm_'
 
+- name: set destination project name
+  ansible.builtin.replace:
+    path: "{{ os_migrate_data_dir }}/projects.yml"
+    regexp: "name: osm_project"
+    replace: "name: osmdst_project"
+
 - name: re-load project_resources for idempotency test
   ansible.builtin.set_fact:
     project_resources_idem: "{{ (lookup('file',
@@ -25,24 +31,24 @@
 
 ### IMPORT IDEMPOTENCE ###
 
-- name: look up osm_project dst cloud
+- name: look up osmdst_project dst cloud
   openstack.cloud.project_info:
     auth: "{{ os_migrate_dst_auth }}"
     filters:
-      name: osm_project
+      name: osmdst_project
   register: project_import_idem_before
 
 - ansible.builtin.include_role:
     name: os_migrate.os_migrate.import_projects
 
-- name: look up osm_project in dst cloud again
+- name: look up osmdst_project in dst cloud again
   openstack.cloud.project_info:
     auth: "{{ os_migrate_dst_auth }}"
     filters:
-      name: osm_project
+      name: osmdst_project
   register: project_import_idem_after
 
-- name: ensure is_enabled for osm_project did not change
+- name: ensure is_enabled for osmdst_project did not change
   ansible.builtin.assert:
     that:
       - project_import_idem_before['openstack_projects'][0].is_enabled != None

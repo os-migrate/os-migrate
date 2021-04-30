@@ -2,21 +2,21 @@
   ansible.builtin.replace:
     path: "{{ os_migrate_data_dir }}/projects.yml"
     regexp: "    description: seeded"
-    replace: "    description: 'osm_project_updated'"
+    replace: "    description: 'osmdst_project_updated'"
     backup: yes
 
-- name: scan available projects after before test
+- name: scan available projects before update test
   openstack.cloud.project_info:
     auth: "{{ os_migrate_dst_auth }}"
     filters:
-      name: osm_project
+      name: osmdst_project
   register: dst_projects_info_before
 
 - name: get original description
   ansible.builtin.set_fact:
     original_desc: |-
       {{ dst_projects_info_before['openstack_projects'] | json_query(
-        "[?name=='osm_project'].description") }}
+        "[?name=='osmdst_project'].description") }}
 
 - ansible.builtin.include_role:
     name: os_migrate.os_migrate.import_projects
@@ -25,20 +25,20 @@
   openstack.cloud.project_info:
     auth: "{{ os_migrate_dst_auth }}"
     filters:
-      name: osm_project
+      name: osmdst_project
   register: dst_projects_info_after
 
 - name: get changed description
   ansible.builtin.set_fact:
     changed_desc: |-
       {{ dst_projects_info_after['openstack_projects'] | json_query(
-        "[?name=='osm_project'].description") }}
+        "[?name=='osmdst_project'].description") }}
 
-- name: ensure description for osm_project changed
+- name: ensure description for osmdst_project changed
   ansible.builtin.assert:
     that:
       - original_desc == ['seeded']
-      - changed_desc == ['osm_project_updated']
+      - changed_desc == ['osmdst_project_updated']
     fail_msg: |
       dst_projects_info_before description:
       {{ original_desc }}
