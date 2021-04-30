@@ -18,14 +18,13 @@ class Keypair(resource.Resource):
         'id',
         'user_id',
         'fingerprint',
-        'type',
         'is_deleted',
     ]
 
     params_from_sdk = [
         'name',
-        'private_key',
         'public_key',
+        'type',
     ]
 
     @staticmethod
@@ -39,4 +38,4 @@ class Keypair(resource.Resource):
     @staticmethod
     def _update_sdk_res(conn, sdk_res, sdk_params):
         # openstack.compute.v2.keypair.Keypair does not support update
-        return
+        return sdk_res

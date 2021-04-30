@@ -6,14 +6,6 @@
         - test_flavor
   tags: always
 
-- name: Include keypair tasks
-  ansible.builtin.include_tasks: keypair.yml
-  args:
-    apply:
-      tags:
-        - test_keypair
-  tags: always
-
 - name: Include user tasks
   ansible.builtin.include_tasks: user.yml
   args:
