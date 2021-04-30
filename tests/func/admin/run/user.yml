@@ -4,6 +4,12 @@
     os_migrate_users_filter:
       - regex: '^osm_'
 
+- name: set destination user name
+  ansible.builtin.replace:
+    path: "{{ os_migrate_data_dir }}/users.yml"
+    regexp: "name: osm_user"
+    replace: "name: osmdst_user"
+
 - name: load exported data
   ansible.builtin.set_fact:
     resources: "{{ (lookup('file',
