@@ -12,7 +12,7 @@
 
 - name: load exported data
   ansible.builtin.set_fact:
-    resources: "{{ (lookup('file',
+    user_resources: "{{ (lookup('file',
                            os_migrate_data_dir +
                            '/users.yml') | from_yaml)
                    ['resources'] }}"
@@ -20,10 +20,10 @@
 - name: verify data contents
   ansible.builtin.assert:
     that:
-      - (resources |
+      - (user_resources |
         json_query("[?params.name ==
-        'osm_user'].params.name")
-        == ['osm_user'])
+        'osmdst_user'].params.name")
+        == ['osmdst_user'])
 
 - ansible.builtin.include_role:
     name: os_migrate.os_migrate.import_users
