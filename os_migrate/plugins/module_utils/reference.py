@@ -268,6 +268,27 @@ def subnet_pool_ref(conn, id_, required=True):
     return _fetch_ref(conn, conn.network.find_subnet_pool, id_, required)
 
 
+def domain_id(conn, ref, required=True):
+    """Fetch ID of a Domain identified by reference dict `ref`. Use
+    OpenStack SDK connection `conn` to fetch the info. If `required`,
+    ensure the fetch is successful.
+    Returns: the ID, or None if not found and not `required`
+    Raises: openstack's ResourceNotFound when `required` but not found
+    """
+    return _fetch_id(conn, conn.identity.find_domain, ref, required)
+
+
+def domain_ref(conn, id_, required=True):
+    """Create reference dict for a Domain identified by ID `id_`. Use
+    OpenStack SDK connection `conn` to fetch the info. If `required`,
+    ensure the fetch is successful.
+    Returns: the ref dict, or None if not found and not `required`
+    Raises: openstack's ResourceNotFound when `required` but not found
+    """
+    # Domain objects don't have project_id
+    return _fetch_ref(conn, conn.identity.find_domain, id_, required, get_project_info=False)
+
+
 def project_id(conn, ref, required=True):
     """Fetch ID of a Project identified by reference dict `ref`. Use
     OpenStack SDK connection `conn` to fetch the info. If `required`,
