@@ -200,6 +200,12 @@
 <div class="section" id="fix">
 <h3>Fix<a class="headerlink" href="#fix" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Preserve domain and parent for projects. [Jiri Stransky]</p>
+<p>The references to project parents and domains are now exported and
+used during import. This makes it possible to export/import projects
+from non-default domains, but also requires making sure that the
+domain exists in destination.</p>
+</li>
 <li><p>Preserve keypair type on migration. [Jiri Stransky]</p>
 <p>Type can be ‘ssh’ or ‘x509’, let’s preserve the value.</p>
 <p>The ‘private_key’ param is removed since it is always null for

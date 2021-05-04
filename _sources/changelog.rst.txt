@@ -7,6 +7,12 @@ Changelog
 
 Fix
 ~~~
+- Preserve domain and parent for projects. [Jiri Stransky]
+
+  The references to project parents and domains are now exported and
+  used during import. This makes it possible to export/import projects
+  from non-default domains, but also requires making sure that the
+  domain exists in destination.
 - Preserve keypair type on migration. [Jiri Stransky]
 
   Type can be 'ssh' or 'x509', let's preserve the value.
