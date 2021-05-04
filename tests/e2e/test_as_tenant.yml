@@ -4,32 +4,32 @@
     - name: prepare the environment
       ansible.builtin.import_tasks: common/prep.yml
 
-- name: Make sure conversion hosts are cleaned up
-  ansible.builtin.import_playbook:
-    "{{ lookup('env', 'OS_MIGRATE') }}/playbooks/delete_conversion_hosts.yml"
+    - name: Make sure conversion hosts are cleaned up
+      ansible.builtin.import_playbook:
+        "{{ lookup('env', 'OS_MIGRATE') }}/playbooks/delete_conversion_hosts.yml"
 
-- name: Deploy conversion hosts
-  ansible.builtin.import_playbook:
-    "{{ lookup('env', 'OS_MIGRATE') }}/playbooks/deploy_conversion_hosts.yml"
+    - name: Deploy conversion hosts
+      ansible.builtin.import_playbook:
+        "{{ lookup('env', 'OS_MIGRATE') }}/playbooks/deploy_conversion_hosts.yml"
 
-- name: Conversion host inventory
-  hosts: migrator
-  tasks:
-    - name: include the conversion hosts inventory
-      ansible.builtin.include_role:
-        name: os_migrate.os_migrate.conversion_host
-        tasks_from: conv_hosts_inventory.yml
+    - name: Conversion host inventory
+      hosts: migrator
+      tasks:
+        - name: include the conversion hosts inventory
+          ansible.builtin.include_role:
+            name: os_migrate.os_migrate.conversion_host
+            tasks_from: conv_hosts_inventory.yml
 
-# Immediately unregister the conversion hosts to prevent dangling
-# subscriptions from CI in case the job crashes.
-- name: Unregister conversion hosts
-  hosts: conversion_hosts
-  ignore_unreachable: true
-  tasks:
-    - name: unregister the conversion hosts
-      ansible.builtin.include_role:
-        name: os_migrate.os_migrate.conversion_host
-        tasks_from: unregister.yml
+    # Immediately unregister the conversion hosts to prevent dangling
+    # subscriptions from CI in case the job crashes.
+    - name: Unregister conversion hosts
+      hosts: conversion_hosts
+      ignore_unreachable: true
+      tasks:
+        - name: unregister the conversion hosts
+          ansible.builtin.include_role:
+            name: os_migrate.os_migrate.conversion_host
+            tasks_from: unregister.yml
 
 - name: Migration tests
   hosts: migrator
