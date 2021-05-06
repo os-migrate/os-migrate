@@ -306,8 +306,20 @@ def project_ref(conn, id_, required=True):
     Returns: the ref dict, or None if not found and not `required`
     Raises: openstack's ResourceNotFound when `required` but not found
     """
-    # Project objects don't have project_id
-    return _fetch_ref(conn, conn.identity.find_project, id_, required, get_project_info=False)
+    # Project objects don't have project_id, but most of them have a
+    # domain_id (unless they're domains themselves). Since extending
+    # _fetch_ref with this very special case doesn't make much sense,
+    # we handle it here.
+    ref = _fetch_ref(conn, conn.identity.find_project, id_, required, get_project_info=False)
+    if ref is None:
+        return
+
+    project = conn.identity.find_project(id_)
+    if project is not None and project['domain_id'] is not None:
+        domain = conn.identity.find_domain(project['domain_id'])
+        ref['domain_name'] = domain['name']
+
+    return ref
 
 
 def _fetch_ref(conn, get_method, id_, required=True, get_project_info=True):
@@ -338,11 +350,13 @@ def _fetch_id(conn, get_method, ref, required=True):
     if ref is None:
         return None
 
-    return get_method(
+    sdk_res = get_method(
         ref['name'],
         ignore_missing=not required,
         **_project_id_filters(conn, ref),
-    )['id']
+    )
+    if sdk_res:
+        return sdk_res['id']
 
 
 def _project_id_filters(conn, ref):

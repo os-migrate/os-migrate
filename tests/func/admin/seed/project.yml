@@ -2,6 +2,6 @@
   openstack.cloud.project:
     auth: "{{ os_migrate_src_auth }}"
     name: osm_project
-    domain: default
+    domain: osm_domain
     description: seeded
     state: present

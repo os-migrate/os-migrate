@@ -1,3 +1,12 @@
+- name: Include domain tasks
+  ansible.builtin.include_tasks: domain.yml
+  args:
+    apply:
+      tags:
+        - test_domain
+        - test_project
+  tags: always
+
 - name: Include flavor tasks
   ansible.builtin.include_tasks: flavor.yml
   args:
