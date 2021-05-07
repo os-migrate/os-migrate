@@ -4,11 +4,19 @@
     os_migrate_users_filter:
       - regex: '^osm_'
 
+# TODO: Set domain to osmdst_domain when we support migrating domains.
+
 - name: set destination user name
   ansible.builtin.replace:
     path: "{{ os_migrate_data_dir }}/users.yml"
     regexp: "name: osm_user"
     replace: "name: osmdst_user"
+
+- name: set destination project name
+  ansible.builtin.replace:
+    path: "{{ os_migrate_data_dir }}/users.yml"
+    regexp: "name: osm_project"
+    replace: "name: osmdst_project"
 
 - name: load exported data
   ansible.builtin.set_fact:

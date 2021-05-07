@@ -48,8 +48,14 @@ class Project(resource.Resource):
             conn, sdk_res['domain_id'])
 
         refs['parent_id'] = sdk_res['parent_id']
-        refs['parent_ref'] = reference.project_ref(
-            conn, sdk_res['parent_id'])
+        # Parent can be either a project, or a domain.
+        refs['parent_ref'] = (
+            reference.project_ref(
+                conn, sdk_res['parent_id'], False)
+            or
+            reference.domain_ref(
+                conn, sdk_res['parent_id'])
+        )
 
         return refs
 
@@ -61,8 +67,14 @@ class Project(resource.Resource):
             conn, self.params()['domain_ref'])
 
         refs['parent_ref'] = self.params()['parent_ref']
-        refs['parent_id'] = reference.project_id(
-            conn, self.params()['parent_ref'])
+        # Parent can be either a project, or a domain.
+        refs['parent_id'] = (
+            reference.project_id(
+                conn, self.params()['parent_ref'], False)
+            or
+            reference.domain_id(
+                conn, self.params()['parent_ref'])
+        )
 
         return refs
 

@@ -1,0 +1,10 @@
+- name: remove src/dst domains
+  openstack.cloud.identity_domain:
+    auth: "{{ item['auth'] }}"
+    name: "{{ item['domain'] }}"
+    state: absent
+  loop:
+    - auth: "{{ os_migrate_src_auth }}"
+      domain: osm_domain
+    - auth: "{{ os_migrate_dst_auth }}"
+      domain: osmdst_domain

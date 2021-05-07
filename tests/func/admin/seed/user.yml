@@ -5,5 +5,5 @@
     email: testuser@example.org
     description: test user
     state: present
-    default_project: admin
-    domain: default
+    default_project: osm_project
+    domain: osm_domain
