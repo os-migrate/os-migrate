@@ -200,6 +200,12 @@
 <div class="section" id="fix">
 <h3>Fix<a class="headerlink" href="#fix" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Project parent references allow domains too. [Jiri Stransky]</p>
+<p>Keystone has 2 types of domains - domain objects, and project objects
+with is_domain=True. OS Migrate correctly worked only with the latter
+until now. Domain objects are now working too, and it is tested in
+functional tests.</p>
+</li>
 <li><p>Preserve domain on user export/import. [Jiri Stransky]</p>
 <p>We now preserve domain when migrating users. This means the domain of
 a given name needs to exist in the destination cloud.</p>

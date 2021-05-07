@@ -7,6 +7,12 @@ Changelog
 
 Fix
 ~~~
+- Project parent references allow domains too. [Jiri Stransky]
+
+  Keystone has 2 types of domains - domain objects, and project objects
+  with is_domain=True. OS Migrate correctly worked only with the latter
+  until now. Domain objects are now working too, and it is tested in
+  functional tests.
 - Preserve domain on user export/import. [Jiri Stransky]
 
   We now preserve domain when migrating users. This means the domain of
