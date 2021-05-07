@@ -9,6 +9,8 @@
     os_migrate_projects_filter:
       - regex: '^osm_'
 
+# TODO: Set domain to osmdst_domain when we support migrating domains.
+
 - name: set destination project name
   ansible.builtin.replace:
     path: "{{ os_migrate_data_dir }}/projects.yml"
