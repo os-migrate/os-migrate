@@ -200,6 +200,10 @@
 <div class="section" id="fix">
 <h3>Fix<a class="headerlink" href="#fix" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Preserve domain on user export/import. [Jiri Stransky]</p>
+<p>We now preserve domain when migrating users. This means the domain of
+a given name needs to exist in the destination cloud.</p>
+</li>
 <li><p>Preserve domain and parent for projects. [Jiri Stransky]</p>
 <p>The references to project parents and domains are now exported and
 used during import. This makes it possible to export/import projects

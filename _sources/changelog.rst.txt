@@ -7,6 +7,10 @@ Changelog
 
 Fix
 ~~~
+- Preserve domain on user export/import. [Jiri Stransky]
+
+  We now preserve domain when migrating users. This means the domain of
+  a given name needs to exist in the destination cloud.
 - Preserve domain and parent for projects. [Jiri Stransky]
 
   The references to project parents and domains are now exported and
