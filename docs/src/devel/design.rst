@@ -13,6 +13,11 @@ High-level development goals
       filter to analyze the exported contents from source cloud and
       choose what (not) to import into the destination cloud.
 
+   -  Sometimes (e.g. in workload migration) only metadata may be
+      written out and editable on the migrator machine, and the actual
+      binary data is transferred in a direct path between the clouds
+      for performance reasons.
+
 -  Logging. When contributing code, don’t forget about logging and how
    will information be presented to the user. Try to think about what
    can potentially fail and what kind of log output might help figuring
@@ -24,6 +29,12 @@ High-level development goals
    OpenStack backend). Functional tests are closest to the real use
    cases and provide at least basic level of comfort that the software
    does what it should.
+
+   -  Avoid excessive mocking in unit tests. Focus on writing unit
+      tests for self-contained (pure) functions/methods, and structure
+      the code so that as much as possible is written as pure
+      functions/methods. When this is not possible, consider writing
+      functional/end-to-end tests instead of unit tests.
 
 -  Always talking to OpenStack via API. The tool must be able to be
    deployed externally to both source and destination clouds. No looking
@@ -37,13 +48,15 @@ High-level development goals
 
 -  Whenever simplicity / understandability / clarity gets into conflict
    with convenience / ease-of-use, we prefer simplicity /
-   understandability / clarity. Prefer running 20 CLI commands to do
-   something where each CLI command is simple and human can enter the
-   process by amending inputs/outputs e.g. with additional tools or a
-   text editor, rather than one magical command which aims to satisfy
-   all use cases and eventually turns out to satisfy very few, and tends
-   to fail in mysterious ways with partial completion and limited
-   re-runnability.
+   understandability / clarity.
+
+   -  Prefer running several CLI commands to do something where each
+      command is simple and human can enter the process by amending
+      inputs/outputs e.g. with additional tools or a text editor,
+      rather than one magical command which aims to satisfy all use
+      cases and eventually turns out to satisfy very few, and tends to
+      fail in mysterious ways with partial completion and limited
+      re-runnability.
 
 -  OS Migrate is intended to be a building block for tenant migrations
    rather than a push-button solution. The assumption is that to cover
@@ -60,9 +73,9 @@ Challenges of the problem domain
    user has to be added into the project for the duration of the import.
 
    -  This is not true for *some* resources. As of January 2020,
-      e.g. networking resources can be created under arbitrary
+      e.g. networking resources can be created under arbitrary
       domain/project by admin using Networking API v2, but it’s not the
-      case for e.g. volumes, servers, keypairs. At least initially, we
+      case for e.g. volumes, servers, keypairs. At least initially, we
       will assume the general scenario that we’re running the migration
       as the tenant who owns the resources on both src/dst sides.
 
@@ -138,22 +151,22 @@ Basic Ansible workflow design
       specifics, but underneath we may be calling the community
       OpenStack Ansible module if that proves helpful.
 
--  Example workflow: import/export tenant. Provided playbook.
-
-   -  Just ``import_playbook`` for individual resource type playbooks.
-
 -  We may want to consider using ``tags`` on our tasks to allow some
    sub-executions. However, it may be that chunking up the code and
    using ``import_playbook`` might be more clear and safe to use than
    ``tags`` in many cases. If we do happen to add ``tags``, they
-   shouldn’t be added wildly, use cases should be thought throught and
+   shouldn’t be added wildly, use cases should be thought through and
    documented for both users and developers. Tags need clarity and
    disciplined use in order to be helpful.
+
+   - The above talks about tags in end-user code. We do use tags in
+     our test suites, and it's much less sensitive there as we can
+     change those tags any time without breaking user expectations.
 
 Misc
 ----
 
--  Naming conventions - `underscores over hyphens in
+-  Naming conventions - `underscores rather than hyphens in
    Ansible <https://github.com/ansible/galaxy/issues/1128#issuecomment-454519526>`__.
 
    -  Github does not support underscores in organization URLs though.
