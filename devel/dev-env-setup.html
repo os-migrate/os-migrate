@@ -191,20 +191,18 @@ the project:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">toolbox</span><span class="o">-</span><span class="n">build</span>
 </pre></div>
 </div>
-<p>All further <code class="docutils literal notranslate"><span class="pre">make</span></code> commands etc. should be run from a container using
-this image. You can start a shell within the development container like
-so:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">shell</span>
+<p>All further <code class="docutils literal notranslate"><span class="pre">make</span></code> commands etc. should be run from a container
+using this image. You can start a bash shell within the development
+container like so:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span>
 </pre></div>
 </div>
 <p>Alternatively, you can run each development-related command in an
-ephemeral container using the provided wrapper:</p>
+ephemeral container using the provided wrapper, if you provide the
+command as parameter(s) to the <cite>./toolbox/run</cite> script:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">echo</span> <span class="s2">&quot;Hello from os-migrate toolbox.&quot;</span>
 </pre></div>
 </div>
-<p>Note: the <code class="docutils literal notranslate"><span class="pre">./toolbox/&lt;cmd&gt;</span></code> commands are alternatives to each other.
-They shouldn’t be nested, e.g. running <code class="docutils literal notranslate"><span class="pre">./toolbox/run</span></code> from
-<code class="docutils literal notranslate"><span class="pre">./toolbox/shell</span></code> will deliberately fail.</p>
 </div>
 <div class="section" id="sanity-and-unit-tests">
 <h2>Sanity and unit tests<a class="headerlink" href="#sanity-and-unit-tests" title="Permalink to this headline">¶</a></h2>
@@ -229,17 +227,19 @@ where tenant resources can be managed. As a developer, the easiest way
 is to run a local virtualized all-in-one OpenStack cloud. OS Migrate has
 Vagrant+Devstack setup for this purpose.</p>
 <p>If you have Vagrant-libvirt installed on your machine, you can use it
-directly, but OS Migrate tooling does not assume that, the customary way
-is to run it via the OS Migrate toolbox container. Special
-<code class="docutils literal notranslate"><span class="pre">vagrant-shell</span></code> and <code class="docutils literal notranslate"><span class="pre">vagrant-run</span></code> wrapper scripts are provided for
-this purpose. Note that this container does not run in rootless mode
-since it talks to libvirt.</p>
+directly, but OS Migrate tooling does not assume that, the customary
+way is to run it via the OS Migrate toolbox container. Special
+<code class="docutils literal notranslate"><span class="pre">vagrant-run</span></code> wrapper scripts are provided for this purpose.</p>
+<p>Note that the Vagrant container cannot run in rootless mode since it
+controls libvirt. When the wrapper script is first run, it will copy
+the rootless <cite>os-migrate-toolbox</cite> image into the system’s (<cite>root</cite>
+user’s) container images automatically.</p>
 <p>Launch the Vagrant-capable containerized shell:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">vagrant</span><span class="o">-</span><span class="n">shell</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">vagrant</span><span class="o">-</span><span class="n">run</span>
 </pre></div>
 </div>
 <p>Within that shell, run the script which brings up Vagrant+Devstack:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># we are already in toolbox/vagrant dir when we launch vagrant-shell</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># we are already in toolbox/vagrant dir when we launch vagrant-run</span>
 <span class="o">./</span><span class="n">vagrant</span><span class="o">-</span><span class="n">up</span>
 </pre></div>
 </div>
@@ -250,24 +250,25 @@ state later:</p>
 </pre></div>
 </div>
 <p><strong>Important:</strong> the life of the Vagrant VM is tied to the life of the
-container started by <code class="docutils literal notranslate"><span class="pre">./toolbox/vagrant-shell</span></code>. That means you should
-keep the <code class="docutils literal notranslate"><span class="pre">vagrant-shell</span></code> open, and run functional tests via
-<code class="docutils literal notranslate"><span class="pre">./toolbox/run</span> <span class="pre">make</span> <span class="pre">test-func</span></code> from a different terminal. If you close
-the <code class="docutils literal notranslate"><span class="pre">vagrant-shell</span></code>, the Vagrant VM will get killed. If that happens,
-you can start it again and use <code class="docutils literal notranslate"><span class="pre">./vagrant-snapshot-revert</span></code> to revive
+container started by <code class="docutils literal notranslate"><span class="pre">./toolbox/vagrant-run</span></code>. That means you should
+keep the shell open, and run functional tests via <code class="docutils literal notranslate"><span class="pre">./toolbox/run</span> <span class="pre">make</span>
+<span class="pre">test-func</span></code> from a different terminal. If you close the
+<code class="docutils literal notranslate"><span class="pre">vagrant-run</span></code>, the Vagrant VM will get killed. If that happens, you
+can start it again and use <code class="docutils literal notranslate"><span class="pre">./vagrant-snapshot-revert</span></code> to revive
 the VM.</p>
 <p>If you need to revert the VM at any time, run:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">vagrant</span><span class="o">-</span><span class="n">snapshot</span><span class="o">-</span><span class="n">revert</span>
 </pre></div>
 </div>
-<p>When you’re done developing, halt Vagrant and close <code class="docutils literal notranslate"><span class="pre">vagrant-shell</span></code>:</p>
+<p>When you’re done developing, halt Vagrant and close <code class="docutils literal notranslate"><span class="pre">vagrant-run</span></code>
+shell:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">vagrant</span><span class="o">-</span><span class="n">halt</span>
 <span class="n">exit</span>
 </pre></div>
 </div>
 <p>When you want to develop again, you will be able to reuse the
 snapshotted Vagrant environment:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">vagrant</span><span class="o">-</span><span class="n">shell</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">vagrant</span><span class="o">-</span><span class="n">run</span>
 <span class="o">./</span><span class="n">vagrant</span><span class="o">-</span><span class="n">snapshot</span><span class="o">-</span><span class="n">revert</span>
 </pre></div>
 </div>
@@ -296,12 +297,12 @@ instance:</p>
 </div>
 <p>To run functional tests for just the resource you’re working on, run
 e.g.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;FUNC_TEST_ARGS=&#39;--tags test_network,test_subnet&#39; make test-func&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">OS_MIGRATE_FUNC_TEST_ARGS</span><span class="o">=</span><span class="s1">&#39;--tags test_network,test_subnet&#39;</span> <span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span><span class="o">-</span><span class="n">func</span>
 </pre></div>
 </div>
 <p>To explore imported resoruces, skip the after-test cleanup of resources,
 e.g.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">bash</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;FUNC_TEST_ARGS=&#39;--tags test_network --skip_tags test_clean_after&#39; make test-func&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">OS_MIGRATE_FUNC_TEST_ARGS</span><span class="o">=</span><span class="s1">&#39;--tags test_network,test_subnet --skip-tags test_clean_after&#39;</span> <span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span><span class="o">-</span><span class="n">func</span>
 </pre></div>
 </div>
 </div>

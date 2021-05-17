@@ -17,24 +17,21 @@ the project:
 
    make toolbox-build
 
-All further ``make`` commands etc. should be run from a container using
-this image. You can start a shell within the development container like
-so:
+All further ``make`` commands etc. should be run from a container
+using this image. You can start a bash shell within the development
+container like so:
 
 ::
 
-   ./toolbox/shell
+   ./toolbox/run
 
 Alternatively, you can run each development-related command in an
-ephemeral container using the provided wrapper:
+ephemeral container using the provided wrapper, if you provide the
+command as parameter(s) to the `./toolbox/run` script:
 
 ::
 
    ./toolbox/run echo "Hello from os-migrate toolbox."
-
-Note: the ``./toolbox/<cmd>`` commands are alternatives to each other.
-They shouldn’t be nested, e.g. running ``./toolbox/run`` from
-``./toolbox/shell`` will deliberately fail.
 
 Sanity and unit tests
 ---------------------
@@ -67,23 +64,26 @@ is to run a local virtualized all-in-one OpenStack cloud. OS Migrate has
 Vagrant+Devstack setup for this purpose.
 
 If you have Vagrant-libvirt installed on your machine, you can use it
-directly, but OS Migrate tooling does not assume that, the customary way
-is to run it via the OS Migrate toolbox container. Special
-``vagrant-shell`` and ``vagrant-run`` wrapper scripts are provided for
-this purpose. Note that this container does not run in rootless mode
-since it talks to libvirt.
+directly, but OS Migrate tooling does not assume that, the customary
+way is to run it via the OS Migrate toolbox container. Special
+``vagrant-run`` wrapper scripts are provided for this purpose.
+
+Note that the Vagrant container cannot run in rootless mode since it
+controls libvirt. When the wrapper script is first run, it will copy
+the rootless `os-migrate-toolbox` image into the system's (`root`
+user's) container images automatically.
 
 Launch the Vagrant-capable containerized shell:
 
 ::
 
-   ./toolbox/vagrant-shell
+   ./toolbox/vagrant-run
 
 Within that shell, run the script which brings up Vagrant+Devstack:
 
 ::
 
-   # we are already in toolbox/vagrant dir when we launch vagrant-shell
+   # we are already in toolbox/vagrant dir when we launch vagrant-run
    ./vagrant-up
 
 Assuming the creation succeeded, it is now recommended to take a
@@ -95,11 +95,11 @@ state later:
    ./vagrant-snapshot-create
 
 **Important:** the life of the Vagrant VM is tied to the life of the
-container started by ``./toolbox/vagrant-shell``. That means you should
-keep the ``vagrant-shell`` open, and run functional tests via
-``./toolbox/run make test-func`` from a different terminal. If you close
-the ``vagrant-shell``, the Vagrant VM will get killed. If that happens,
-you can start it again and use ``./vagrant-snapshot-revert`` to revive
+container started by ``./toolbox/vagrant-run``. That means you should
+keep the shell open, and run functional tests via ``./toolbox/run make
+test-func`` from a different terminal. If you close the
+``vagrant-run``, the Vagrant VM will get killed. If that happens, you
+can start it again and use ``./vagrant-snapshot-revert`` to revive
 the VM.
 
 If you need to revert the VM at any time, run:
@@ -108,7 +108,8 @@ If you need to revert the VM at any time, run:
 
    ./vagrant-snapshot-revert
 
-When you’re done developing, halt Vagrant and close ``vagrant-shell``:
+When you’re done developing, halt Vagrant and close ``vagrant-run``
+shell:
 
 ::
 
@@ -120,7 +121,7 @@ snapshotted Vagrant environment:
 
 ::
 
-   ./toolbox/vagrant-shell
+   ./toolbox/vagrant-run
    ./vagrant-snapshot-revert
 
 To destroy the Vagrant VM, e.g. when you want to recreate it from
@@ -158,11 +159,11 @@ e.g.:
 
 ::
 
-   ./toolbox/run bash -c "FUNC_TEST_ARGS='--tags test_network,test_subnet' make test-func"
+   OS_MIGRATE_FUNC_TEST_ARGS='--tags test_network,test_subnet' ./toolbox/run make test-func
 
 To explore imported resoruces, skip the after-test cleanup of resources,
 e.g.:
 
 ::
 
-   ./toolbox/run bash -c "FUNC_TEST_ARGS='--tags test_network --skip_tags test_clean_after' make test-func"
+   OS_MIGRATE_FUNC_TEST_ARGS='--tags test_network,test_subnet --skip-tags test_clean_after' ./toolbox/run make test-func

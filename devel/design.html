@@ -187,6 +187,10 @@ output” and “read input”.</p>
 <li><p>E.g. arbitrary/custom yaml-parsing tools can be used as a smart
 filter to analyze the exported contents from source cloud and
 choose what (not) to import into the destination cloud.</p></li>
+<li><p>Sometimes (e.g. in workload migration) only metadata may be
+written out and editable on the migrator machine, and the actual
+binary data is transferred in a direct path between the clouds
+for performance reasons.</p></li>
 </ul>
 </li>
 <li><p>Logging. When contributing code, don’t forget about logging and how
@@ -198,7 +202,15 @@ would add clutter without much information value.</p></li>
 Emphasize automated functional tests (end-to-end, talking to a real
 OpenStack backend). Functional tests are closest to the real use
 cases and provide at least basic level of comfort that the software
-does what it should.</p></li>
+does what it should.</p>
+<ul>
+<li><p>Avoid excessive mocking in unit tests. Focus on writing unit
+tests for self-contained (pure) functions/methods, and structure
+the code so that as much as possible is written as pure
+functions/methods. When this is not possible, consider writing
+functional/end-to-end tests instead of unit tests.</p></li>
+</ul>
+</li>
 <li><p>Always talking to OpenStack via API. The tool must be able to be
 deployed externally to both source and destination clouds. No looking
 at DBs or other hacks. If we hit a hurdle due to no-hacks approach,
@@ -209,13 +221,17 @@ required.</p></li>
 possible to retry with the same command.</p></li>
 <li><p>Whenever simplicity / understandability / clarity gets into conflict
 with convenience / ease-of-use, we prefer simplicity /
-understandability / clarity. Prefer running 20 CLI commands to do
-something where each CLI command is simple and human can enter the
-process by amending inputs/outputs e.g. with additional tools or a
-text editor, rather than one magical command which aims to satisfy
-all use cases and eventually turns out to satisfy very few, and tends
-to fail in mysterious ways with partial completion and limited
+understandability / clarity.</p>
+<ul>
+<li><p>Prefer running several CLI commands to do something where each
+command is simple and human can enter the process by amending
+inputs/outputs e.g. with additional tools or a text editor,
+rather than one magical command which aims to satisfy all use
+cases and eventually turns out to satisfy very few, and tends to
+fail in mysterious ways with partial completion and limited
 re-runnability.</p></li>
+</ul>
+</li>
 <li><p>OS Migrate is intended to be a building block for tenant migrations
 rather than a push-button solution. The assumption is that to cover
 needs of a particular tenant migration, a knowledgeable human is
@@ -232,9 +248,9 @@ the target non-admin user have to be used for importing, or the admin
 user has to be added into the project for the duration of the import.</p>
 <ul>
 <li><p>This is not true for <em>some</em> resources. As of January 2020,
-e.g. networking resources can be created under arbitrary
+e.g. networking resources can be created under arbitrary
 domain/project by admin using Networking API v2, but it’s not the
-case for e.g. volumes, servers, keypairs. At least initially, we
+case for e.g. volumes, servers, keypairs. At least initially, we
 will assume the general scenario that we’re running the migration
 as the tenant who owns the resources on both src/dst sides.</p></li>
 </ul>
@@ -316,24 +332,25 @@ specifics, but underneath we may be calling the community
 OpenStack Ansible module if that proves helpful.</p></li>
 </ul>
 </li>
-<li><p>Example workflow: import/export tenant. Provided playbook.</p>
-<ul>
-<li><p>Just <code class="docutils literal notranslate"><span class="pre">import_playbook</span></code> for individual resource type playbooks.</p></li>
-</ul>
-</li>
 <li><p>We may want to consider using <code class="docutils literal notranslate"><span class="pre">tags</span></code> on our tasks to allow some
 sub-executions. However, it may be that chunking up the code and
 using <code class="docutils literal notranslate"><span class="pre">import_playbook</span></code> might be more clear and safe to use than
 <code class="docutils literal notranslate"><span class="pre">tags</span></code> in many cases. If we do happen to add <code class="docutils literal notranslate"><span class="pre">tags</span></code>, they
-shouldn’t be added wildly, use cases should be thought throught and
+shouldn’t be added wildly, use cases should be thought through and
 documented for both users and developers. Tags need clarity and
-disciplined use in order to be helpful.</p></li>
+disciplined use in order to be helpful.</p>
+<ul>
+<li><p>The above talks about tags in end-user code. We do use tags in
+our test suites, and it’s much less sensitive there as we can
+change those tags any time without breaking user expectations.</p></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="section" id="misc">
 <h2>Misc<a class="headerlink" href="#misc" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>Naming conventions - <a class="reference external" href="https://github.com/ansible/galaxy/issues/1128#issuecomment-454519526">underscores over hyphens in
+<li><p>Naming conventions - <a class="reference external" href="https://github.com/ansible/galaxy/issues/1128#issuecomment-454519526">underscores rather than hyphens in
 Ansible</a>.</p>
 <ul>
 <li><p>Github does not support underscores in organization URLs though.
