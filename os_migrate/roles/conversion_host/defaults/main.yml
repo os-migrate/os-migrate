@@ -30,6 +30,7 @@ os_migrate_conversion_keypair_name: os_migrate_conv
 os_migrate_conversion_keypair_private_path: "{{ os_migrate_data_dir }}/conversion/ssh.key"
 os_migrate_conversion_link_keypair_private_path: "{{ os_migrate_data_dir }}/conversion/link-ssh.key"
 
+os_migrate_conversion_host_deploy_timeout: 600
 os_migrate_conversion_host_name: os_migrate_conv
 os_migrate_conversion_image_name: os_migrate_conv
 
