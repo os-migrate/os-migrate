@@ -217,10 +217,10 @@ hosts itself.</p>
 
 <span class="nt">os_migrate_conversion_net_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">os_migrate_conv</span>
 
-<span class="nt">os_migrate_src_conversion_net_mtu</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">1400</span><span class="nv"> </span><span class="s">if</span><span class="nv"> </span><span class="s">os_migrate_src_release</span><span class="nv"> </span><span class="s">&gt;</span><span class="nv"> </span><span class="s">10</span><span class="nv"> </span><span class="s">else</span><span class="nv"> </span><span class="s">omit</span>
-  <span class="s">}}&#39;</span>
-<span class="nt">os_migrate_dst_conversion_net_mtu</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">1400</span><span class="nv"> </span><span class="s">if</span><span class="nv"> </span><span class="s">os_migrate_dst_release</span><span class="nv"> </span><span class="s">&gt;</span><span class="nv"> </span><span class="s">10</span><span class="nv"> </span><span class="s">else</span><span class="nv"> </span><span class="s">omit</span>
-  <span class="s">}}&#39;</span>
+<span class="nt">os_migrate_src_conversion_net_mtu</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">1400</span><span class="nv"> </span><span class="s">if</span><span class="nv"> </span><span class="s">os_migrate_src_release</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">int</span><span class="nv"> </span><span class="s">&gt;</span><span class="nv"> </span><span class="s">10</span><span class="nv"> </span><span class="s">else</span>
+  <span class="s">omit</span><span class="nv"> </span><span class="s">}}&#39;</span>
+<span class="nt">os_migrate_dst_conversion_net_mtu</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">1400</span><span class="nv"> </span><span class="s">if</span><span class="nv"> </span><span class="s">os_migrate_dst_release</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">int</span><span class="nv"> </span><span class="s">&gt;</span><span class="nv"> </span><span class="s">10</span><span class="nv"> </span><span class="s">else</span>
+  <span class="s">omit</span><span class="nv"> </span><span class="s">}}&#39;</span>
 
 <span class="c1"># If we install packages we need a DNS server working</span>
 <span class="nt">os_migrate_src_conversion_subnet_dns_nameservers</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">8.8.8.8</span><span class="p p-Indicator">]</span>

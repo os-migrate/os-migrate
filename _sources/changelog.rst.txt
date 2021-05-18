@@ -2,6 +2,17 @@ Changelog
 =========
 
 
+(unreleased)
+------------
+
+Fix
+~~~
+- Make sure the src/dst release is an integer. [Carlos Camacho]
+
+  This commit cast the os_migrate_src_release and
+  os_migrate_dst_release variables to integers.
+
+
 0.8.1 (2021-05-12)
 ------------------
 
