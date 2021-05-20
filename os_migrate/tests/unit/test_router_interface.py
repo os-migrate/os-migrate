@@ -118,3 +118,26 @@ class TestRouterInterface(unittest.TestCase):
         self.assertEqual(params['network_ref']['name'], 'test-net')
 
         self.assertEqual(info['id'], 'uuid-test-router-interface')
+
+    def test_serialize_router_interface_distributed(self):
+        sdk_rtr = sdk_router_interface()
+        sdk_rtr['device_owner'] = 'network:router_interface_distributed'
+        rtr = RouterInterface.from_sdk(None, sdk_rtr)
+        params, info = rtr.params_and_info()
+
+        self.assertEqual(rtr.type(), 'openstack.network.RouterInterface')
+        self.assertEqual(params['device_ref']['name'], 'test-router')
+        self.assertEqual(params['device_owner'], 'network:router_interface_distributed')
+        self.assertEqual(params['fixed_ips_refs'], [
+            {
+                'subnet_ref': {
+                    'name': 'test-subnet',
+                    'project_name': 'test-project',
+                    'domain_name': 'Default',
+                },
+                'ip_address': '192.168.0.10',
+            },
+        ])
+        self.assertEqual(params['network_ref']['name'], 'test-net')
+
+        self.assertEqual(info['id'], 'uuid-test-router-interface')
