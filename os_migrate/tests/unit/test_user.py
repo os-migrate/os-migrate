@@ -8,14 +8,20 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import const, user
 
 
-def default_project_refs():
+def user_refs():
     return {
         'id': 'uuid-test-user',
-        'default_project_id': 'uuid-default-project-id',
+        'default_project_id': 'uuid-test-project',
         'default_project_ref': {
-            'name': 'test-user',
-            'project_name': 'test-project',
-            'domain_name': 'Default',
+            'name': 'test-project',
+            'project_name': None,
+            'domain_name': 'test-domain',
+        },
+        'domain_id': 'uuid-test-domain',
+        'domain_ref': {
+            'domain_name': None,
+            'name': 'test-domain',
+            'project_name': None,
         },
     }
 
@@ -24,7 +30,7 @@ def sdk_user():
     return openstack.identity.v3.user.User(
         id='uuid-test-user',
         domain_id='uuid-test-domain',
-        default_project_id='uuid-default-project-id',
+        default_project_id='uuid-test-project',
         name='test-user',
         description='test-user-description',
         email='test-user@domain.com',
@@ -40,15 +46,20 @@ def serialized_user():
             'email': 'test-user@domain.com',
             'is_enabled': True,
             'default_project_ref': {
-                'name': 'test-user',
-                'project_name': 'test-project',
-                'domain_name': 'Default',
+                'name': 'test-project',
+                'project_name': None,
+                'domain_name': 'test-domain',
+            },
+            'domain_ref': {
+                'domain_name': None,
+                'name': 'test-domain',
+                'project_name': None,
             },
         },
         const.RES_INFO: {
             'id': 'uuid-test-user',
             'domain_id': 'uuid-test-domain',
-            'default_project_id': 'uuid-default-project-id',
+            'default_project_id': 'uuid-test-project',
         },
         const.RES_TYPE: 'openstack.user.User',
     }
@@ -57,11 +68,11 @@ def serialized_user():
 class User(user.User):
 
     def _refs_from_ser(self, conn):
-        return default_project_refs()
+        return user_refs()
 
     @staticmethod
     def _refs_from_sdk(conn, sdk_res):
-        return default_project_refs()
+        return user_refs()
 
 
 class TestUser(unittest.TestCase):
@@ -72,15 +83,24 @@ class TestUser(unittest.TestCase):
         params, info = usr.params_and_info()
 
         self.assertEqual(usr.type(), 'openstack.user.User')
-        self.assertEqual(params['default_project_ref']['project_name'], 'test-project')
         self.assertEqual(params['name'], 'test-user')
         self.assertEqual(params['description'], 'test-user-description')
         self.assertEqual(params['email'], 'test-user@domain.com')
         self.assertEqual(params['is_enabled'], True)
+        self.assertEqual(params['domain_ref'], {
+            'domain_name': None,
+            'name': 'test-domain',
+            'project_name': None,
+        })
+        self.assertEqual(params['default_project_ref'], {
+            'domain_name': 'test-domain',
+            'name': 'test-project',
+            'project_name': None,
+        })
 
         self.assertEqual(info['id'], 'uuid-test-user')
         self.assertEqual(info['domain_id'], 'uuid-test-domain')
-        self.assertEqual(info['default_project_id'], 'uuid-default-project-id')
+        self.assertEqual(info['default_project_id'], 'uuid-test-project')
 
     def test_user_sdk_params(self):
         usr = User.from_data(serialized_user())
@@ -91,3 +111,4 @@ class TestUser(unittest.TestCase):
         self.assertEqual(sdk_params['description'], 'test-user-description')
         self.assertEqual(sdk_params['email'], 'test-user@domain.com')
         self.assertEqual(sdk_params['is_enabled'], True)
+        self.assertEqual(sdk_params['domain_id'], 'uuid-test-domain')
