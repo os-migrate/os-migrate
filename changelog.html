@@ -218,6 +218,14 @@ the VM is destroyed.</p>
 <div class="section" id="fix">
 <h3>Fix<a class="headerlink" href="#fix" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Increase timeouts when deployment takes more than default. [Carlos
+Camacho]</p>
+<p>This commit allows to increase the hardwired default timeout of
+600 seconds when deploying the conversion hosts.</p>
+<p>In this case, when the overlay network provider takes longer to
+assign a floating IP, there might be needed to increase this
+default.</p>
+</li>
 <li><p>Export RouterInterface of HA and DVR routers. [Jiri Stransky]</p>
 <p>Previously when exporting router interfaces, only ports with
 device_owner value of ‘network:router_interface’ were picked up. This

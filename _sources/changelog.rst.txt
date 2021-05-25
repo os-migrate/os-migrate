@@ -15,6 +15,15 @@ New
 
 Fix
 ~~~
+- Increase timeouts when deployment takes more than default. [Carlos
+  Camacho]
+
+  This commit allows to increase the hardwired default timeout of
+  600 seconds when deploying the conversion hosts.
+
+  In this case, when the overlay network provider takes longer to
+  assign a floating IP, there might be needed to increase this
+  default.
 - Export RouterInterface of HA and DVR routers. [Jiri Stransky]
 
   Previously when exporting router interfaces, only ports with
