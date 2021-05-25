@@ -15,6 +15,10 @@ New
 
 Changes
 ~~~~~~~
+- Add retry logic to RHSM. [Carlos Camacho]
+
+  This commit adds the retry logic when
+  using RHSM in the conversion hosts.
 - Add the conversion hosts to specific groups. [Carlos Camacho]
 
   This commit allows having two additional
