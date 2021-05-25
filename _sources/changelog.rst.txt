@@ -5,6 +5,14 @@ Changelog
 (unreleased)
 ------------
 
+New
+~~~
+- Delete volumes when deleting the conversion hosts. [Carlos Camacho]
+
+  This commit adds the hability to remove automatically
+  the volume created with the conversion host once
+  the VM is destroyed.
+
 Fix
 ~~~
 - Export RouterInterface of HA and DVR routers. [Jiri Stransky]
