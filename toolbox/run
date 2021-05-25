@@ -37,6 +37,7 @@ podman run \
        --net host \
        --security-opt label=disable \
        $PASS_THROUGH_VARS \
+       -v /etc/resolv.conf:/etc/resolv.conf:ro \
        -v "$OSM_DIR:/root/os_migrate:z" \
        ${OS_MIGRATE_TOOLBOX_ARGS:-} \
        localhost/os_migrate_toolbox:latest \
