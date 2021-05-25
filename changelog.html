@@ -94,6 +94,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Changelog</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#unreleased">(unreleased)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#changes">Changes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#fix">Fix</a></li>
 </ul>
 </li>
@@ -108,29 +109,29 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#id6">0.7.0 (2021-02-18)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id7">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#changes">Changes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id8">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">Fix</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#other">Other</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id9">0.6.2 (2021-01-28)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id10">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id11">Other</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">0.6.2 (2021-01-28)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id11">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">Other</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id12">0.6.1 (2020-12-10)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id13">0.6.0 (2020-11-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id14">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id15">Changes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id16">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id17">Other</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">0.6.1 (2020-12-10)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id14">0.6.0 (2020-11-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id15">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id17">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id18">Other</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id18">0.5.0 (2020-10-02)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id19">0.4.1 (2020-06-26)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id20">0.4.0 (2020-06-26)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id21">0.3.1 (2020-06-05)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id22">0.3.0 (2020-06-02)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id19">0.5.0 (2020-10-02)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id20">0.4.1 (2020-06-26)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id21">0.4.0 (2020-06-26)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id22">0.3.1 (2020-06-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id23">0.3.0 (2020-06-02)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="devel/README.html">OS Migrate Developer Documentation</a></li>
@@ -212,6 +213,16 @@
 <p>This commit adds the hability to remove automatically
 the volume created with the conversion host once
 the VM is destroyed.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="changes">
+<h3>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p>Add the conversion hosts to specific groups. [Carlos Camacho]</p>
+<p>This commit allows having two additional
+groups for the conversion hosts.
+conversion_hosts_src and conversion_hosts_dst</p>
 </li>
 </ul>
 </div>
@@ -428,8 +439,8 @@ with the changes.</p>
 </li>
 </ul>
 </div>
-<div class="section" id="changes">
-<h3>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id8">
+<h3>Changes<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><p>Make boot volume prefix configurable, default to ‘os-migrate-‘ [Jiri
 Stransky]</p>
@@ -492,8 +503,8 @@ is “SHUTOFF” before attempting to migrate it.</p>
 </li>
 </ul>
 </div>
-<div class="section" id="id8">
-<h3>Fix<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id9">
+<h3>Fix<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><p>Clean up in the destination cloud after a failed migration. [Jiri
 Stransky]</p>
@@ -620,10 +631,10 @@ when deploying the conversion hosts.</p>
 </ul>
 </div>
 </div>
-<div class="section" id="id9">
-<h2>0.6.2 (2021-01-28)<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="id10">
-<h3>Fix<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<h2>0.6.2 (2021-01-28)<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id11">
+<h3>Fix<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><p>Always stop on errors in conversion host deployment. [Jiri Stransky]</p>
 <p>Previously when the source or destination conversion host encountered
@@ -671,8 +682,8 @@ images in destination, so we no longer perform an image lookup.</p>
 </li>
 </ul>
 </div>
-<div class="section" id="id11">
-<h3>Other<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id12">
+<h3>Other<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><p>Prepare release 0.6.2. [Jiri Stransky]</p></li>
 <li><p>Pin openstacksdk version due to os_security_group_rule module
@@ -690,8 +701,8 @@ module incompatible with Train release and lower.</p>
 </ul>
 </div>
 </div>
-<div class="section" id="id12">
-<h2>0.6.1 (2020-12-10)<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id13">
+<h2>0.6.1 (2020-12-10)<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h2>
 <ul>
 <li><p>Update packages when deploying conversion hosts. [Jiri Stransky]</p>
 <p>I ran into a bug when trying to migrate workloads, the volume export
@@ -705,10 +716,10 @@ when deploying the conversion hosts.</p>
 </li>
 </ul>
 </div>
-<div class="section" id="id13">
-<h2>0.6.0 (2020-11-25)<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="id14">
-<h3>New<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<h2>0.6.0 (2020-11-25)<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id15">
+<h3>New<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><p>Documentation for resource filters. [Jiri Stransky]</p></li>
 <li><p>Guide for using migration parameters. [Jiri Stransky]</p></li>
@@ -717,8 +728,8 @@ when deploying the conversion hosts.</p>
 </li>
 </ul>
 </div>
-<div class="section" id="id15">
-<h3>Changes<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id16">
+<h3>Changes<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><p>User documentation improvements. [Jiri Stransky]</p>
 <p>Improve clarity of user docs in various spots and add more workload
@@ -739,8 +750,8 @@ and have to be cleaned up afterwards.</p>
 <li><p>More metadata to migrate with servers. [Jiri Stransky]</p></li>
 </ul>
 </div>
-<div class="section" id="id16">
-<h3>Fix<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id17">
+<h3>Fix<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><p>Detach stuck volumes in unit tests. [Jiri Stransky]</p></li>
 <li><p>Revert to conditional empty variable check. [Carlos Camacho]</p>
@@ -757,8 +768,8 @@ if not defined, which means, build the container image.</p>
 </li>
 </ul>
 </div>
-<div class="section" id="id17">
-<h3>Other<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id18">
+<h3>Other<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><p>Update contributing.rst. [Ryan Brady]</p>
 <p>minor edit, changed titles to title case</p>
@@ -852,8 +863,8 @@ to malformed block_device_mapping_v2 data structure. See docs [1].</p>
 </ul>
 </div>
 </div>
-<div class="section" id="id18">
-<h2>0.5.0 (2020-10-02)<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id19">
+<h2>0.5.0 (2020-10-02)<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h2>
 <ul>
 <li><p>Add missing role readme files. [Jiri Stransky]</p>
 <p>Galaxy releasing fails without these.</p>
@@ -1065,15 +1076,15 @@ using os-migrate.</p>
 Stransky]</p></li>
 </ul>
 </div>
-<div class="section" id="id19">
-<h2>0.4.1 (2020-06-26)<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id20">
+<h2>0.4.1 (2020-06-26)<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Prepare release of 0.4.1. [Jiri Stransky]</p></li>
 <li><p>Fix. [Carlos Camacho]</p></li>
 </ul>
 </div>
-<div class="section" id="id20">
-<h2>0.4.0 (2020-06-26)<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id21">
+<h2>0.4.0 (2020-06-26)<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h2>
 <ul>
 <li><p>Prepare release 0.4.0. [Jiri Stransky]</p>
 <p>Mainly utilizes a new workload migration approach with new conversion
@@ -1186,8 +1197,8 @@ the functional test to complete.</p>
 </li>
 </ul>
 </div>
-<div class="section" id="id21">
-<h2>0.3.1 (2020-06-05)<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id22">
+<h2>0.3.1 (2020-06-05)<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h2>
 <ul>
 <li><p>Prepare release 0.3.1. [Jiri Stransky]</p></li>
 <li><p>Fix exporting router interfaces when router name filter is undefined.
@@ -1198,8 +1209,8 @@ the functional test to complete.</p>
 </li>
 </ul>
 </div>
-<div class="section" id="id22">
-<h2>0.3.0 (2020-06-02)<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id23">
+<h2>0.3.0 (2020-06-02)<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h2>
 <ul>
 <li><p>Add readme files to all roles, pointing to user docs. [Jiri Stransky]</p>
 <p>It looks like this is now required, otherwise the Galaxy publish

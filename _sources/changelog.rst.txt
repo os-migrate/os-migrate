@@ -13,6 +13,14 @@ New
   the volume created with the conversion host once
   the VM is destroyed.
 
+Changes
+~~~~~~~
+- Add the conversion hosts to specific groups. [Carlos Camacho]
+
+  This commit allows having two additional
+  groups for the conversion hosts.
+  conversion_hosts_src and conversion_hosts_dst
+
 Fix
 ~~~
 - Increase timeouts when deployment takes more than default. [Carlos
