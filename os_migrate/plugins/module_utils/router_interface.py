@@ -7,8 +7,15 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import exc, const, reference, resource
 
 
+ROUTER_INTERFACE_OWNERS = [
+    'network:router_interface',
+    'network:ha_router_replicated_interface',
+    'network:router_interface_distributed',
+]
+
+
 def router_interfaces(conn, sdk_rtr):
-    return filter(lambda p: p['device_owner'] == 'network:router_interface',
+    return filter(lambda p: p['device_owner'] in ROUTER_INTERFACE_OWNERS,
                   router_ports(conn, sdk_rtr))
 
 
@@ -41,9 +48,9 @@ class RouterInterface(resource.Resource):
     @classmethod
     def from_sdk(cls, conn, sdk_resource):
         obj = super(RouterInterface, cls).from_sdk(conn, sdk_resource)
-        if sdk_resource['device_owner'] != 'network:router_interface':
-            raise exc.UnexpectedValue(
-                'device_owner', 'network:router_interface', sdk_resource['device_owner'])
+        if sdk_resource['device_owner'] not in ROUTER_INTERFACE_OWNERS:
+            raise exc.UnexpectedChoice(
+                'device_owner', ROUTER_INTERFACE_OWNERS, sdk_resource['device_owner'])
         return obj
 
     # Custom logic needed for RouterInterface as the operation is complex:
@@ -61,7 +68,7 @@ class RouterInterface(resource.Resource):
 
         if port:
             # port exists but is assigned to something else => fail
-            if ((port['device_owner'] and port['device_owner'] != 'network:router_interface')
+            if ((port['device_owner'] and port['device_owner'] not in ROUTER_INTERFACE_OWNERS)
                     or (port['device_id'] and port['device_id'] != refs['device_id'])):
                 raise exc.CannotConverge(
                     "Port with IP address for router import exists, and it is assigned "
@@ -76,7 +83,7 @@ class RouterInterface(resource.Resource):
             changed = True
 
         # 2. ensure the port is attached to the router by `router_name`
-        if port['device_owner'] != 'network:router_interface' \
+        if port['device_owner'] not in ROUTER_INTERFACE_OWNERS \
            and port['device_id'] != refs['device_id']:
             conn.network.add_interface_to_router(
                 refs['device_id'], port_id=port['id'])

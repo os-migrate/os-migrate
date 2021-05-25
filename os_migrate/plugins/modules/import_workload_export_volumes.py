@@ -101,6 +101,7 @@ options:
     description:
       - Timeout for long running operations, in seconds.
     required: false
+    default: 1800
     type: int
 '''
 

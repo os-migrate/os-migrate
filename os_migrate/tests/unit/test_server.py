@@ -111,6 +111,15 @@ def server_refs():
                 'domain_name': 'Default',
             },
         ],
+        'volume_attachments_info': [
+            {
+                'device': '/dev/vdb',
+                'id': 'uuid-test-volume-attachment',
+                'volume_id': 'uuid-test-volume',
+                'volume_name': 'test-volume',
+                'volume_project_id': 'uuid-test-project',
+            }
+        ],
     }
 
 

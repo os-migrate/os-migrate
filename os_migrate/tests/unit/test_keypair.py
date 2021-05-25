@@ -16,7 +16,6 @@ def sdk_keypair():
         name='test-keypair',
         is_deleted=False,
         fingerprint='TqiTXPRs4cBksWa5pnMTmbEXjgd7bfvuSX7y4sHeMo4',
-        private_key='MIIJKAIBAAKCAgEAw51HtWh2MiRSvL0sPak4G2Qh2kKlfY6hfp0mQN9e=',
         public_key='AAAAB3NzaC1yc2EAAAADAQABAAACAQDDnUe1aHYyJFK8vSw9qTgbZCHa==',
         type='ssh'
     )
@@ -28,7 +27,6 @@ def serialized_keypair():
             'name': 'test-keypair',
             'is_deleted': False,
             'fingerprint': 'TqiTXPRs4cBksWa5pnMTmbEXjgd7bfvuSX7y4sHeMo4',
-            'private_key': 'MIIJKAIBAAKCAgEAw51HtWh2MiRSvL0sPak4G2Qh2kKlfY6hfp0mQN9e=',
             'public_key': 'AAAAB3NzaC1yc2EAAAADAQABAAACAQDDnUe1aHYyJFK8vSw9qTgbZCHa==',
             'type': 'ssh'
         },
@@ -51,11 +49,9 @@ class TestKeypair(unittest.TestCase):
         self.assertEqual(kp.type(), 'openstack.compute.Keypair')
         self.assertEqual(params['name'], 'test-keypair')
         self.assertEqual(
-            params['private_key'],
-            'MIIJKAIBAAKCAgEAw51HtWh2MiRSvL0sPak4G2Qh2kKlfY6hfp0mQN9e=')
-        self.assertEqual(
             params['public_key'],
             'AAAAB3NzaC1yc2EAAAADAQABAAACAQDDnUe1aHYyJFK8vSw9qTgbZCHa==')
+        self.assertEqual(params['type'], 'ssh')
 
         self.assertEqual(info['created_at'], '2020-01-06T15:50:55Z')
         # creating a new Keypair object sets the id to the name in openstacksdk
@@ -64,16 +60,13 @@ class TestKeypair(unittest.TestCase):
         self.assertEqual(info['is_deleted'], False)
         self.assertEqual(info['fingerprint'],
                          'TqiTXPRs4cBksWa5pnMTmbEXjgd7bfvuSX7y4sHeMo4')
-        self.assertEqual(info['type'], 'ssh')
 
     def test_keypair_sdk_params(self):
         kp = keypair.Keypair.from_data(serialized_keypair())
         sdk_params = kp._to_sdk_params(None)
 
         self.assertEqual(sdk_params['name'], 'test-keypair')
-        self.assertEqual(
-            sdk_params['private_key'],
-            'MIIJKAIBAAKCAgEAw51HtWh2MiRSvL0sPak4G2Qh2kKlfY6hfp0mQN9e=')
+        self.assertEqual(sdk_params['type'], 'ssh')
         self.assertEqual(
             sdk_params['public_key'],
             'AAAAB3NzaC1yc2EAAAADAQABAAACAQDDnUe1aHYyJFK8vSw9qTgbZCHa==')
@@ -81,4 +74,3 @@ class TestKeypair(unittest.TestCase):
         # disallowed params when creating a keypair
         self.assertNotIn('is_deleted', sdk_params)
         self.assertNotIn('fingerprint', sdk_params)
-        self.assertNotIn('type', sdk_params)

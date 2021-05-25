@@ -4,6 +4,7 @@ set -euxo pipefail
 
 DIR=$(dirname $(realpath $0))
 OS_MIGRATE_DIR=$(realpath "$DIR/../..")
+ANSIBLE_PYTHON=python3.8
 
 ### PACKAGES ###
 
@@ -19,6 +20,7 @@ dnf -y install \
     make \
     python3-devel \
     python3-openstackclient \
+    "$ANSIBLE_PYTHON" \
     shyaml \
 
 # The below packages are for vagrant-libvirt and take a lot of deps,
@@ -31,7 +33,7 @@ dnf clean all
 
 ### VIRTUALENV ###
 
-python3 -m venv /root/venv
+"$ANSIBLE_PYTHON" -m venv /root/venv
 set +x
 source /root/venv/bin/activate
 set -x
