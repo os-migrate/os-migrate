@@ -103,6 +103,7 @@
     flavor: "{{ os_migrate_conversion_flavor_name }}"
     image: "{{ os_migrate_conversion_image_name }}"
     key_name: "{{ os_migrate_conversion_keypair_name }}"
+    terminate_volume: yes
     network: "{{ os_migrate_conversion_net_name }}"
     security_groups:
       - "{{ os_migrate_conversion_secgroup_name }}"
