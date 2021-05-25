@@ -25,6 +25,10 @@
     server_proxy_user: "{{ os_migrate_conversion_rhsm_server_proxy_user|default(omit) }}"
     syspurpose: "{{ os_migrate_conversion_rhsm_syspurpose|default(omit) }}"
     username: "{{ os_migrate_conversion_rhsm_username|default(omit) }}"
+  register: rhsm_subscription_result
+  until: rhsm_subscription_result.subscribed_pool_ids | length > 0
+  retries: "{{ os_migrate_conversion_rhsm_retries }}"
+  delay: "{{ os_migrate_conversion_rhsm_delay }}"
   when:
     - >-
       os_migrate_conversion_rhsm_username is defined or
