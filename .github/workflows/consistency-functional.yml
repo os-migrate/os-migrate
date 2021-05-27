@@ -269,6 +269,8 @@ jobs:
           ENABLED_SERVICES+=,ovn-controller,ovn-northd,ovs-vswitchd,ovsdb-server
           # Glance
           ENABLED_SERVICES+=,g-api
+          # OVN options
+          OVN_L3_CREATE_PUBLIC_NETWORK=false
           [[post-config|/etc/nova/nova.conf]]
           [placement]
           auth_type = password
