@@ -223,6 +223,10 @@ the VM is destroyed.</p>
 <div class="section" id="changes">
 <h3>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Increase the linelenght for the lint tests. [Carlos Camacho]</p>
+<p>Lint tests are failing with the line lenght &lt;=100.
+This commits increases the limit to 150.</p>
+</li>
 <li><p>Add retry logic to RHSM. [Carlos Camacho]</p>
 <p>This commit adds the retry logic when
 using RHSM in the conversion hosts.</p>
@@ -237,6 +241,12 @@ conversion_hosts_src and conversion_hosts_dst</p>
 <div class="section" id="fix">
 <h3>Fix<a class="headerlink" href="#fix" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Do not check for the subscribed_pool_ids. [Carlos Camacho]</p>
+<p>Our internal RHSM server does not reply with
+subscribed_pool_ids, as it is always an empty
+list. This commit checks that the
+machines are correctly subscribed.</p>
+</li>
 <li><p>Increase timeouts when deployment takes more than default. [Carlos
 Camacho]</p>
 <p>This commit allows to increase the hardwired default timeout of

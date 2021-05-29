@@ -15,6 +15,10 @@ New
 
 Changes
 ~~~~~~~
+- Increase the linelenght for the lint tests. [Carlos Camacho]
+
+  Lint tests are failing with the line lenght <=100.
+  This commits increases the limit to 150.
 - Add retry logic to RHSM. [Carlos Camacho]
 
   This commit adds the retry logic when
@@ -27,6 +31,12 @@ Changes
 
 Fix
 ~~~
+- Do not check for the subscribed_pool_ids. [Carlos Camacho]
+
+  Our internal RHSM server does not reply with
+  subscribed_pool_ids, as it is always an empty
+  list. This commit checks that the
+  machines are correctly subscribed.
 - Increase timeouts when deployment takes more than default. [Carlos
   Camacho]
 
