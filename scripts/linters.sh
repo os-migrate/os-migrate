@@ -41,7 +41,7 @@ find ./ \
         rules: {
             truthy: disable,
             document-start: disable,
-            line-length: { max: 100 },
+            line-length: { max: 150 },
         }
     }' {}
 

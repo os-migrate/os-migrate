@@ -26,13 +26,17 @@
     syspurpose: "{{ os_migrate_conversion_rhsm_syspurpose|default(omit) }}"
     username: "{{ os_migrate_conversion_rhsm_username|default(omit) }}"
   register: rhsm_subscription_result
-  until: rhsm_subscription_result.subscribed_pool_ids | length > 0
+  until: "'subscribed_pool_ids' in rhsm_subscription_result and not rhsm_subscription_result.failed"
   retries: "{{ os_migrate_conversion_rhsm_retries }}"
   delay: "{{ os_migrate_conversion_rhsm_delay }}"
   when:
     - >-
       os_migrate_conversion_rhsm_username is defined or
       os_migrate_conversion_rhsm_org_id is defined
+
+- name: log the subscription manager output
+  ansible.builtin.debug:
+    msg: "{{ rhsm_subscription_result }}"
 
 - name: update all packages
   ansible.builtin.yum:
