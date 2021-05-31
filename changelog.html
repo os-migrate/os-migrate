@@ -241,6 +241,14 @@ conversion_hosts_src and conversion_hosts_dst</p>
 <div class="section" id="fix">
 <h3>Fix<a class="headerlink" href="#fix" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Handle when flavor extra_specs are reported as None from API. [Jiri
+Stransky]</p>
+<p>Most recent APIs+SDKs always give empty hash for extra_specs. However,
+some older versions may also return extra_specs as None. This could
+break OS Migrate. The issue is now fixed by making sure we set
+internal variables to {} whenever some extra_specs parameter (either
+loaded from YAML or queried from SDK) is None.</p>
+</li>
 <li><p>Do not check for the subscribed_pool_ids. [Carlos Camacho]</p>
 <p>Our internal RHSM server does not reply with
 subscribed_pool_ids, as it is always an empty

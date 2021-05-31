@@ -31,6 +31,14 @@ Changes
 
 Fix
 ~~~
+- Handle when flavor extra_specs are reported as None from API. [Jiri
+  Stransky]
+
+  Most recent APIs+SDKs always give empty hash for extra_specs. However,
+  some older versions may also return extra_specs as None. This could
+  break OS Migrate. The issue is now fixed by making sure we set
+  internal variables to {} whenever some extra_specs parameter (either
+  loaded from YAML or queried from SDK) is None.
 - Do not check for the subscribed_pool_ids. [Carlos Camacho]
 
   Our internal RHSM server does not reply with
