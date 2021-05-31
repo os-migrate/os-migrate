@@ -10,3 +10,13 @@
     extra_specs:
       os_migrate:some_property: asdf
       os_migrate:other_property: ghij
+
+- name: create osm_flavor_specless
+  openstack.cloud.compute_flavor:
+    auth: "{{ os_migrate_src_auth }}"
+    state: present
+    name: osm_flavor_specless
+    ram: 2048
+    vcpus: 2
+    disk: 20
+    ephemeral: 0
