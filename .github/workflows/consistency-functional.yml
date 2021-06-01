@@ -17,6 +17,7 @@ jobs:
   # * Store the container image to be reused in all jobs
   # * Import the container image on each job
   build:
+    if: github.repository_owner == 'os-migrate'
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4

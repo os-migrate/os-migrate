@@ -8,6 +8,7 @@ on:
       - 'docs/**'
 jobs:
   build:
+    if: github.repository_owner == 'os-migrate'
     runs-on: ubuntu-latest
     steps:
       - name: Use checkout v2 with all git log available
