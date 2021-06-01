@@ -6,6 +6,7 @@ on:
       - 'doc/**'
 jobs:
   push_to_reg:
+    if: github.repository_owner == 'os-migrate'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

@@ -4,6 +4,12 @@ on:
     paths-ignore:
       - 'docs/**'
   pull_request:
+  # Run the functional tests every 8 hours.
+  # This will help to identify faster if
+  # there is a CI failure related to a
+  # problem deploying DevStack.
+  schedule:
+    - cron: '0 */8 * * *'
 
 jobs:
   # TODO: Add a previous job that:
@@ -11,6 +17,7 @@ jobs:
   # * Store the container image to be reused in all jobs
   # * Import the container image on each job
   build:
+    if: github.repository_owner == 'os-migrate'
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
