@@ -39,7 +39,7 @@ IDX=0
 while sudo podman inspect os_migrate_vagrant_$IDX &> /dev/null; do
     ((IDX++))
 done || true
-CONTAINER_NAME=os_migrate_vagrant_shell_$IDX
+CONTAINER_NAME=os_migrate_vagrant_$IDX
 
 mkdir -p $HOME/.vagrant.d
 mkdir -p $HOME/.cache/libvirt
