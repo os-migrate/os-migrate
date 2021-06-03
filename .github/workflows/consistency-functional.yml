@@ -216,9 +216,12 @@ jobs:
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | \
             podman login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-      - id: file_changes
+      - name: Get the changed files list
+        id: file_changes
+        if: github.event_name != 'schedule'
         uses: trilom/file-changes-action@v1.2.4
       - name: Build or reuse the toolbox container image
+        if: github.event_name != 'schedule'
         run: |
           # The following array defines the expressions that
           # when matching the container image for the toolbox
@@ -238,6 +241,14 @@ jobs:
             done
           done
           REUSE_TOOLBOX=$REUSE NO_VAGRANT=1 make toolbox-build
+      - name: Reuse the toolbox container image for the scheduled job
+        if: github.event_name == 'schedule'
+        run: |
+          # In this case we assume that the scheduled job will
+          # pull the container image from the local container
+          # registry because that should be the latest correct
+          # toolbox image.
+          REUSE_TOOLBOX=1 NO_VAGRANT=1 make toolbox-build
       # We're hitting filesystem ownership issue on some GH Actions workers:
       # https://ubuntuforums.org/showthread.php?t=2406453
       - name: Make sure filesystem ownership is correct
