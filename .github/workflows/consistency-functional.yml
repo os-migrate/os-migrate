@@ -271,6 +271,8 @@ jobs:
           NUMBER_FAKE_NOVA_COMPUTE=2
           CELLSV2_SETUP="singleconductor"
           OS_PLACEMENT_CONFIG_DIR=/etc/nova
+          # Enable only IPv4
+          IP_VERSION=4
           # Horizon is enabled by default, but
           # its not required
           disable_service horizon
