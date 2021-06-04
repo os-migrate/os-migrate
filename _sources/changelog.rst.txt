@@ -31,6 +31,13 @@ Changes
 
 Fix
 ~~~
+- Flavor extra_specs import with OpenStack SDK older than 0.51. [Jiri
+  Stransky]
+
+  The previous implementation of extra_specs import on flavors only
+  worked with SDK >=0.51. A fallback implementation is now added for
+  running with older SDKs. This fallback implementation can be dropped
+  in the future after we drop support for SDK <0.51.
 - Handle when flavor extra_specs are reported as None from API. [Jiri
   Stransky]
 

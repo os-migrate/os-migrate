@@ -241,6 +241,13 @@ conversion_hosts_src and conversion_hosts_dst</p>
 <div class="section" id="fix">
 <h3>Fix<a class="headerlink" href="#fix" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Flavor extra_specs import with OpenStack SDK older than 0.51. [Jiri
+Stransky]</p>
+<p>The previous implementation of extra_specs import on flavors only
+worked with SDK &gt;=0.51. A fallback implementation is now added for
+running with older SDKs. This fallback implementation can be dropped
+in the future after we drop support for SDK &lt;0.51.</p>
+</li>
 <li><p>Handle when flavor extra_specs are reported as None from API. [Jiri
 Stransky]</p>
 <p>Most recent APIs+SDKs always give empty hash for extra_specs. However,
