@@ -17,7 +17,7 @@
     <img src="https://img.shields.io/badge/License-Apache2.0-blue.svg">
   </a>
   <a href="https://github.com/os-migrate/os-migrate/actions?workflow=consistency-functional">
-    <img src="https://github.com/os-migrate/os-migrate/workflows/consistency-functional/badge.svg?event=push">
+    <img src="https://github.com/os-migrate/os-migrate/workflows/consistency-functional/badge.svg?event=schedule">
   </a>
   <a href="https://github.com/os-migrate/os-migrate/actions?workflow=container-image-build">
     <img src="https://github.com/os-migrate/os-migrate/workflows/container-image-build/badge.svg?event=push">
