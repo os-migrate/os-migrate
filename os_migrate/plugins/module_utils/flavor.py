@@ -45,11 +45,21 @@ class Flavor(resource.Resource):
         delete_extra_specs = list(set(sdk_extra_specs.keys()) -
                                   set(params_extra_specs.keys()))
         for prop_name in delete_extra_specs:
-            conn.compute.delete_flavor_extra_specs_property(sdk_res, prop_name)
+            # We can use the 'if' variant exclusively after we mandate OpenStack SDK >= 0.51
+            if hasattr(conn.compute, 'delete_flavor_extra_specs_property'):
+                conn.compute.delete_flavor_extra_specs_property(sdk_res['id'], prop_name)
+            else:
+                # Old non-proxy SDK API
+                conn.unset_flavor_specs(sdk_res, [prop_name])
         for prop_name in params_extra_specs.keys():
             if sdk_extra_specs.get(prop_name) != params_extra_specs[prop_name]:
-                conn.compute.update_flavor_extra_specs_property(
-                    sdk_res, prop_name, params_extra_specs[prop_name])
+                # We can use the 'if' variant exclusively after we mandate OpenStack SDK >= 0.51
+                if hasattr(conn.compute, 'update_flavor_extra_specs_property'):
+                    conn.compute.update_flavor_extra_specs_property(
+                        sdk_res, prop_name, params_extra_specs[prop_name])
+                else:
+                    # Old non-proxy SDK API
+                    conn.set_flavor_specs(sdk_res['id'], {prop_name: params_extra_specs[prop_name]})
 
     @staticmethod
     def _create_sdk_res(conn, sdk_params):
