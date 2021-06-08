@@ -31,6 +31,26 @@ Changes
 
 Fix
 ~~~
+- Only use 'type' on keypairs when it is supported. [Jiri Stransky]
+
+  SDK should support 'type' on keypairs since 0.32 [1], however even
+  with 0.36 this error still appears when testing against latest
+  Devstack:
+
+  openstack.exceptions.BadRequestException: BadRequestException: 400:
+  Client Error for url: http://192.168.122.93/compute/v2.1/os-keypairs,
+  Invalid input for field/attribute keypair. Value: {'type': 'ssh',
+  <REDACTED>, 'name': 'osm_keypair'}. Additional properties are not
+  allowed ('type' was unexpected).
+
+  This error disappears when testing with latest SDK. It's not easy to
+  track down what exact combinations of SDK/API are needed to allow for
+  'type' in keypair creation request. So we'll first try with 'type',
+  and if that request fails with error 400 (Bad Request), then we retry
+  without 'type'. If that request still fails, the keypair import module
+  fails too.
+
+  [1] https://github.com/openstack/openstacksdk/commit/15baef656ac56421a71e691982a70b218110f18d
 - Flavor extra_specs import with OpenStack SDK older than 0.51. [Jiri
   Stransky]
 
