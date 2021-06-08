@@ -29,7 +29,11 @@ class Keypair(resource.Resource):
 
     @staticmethod
     def _create_sdk_res(conn, sdk_params):
-        return conn.compute.create_keypair(**sdk_params)
+        try:
+            return conn.compute.create_keypair(**sdk_params)
+        except openstack.exceptions.BadRequestException:
+            sdk_params_no_type = {k: v for k, v in sdk_params.items() if k != 'type'}
+            return conn.compute.create_keypair(**sdk_params_no_type)
 
     @staticmethod
     def _find_sdk_res(conn, name_or_id, filters=None):
