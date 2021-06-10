@@ -253,6 +253,8 @@ jobs:
           NUMBER_FAKE_NOVA_COMPUTE=2
           CELLSV2_SETUP="singleconductor"
           OS_PLACEMENT_CONFIG_DIR=/etc/nova
+          # Enable only IPv4
+          IP_VERSION=4
           # Horizon is enabled by default, but
           # its not required
           disable_service horizon
@@ -269,6 +271,8 @@ jobs:
           ENABLED_SERVICES+=,ovn-controller,ovn-northd,ovs-vswitchd,ovsdb-server
           # Glance
           ENABLED_SERVICES+=,g-api
+          # OVN options
+          OVN_L3_CREATE_PUBLIC_NETWORK=false
           [[post-config|/etc/nova/nova.conf]]
           [placement]
           auth_type = password

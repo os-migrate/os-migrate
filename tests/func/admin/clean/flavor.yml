@@ -8,3 +8,7 @@
       flavor: osm_flavor
     - auth: "{{ os_migrate_dst_auth }}"
       flavor: osmdst_flavor
+    - auth: "{{ os_migrate_src_auth }}"
+      flavor: osm_flavor_specless
+    - auth: "{{ os_migrate_dst_auth }}"
+      flavor: osmdst_flavor_specless
