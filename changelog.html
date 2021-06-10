@@ -241,6 +241,15 @@ conversion_hosts_src and conversion_hosts_dst</p>
 <div class="section" id="fix">
 <h3>Fix<a class="headerlink" href="#fix" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Remove unnecessary delay in conversion host reachability check. [Jiri
+Stransky]</p>
+<p>In conversion host reachability check, with the <cite>wait_for</cite> Ansible
+module we used <cite>delay</cite> of 10 seconds, which caused a delay before the
+first check, causing unnecessary slowdown (20 seconds in total) of the
+import_workloads playbook. What we probably meant to use was <cite>sleep</cite>,
+which sets the interval between checks. This is now fixed and the
+<cite>sleep</cite> property is set to 5 seconds.</p>
+</li>
 <li><p>Only use ‘type’ on keypairs when it is supported. [Jiri Stransky]</p>
 <p>SDK should support ‘type’ on keypairs since 0.32 [1], however even
 with 0.36 this error still appears when testing against latest

@@ -31,6 +31,15 @@ Changes
 
 Fix
 ~~~
+- Remove unnecessary delay in conversion host reachability check. [Jiri
+  Stransky]
+
+  In conversion host reachability check, with the `wait_for` Ansible
+  module we used `delay` of 10 seconds, which caused a delay before the
+  first check, causing unnecessary slowdown (20 seconds in total) of the
+  import_workloads playbook. What we probably meant to use was `sleep`,
+  which sets the interval between checks. This is now fixed and the
+  `sleep` property is set to 5 seconds.
 - Only use 'type' on keypairs when it is supported. [Jiri Stransky]
 
   SDK should support 'type' on keypairs since 0.32 [1], however even
