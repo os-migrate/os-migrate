@@ -104,6 +104,65 @@ Fix
   os_migrate_dst_release variables to integers.
 
 
+0.8.3 (2021-06-10)
+------------------
+
+Fix
+~~~
+- Remove unnecessary delay in conversion host reachability check. [Jiri
+  Stransky]
+
+  In conversion host reachability check, with the `wait_for` Ansible
+  module we used `delay` of 10 seconds, which caused a delay before the
+  first check, causing unnecessary slowdown (20 seconds in total) of the
+  import_workloads playbook. What we probably meant to use was `sleep`,
+  which sets the interval between checks. This is now fixed and the
+  `sleep` property is set to 5 seconds.
+
+  (cherry picked from commit de1647b8ac43461d521e9e7d002eebc3a2227135)
+- Only use 'type' on keypairs when it is supported. [Jiri Stransky]
+
+  SDK should support 'type' on keypairs since 0.32 [1], however even
+  with 0.36 this error still appears when testing against latest
+  Devstack:
+
+  openstack.exceptions.BadRequestException: BadRequestException: 400:
+  Client Error for url: http://192.168.122.93/compute/v2.1/os-keypairs,
+  Invalid input for field/attribute keypair. Value: {'type': 'ssh',
+  <REDACTED>, 'name': 'osm_keypair'}. Additional properties are not
+  allowed ('type' was unexpected).
+
+  This error disappears when testing with latest SDK. It's not easy to
+  track down what exact combinations of SDK/API are needed to allow for
+  'type' in keypair creation request. So we'll first try with 'type',
+  and if that request fails with error 400 (Bad Request), then we retry
+  without 'type'. If that request still fails, the keypair import module
+  fails too.
+
+  [1] https://github.com/openstack/openstacksdk/commit/15baef656ac56421a71e691982a70b218110f18d
+
+  (cherry picked from commit 3edc278aaca222d48b587caa9e8c9f1d3162d98d)
+- Flavor extra_specs import with OpenStack SDK older than 0.51. [Jiri
+  Stransky]
+
+  The previous implementation of extra_specs import on flavors only
+  worked with SDK >=0.51. A fallback implementation is now added for
+  running with older SDKs. This fallback implementation can be dropped
+  in the future after we drop support for SDK <0.51.
+
+  (cherry picked from commit 224b779da2e552094964bde5127a715c58e48e22)
+- Handle when flavor extra_specs are reported as None from API. [Jiri
+  Stransky]
+
+  Most recent APIs+SDKs always give empty hash for extra_specs. However,
+  some older versions may also return extra_specs as None. This could
+  break OS Migrate. The issue is now fixed by making sure we set
+  internal variables to {} whenever some extra_specs parameter (either
+  loaded from YAML or queried from SDK) is None.
+
+  (cherry picked from commit 29c7d17856984487f628676478fbdecdd8526ecd)
+
+
 0.8.2 (2021-05-25)
 ------------------
 
