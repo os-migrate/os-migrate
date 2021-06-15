@@ -4,12 +4,8 @@
 
 os_migrate_conversion_net_name: os_migrate_conv
 
-os_migrate_src_conversion_net_mtu: "{{
-  1400 if os_migrate_src_release | int > 10
-  else omit }}"
-os_migrate_dst_conversion_net_mtu: "{{
-  1400 if os_migrate_dst_release | int > 10
-  else omit }}"
+os_migrate_src_conversion_net_mtu: "{{ omit }}"
+os_migrate_dst_conversion_net_mtu: "{{ omit }}"
 
 # If we install packages we need a DNS server working
 os_migrate_src_conversion_subnet_dns_nameservers: ['8.8.8.8']
