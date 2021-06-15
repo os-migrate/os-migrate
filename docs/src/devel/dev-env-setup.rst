@@ -4,7 +4,8 @@ Development Environment Setup
 Prerequisites
 -------------
 
--  Podman and Buildah for running rootless development environment
+-  Local clone of the os-migrate git repo from https://github.com/os-migrate/os-migrate
+-  `Podman <https://podman.io/>`_ and `Buildah <https://buildah.io/>`_ for running rootless development environment
    containers.
 
 Development environment
