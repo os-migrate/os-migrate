@@ -31,6 +31,25 @@ Changes
 
 Fix
 ~~~
+- Conversion host network MTUs default to cloud defaults. [Jiri
+  Stransky]
+
+  Previously we had conversion host network MTUs decided by variables
+  `os_migrate_src_release` and `os_migrate_dst_release` and decided MTUs
+  for conversion host network based on those. These were test-specific
+  decisions leaking into production settings. We now default the MTU
+  parameters to Ansible's `omit` special value, which means the module
+  responsible for creating the network will not specify any value in the
+  network creation API request, and the MTU will be autoselected by the
+  cloud.
+
+  If the defaults result in undesirable values, the MTUs can still be
+  explicitly overriden via `os_migrate_src_conversion_net_mtu` and
+  `os_migrate_dst_conversion_net_mtu` variables.
+
+  This fix also removes dependency of production code on
+  `os_migrate_src_release` and `os_migrate_dst_release` variables, as
+  currently OS Migrate does not alter behavior based on src/dst release.
 - Remove unnecessary delay in conversion host reachability check. [Jiri
   Stransky]
 
