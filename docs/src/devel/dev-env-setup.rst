@@ -126,7 +126,7 @@ snapshotted Vagrant environment:
    ./toolbox/vagrant-run
    ./vagrant-snapshot-revert
 
-To destroy the Vagrant VM, e.g. when you want to recreate it from
+To destroy the Vagrant VM, e.g. when you want to recreate it from
 scratch later, run:
 
 ::
@@ -136,19 +136,28 @@ scratch later, run:
 Running functional tests
 ------------------------
 
-Functional tests expect ``tests/func/auth.yml`` file to exist and
-contain ``os_migrate_src_auth`` and ``os_migrate_dst_auth`` variables
-with credentials for connecting to OpenStack cloud(s). The tests will
-connect to wherever these auth parameters point and create/delete
-resources there.
+Functional tests expect ``tests/func/auth_tenant.yml`` and
+``tests/func/auth_admin.yml`` files to exist and contain
+``os_migrate_src_auth`` and ``os_migrate_dst_auth`` variables
+with credentials for connecting to OpenStack cloud(s). The tests
+will connect to wherever these auth parameters point and
+create/delete resources there.
 
 Run a make target which will set up the aforementioned
-``tests/func/auth.yml`` file to connect to your Vagrant+Devstack
-instance:
+``tests/func/auth_tenant.yml`` file to connect to your
+Vagrant+Devstack instance:
 
 ::
 
    ./toolbox/run make test-setup-vagrant-devstack
+
+Run a make target which will set up the aforementioned
+``tests/func/auth_admin.yml`` file to connect to your
+Vagrant+Devstack instance:
+
+::
+
+   ./toolbox/run make test-setup-vagrant-devstack-admin
 
 Finally, run the functional tests:
 
