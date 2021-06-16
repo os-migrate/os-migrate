@@ -172,7 +172,7 @@ e.g.:
 
    OS_MIGRATE_FUNC_TEST_ARGS='--tags test_network,test_subnet' ./toolbox/run make test-func
 
-To explore imported resoruces, skip the after-test cleanup of resources,
+To explore imported resources, skip the after-test cleanup of resources,
 e.g.:
 
 ::
