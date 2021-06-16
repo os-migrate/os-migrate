@@ -1,5 +1,6 @@
 FROM docker.io/library/fedora:33
 RUN dnf install -y glibc-langpack-en
+ARG NO_VAGRANT=0
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
