@@ -183,9 +183,10 @@
 <div class="section" id="prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>Local clone of the os-migrate git repo from <a class="reference external" href="https://github.com/os-migrate/os-migrate">https://github.com/os-migrate/os-migrate</a></p></li>
-<li><p><a class="reference external" href="https://podman.io/">Podman</a> and <a class="reference external" href="https://buildah.io/">Buildah</a> for running rootless development environment
-containers.</p></li>
+<li><p>Local clone of the os-migrate git repo from
+<a class="reference external" href="https://github.com/os-migrate/os-migrate">https://github.com/os-migrate/os-migrate</a></p></li>
+<li><p><a class="reference external" href="https://podman.io/">Podman</a> and <a class="reference external" href="https://buildah.io/">Buildah</a>
+for running rootless development environment containers.</p></li>
 </ul>
 </div>
 <div class="section" id="development-environment">
@@ -276,7 +277,7 @@ snapshotted Vagrant environment:</p>
 <span class="o">./</span><span class="n">vagrant</span><span class="o">-</span><span class="n">snapshot</span><span class="o">-</span><span class="n">revert</span>
 </pre></div>
 </div>
-<p>To destroy the Vagrant VM, e.g. when you want to recreate it from
+<p>To destroy the Vagrant VM, e.g. when you want to recreate it from
 scratch later, run:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">vagrant</span><span class="o">-</span><span class="n">destroy</span>
 </pre></div>
@@ -284,15 +285,22 @@ scratch later, run:</p>
 </div>
 <div class="section" id="running-functional-tests">
 <h2>Running functional tests<a class="headerlink" href="#running-functional-tests" title="Permalink to this headline">¶</a></h2>
-<p>Functional tests expect <code class="docutils literal notranslate"><span class="pre">tests/func/auth.yml</span></code> file to exist and
-contain <code class="docutils literal notranslate"><span class="pre">os_migrate_src_auth</span></code> and <code class="docutils literal notranslate"><span class="pre">os_migrate_dst_auth</span></code> variables
-with credentials for connecting to OpenStack cloud(s). The tests will
-connect to wherever these auth parameters point and create/delete
-resources there.</p>
+<p>Functional tests expect <code class="docutils literal notranslate"><span class="pre">tests/func/auth_tenant.yml</span></code> and
+<code class="docutils literal notranslate"><span class="pre">tests/func/auth_admin.yml</span></code> files to exist and contain
+<code class="docutils literal notranslate"><span class="pre">os_migrate_src_auth</span></code> and <code class="docutils literal notranslate"><span class="pre">os_migrate_dst_auth</span></code> variables
+with credentials for connecting to OpenStack cloud(s). The tests
+will connect to wherever these auth parameters point and
+create/delete resources there.</p>
 <p>Run a make target which will set up the aforementioned
-<code class="docutils literal notranslate"><span class="pre">tests/func/auth.yml</span></code> file to connect to your Vagrant+Devstack
-instance:</p>
+<code class="docutils literal notranslate"><span class="pre">tests/func/auth_tenant.yml</span></code> file to connect to your
+Vagrant+Devstack instance:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span><span class="o">-</span><span class="n">setup</span><span class="o">-</span><span class="n">vagrant</span><span class="o">-</span><span class="n">devstack</span>
+</pre></div>
+</div>
+<p>Run a make target which will set up the aforementioned
+<code class="docutils literal notranslate"><span class="pre">tests/func/auth_admin.yml</span></code> file to connect to your
+Vagrant+Devstack instance:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span><span class="o">-</span><span class="n">setup</span><span class="o">-</span><span class="n">vagrant</span><span class="o">-</span><span class="n">devstack</span><span class="o">-</span><span class="n">admin</span>
 </pre></div>
 </div>
 <p>Finally, run the functional tests:</p>
@@ -304,7 +312,7 @@ e.g.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">OS_MIGRATE_FUNC_TEST_ARGS</span><span class="o">=</span><span class="s1">&#39;--tags test_network,test_subnet&#39;</span> <span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span><span class="o">-</span><span class="n">func</span>
 </pre></div>
 </div>
-<p>To explore imported resoruces, skip the after-test cleanup of resources,
+<p>To explore imported resources, skip the after-test cleanup of resources,
 e.g.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">OS_MIGRATE_FUNC_TEST_ARGS</span><span class="o">=</span><span class="s1">&#39;--tags test_network,test_subnet --skip-tags test_clean_after&#39;</span> <span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span><span class="o">-</span><span class="n">func</span>
 </pre></div>

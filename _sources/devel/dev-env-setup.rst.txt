@@ -4,9 +4,10 @@ Development Environment Setup
 Prerequisites
 -------------
 
--  Local clone of the os-migrate git repo from https://github.com/os-migrate/os-migrate
--  `Podman <https://podman.io/>`_ and `Buildah <https://buildah.io/>`_ for running rootless development environment
-   containers.
+-  Local clone of the os-migrate git repo from
+   https://github.com/os-migrate/os-migrate
+-  `Podman <https://podman.io/>`_ and `Buildah <https://buildah.io/>`_
+   for running rootless development environment containers.
 
 Development environment
 -----------------------
@@ -125,7 +126,7 @@ snapshotted Vagrant environment:
    ./toolbox/vagrant-run
    ./vagrant-snapshot-revert
 
-To destroy the Vagrant VM, e.g. when you want to recreate it from
+To destroy the Vagrant VM, e.g. when you want to recreate it from
 scratch later, run:
 
 ::
@@ -135,19 +136,28 @@ scratch later, run:
 Running functional tests
 ------------------------
 
-Functional tests expect ``tests/func/auth.yml`` file to exist and
-contain ``os_migrate_src_auth`` and ``os_migrate_dst_auth`` variables
-with credentials for connecting to OpenStack cloud(s). The tests will
-connect to wherever these auth parameters point and create/delete
-resources there.
+Functional tests expect ``tests/func/auth_tenant.yml`` and
+``tests/func/auth_admin.yml`` files to exist and contain
+``os_migrate_src_auth`` and ``os_migrate_dst_auth`` variables
+with credentials for connecting to OpenStack cloud(s). The tests
+will connect to wherever these auth parameters point and
+create/delete resources there.
 
 Run a make target which will set up the aforementioned
-``tests/func/auth.yml`` file to connect to your Vagrant+Devstack
-instance:
+``tests/func/auth_tenant.yml`` file to connect to your
+Vagrant+Devstack instance:
 
 ::
 
    ./toolbox/run make test-setup-vagrant-devstack
+
+Run a make target which will set up the aforementioned
+``tests/func/auth_admin.yml`` file to connect to your
+Vagrant+Devstack instance:
+
+::
+
+   ./toolbox/run make test-setup-vagrant-devstack-admin
 
 Finally, run the functional tests:
 
@@ -162,7 +172,7 @@ e.g.:
 
    OS_MIGRATE_FUNC_TEST_ARGS='--tags test_network,test_subnet' ./toolbox/run make test-func
 
-To explore imported resoruces, skip the after-test cleanup of resources,
+To explore imported resources, skip the after-test cleanup of resources,
 e.g.:
 
 ::
