@@ -25,7 +25,7 @@ dnf -y install \
 
 # The below packages are for vagrant-libvirt and take a lot of deps,
 # build with `NO_VAGRANT=1 make toolbox-build` if Vagrant isn't required.
-if [ "${NO_VAGRANT:-}" != "1" ]; then
+if [ "${NO_VAGRANT:-0}" != "1" ]; then
     dnf -y install ansible libvirt-client rsync openssh-clients vagrant-libvirt
 fi
 dnf clean all
