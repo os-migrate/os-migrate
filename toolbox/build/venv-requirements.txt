@@ -6,6 +6,7 @@ openstacksdk
 ansible-lint==4.1.0
 bashate>=2.0.0
 flake8==3.7.7
+openstackclient>=0.5.5
 pylint>=2.4.0
 pytest-xdist>=1.30.0
 pycodestyle>=2.5.0
