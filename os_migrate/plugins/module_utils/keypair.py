@@ -4,7 +4,7 @@ __metaclass__ = type
 import openstack
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
-    import const, resource
+    import const, reference, resource
 
 
 class Keypair(resource.Resource):
@@ -26,6 +26,33 @@ class Keypair(resource.Resource):
         'public_key',
         'type',
     ]
+
+    params_from_refs = [
+        'user_ref',
+    ]
+
+    sdk_params_from_refs = [
+        'user_id',
+    ]
+
+    @staticmethod
+    def _refs_from_sdk(conn, sdk_res):
+        refs = {}
+
+        refs['user_id'] = sdk_res['user_id']
+        refs['user_ref'] = reference.user_ref(
+            conn, sdk_res['user_id'])
+
+        return refs
+
+    def _refs_from_ser(self, conn, filters=None):
+        refs = {}
+
+        refs['user_ref'] = self.params()['user_ref']
+        refs['user_id'] = reference.user_id(
+            conn, self.params()['user_ref'], none_if_auth=True)
+
+        return refs
 
     @staticmethod
     def _create_sdk_res(conn, sdk_params):

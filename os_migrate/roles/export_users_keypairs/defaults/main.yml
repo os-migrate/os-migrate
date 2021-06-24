@@ -1,0 +1,4 @@
+os_migrate_users_filter:
+  - regex: .*
+os_migrate_keypairs_filter:
+  - regex: .*

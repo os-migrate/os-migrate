@@ -55,6 +55,12 @@ options:
       - Name (or ID) of a Nova Keypair to export.
     required: true
     type: str
+  user_id:
+    description:
+      - ID of the owner of the Keypair, if the owner is different
+        than the authenticated user (admin-only feature).
+    required: false
+    type: str
   availability_zone:
     description:
       - Availability zone.
@@ -90,6 +96,7 @@ def run_module():
     argument_spec = openstack_full_argument_spec(
         path=dict(type='str', required=True),
         name=dict(type='str', required=True),
+        user_id=dict(type='str', required=False, default=None),
     )
     # TODO: check the del
     # del argument_spec['cloud']
@@ -106,7 +113,12 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    sdk_keypair = conn.compute.find_keypair(module.params['name'], ignore_missing=False)
+    filters = {
+        'ignore_missing': False,
+    }
+    if module.params['user_id'] is not None:
+        filters['user_id'] = module.params['user_id']
+    sdk_keypair = conn.compute.find_keypair(module.params['name'], **filters)
     data = keypair.Keypair.from_sdk(conn, sdk_keypair)
 
     result['changed'] = filesystem.write_or_replace_resource(

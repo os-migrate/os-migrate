@@ -322,6 +322,55 @@ def project_ref(conn, id_, required=True):
     return ref
 
 
+def user_id(conn, ref, required=True, none_if_auth=False):
+    """Fetch ID of a User identified by reference dict `ref`. Use
+    OpenStack SDK connection `conn` to fetch the info. If `required`,
+    ensure the fetch is successful. If `none_if_auth` and the user
+    name is '%auth%', return None instead of the actual user ID
+    (useful for skipping the parameter).
+    Returns: the ID, or None if not found and not `required`
+    Raises: openstack's ResourceNotFound when `required` but not found
+    """
+    if ref['name'] == '%auth%':
+        if none_if_auth:
+            return None
+        else:
+            return conn.current_user_id
+
+    return _fetch_id(conn, conn.identity.find_user, ref, required)
+
+
+def user_ref(conn, id_, required=True, allow_auth=True):
+    """Create reference dict for a User identified by ID `id_`. Use
+    OpenStack SDK connection `conn` to fetch the info. If `required`,
+    ensure the fetch is successful. If `allow_auth`, return '%auth%'
+    reference in case the looked up user ID is the same as currently
+    authenticated user ID.
+    Returns: the ref dict, or None if not found and not `required`
+    Raises: openstack's ResourceNotFound when `required` but not found
+    """
+    if allow_auth and id_ == conn.current_user_id:
+        return {
+            'project_name': '%auth%',
+            'name': '%auth%',
+            'domain_name': '%auth%',
+        }
+
+    # User objects don't have project_id, but they have a
+    # domain_id. Since extending _fetch_ref with this very special
+    # case doesn't make much sense, we handle it here.
+    ref = _fetch_ref(conn, conn.identity.find_user, id_, required, get_project_info=False)
+    if ref is None:
+        return
+
+    user = conn.identity.find_user(id_)
+    if user is not None and user['domain_id'] is not None:
+        domain = conn.identity.find_domain(user['domain_id'])
+        ref['domain_name'] = domain['name']
+
+    return ref
+
+
 def _fetch_ref(conn, get_method, id_, required=True, get_project_info=True):
     if id_ is None:
         return None

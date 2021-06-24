@@ -1,0 +1,37 @@
+- ansible.builtin.include_role:
+    name: os_migrate.os_migrate.export_users_keypairs
+  vars:
+    os_migrate_users_filter:
+      - regex: '^osm_'
+    os_migrate_keypairs_filter:
+      - regex: '^osm_'
+
+- name: set destination user name
+  ansible.builtin.replace:
+    path: "{{ os_migrate_data_dir }}/users_keypairs.yml"
+    regexp: "name: osm_user$"
+    replace: "name: osmdst_user"
+
+- name: set destination keypair name
+  ansible.builtin.replace:
+    path: "{{ os_migrate_data_dir }}/users_keypairs.yml"
+    regexp: "name: osm_user_keypair"
+    replace: "name: osmdst_user_keypair"
+
+- name: load exported data
+  ansible.builtin.set_fact:
+    users_keypairs_resources: "{{ (lookup('file',
+                                  os_migrate_data_dir +
+                                  '/users_keypairs.yml') | from_yaml)
+                   ['resources'] }}"
+
+- name: verify data contents
+  ansible.builtin.assert:
+    that:
+      - (users_keypairs_resources | json_query("[?params.name ==
+                            'osmdst_user_keypair'].params.type") == ['ssh'])
+      - (users_keypairs_resources | json_query("[?params.name ==
+                            'osmdst_user_keypair'].params.user_ref.name") == ['osmdst_user'])
+
+# - ansible.builtin.include_role:
+#     name: os_migrate.os_migrate.import_keypairs

@@ -1,0 +1,41 @@
+- name: get src auth token
+  openstack.cloud.auth:
+    auth: "{{ os_migrate_src_auth }}"
+
+- name: delete osm_user_keypair
+  ansible.builtin.shell: |
+    if openstack keypair show --user osm_user osm_user_keypair; then
+        # https://storyboard.openstack.org/#!/story/2009000
+        # openstack keypair delete --user osm_user osm_user_keypair
+        OSM_USER_ID=$(openstack user show -f value -c id osm_user)
+        nova keypair-delete --user $OSM_USER_ID osm_user_keypair
+    fi
+  environment:
+    OS_AUTH_TYPE: token
+    OS_AUTH_URL: "{{ os_migrate_src_auth.auth_url }}"
+    OS_TOKEN: "{{ auth_token }}"
+    OS_PROJECT_ID: "{{ os_migrate_src_auth.project_id|default('') }}"
+    OS_PROJECT_NAME: "{{ os_migrate_src_auth.project_name|default('') }}"
+    OS_PROJECT_DOMAIN_ID: "{{ os_migrate_src_auth.project_domain_id|default('') }}"
+    OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_src_auth.project_domain_name|default('') }}"
+
+- name: get dst auth token
+  openstack.cloud.auth:
+    auth: "{{ os_migrate_dst_auth }}"
+
+- name: delete osmdst_user_keypair
+  ansible.builtin.shell: |
+    if openstack keypair show --user osmdst_user osmdst_user_keypair; then
+        # https://storyboard.openstack.org/#!/story/2009000
+        # openstack keypair delete --user osmdst_user osmdst_user_keypair
+        OSMDST_USER_ID=$(openstack user show -f value -c id osmdst_user)
+        nova keypair-delete --user $OSMDST_USER_ID osmdst_user_keypair
+    fi
+  environment:
+    OS_AUTH_TYPE: token
+    OS_AUTH_URL: "{{ os_migrate_dst_auth.auth_url }}"
+    OS_TOKEN: "{{ auth_token }}"
+    OS_PROJECT_ID: "{{ os_migrate_dst_auth.project_id|default('') }}"
+    OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
+    OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
+    OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
