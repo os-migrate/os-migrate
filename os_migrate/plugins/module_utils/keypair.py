@@ -35,6 +35,30 @@ class Keypair(resource.Resource):
         'user_id',
     ]
 
+    # This needs to be overriden, because we need to feed special
+    # filters to _find_sdk_res. Keypairs are owned by Users, not
+    # Projects.
+    def create_or_update(self, conn, filters=None):
+        refs = self._refs_from_ser(conn, filters)
+        sdk_params = self._to_sdk_params(refs)
+
+        user_filters = {}
+        if refs['user_id'] is not None:
+            user_filters['user_id'] = refs['user_id']
+
+        existing = self._find_sdk_res(conn, sdk_params['name'], user_filters)
+        if existing:
+            if self._needs_update(self.from_sdk(conn, existing)):
+                self._remove_readonly_params(sdk_params)
+                sdk_res = self._update_sdk_res(conn, existing, sdk_params)
+                self._hook_after_update(conn, sdk_res, False)
+                return True
+        else:
+            sdk_res = self._create_sdk_res(conn, sdk_params)
+            self._hook_after_update(conn, sdk_res, True)
+            return True
+        return False  # no change done
+
     @staticmethod
     def _refs_from_sdk(conn, sdk_res):
         refs = {}

@@ -1,0 +1,42 @@
+- name: validate loaded resources
+  os_migrate.os_migrate.validate_resource_files:
+    paths:
+      - "{{ os_migrate_data_dir }}/users_keypairs.yml"
+  register: users_keypairs_file_validation
+  when: import_users_keypairs_validate_file
+
+- name: stop when errors found
+  ansible.builtin.fail:
+    msg: "{{ users_keypairs_file_validation.errors|join(' ') }}"
+  when: not ( users_keypairs_file_validation.ok | bool )
+
+- name: read users' keypairs resource file
+  os_migrate.os_migrate.read_resources:
+    path: "{{ os_migrate_data_dir }}/users_keypairs.yml"
+  register: read_users_keypairs
+
+- name: filter users' keypairs to import based on user name
+  ansible.builtin.set_fact:
+    filtered_users_keypairs: "{{ (
+      read_users_keypairs.resources
+        | os_migrate.os_migrate.stringfilter(os_migrate_users_filter,
+                                             attribute='params.user_ref.name') ) }}"
+
+- name: filter users' keypairs to import based on keypair name
+  ansible.builtin.set_fact:
+    filtered_users_keypairs: "{{ (
+      filtered_users_keypairs
+        | os_migrate.os_migrate.stringfilter(os_migrate_keypairs_filter,
+                                             attribute='params.name') ) }}"
+
+- name: import users_keypairs
+  os_migrate.os_migrate.import_keypair:
+    auth: "{{ os_migrate_dst_auth }}"
+    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+    data: "{{ item }}"
+    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+  loop: "{{ filtered_users_keypairs }}"

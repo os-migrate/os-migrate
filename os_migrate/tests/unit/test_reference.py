@@ -11,7 +11,7 @@ class TestReference(unittest.TestCase):
 
     def test_user_id_with_auth(self):
         ref = {
-            'project_name': '%auth%',
+            'project_name': None,
             'name': '%auth%',
             'domain_name': '%auth%',
         }
@@ -22,7 +22,7 @@ class TestReference(unittest.TestCase):
 
     def test_user_ref_with_auth(self):
         expected_ref = {
-            'project_name': '%auth%',
+            'project_name': None,
             'name': '%auth%',
             'domain_name': '%auth%',
         }

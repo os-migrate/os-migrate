@@ -15,6 +15,10 @@ Prerequisites
 
 -  OpenStack SDK version should be 0.36 or newer.
 
+   - If you plan to bulk export/import keypairs as admin on behalf of
+     other users (playbooks ``export_users_keypairs.yml`` and
+     ``import_users_keypairs.yml``), use OpenStack SDK 0.57 or newer.
+
 .. _installation-1:
 
 Installation
