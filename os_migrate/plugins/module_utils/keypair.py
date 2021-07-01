@@ -59,6 +59,15 @@ class Keypair(resource.Resource):
             return True
         return False  # no change done
 
+    def import_id(self):
+        res_type = self.data.get('type', None)
+        res_name = self.data.get('params', {}).get('name', None)
+        user_name = self.data.get('params', {}).get('user_ref', {}).get('name', '')
+        user_domain = self.data.get('params', {}).get('user_ref', {}).get('domain_name', '')
+        if res_type and res_name:
+            return '{0}:{1}:{2}:{3}'.format(res_type, res_name, user_name, user_domain)
+        return None
+
     @staticmethod
     def _refs_from_sdk(conn, sdk_res):
         refs = {}

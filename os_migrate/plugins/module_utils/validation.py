@@ -21,7 +21,7 @@ def get_errors_in_file_structs(file_structs, resrc_map=None):
     all_resources, errors = serialization.create_resources_from_struct(
         all_resource_structs, resrc_map)
 
-    errors.extend(_resource_duplicate_name_errors(all_resource_structs))
+    errors.extend(_resource_duplicate_name_errors(all_resources))
     errors.extend(_resource_data_errors(all_resources))
     return errors
 
@@ -40,24 +40,18 @@ def _resource_duplicate_name_errors(resources):
 
     Returns: A list of validation error messages. Empty if all is ok.
     """
-    # Nested dict tracking count of resources per type per name.
-    # E.g. { 'some.resource.Type': { 'some-resource-name': 2 } }
-    type_name_counts = {}
+    import_id_counts = {}
     for resource in resources:
-        r_type = resource.get('type', None)
-        r_name = resource.get('params', {}).get('name', None)
-        if r_type and r_name:
-            type_subdict = type_name_counts.setdefault(r_type, {})
-            count = type_subdict.get(r_name, 0)
-            type_subdict[r_name] = count + 1
+        import_id = resource.import_id()
+        if import_id:
+            count = import_id_counts.get(import_id, 0)
+            import_id_counts[import_id] = count + 1
 
     errors = []
-
-    for type_, type_subdict in type_name_counts.items():
-        for name, count in type_subdict.items():
-            if count > 1:
-                errors.append(
-                    "Resource duplication: {0} resources of type '{1}' and "
-                    "name '{2}'.".format(count, type_, name))
+    for import_id, count in import_id_counts.items():
+        if count > 1:
+            errors.append(
+                "Resource duplication: {0} resources with import identity '{1}'. "
+                "This would result in duplicit imports.".format(count, import_id))
 
     return errors

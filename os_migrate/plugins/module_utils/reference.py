@@ -351,7 +351,7 @@ def user_ref(conn, id_, required=True, allow_auth=True):
     """
     if allow_auth and id_ == conn.current_user_id:
         return {
-            'project_name': '%auth%',
+            'project_name': None,
             'name': '%auth%',
             'domain_name': '%auth%',
         }

@@ -254,6 +254,34 @@ class Resource():
         id_ = info.get('id', '')
         return "{0}:{1}:{2}".format(self.resource_type, name, id_)
 
+    def import_id(self):
+        """Get an identity string (somewhat human readable) of the resource
+        for import purposes. Trying to import two resources with the
+        same import identity means that they would not import as
+        separate resources, but rather the 2nd import would try to
+        update the resource created by the 1st import (if updating is
+        applicable to a given resource type). This generally
+        constitues an invalid scenario that should be caught by a
+        validation.
+
+        The default ID is constructed from type and name, but some
+        resources may need to override this with custom behavior.
+
+        If the ID cannot be constructed, None is returned. This
+        generally means that the validation of the resource should
+        fail due to a different reason than duplicity, and the message
+        about duplicity (e.g. due to multiple resources missing type
+        or name fields) would just be distracting from the root cause.
+
+        Returns: string import ID of the resource or None if the ID
+        cannot be constructed
+        """
+        res_type = self.data.get('type', None)
+        res_name = self.data.get('params', {}).get('name', None)
+        if res_type and res_name:
+            return '{0}:{1}'.format(res_type, res_name)
+        return None
+
     def dst_prerequisites_errors(self, conn, filters=None):
         """Get messages for unmet destination cloud prerequisites.
 
