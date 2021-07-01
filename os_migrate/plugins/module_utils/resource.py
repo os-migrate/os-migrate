@@ -192,12 +192,12 @@ class Resource():
     # Must be overriden in child class if `create_or_update` isn't
     # overriden.
     @classmethod
-    def _update_sdk_res(cls, conn, name_or_id, sdk_params):
-        """Update the OpenStack resource which matches a Resource subclass and
-        is identified by `name_or_id`, use `sdk_params` for the
-        update method call.
+    def _update_sdk_res(cls, conn, sdk_res, sdk_params):
+        """Update the enclosed OpenStack resource `sdk_res`, use `sdk_params`
+        for the update method call.
 
         Returns: OpenStack SDK object
+
         """
         raise NotImplementedError("_update_sdk_res not implemented for {0}."
                                   .format(cls))

@@ -52,7 +52,7 @@ class FakeResource(resource.Resource):
         }
 
     @staticmethod
-    def _update_sdk_res(conn, name_or_id, sdk_params):
+    def _update_sdk_res(conn, sdk_res, sdk_params):
         return valid_fakeresource_sdk()
 
 

@@ -44,7 +44,7 @@ class MinimalResource(resource.Resource):
         return valid_minimalresource_data()
 
     @staticmethod
-    def _update_sdk_res(conn, name_or_id, sdk_params):
+    def _update_sdk_res(conn, sdk_res, sdk_params):
         return valid_minimalresource_data()
 
 
