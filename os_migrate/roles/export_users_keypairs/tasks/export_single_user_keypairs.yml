@@ -1,4 +1,4 @@
-- name: scan available keypairs
+- name: scan available keypairs for {{ export_user['name'] }} ({{ export_user['id'] }})
   os_migrate.os_migrate.os_keypairs_info:
     auth: "{{ os_migrate_src_auth }}"
     auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"

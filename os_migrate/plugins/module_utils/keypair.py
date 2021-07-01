@@ -94,3 +94,13 @@ class Keypair(resource.Resource):
     def _update_sdk_res(conn, sdk_res, sdk_params):
         # openstack.compute.v2.keypair.Keypair does not support update
         return sdk_res
+
+    def _is_same_resource(self, target_data):
+        # For keys, IDs are typically the same as names, so we cannot
+        # rely on IDs being unique. We have to track identity by
+        # looking at ID + user_ref tuple.
+        ids_match = (self.data[const.RES_INFO].get('id', '__undefined1__') ==
+                     target_data[const.RES_INFO].get('id', '__undefined2__'))
+        user_refs_match = (self.data[const.RES_PARAMS].get('user_ref', '__undefined1__') ==
+                           target_data[const.RES_PARAMS].get('user_ref', '__undefined2__'))
+        return ids_match and user_refs_match

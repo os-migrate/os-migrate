@@ -1,5 +1,12 @@
 ### EXPORT IDEMPOTENCE ###
 
+# With keypairs, user name matters for idempotency check when exporting
+- name: revert destination user name before re-export
+  ansible.builtin.replace:
+    path: "{{ os_migrate_data_dir }}/users_keypairs.yml"
+    regexp: "name: osmdst_user$"
+    replace: "name: osm_user"
+
 - ansible.builtin.include_role:
     name: os_migrate.os_migrate.export_users_keypairs
   vars:
