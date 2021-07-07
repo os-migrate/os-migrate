@@ -91,9 +91,12 @@ fi
 python ./scripts/check_fqcn.py
 
 # Ansible lint
-find ./ \
-     -not -wholename ".tox/*" \
-     -and -not -wholename "./local/*" \
-     -and -not -wholename "./tests/func/tmp/*" \
-     -and -name "*.yml" -print0 \
-    | xargs -0 ansible-lint
+# runtime.yml is skipped until ansible-lint is compatible with it
+find \
+    ./os_migrate \
+    ./tests \
+    -name "*.yml" \
+    -and -not -wholename "./os_migrate/meta/runtime.yml" \
+    -and -not -wholename "./tests/func/tmp/*" \
+    -print0 \
+    | xargs -0 ansible-lint --exclude=os_migrate/meta/runtime.yml
