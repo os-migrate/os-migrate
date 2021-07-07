@@ -1,12 +1,12 @@
 # runtime
 ansible>=2.9.1,<2.10
-# openstacksdk pin for https://github.com/os-migrate/os-migrate/issues/350
-openstacksdk>=0.39.0,<0.53
+openstacksdk
 
 # test
 ansible-lint==4.1.0
 bashate>=2.0.0
 flake8==3.7.7
+openstackclient>=0.5.5
 pylint>=2.4.0
 pytest-xdist>=1.30.0
 pycodestyle>=2.5.0

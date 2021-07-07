@@ -27,8 +27,8 @@ class TestValidation(unittest.TestCase):
         minimal2[const.RES_INFO]['id'] = 'uuid-minimal-2'
         resources.append(minimal2)
         self.assertEqual(
-            ["Resource duplication: 2 resources of type 'openstack.Minimal' "
-             "and name 'minimal'."],
+            ["Resource duplication: 2 resources with import identity 'openstack.Minimal:minimal'. "
+             "This would result in duplicit imports."],
             validation.get_errors_in_file_structs([file_struct], self.resrc_map))
 
     def test_get_errors_in_file_structs_duplication_multi(self):
@@ -36,8 +36,8 @@ class TestValidation(unittest.TestCase):
         file_struct2 = fixtures.minimal_resource_file_struct()
 
         self.assertEqual(
-            ["Resource duplication: 2 resources of type 'openstack.Minimal' "
-             "and name 'minimal'."],
+            ["Resource duplication: 2 resources with import identity 'openstack.Minimal:minimal'. "
+             "This would result in duplicit imports."],
             validation.get_errors_in_file_structs(
                 [file_struct1, file_struct2], self.resrc_map))
 

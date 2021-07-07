@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
@@ -491,6 +490,7 @@ class OpenStackSourceHost(OpenStackHostBase):
             else:
                 raise RuntimeError('Timed out starting nbdkit exports!')
 
+            # pylint: disable=unnecessary-dict-index-lookup
             self.volume_map[path]['port'] = port
             self.log.info('Volume map so far: %s', self.volume_map)
 

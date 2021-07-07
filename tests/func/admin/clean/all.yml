@@ -1,3 +1,11 @@
+- name: Include user keypair tasks
+  ansible.builtin.include_tasks: user_keypair.yml
+  args:
+    apply:
+      tags:
+        - test_user_keypair
+  tags: always
+
 - name: Include user tasks
   ansible.builtin.include_tasks: user.yml
   args:
