@@ -221,6 +221,24 @@
 <div class="section" id="new">
 <h3>New<a class="headerlink" href="#new" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Import of users’ Nova keypairs as admin. [Jiri Stransky]</p>
+<p>Import of Nova keypairs can now be done for other users as well,
+provided that the authenticated user running the playbook is
+authorized to read and create keys for other users (an admin
+user is typically authorized to do that). The playbook to perform this
+import is called <cite>import_users_keypairs.yml</cite>.</p>
+<p>Both <cite>os_migrate_users_filter</cite> and <cite>os_migrate_keypairs_filter</cite>
+variables are respected when iterating over users and their keypairs.</p>
+</li>
+<li><p>Export of users’ Nova keypairs as admin. [Jiri Stransky]</p>
+<p>Export of Nova keypairs can now be done for other users as well,
+provided that the authenticated user running the playbook is
+authorized to list users and their keys and read those keys (an admin
+user is typically authorized to do that). The playbook to perform this
+export is called <cite>export_users_keypairs.yml</cite>.</p>
+<p>Both <cite>os_migrate_users_filter</cite> and <cite>os_migrate_keypairs_filter</cite>
+variables are respected when iterating over users and their keypairs.</p>
+</li>
 <li><p>Delete volumes when deleting the conversion hosts. [Carlos Camacho]</p>
 <p>This commit adds the hability to remove automatically
 the volume created with the conversion host once
@@ -231,6 +249,11 @@ the VM is destroyed.</p>
 <div class="section" id="changes">
 <h3>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Stop capping recommended OpenStack SDK on 0.52. [Jiri Stransky]</p>
+<p>The security groups bug [1] introduced in OpenStack SDK 0.53 has been
+fixed, we start recommending and testing with the latest SDK again.</p>
+<p>[1] <a class="reference external" href="https://storyboard.openstack.org/#!/story/2008577">https://storyboard.openstack.org/#!/story/2008577</a></p>
+</li>
 <li><p>Increase the linelenght for the lint tests. [Carlos Camacho]</p>
 <p>Lint tests are failing with the line lenght &lt;=100.
 This commits increases the limit to 150.</p>
@@ -249,6 +272,26 @@ conversion_hosts_src and conversion_hosts_dst</p>
 <div class="section" id="fix">
 <h3>Fix<a class="headerlink" href="#fix" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Consider same-named keys for different users as valid for import.
+[Jiri Stransky]</p>
+<p>The OS Migrate import validation used resource type + name to define
+identity. This works as expected when working in project scope. But as
+we added keypair migration by admin on behalf of other users, and
+keypairs are scoped to users, having multiple keypairs of the same
+name is valid as long as they are owned by different users. This
+commit refactors validation mechanisms to support custom notions of
+import identity per resource type, and keypairs use a tuple of
+resource type + resource name + user name + user domain.</p>
+</li>
+<li><p>Allow exporting same-named keypairs for different users. [Jiri
+Stransky]</p>
+<p>Keypair IDs are typically the same as their names, they aren’t
+randomized UUIDs. We cannot rely on them for distinguishing
+uniqueneess on export and performing idempotency checks when exporting
+to a file which already contains some resources. The sameness check
+now uses ID + user_ref tuple, making it possible to export keys with
+the same ID values for mutliple users.</p>
+</li>
 <li><p>Conversion host network MTUs default to cloud defaults. [Jiri
 Stransky]</p>
 <p>Previously we had conversion host network MTUs decided by variables

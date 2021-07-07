@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Role - export_images &mdash; os-migrate  documentation</title>
+  <title>Role - import_users_keypairs &mdash; os-migrate  documentation</title>
   
 
   
@@ -41,8 +41,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Role - export_keypairs" href="role-export_keypairs.html" />
-    <link rel="prev" title="Role - export_flavors" href="role-export_flavors.html" /> 
+    <link rel="next" title="Role - import_workloads" href="role-import_workloads.html" />
+    <link rel="prev" title="Role - import_users" href="role-import_users.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -93,13 +93,7 @@
 <li class="toctree-l2"><a class="reference internal" href="role-conversion_host.html">Role - conversion_host</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-conversion_host_content.html">Role - conversion_host_content</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-export_flavors.html">Role - export_flavors</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Role - export_images</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#r-o-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">Role Documentation</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#r-o-l-e-d-e-f-a-u-l-t-s">Role Defaults</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="role-export_images.html">Role - export_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-export_keypairs.html">Role - export_keypairs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-export_networks.html">Role - export_networks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-export_projects.html">Role - export_projects</a></li>
@@ -122,7 +116,13 @@
 <li class="toctree-l2"><a class="reference internal" href="role-import_security_groups.html">Role - import_security_groups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-import_subnets.html">Role - import_subnets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-import_users.html">Role - import_users</a></li>
-<li class="toctree-l2"><a class="reference internal" href="role-import_users_keypairs.html">Role - import_users_keypairs</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Role - import_users_keypairs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#r-o-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">Role Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#r-o-l-e-d-e-f-a-u-l-t-s">Role Defaults</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="role-import_workloads.html">Role - import_workloads</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-prelude_dst.html">Role - prelude_dst</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-prelude_src.html">Role - prelude_src</a></li>
@@ -182,13 +182,13 @@
         
           <li><a href="../roles.html">Documented roles in os-migrate</a> &raquo;</li>
         
-      <li>Role - export_images</li>
+      <li>Role - import_users_keypairs</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../_sources/roles/role-export_images.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/roles/role-import_users_keypairs.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -201,26 +201,27 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="role-export-images">
-<h1>Role - export_images<a class="headerlink" href="#role-export-images" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="role-import-users-keypairs">
+<h1>Role - import_users_keypairs<a class="headerlink" href="#role-import-users-keypairs" title="Permalink to this headline">¶</a></h1>
+<p>This role is meant to be run with admin privileges. It exports Nova
+keypairs matching <code class="docutils literal notranslate"><span class="pre">os_migrate_keypairs_filter</span></code> for all users
+matching <code class="docutils literal notranslate"><span class="pre">os_migrate_users_filter</span></code>.</p>
+<p>When using this role, make sure you have recent enough OpenStack SDK
+(0.57+).</p>
 <div class="section" id="r-o-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">
 <h2>Role Documentation<a class="headerlink" href="#r-o-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n" title="Permalink to this headline">¶</a></h2>
-<p>The role export_images
-scans the available images in the
-source tenant, creates an id-name pairs
-of the resources to export, filters them
-based on a regular expression, and serializes
-the result in the output folder.</p>
-<p>Then if selected it will export the image blobs
-to the destination tenant.</p>
-<p>For further information about the role export_images refer to the
-<a href="https://os-migrate.github.io/os-migrate/roles/role-export_images.html">official docs</a>.</p><div class="section" id="r-o-l-e-d-e-f-a-u-l-t-s">
+<p>The role import_users_keypairs will validate the serialized data of
+the exported users' keypairs, will read the exported metadata, and it
+will create the resources in the destination tenant.</p>
+<p>For further information about the role import_users_keypairs refer to the
+<a href="https://os-migrate.github.io/os-migrate/roles/role-import_users_keypairs.html">official docs</a>.</p><div class="section" id="r-o-l-e-d-e-f-a-u-l-t-s">
 <h3>Role Defaults<a class="headerlink" href="#r-o-l-e-d-e-f-a-u-l-t-s" title="Permalink to this headline">¶</a></h3>
-<dd><p>This section highlights all of the defaults and variables set within the “export_images” role.</p>
+<dd><p>This section highlights all of the defaults and variables set within the “import_users_keypairs” role.</p>
 </dd>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_export_images_blobs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="nt">os_migrate_image_blobs_dir</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_data_dir</span><span class="nv"> </span><span class="s">}}/image_blobs&#39;</span>
-<span class="nt">os_migrate_images_filter</span><span class="p">:</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">import_users_keypairs_validate_file</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="nt">os_migrate_keypairs_filter</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
+<span class="nt">os_migrate_users_filter</span><span class="p">:</span>
 <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
 </pre></div>
 </div>
@@ -234,8 +235,8 @@ to the destination tenant.</p>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="role-export_keypairs.html" class="btn btn-neutral float-right" title="Role - export_keypairs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="role-export_flavors.html" class="btn btn-neutral float-left" title="Role - export_flavors" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="role-import_workloads.html" class="btn btn-neutral float-right" title="Role - import_workloads" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="role-import_users.html" class="btn btn-neutral float-left" title="Role - import_users" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
