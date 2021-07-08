@@ -1,4 +1,4 @@
-FROM docker.io/library/fedora:33
+FROM quay.io/fedora/fedora:33-x86_64
 RUN dnf install -y glibc-langpack-en
 ARG NO_VAGRANT=0
 ENV LANG en_US.UTF-8
