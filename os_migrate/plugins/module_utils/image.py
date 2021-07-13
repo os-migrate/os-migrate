@@ -180,7 +180,7 @@ def export_blob(conn, sdk_res, path):
     if os.path.exists(path):
         return False
 
-    chunk_size = 1024 * 1024  # 1 KB
+    chunk_size = 1024 * 1024  # 1 MiB
     checksum = hashlib.md5()
     try:
         with open(path, "wb") as image_file:
