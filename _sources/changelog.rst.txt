@@ -2,6 +2,13 @@ Changelog
 =========
 
 
+(unreleased)
+------------
+- Update comment in image.py. [Yaniv Kaul]
+
+  Fixes issue #437
+
+
 0.9.0 (2021-07-08)
 ------------------
 
