@@ -9,6 +9,7 @@ to another.
 
    install-from-galaxy.rst
    install-from-source.rst
+   upgrade.rst
    walkthrough.rst
    variables-guide.rst
    migration-params-guide.rst
