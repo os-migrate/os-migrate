@@ -41,8 +41,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Variables Guide" href="variables-guide.html" />
-    <link rel="prev" title="Installation from source (when customizing)" href="install-from-source.html" /> 
+    <link rel="next" title="General usage notes" href="usage-notes.html" />
+    <link rel="prev" title="Upgrading" href="upgrade.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -91,6 +91,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="README.html">OS Migrate User Documentation</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="install-from-galaxy.html">Installation from Galaxy (recommended)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install-from-source.html">Installation from source (when customizing)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upgrade.html">Upgrading</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">OS Migrate Walkthrough</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#authentication">Authentication</a></li>
@@ -118,9 +119,9 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="usage-notes.html">General usage notes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="variables-guide.html">Variables Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="migration-params-guide.html">Migration Parameters Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="README.html#general-usage-notes">General usage notes</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../roles.html">Documented roles in os-migrate</a></li>
@@ -281,7 +282,12 @@ will be removed automatically.</p>
 </div>
 <p>The file contains the source and destination tenant credentials, a
 directory on the migrator host (typically localhost) and a directory
-where the exported data will be saved. There can also</p>
+where the exported data will be saved.</p>
+<p><strong>If you are migrating content from multiple source projects, make
+sure to use a separate data directory for each source project.</strong> In
+other words, when changing <code class="docutils literal notranslate"><span class="pre">os_migrate_src_auth</span></code> or
+<code class="docutils literal notranslate"><span class="pre">os_migrate_src_region_name</span></code>, make sure to also change
+<code class="docutils literal notranslate"><span class="pre">os_migrate_data_dir</span></code>.</p>
 <div class="section" id="a-note-about-keystone-v2">
 <h4>A note about Keystone v2<a class="headerlink" href="#a-note-about-keystone-v2" title="Permalink to this headline">¶</a></h4>
 <p>As depicted in content of the previously defined <code class="docutils literal notranslate"><span class="pre">os-migrate-vars.yml</span></code>
@@ -632,8 +638,8 @@ conversion hosts via the delete_conversion_hosts playbook:</p>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="variables-guide.html" class="btn btn-neutral float-right" title="Variables Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="install-from-source.html" class="btn btn-neutral float-left" title="Installation from source (when customizing)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="usage-notes.html" class="btn btn-neutral float-right" title="General usage notes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="upgrade.html" class="btn btn-neutral float-left" title="Upgrading" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

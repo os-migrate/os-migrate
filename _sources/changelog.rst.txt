@@ -4,6 +4,12 @@ Changelog
 
 (unreleased)
 ------------
+- Oth: General usage notes and TLS variables docs. [Jiri Stransky]
+
+  The documentation is extended with a separate page for general usage
+  notes, and info about API TLS-related variables is added to the
+  variables guide.
+- Oth: Add upgrade documentation. [Jiri Stransky]
 - Update comment in image.py. [Yaniv Kaul]
 
   Fixes issue #437

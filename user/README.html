@@ -91,10 +91,11 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">OS Migrate User Documentation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="install-from-galaxy.html">Installation from Galaxy (recommended)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install-from-source.html">Installation from source (when customizing)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upgrade.html">Upgrading</a></li>
 <li class="toctree-l2"><a class="reference internal" href="walkthrough.html">OS Migrate Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage-notes.html">General usage notes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="variables-guide.html">Variables Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="migration-params-guide.html">Migration Parameters Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#general-usage-notes">General usage notes</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../roles.html">Documented roles in os-migrate</a></li>
@@ -181,15 +182,22 @@ to another.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install-from-source.html">Installation from source (when customizing)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upgrade.html">Upgrading</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="upgrade.html#collection-upgrade">Collection upgrade</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upgrade.html#usage-notes-related-to-upgrading">Usage notes related to upgrading</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="walkthrough.html">OS Migrate Walkthrough</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="walkthrough.html#prerequisites">Prerequisites</a></li>
 <li class="toctree-l2"><a class="reference internal" href="walkthrough.html#pre-workload-migration">Pre-workload migration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="walkthrough.html#workload-migration">Workload migration</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="usage-notes.html">General usage notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="variables-guide.html">Variables Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="variables-guide.html#general-variables">General variables</a></li>
 <li class="toctree-l2"><a class="reference internal" href="variables-guide.html#conversion-host-variables">Conversion host variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="variables-guide.html#openstack-rest-api-tls-variables">OpenStack REST API TLS variables</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="migration-params-guide.html">Migration Parameters Guide</a><ul>
@@ -197,19 +205,6 @@ to another.</p>
 <li class="toctree-l2"><a class="reference internal" href="migration-params-guide.html#workload-migration-parameters">Workload migration parameters</a></li>
 </ul>
 </li>
-</ul>
-</div>
-<div class="section" id="general-usage-notes">
-<h2>General usage notes<a class="headerlink" href="#general-usage-notes" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>Run against testing/staging clouds first, verify that you are getting
-the expected results.</p></li>
-<li><p>OS Migrate may not fit each use case out of the box. You can craft
-custom playbooks using the OS Migrate collection pieces (roles and
-modules) as building blocks.</p></li>
-<li><p>Use the same version of OS Migrate for export and import. We
-currently do not guarantee that data files are compatible across
-versions.</p></li>
 </ul>
 </div>
 </div>
