@@ -33,7 +33,7 @@ Usage notes related to upgrading
    export and import.**
 
 -  After upgrading, **clear any potential existing data files** from
-   your `os_migrate_data_dir`, or use a different one.
+   your ``os_migrate_data_dir``, or use a different one.
 
    During export, OS Migrate will attempt to parse exsiting data files
    (with the intention of adding new resources to them), and an error

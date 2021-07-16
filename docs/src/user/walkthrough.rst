@@ -96,7 +96,13 @@ Let’s create an ``os-migrate-vars.yml`` file with Ansible variables:
 
 The file contains the source and destination tenant credentials, a
 directory on the migrator host (typically localhost) and a directory
-where the exported data will be saved. There can also
+where the exported data will be saved.
+
+**If you are migrating content from multiple source projects, make
+sure to use a separate data directory for each source project.** In
+other words, when changing ``os_migrate_src_auth`` or
+``os_migrate_src_region_name``, make sure to also change
+``os_migrate_data_dir``.
 
 A note about Keystone v2
 ^^^^^^^^^^^^^^^^^^^^^^^^

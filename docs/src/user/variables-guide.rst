@@ -186,3 +186,26 @@ Ansible module. In OS Migrate they are named as follows::
     os_migrate_conversion_rhsm_server_proxy_user
     os_migrate_conversion_rhsm_syspurpose
     os_migrate_conversion_rhsm_username
+
+
+OpenStack REST API TLS variables
+--------------------------------
+
+If either of your clouds uses TLS endpoints that are not trusted by
+the Migrator host by default (e.g. using self-signed certificates), or
+if the Migrator host should authenticate itself via key+cert, you will
+need to set TLS-related variables.
+
+-  ``os_migrate_src_validate_certs`` / ``os_migrate_dst_validate_certs`` -
+   Setting these to ``false`` disables certificate validity checks of
+   the source/destination API endpoints.
+
+-  ``os_migrate_src_ca_cert`` / ``os_migrate_dst_ca_cert`` - These
+   variables allow you to specify a custom CA certificate that should
+   be used to validate the source/destination API certificates.
+
+-  ``os_migrate_src_client_cert``, ``os_migrate_src_client_key`` /
+   ``os_migrate_dst_client_cert``, ``os_migrate_dst_client_key`` - If the
+   Migrator host should authenticate itself using a TLS key +
+   certificate when talking to source/destination APIs, set these
+   variables.
