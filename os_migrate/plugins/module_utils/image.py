@@ -29,6 +29,7 @@ class Image(resource.Resource):
         'schema',
         'size',
         'status',
+        'store',
         'updated_at',
         'url',
         'virtual_size',
@@ -74,7 +75,6 @@ class Image(resource.Resource):
         'os_type',
         'os_version',
         'properties',
-        'store',
         'visibility',
         'vm_mode',
         'vmware_adaptertype',
@@ -88,6 +88,14 @@ class Image(resource.Resource):
         'kernel_id',
         'ramdisk_id',
     ]
+
+    # Some parameters are allowed when reading an image resource but not when
+    # creating or updating it.  This list of parameter names is purged from the parameter
+    # list before calling create or update and removed from object properties when reading from sdk
+    # Attribute 'stores' is read-only now. Due to bug https://bugs.launchpad.net/glance/+bug/1889676 glance now
+    # sets stores as a read only property. As such we should remove it from any create or update calls.
+    # An existing pattern is to use the readonly_sdk_params list to do this.
+    readonly_sdk_params = ["store", "stores"]
 
     @classmethod
     def from_sdk(cls, conn, sdk_resource):
@@ -172,7 +180,8 @@ class Image(resource.Resource):
         # Special Glance thing - properties should be specified as
         # kwargs.
         for key, val in (sdk_params.get('properties') or {}).items():
-            sdk_params[key] = val
+            if key not in self.readonly_sdk_params:
+                sdk_params[key] = val
         return sdk_params
 
 
