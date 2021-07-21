@@ -89,22 +89,29 @@ class Image(resource.Resource):
         'ramdisk_id',
     ]
 
-    # Some parameters are allowed when reading an image resource but not when
-    # creating or updating it.  This list of parameter names is purged from the parameter
-    # list before calling create or update and removed from object properties when reading from sdk
-    # Attribute 'stores' is read-only now. Due to bug https://bugs.launchpad.net/glance/+bug/1889676 glance now
-    # sets stores as a read only property. As such we should remove it from any create or update calls.
-    # An existing pattern is to use the readonly_sdk_params list to do this.
-    readonly_sdk_params = ["store", "stores"]
-
     @classmethod
     def from_sdk(cls, conn, sdk_resource):
         obj = super().from_sdk(conn, sdk_resource)
         params = obj.params()
-        # We need to remove 'self' from properties as it would break
-        # idempotency check and it's not really a property anyway.
-        if 'self' in (params.get('properties') or {}).keys():
-            del params['properties']['self']
+
+        # The SDK returns a dict with key 'properties' whose value is also a dict, when later
+        # (in method _to_sdk_params) calling create or update the keys and values of the 'properties' dict are
+        # copied as paramaters. This is not appropriate for all keys of the 'properties' dict as attempting to
+        # modify some image properties will cause the entire request to fail with a 403 (Forbidden) response
+        # code. As such we delete these keys from the 'properties' dict. Below is the current list we delete.
+        #
+        # * 'stores'
+        #   Attribute 'stores' is read-only now. Due to bug https://bugs.launchpad.net/glance/+bug/1889676 glance now
+        #   sets stores as a read only property. As such we should remove it from any create or update calls.
+        # * 'self'
+        #   We need to remove 'self' from properties as it would break
+        #   idempotency check and it's not really a property anyway.
+        readonly_properties = ['self', 'stores']
+
+        # cast .keys() to list to avoid 'dictionary changed size during iteration' error
+        for key in list((params.get('properties') or {}).keys()):
+            if key in readonly_properties:
+                del params['properties'][key]
         return obj
 
     def create_or_update(self, conn, blob_path, filters=None):
@@ -180,8 +187,7 @@ class Image(resource.Resource):
         # Special Glance thing - properties should be specified as
         # kwargs.
         for key, val in (sdk_params.get('properties') or {}).items():
-            if key not in self.readonly_sdk_params:
-                sdk_params[key] = val
+            sdk_params[key] = val
         return sdk_params
 
 
