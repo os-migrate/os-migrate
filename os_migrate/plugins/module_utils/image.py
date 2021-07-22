@@ -29,6 +29,7 @@ class Image(resource.Resource):
         'schema',
         'size',
         'status',
+        'store',
         'updated_at',
         'url',
         'virtual_size',
@@ -74,7 +75,6 @@ class Image(resource.Resource):
         'os_type',
         'os_version',
         'properties',
-        'store',
         'visibility',
         'vm_mode',
         'vmware_adaptertype',
@@ -93,10 +93,25 @@ class Image(resource.Resource):
     def from_sdk(cls, conn, sdk_resource):
         obj = super().from_sdk(conn, sdk_resource)
         params = obj.params()
-        # We need to remove 'self' from properties as it would break
-        # idempotency check and it's not really a property anyway.
-        if 'self' in (params.get('properties') or {}).keys():
-            del params['properties']['self']
+
+        # The SDK returns a dict with key 'properties' whose value is also a dict, when later
+        # (in method _to_sdk_params) calling create or update the keys and values of the 'properties' dict are
+        # copied as paramaters. This is not appropriate for all keys of the 'properties' dict as attempting to
+        # modify some image properties will cause the entire request to fail with a 403 (Forbidden) response
+        # code. As such we delete these keys from the 'properties' dict. Below is the current list we delete.
+        #
+        # * 'stores'
+        #   Attribute 'stores' is read-only now. Due to bug https://bugs.launchpad.net/glance/+bug/1889676 glance now
+        #   sets stores as a read only property. As such we should remove it from any create or update calls.
+        # * 'self'
+        #   We need to remove 'self' from properties as it would break
+        #   idempotency check and it's not really a property anyway.
+        readonly_properties = ['self', 'stores']
+
+        # cast .keys() to list to avoid 'dictionary changed size during iteration' error
+        for key in list((params.get('properties') or {}).keys()):
+            if key in readonly_properties:
+                del params['properties'][key]
         return obj
 
     def create_or_update(self, conn, blob_path, filters=None):
