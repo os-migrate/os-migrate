@@ -4,6 +4,27 @@ Changelog
 
 (unreleased)
 ------------
+
+Fix
+~~~
+- Glance API attribute 'stores' is read-only now (#443) [Philip Roche]
+
+  Fix: Glance API attribute 'stores' is read-only now
+
+  Due to bug https://bugs.launchpad.net/glance/+bug/1889676 glance now
+  sets stores as a read only property. As such we should remove it from
+  any create image calls.
+
+  See https://github.com/openstack/glance/commit/e1f0e94b90b162b1cdca5bdd7af3c09a90ca80ac#diff-3a53e94e6a14f08e4e3305f4e4388819cef4f35a9277afeab2f07bc2664489d6
+  for the Glance API change and also see conversation on
+  terraform-provider-openstack repo @
+  https://github.com/terraform-provider-openstack/terraform-provider-openstack/issues/1091#issuecomment-806003499
+  for some related context.
+
+  This bug was found when testing e2e tests using an infrared deployed Openstack 16.1.
+
+Other
+~~~~~
 - Oth: General usage notes and TLS variables docs. [Jiri Stransky]
 
   The documentation is extended with a separate page for general usage
