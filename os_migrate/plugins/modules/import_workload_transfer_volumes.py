@@ -282,6 +282,8 @@ from ansible.module_utils.openstack \
     import openstack_full_argument_spec, openstack_cloud_from_module
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import server
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils.server_volume \
+    import ServerVolume
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils.workload_common \
     import OpenStackHostBase, RemoteShell, use_lock, ATTACH_LOCK_FILE_DESTINATION, DEFAULT_TIMEOUT, DEVNULL
@@ -297,7 +299,7 @@ import time
 class OpenStackDestinationHost(OpenStackHostBase):
     def __init__(self, openstack_connection, destination_conversion_host_id,
                  ssh_key_path, ssh_user, transfer_uuid, source_conversion_host_address,
-                 volume_map, destination_conversion_host_address=None,
+                 volume_map, ser_server, destination_conversion_host_address=None,
                  state_file=None, log_file=None, timeout=DEFAULT_TIMEOUT):
 
         super().__init__(
@@ -325,6 +327,8 @@ class OpenStackDestinationHost(OpenStackHostBase):
         # SSH tunnel process
         self.forwarding_process = None
         self.forwarding_process_command = None
+
+        self.ser_server = ser_server
 
     def transfer_exports(self):
         try:
@@ -409,11 +413,25 @@ class OpenStackDestinationHost(OpenStackHostBase):
         and fill in dest_id with the new volumes.
         """
         self.log.info('Creating volumes on destination cloud')
+        volumes = list(map(ServerVolume.from_data, self.ser_server.params()['volumes']))
+        src_id_volumes = {vol.info()['id']: vol for vol in volumes}
         for path, mapping in self.volume_map.items():
-            new_volume = self.conn.create_volume(
-                name=mapping['name'], bootable=mapping['bootable'],
-                description=mapping['description'], size=mapping['size'],
-                wait=True, timeout=self.timeout)
+            source_id = mapping['source_id']
+            sdk_params = {
+                'name': mapping['name'],
+                'bootable': mapping['bootable'],
+                'description': mapping['description'],
+                'size': mapping['size'],
+                'wait': True,
+                'timeout': self.timeout,
+            }
+            # Boot volume may not be present in the src_id_volumes in
+            # case we're using 'boot_disk_copy: true' on a source
+            # server which is boot-from-image. Setting params on such
+            # devices is TBD.
+            if source_id in src_id_volumes:
+                sdk_params.update(src_id_volumes[source_id].sdk_params(self.conn))
+            new_volume = self.conn.create_volume(**sdk_params)
             self.volume_map[path]['dest_id'] = new_volume.id
 
     @use_lock(ATTACH_LOCK_FILE_DESTINATION)
@@ -556,8 +574,8 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    src = server.Server.from_data(module.params['data'])
-    params, info = src.params_and_info()
+    ser_server = server.Server.from_data(module.params['data'])
+    params, info = ser_server.params_and_info()
 
     # Required parameters
     destination_conversion_host_id = module.params['conversion_host']['id']
@@ -583,6 +601,7 @@ def run_module():
         transfer_uuid,
         source_conversion_host_address,
         volume_map,
+        ser_server,
         destination_conversion_host_address=destination_conversion_host_address,
         state_file=state_file,
         log_file=log_file,
