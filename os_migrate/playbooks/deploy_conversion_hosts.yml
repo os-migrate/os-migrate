@@ -70,6 +70,18 @@
 - hosts: conversion_hosts
   any_errors_fatal: true
   tasks:
+    - name: enable ssh_user password access to the conversion hosts
+      ansible.builtin.include_role:
+        name: os_migrate.os_migrate.conversion_host
+        tasks_from: enable_password_access.yml
+      when: os_migrate_conversion_host_ssh_user_enable_password_access|default(false)|bool
+  vars:
+    ansible_become_user: root
+    ansible_become: true
+
+- hosts: conversion_hosts
+  any_errors_fatal: true
+  tasks:
     - name: install the conversion host content
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host_content
