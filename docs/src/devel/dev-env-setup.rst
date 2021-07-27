@@ -178,3 +178,216 @@ e.g.:
 ::
 
    OS_MIGRATE_FUNC_TEST_ARGS='--tags test_network,test_subnet --skip-tags test_clean_after' ./toolbox/run make test-func
+
+Running e2e tests
+-----------------
+
+OS Migrate also has a suite of end to end, e2e, tests which tests a migration from one existing openstack deployment
+to another existing openstack deployment.
+
+You can also test with a single existing openstack deployment migrating from one project to another.
+
+These docs cover the testing of a single existing openstack deployment migrating from one project to another scenario.
+
+The concepts and prerequisites are the same for other deployments.
+
+Prerequisites for e2e test
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* Source environment credentials
+* Destination environment credentials
+* Existing images in both source and destination environments
+* Flavors
+* Space requirements
+  - 2 images totalling 1.25GB
+  - 1 volume totalling 1GiB in source environment
+  - 2 volumes totalling 5GiB in destination environment
+  - 2 VMs totalling 35GB disk usage in each environment
+
+Below are the steps required to satisfy the above requirements and run e2e tests in a test environment, migrating
+resources from one project to another.
+
+Create source environment and destination environment projects and users
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block::
+
+    # Create the src user in the default domain with password 'redhat'
+    openstack user create --domain default --password redhat src
+
+    # Create the src project
+    openstack project create --domain default src
+
+    # Assign src user a 'member' role in the src project
+    openstack role add \
+    --user src --user-domain default \
+    --project src --project-domain default member
+
+    # Confirm role assignment was successful
+    openstack role assignment list --project src
+
+    # Create the dst user in the default domain with password 'redhat'
+    openstack user create --domain default --password redhat dst
+
+    # Create the dst project
+    openstack project create --domain default dst
+
+    # Assign dst user a 'member' role in the src project
+    openstack role add \
+    --user dst --user-domain default \
+    --project dst --project-domain default member
+
+    # Confirm role assignment was successful
+    openstack role assignment list --project dst
+
+Create images
+^^^^^^^^^^^^^
+
+.. code-block::
+
+    # Download images
+    wget https://cloud.centos.org/centos/8-stream/x86_64/images/CentOS-Stream-GenericCloud-8-20210603.0.x86_64.qcow2
+    wget http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img
+
+    # Create images in glance from these downloads
+    openstack image create --public --disk-format qcow2 --file \
+        CentOS-Stream-GenericCloud-8-20210603.0.x86_64.qcow2 CentOS-Stream-GenericCloud-8-20210603.0.x86_64.qcow2
+    openstack image create --public --disk-format raw --file cirros-0.4.0-x86_64-disk.img cirros-0.4.0-x86_64-disk.img
+
+Create flavors
+^^^^^^^^^^^^^^
+
+.. code-block::
+
+    openstack flavor create --public --id auto \
+    --ram 256 --disk 5 --vcpus 1 --rxtx-factor 1 m1.xtiny
+
+    openstack flavor create --public --id auto \
+    --ram 512 --disk 30 --vcpus 2 --rxtx-factor 1 m1.large
+
+Sample e2e config yaml using the above prerequisites
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Also see https://github.com/os-migrate/os-migrate/blob/main/tests/e2e/tenant/scenario_variables.yml
+
+Auth URLs and network names will change based on your environment.
+
+.. code-block::
+
+    os_migrate_src_auth:
+      auth_url: http://10.0.0.131:5000/v3
+      password: redhat
+      project_domain_name: Default
+      project_name: src
+      user_domain_name: Default
+      username: src
+    os_migrate_src_region_name: regionOne
+    os_migrate_dst_auth:
+      auth_url: http://10.0.0.131:5000/v3
+      password: redhat
+      project_domain_name: Default
+      project_name: dst
+      user_domain_name: Default
+      username: dst
+    os_migrate_dst_region_name: regionOne
+
+    os_migrate_data_dir: /root/os_migrate/local/migrate-data
+
+    os_migrate_conversion_host_ssh_user: centos
+    os_migrate_conversion_external_network_name: nova
+    os_migrate_conversion_flavor_name: m1.large
+    os_migrate_conversion_image_name: CentOS-Stream-GenericCloud-8-20210603.0.x86_64.qcow2
+
+    os_migrate_src_osm_server_flavor: m1.xtiny
+    os_migrate_src_osm_server_image: cirros-0.4.0-x86_64-disk.img
+    os_migrate_src_osm_router_external_network: nova
+
+    os_migrate_src_validate_certs: False
+    os_migrate_dst_validate_certs: False
+
+    os_migrate_src_release: 16
+    os_migrate_dst_release: 16
+
+    os_migrate_src_conversion_net_mtu: 1400
+    os_migrate_dst_conversion_net_mtu: 1400
+
+Run e2e test using the OS Migrate toolbox and the above config
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Copy the above config to file `custom-config.yaml` in the `local` directory of your local `os-migrate` source.
+
+Run the full test suite using the above config.
+
+.. code-block::
+
+   OS_MIGRATE_E2E_TEST_ARGS='-e @/root/os_migrate/local/custom-config.yaml' ./toolbox/run make test-e2e-tenant
+
+
+Expected output from successful e2e test run
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block::
+
+    PLAY RECAP ********************************************************************************************************
+    localhost                  : ok=318  changed=110  unreachable=0    failed=0    skipped=27   rescued=0    ignored=0
+    os_migrate_conv_dst        : ok=12   changed=5    unreachable=0    failed=0    skipped=3    rescued=0    ignored=0
+    os_migrate_conv_src        : ok=12   changed=5    unreachable=0    failed=0    skipped=3    rescued=0    ignored=0
+
+    Wednesday 21 July 2021  09:59:17 +0000 (0:00:03.419)       0:29:17.016 ********
+    ===============================================================================
+    os_migrate.os_migrate.conversion_host_content : update all packages --------------------------------------- 435.56s
+    os_migrate.os_migrate.import_workloads : transfer volumes to destination ---------------------------------- 101.72s
+    os_migrate.os_migrate.import_workloads : expose source volumes --------------------------------------------- 66.67s
+    os_migrate.os_migrate.conversion_host_content : install content -------------------------------------------- 62.35s
+    os_migrate.os_migrate.import_workloads : transfer volumes to destination ----------------------------------- 58.75s
+    os_migrate.os_migrate.import_workloads : clean up in the source cloud after migration ---------------------- 27.40s
+    os_migrate.os_migrate.import_workloads : expose source volumes --------------------------------------------- 27.30s
+    Create osm_server ------------------------------------------------------------------------------------------ 24.71s
+    create osm_image ------------------------------------------------------------------------------------------- 23.86s
+    os_migrate.os_migrate.export_images : export image blobs --------------------------------------------------- 23.80s
+    os_migrate.os_migrate.import_images : import images -------------------------------------------------------- 23.69s
+    os_migrate.os_migrate.import_workloads : create destination instance --------------------------------------- 23.30s
+    os_migrate.os_migrate.import_workloads : create destination instance --------------------------------------- 21.93s
+    Create osm_server ------------------------------------------------------------------------------------------ 21.61s
+    os_migrate.os_migrate.import_workloads : clean up in the source cloud after migration ---------------------- 21.16s
+    os_migrate.os_migrate.conversion_host : create os_migrate conversion host ---------------------------------- 20.03s
+    Remove osm_server ------------------------------------------------------------------------------------------ 19.01s
+    os_migrate.os_migrate.conversion_host : create os_migrate conversion host ---------------------------------- 18.23s
+    Shutdown osm_server ---------------------------------------------------------------------------------------- 18.14s
+    Shutdown osm_server ---------------------------------------------------------------------------------------- 17.88s
+
+Optional tags to pass to e2e tests
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+There are a set of tags that can be used to filter which tasks to run during test.
+
+- test_clean_before
+- test_workload
+- test_image_workload_boot_copy
+- test_image_workload_boot_nocopy
+- test_image_workload_boot_copy_clean
+- test_clean_before
+- test_pre_workload
+
+Optional playbook variable
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+There is also an optional variable `test_clean_conversion_hosts_after` which can be set to `false` if you do not wish
+to clean up conversion hosts after test is complete.
+
+Environment variables
+^^^^^^^^^^^^^^^^^^^^^
+The following environment variables can be used when running e2e tests.
+
+- `OS_MIGRATE_E2E_TEST_ARGS`: All of the above tags and playbook variables can be set using the
+  `OS_MIGRATE_E2E_TEST_ARGS` environment variable. This variable is also used to pass in the playbook custom config
+  file. eg:
+
+      `OS_MIGRATE_E2E_TEST_ARGS='-e @/root/os_migrate/local/custom-config.yaml \
+      --tags test_clean_before,test_workload --skip-tags test_clean_after -e test_clean_conversion_hosts_after=false'`
+
+- `ROOT_DIR`: Absolute directory path to OS Migrate source. When not set the default when run using OS Migrate developer
+  toolbox this is set to `/root/os_migrate`.
+- `OS_MIGRATE`: Absolute directory path to the OS Migrate ansible collection. When not set the default when run using
+  os-migrate developer toolbox this is set to `/root/.ansible/collections/ansible_collections/os_migrate/os_migrate`.
+
+
+
