@@ -147,18 +147,27 @@ When using RHEL as conversion host, set the SSH user name as follows::
     os_migrate_conversion_host_ssh_user: cloud-user
 
 It is also necessary to set RHEL registration variables. The
-``os_migrate_conversion_rhsm_auto_attach`` variable is defaulted to
-``true``, others are defaulted to omitting.
+variables part of this role are set to ``omit`` by default.
+
+The variables `os_migrate_conversion_rhsm_auto_attach`
+and `os_migrate_conversion_rhsm_activationkey` are mutually
+exclusive, given that, they are both defaulted to omit.
 
 Typically the only registration variables to set are::
 
     os_migrate_conversion_rhsm_username
     os_migrate_conversion_rhsm_password
 
+In this case, `os_migrate_conversion_rhsm_auto_attach` should be set to `True`
+in order to fetch automatically the content once the node is registered.
+
 or::
 
     os_migrate_conversion_rhsm_activationkey
     os_migrate_conversion_rhsm_org_id
+
+For this case, `os_migrate_conversion_rhsm_auto_attach` must be left
+undefined with its default value of `omit`.
 
 The complete list of registration variables corresponds to the
 `redhat_subscription <https://docs.ansible.com/ansible/latest/collections/community/general/redhat_subscription_module.html>`_

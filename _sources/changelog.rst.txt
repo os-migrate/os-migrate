@@ -19,6 +19,16 @@ New
 
 Fix
 ~~~
+- In rhsm auto_attach once defaulted will always collide with
+  activationkey. [Carlos Camacho]
+
+  Once a variable is defaulted to an existing value it can not
+  be omited, auto_attach is defaulted to true so if activationkey
+  it can not be put back to omit.
+
+  omit is a special variable for omitting an individual argument
+  to a module with only that value, and once defined it can not
+  be omited again.
 - Glance API attribute 'stores' is read-only now (#443) [Philip Roche]
 
   Fix: Glance API attribute 'stores' is read-only now

@@ -311,18 +311,24 @@ or
 </pre></div>
 </div>
 <p>It is also necessary to set RHEL registration variables. The
-<code class="docutils literal notranslate"><span class="pre">os_migrate_conversion_rhsm_auto_attach</span></code> variable is defaulted to
-<code class="docutils literal notranslate"><span class="pre">true</span></code>, others are defaulted to omitting.</p>
+variables part of this role are set to <code class="docutils literal notranslate"><span class="pre">omit</span></code> by default.</p>
+<p>The variables <cite>os_migrate_conversion_rhsm_auto_attach</cite>
+and <cite>os_migrate_conversion_rhsm_activationkey</cite> are mutually
+exclusive, given that, they are both defaulted to omit.</p>
 <p>Typically the only registration variables to set are:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_conversion_rhsm_username</span>
 <span class="n">os_migrate_conversion_rhsm_password</span>
 </pre></div>
 </div>
+<p>In this case, <cite>os_migrate_conversion_rhsm_auto_attach</cite> should be set to <cite>True</cite>
+in order to fetch automatically the content once the node is registered.</p>
 <p>or:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_conversion_rhsm_activationkey</span>
 <span class="n">os_migrate_conversion_rhsm_org_id</span>
 </pre></div>
 </div>
+<p>For this case, <cite>os_migrate_conversion_rhsm_auto_attach</cite> must be left
+undefined with its default value of <cite>omit</cite>.</p>
 <p>The complete list of registration variables corresponds to the
 <a class="reference external" href="https://docs.ansible.com/ansible/latest/collections/community/general/redhat_subscription_module.html">redhat_subscription</a>
 Ansible module. In OS Migrate they are named as follows:</p>
