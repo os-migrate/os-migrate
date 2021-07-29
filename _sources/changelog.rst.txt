@@ -5,6 +5,18 @@ Changelog
 (unreleased)
 ------------
 
+New
+~~~
+- Allow ssh access to conversion host using a default password. [Carlos
+  Camacho]
+
+  This commit allows to configure a default password in both
+  centos and cloud-user users, this can help connecting directly
+  to the hosts with a default password disabled by default.
+
+  Added os_migrate_conversion_host_ssh_user_enable_password_access
+  disabled by default.
+
 Fix
 ~~~
 - Glance API attribute 'stores' is read-only now (#443) [Philip Roche]
