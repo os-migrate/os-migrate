@@ -7,6 +7,13 @@ Changelog
 
 New
 ~~~
+- Customizable attached volume properties in workload migration. [Jiri
+  Stransky]
+
+  Attached volumes are now exported in the 'params' section of workload
+  serialization, as nested resources. This allows editing these desired
+  properties of attached volumes that should be created in the
+  destination cloud: name, description, availability zone, volume type.
 - Allow ssh access to conversion host using a default password. [Carlos
   Camacho]
 

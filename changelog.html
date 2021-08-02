@@ -227,6 +227,13 @@
 <div class="section" id="new">
 <h3>New<a class="headerlink" href="#new" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Customizable attached volume properties in workload migration. [Jiri
+Stransky]</p>
+<p>Attached volumes are now exported in the ‘params’ section of workload
+serialization, as nested resources. This allows editing these desired
+properties of attached volumes that should be created in the
+destination cloud: name, description, availability zone, volume type.</p>
+</li>
 <li><p>Allow ssh access to conversion host using a default password. [Carlos
 Camacho]</p>
 <p>This commit allows to configure a default password in both
