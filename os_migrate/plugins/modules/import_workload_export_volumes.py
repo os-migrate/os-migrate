@@ -241,7 +241,8 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.openstack \
     import openstack_full_argument_spec, openstack_cloud_from_module
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils import server
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
+    import exc, server
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils.workload_common \
     import use_lock, ATTACH_LOCK_FILE_SOURCE, DEFAULT_TIMEOUT, OpenStackHostBase
@@ -310,6 +311,7 @@ class OpenStackSourceHost(OpenStackHostBase):
         """
         self._test_source_vm_shutdown()
         self._get_root_and_data_volumes()
+        self._validate_volumes_match_data(ser_srv)
         self._detach_data_volumes_from_source(ser_srv)
         self._attach_volumes_to_converter()
         self._export_volumes_from_converter()
@@ -347,6 +349,24 @@ class OpenStackSourceHost(OpenStackHostBase):
                 size=volume.size, port=None, url=None, progress=None,
                 bootable=volume.bootable, description=volume.description)
             self._update_progress(dev_path, 0.0)
+
+    def _validate_volumes_match_data(self, ser_srv):
+        """
+        Check that the volumes as exported into the workload metadata YAML
+        still match what is actually attached on the source VM, raise
+        an error if not.
+        """
+        scanned_volume_ids = set(map(lambda vol: vol['source_id'],
+                                     self.volume_map.values()))
+        data_volume_ids = set(map(lambda vol: vol.get('_info', {}).get('id'),
+                                  ser_srv.params()['volumes']))
+        if data_volume_ids != scanned_volume_ids:
+            message = (
+                "The scanned set of volumes on instance '{0}' is not the same "
+                "as in the exported data. Scanned: {1}. In data: {2}."
+                .format(self.source_instance_id, scanned_volume_ids, data_volume_ids)
+            )
+            raise exc.InconsistentState(message)
 
     def _detach_data_volumes_from_source(self, ser_srv):
         """
@@ -546,6 +566,9 @@ def run_module():
         boot_volume_prefix=boot_volume_prefix,
         timeout=timeout,
     )
+    # FIXME: Make ser_srv another initialization parameter of
+    # OpenStackSourceHost, it is also generally related to the whole
+    # workload migration and contains important data.
     source_host.prepare_exports(ser_srv)
     result['transfer_uuid'] = source_host.transfer_uuid
     result['volume_map'] = source_host.volume_map

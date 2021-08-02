@@ -147,7 +147,7 @@
       when:
         - prelim.changed
         - os_migrate_workload_cleanup_on_failure
-        - exports is defined
+        - exports is defined and 'volume_map' in exports
 
     - name: clean up in the destination cloud after migration failure
       os_migrate.os_migrate.import_workload_dst_failure_cleanup:
@@ -170,8 +170,8 @@
       when:
         - prelim.changed
         - os_migrate_workload_cleanup_on_failure
-        - exports is defined
-        - transfer is defined
+        - exports is defined and 'volume_map' in exports
+        - transfer is defined and 'volume_map' in transfer
 
     - ansible.builtin.fail:
         msg: "Failed to import {{ item.params.name }}."

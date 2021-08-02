@@ -111,14 +111,33 @@ def server_refs():
                 'domain_name': 'Default',
             },
         ],
-        'volume_attachments_info': [
+        'volumes': [
             {
-                'device': '/dev/vdb',
-                'id': 'uuid-test-volume-attachment',
-                'volume_id': 'uuid-test-volume',
-                'volume_name': 'test-volume',
-                'volume_project_id': 'uuid-test-project',
-            }
+                '_info': {
+                    'attachments': [
+                        {
+                            'attached_at': '2021-07-22T12:14:23.000000',
+                            'attachment_id': 'uuid-test-attachment',
+                            'device': '/dev/vdb',
+                            'host_name': 'compute-1.jistr-13.local',
+                            'id': 'uuid-test-volume',
+                            'server_id': 'uuid-test-server',
+                            'volume_id': 'uuid-test-volume',
+                        },
+                    ],
+                    'id': 'uuid-test-volume',
+                    'is_bootable': False,
+                    'size': 1,
+                },
+                '_migration_params': {},
+                'params': {
+                    'availability_zone': 'nova',
+                    'description': None,
+                    'name': 'test-volume',
+                    'volume_type': 'tripleo',
+                },
+                'type': 'openstack.network.ServerVolume',
+            },
         ],
     }
 

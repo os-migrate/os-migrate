@@ -11,6 +11,8 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils.server_float
     import server_floating_ips, ServerFloatingIP
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils.server_port \
     import server_ports, ServerPort
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils.server_volume \
+    import server_volumes, ServerVolume
 
 
 class Server(resource.Resource):
@@ -30,7 +32,6 @@ class Server(resource.Resource):
     info_from_refs = [
         'flavor_id',
         'security_group_ids',
-        'volume_attachments_info',
     ]
     params_from_sdk = [
         'availability_zone',
@@ -50,6 +51,7 @@ class Server(resource.Resource):
         'floating_ips',
         'image_ref',
         'security_group_refs',
+        'volumes',
     ]
     sdk_params_from_refs = [
         'flavor_id',
@@ -210,8 +212,9 @@ class Server(resource.Resource):
         ser_fips = map(lambda fip: ServerFloatingIP.from_sdk(conn, fip), sdk_fips)
         refs['floating_ips'] = list(map(lambda fip: fip.data, ser_fips))
 
-        # For _info only, not for usage within migration.
-        refs['volume_attachments_info'] = _volume_attachments_info(conn, sdk_res)
+        sdk_volumes = server_volumes(conn, sdk_res)
+        ser_volumes = map(lambda vol: ServerVolume.from_sdk(conn, vol), sdk_volumes)
+        refs['volumes'] = list(map(lambda vol: vol.data, ser_volumes))
 
         return refs
 
@@ -236,25 +239,6 @@ class Server(resource.Resource):
 
         refs['ports'] = params['ports']
         refs['floating_ips'] = params['floating_ips']
-
-        # For _info only, we don't need it when deserializing.
-        refs['volume_attachments_info'] = None
+        refs['volumes'] = params['volumes']
 
         return refs
-
-
-def _volume_attachments_info(conn, sdk_res):
-    """Return information about volume attachments. For debugging (_info)
-    purposes only, not intended for use within migration.
-    """
-    attachments = []
-    for attachment in conn.compute.volume_attachments(sdk_res):
-        volume = conn.block_storage.get_volume(attachment['volume_id'])
-        attachments.append({
-            'device': attachment['device'],
-            'id': attachment['id'],
-            'volume_id': attachment['volume_id'],
-            'volume_name': volume['name'],
-            'volume_project_id': volume['project_id'],
-        })
-    return attachments
