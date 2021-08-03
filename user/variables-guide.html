@@ -104,6 +104,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-flavor-name">Conversion host flavor name</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-image-name">Conversion host image name</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-rhel-variables">Conversion host RHEL variables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#enabling-password-based-ssh-access-to-the-conversion-hosts">Enabling password-based SSH access to the conversion hosts</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#openstack-rest-api-tls-variables">OpenStack REST API TLS variables</a></li>
@@ -356,6 +357,24 @@ Ansible module. In OS Migrate they are named as follows:</p>
 <span class="n">os_migrate_conversion_rhsm_username</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="enabling-password-based-ssh-access-to-the-conversion-hosts">
+<h3>Enabling password-based SSH access to the conversion hosts<a class="headerlink" href="#enabling-password-based-ssh-access-to-the-conversion-hosts" title="Permalink to this headline">¶</a></h3>
+<p>When required, a user can configure password-based SSH access to
+the conversion hosts, this feature might be useful for debugging
+when the private key of the hosts is not available anymore.</p>
+<p>The variables required in order to configure the password-based
+access are named as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_conversion_host_ssh_user_enable_password_access</span>
+<span class="n">os_migrate_conversion_host_ssh_user_password</span>
+</pre></div>
+</div>
+<p>The variable <cite>os_migrate_conversion_host_ssh_user_enable_password_access</cite>
+is set by default to <cite>false</cite>, and the variable
+<cite>os_migrate_conversion_host_ssh_user_password</cite> is set by default to the
+following string <cite>weak_password_disabled_by_default</cite>.</p>
+<p>The user enabled to access the conversion hosts with password-based authentication
+is the one defined in the <cite>os_migrate_conversion_host_ssh_user</cite> variable.</p>
 </div>
 </div>
 <div class="section" id="openstack-rest-api-tls-variables">

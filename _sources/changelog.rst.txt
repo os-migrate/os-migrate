@@ -54,6 +54,11 @@ Fix
 
 Other
 ~~~~~
+- Docs: Add password-based authentication variable docs. [Carlos
+  Camacho]
+
+  This commit adds the information for the ssh access using
+  password in the conversion hosts.
 - Oth: General usage notes and TLS variables docs. [Jiri Stransky]
 
   The documentation is extended with a separate page for general usage
