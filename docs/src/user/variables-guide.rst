@@ -196,6 +196,26 @@ Ansible module. In OS Migrate they are named as follows::
     os_migrate_conversion_rhsm_syspurpose
     os_migrate_conversion_rhsm_username
 
+Enabling password-based SSH access to the conversion hosts
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When required, a user can configure password-based SSH access to
+the conversion hosts, this feature might be useful for debugging
+when the private key of the hosts is not available anymore.
+
+The variables required in order to configure the password-based
+access are named as follows::
+
+    os_migrate_conversion_host_ssh_user_enable_password_access
+    os_migrate_conversion_host_ssh_user_password
+
+The variable `os_migrate_conversion_host_ssh_user_enable_password_access`
+is set by default to `false`, and the variable
+`os_migrate_conversion_host_ssh_user_password` is set by default to the
+following string `weak_password_disabled_by_default`.
+
+The user enabled to access the conversion hosts with password-based authentication
+is the one defined in the `os_migrate_conversion_host_ssh_user` variable.
 
 OpenStack REST API TLS variables
 --------------------------------
