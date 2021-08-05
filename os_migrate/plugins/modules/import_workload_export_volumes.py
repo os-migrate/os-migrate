@@ -221,7 +221,6 @@ volume_map:
     "volume_map": {
           "/dev/vda": {
               "bootable": True,
-              "description": "Boot device",
               "dest_dev": null,
               "dest_id": null,
               "image_id": null,
@@ -301,7 +300,6 @@ class OpenStackSourceHost(OpenStackHostBase):
         #   url:         Final NBD export on destination conversion host
         #   progress:    Transfer progress percentage
         #   bootable:    Boolean flag for boot disks
-        #   description: Volume description to pass through to destination
         self.volume_map = {}
 
         self.ser_server = ser_server
@@ -349,7 +347,7 @@ class OpenStackSourceHost(OpenStackHostBase):
                 source_dev=None, source_id=volume.id, dest_dev=None,
                 dest_id=None, snap_id=None, image_id=None, name=volume.name,
                 size=volume.size, port=None, url=None, progress=None,
-                bootable=volume.bootable, description=volume.description)
+                bootable=volume.bootable)
             self._update_progress(dev_path, 0.0)
 
     def _validate_volumes_match_data(self):
@@ -419,7 +417,7 @@ class OpenStackSourceHost(OpenStackHostBase):
                 source_dev=None, source_id=volume.id, dest_dev=None,
                 dest_id=None, snap_id=None, image_id=image.id, name=volume.name,
                 size=volume.size, port=None, url=None, progress=None,
-                bootable=volume.bootable, description=volume.description)
+                bootable=volume.bootable)
             self._update_progress('/dev/vda', 0.0)
         elif sourcevm.image and not self.ser_server.migration_params()['boot_disk_copy']:
             self.log.info('Image-based instance, boot_disk_copy disabled: skipping boot volume')

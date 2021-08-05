@@ -260,7 +260,6 @@ volume_map:
     "volume_map": {
         "/dev/vda": {
             "bootable": true,
-            "description": "",
             "dest_dev": "/dev/vdc",
             "dest_id": "3b7a57d7-8210-47f9-b592-a6627ae52d13",
             "image_id": null,
@@ -420,7 +419,6 @@ class OpenStackDestinationHost(OpenStackHostBase):
             sdk_params = {
                 'name': mapping['name'],
                 'bootable': mapping['bootable'],
-                'description': mapping['description'],
                 'size': mapping['size'],
                 'wait': True,
                 'timeout': self.timeout,
