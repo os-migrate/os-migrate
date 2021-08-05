@@ -26,6 +26,13 @@ New
 
 Fix
 ~~~
+- For resources that have name, reject migration of resources with empty
+  name. [Philip Roche]
+
+  For resources which have a name property validate that it is non empty.
+
+  This fixes an issue where resources with empty names are not included in the check
+  for uniqueness/idempotence. By checking for empty names we avoid this issue.
 - In rhsm auto_attach once defaulted will always collide with
   activationkey. [Carlos Camacho]
 

@@ -247,6 +247,12 @@ disabled by default.</p>
 <div class="section" id="fix">
 <h3>Fix<a class="headerlink" href="#fix" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>For resources that have name, reject migration of resources with empty
+name. [Philip Roche]</p>
+<p>For resources which have a name property validate that it is non empty.</p>
+<p>This fixes an issue where resources with empty names are not included in the check
+for uniqueness/idempotence. By checking for empty names we avoid this issue.</p>
+</li>
 <li><p>In rhsm auto_attach once defaulted will always collide with
 activationkey. [Carlos Camacho]</p>
 <p>Once a variable is defaulted to an existing value it can not
