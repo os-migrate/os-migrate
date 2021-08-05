@@ -2,7 +2,7 @@
 SHELL := /bin/bash
 ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 OS_MIGRATE := $(HOME)/.ansible/collections/ansible_collections/os_migrate/os_migrate
-NO_VAGRANT := 0
+NO_VAGRANT ?= 0
 export OS_MIGRATE
 
 
