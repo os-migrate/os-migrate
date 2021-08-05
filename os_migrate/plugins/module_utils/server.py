@@ -60,6 +60,12 @@ class Server(resource.Resource):
 
     migration_param_defaults = {
         'boot_disk_copy': False,
+        'boot_volume_params': {
+            'availability_zone': None,
+            'name': None,
+            'description': None,
+            'volume_type': None,
+        },
         'floating_ip_mode': 'auto',
     }
 
