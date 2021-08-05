@@ -238,6 +238,7 @@ class Resource():
         well-formed
         """
         errors = self._validation_id_errors()
+        errors.extend(self._validation_empty_name_errors())
         errors.extend(self._validation_migration_params_errors())
         errors.extend(self._validation_params_errors())
         return errors
@@ -528,4 +529,21 @@ class Resource():
         for param in self.params_from_sdk + self.params_from_refs:
             if param not in params:
                 errors.append('Missing params.{0}.'.format(param))
+        return errors
+
+    # Can be overridden in some subclasses.
+    def _validation_empty_name_errors(self):
+        """For resources which have a name property validate that it is non empty
+
+        Returns: list of strings (error messages)
+        """
+        errors = []
+        params = self.params()
+        name_param_key = 'name'
+        # check to see if this resource has a name
+        if name_param_key in self.params_from_sdk:
+            # Check to see if name is present and if so is it empty.
+            # _validation_params_errors check will catch if it is not present.
+            if name_param_key in params.keys() and not params.get(name_param_key, ''):
+                errors.append('params.{0} is empty.'.format(name_param_key))
         return errors

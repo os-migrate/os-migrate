@@ -258,6 +258,13 @@ class TestResource(unittest.TestCase):
         self.assertFalse(res.is_data_valid())
         self.assertEqual(res.data_errors(), ["Missing _migration_params.migparam1."])
 
+        # Test that if a resource has a name then it should not be empty
+        data = valid_fakeresource_data()
+        data['params']['name'] = ''
+        res = FakeResource.from_data(data)
+        self.assertFalse(res.is_data_valid())
+        self.assertEqual(res.data_errors(), ["params.name is empty."])
+
     def test_debug_id(self):
         res = FakeResource.from_data(valid_fakeresource_data())
         self.assertEqual(res.debug_id(), "some.FakeResource:nameval:idval")
