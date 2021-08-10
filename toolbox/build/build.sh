@@ -8,7 +8,6 @@ ANSIBLE_PYTHON=python3.8
 
 ### PACKAGES ###
 
-dnf clean all
 dnf -y update
 dnf -y install \
     ansible \
@@ -28,8 +27,6 @@ dnf -y install \
 if [ "${NO_VAGRANT:-0}" != "1" ]; then
     dnf -y install ansible libvirt-client rsync openssh-clients vagrant-libvirt
 fi
-dnf clean all
-
 
 ### VIRTUALENV ###
 
@@ -39,10 +36,11 @@ source /root/venv/bin/activate
 set -x
 # We need to be sure we use the latest versions of
 # pip, virtualenv and setuptools
-pip install --upgrade pip
-pip install --upgrade virtualenv
-pip install --upgrade setuptools
-pip install --upgrade -r /build/venv-requirements.txt
+python3 -m pip install --upgrade \
+                        pip \
+                        virtualenv \
+                        setuptools
+python3 -m pip install --upgrade -r /build/venv-requirements.txt
 
 cp /build/venv-wrapper /usr/local/bin/venv-wrapper
 chmod a+x /usr/local/bin/venv-wrapper
@@ -56,3 +54,8 @@ cat /build/galaxy.yml | shyaml get-value dependencies | \
 
 touch /.os-migrate-toolbox
 chmod 0444 /.os-migrate-toolbox
+
+### CLEANUP ###
+
+dnf clean all
+python3 -m pip cache purge
