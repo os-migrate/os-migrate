@@ -260,7 +260,6 @@ volume_map:
     "volume_map": {
         "/dev/vda": {
             "bootable": true,
-            "description": "",
             "dest_dev": "/dev/vdc",
             "dest_id": "3b7a57d7-8210-47f9-b592-a6627ae52d13",
             "image_id": null,
@@ -420,17 +419,23 @@ class OpenStackDestinationHost(OpenStackHostBase):
             sdk_params = {
                 'name': mapping['name'],
                 'bootable': mapping['bootable'],
-                'description': mapping['description'],
                 'size': mapping['size'],
                 'wait': True,
                 'timeout': self.timeout,
             }
-            # Boot volume may not be present in the src_id_volumes in
-            # case we're using 'boot_disk_copy: true' on a source
-            # server which is boot-from-image. Setting params on such
-            # devices is TBD.
             if source_id in src_id_volumes:
                 sdk_params.update(src_id_volumes[source_id].sdk_params(self.conn))
+            elif path == '/dev/vda':
+                # This code path is exercised when the source VM has
+                # no boot volume but is being migrated with
+                # `boot_disk_copy: true` and a boot volume is being
+                # created in the destination.
+                # `None` value in boot_volume_params means we do not
+                # want to override that parameter.
+                boot_volume_params_defined = \
+                    dict(filter(lambda item: item[1] is not None,
+                                self.ser_server.migration_params()['boot_volume_params'].items()))
+                sdk_params.update(boot_volume_params_defined)
             new_volume = self.conn.create_volume(**sdk_params)
             self.volume_map[path]['dest_id'] = new_volume.id
 

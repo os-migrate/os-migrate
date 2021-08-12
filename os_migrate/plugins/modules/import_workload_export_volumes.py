@@ -221,7 +221,6 @@ volume_map:
     "volume_map": {
           "/dev/vda": {
               "bootable": True,
-              "description": "Boot device",
               "dest_dev": null,
               "dest_id": null,
               "image_id": null,
@@ -256,8 +255,8 @@ class OpenStackSourceHost(OpenStackHostBase):
     """ Export volumes from an OpenStack instance over NBD. """
 
     def __init__(self, openstack_connection, source_conversion_host_id,
-                 ssh_key_path, ssh_user, source_instance_id, state_file=None,
-                 log_file=None, source_conversion_host_address=None,
+                 ssh_key_path, ssh_user, source_instance_id, ser_server,
+                 state_file=None, log_file=None, source_conversion_host_address=None,
                  boot_volume_prefix=None, timeout=DEFAULT_TIMEOUT):
         # UUID marker for child processes on conversion hosts.
         transfer_uuid = str(uuid.uuid4())
@@ -301,18 +300,19 @@ class OpenStackSourceHost(OpenStackHostBase):
         #   url:         Final NBD export on destination conversion host
         #   progress:    Transfer progress percentage
         #   bootable:    Boolean flag for boot disks
-        #   description: Volume description to pass through to destination
         self.volume_map = {}
 
-    def prepare_exports(self, ser_srv):
+        self.ser_server = ser_server
+
+    def prepare_exports(self):
         """
         Attach the source VM's volumes to the source conversion host, and start
         waiting for NBD connections.
         """
         self._test_source_vm_shutdown()
         self._get_root_and_data_volumes()
-        self._validate_volumes_match_data(ser_srv)
-        self._detach_data_volumes_from_source(ser_srv)
+        self._validate_volumes_match_data()
+        self._detach_data_volumes_from_source()
         self._attach_volumes_to_converter()
         self._export_volumes_from_converter()
 
@@ -347,10 +347,10 @@ class OpenStackSourceHost(OpenStackHostBase):
                 source_dev=None, source_id=volume.id, dest_dev=None,
                 dest_id=None, snap_id=None, image_id=None, name=volume.name,
                 size=volume.size, port=None, url=None, progress=None,
-                bootable=volume.bootable, description=volume.description)
+                bootable=volume.bootable)
             self._update_progress(dev_path, 0.0)
 
-    def _validate_volumes_match_data(self, ser_srv):
+    def _validate_volumes_match_data(self):
         """
         Check that the volumes as exported into the workload metadata YAML
         still match what is actually attached on the source VM, raise
@@ -359,7 +359,7 @@ class OpenStackSourceHost(OpenStackHostBase):
         scanned_volume_ids = set(map(lambda vol: vol['source_id'],
                                      self.volume_map.values()))
         data_volume_ids = set(map(lambda vol: vol.get('_info', {}).get('id'),
-                                  ser_srv.params()['volumes']))
+                                  self.ser_server.params()['volumes']))
         if data_volume_ids != scanned_volume_ids:
             message = (
                 "The scanned set of volumes on instance '{0}' is not the same "
@@ -368,7 +368,7 @@ class OpenStackSourceHost(OpenStackHostBase):
             )
             raise exc.InconsistentState(message)
 
-    def _detach_data_volumes_from_source(self, ser_srv):
+    def _detach_data_volumes_from_source(self):
         """
         Detach data volumes from source VM, and pretend to "detach" the boot
         volume by creating a new volume from a snapshot of the VM. If the VM is
@@ -399,7 +399,7 @@ class OpenStackSourceHost(OpenStackHostBase):
             # Update the volume map with the new volume ID
             self.volume_map['/dev/vda']['source_id'] = root_volume_copy.id
             self.volume_map['/dev/vda']['snap_id'] = root_snapshot.id
-        elif sourcevm.image and ser_srv.migration_params()['boot_disk_copy']:
+        elif sourcevm.image and self.ser_server.migration_params()['boot_disk_copy']:
             self.log.info('Image-based instance, boot_disk_copy enabled: creating snapshot')
             image = self.conn.compute.create_server_image(
                 name='{0}{1}'.format(self.boot_volume_prefix, sourcevm.name),
@@ -417,9 +417,9 @@ class OpenStackSourceHost(OpenStackHostBase):
                 source_dev=None, source_id=volume.id, dest_dev=None,
                 dest_id=None, snap_id=None, image_id=image.id, name=volume.name,
                 size=volume.size, port=None, url=None, progress=None,
-                bootable=volume.bootable, description=volume.description)
+                bootable=volume.bootable)
             self._update_progress('/dev/vda', 0.0)
-        elif sourcevm.image and not ser_srv.migration_params()['boot_disk_copy']:
+        elif sourcevm.image and not self.ser_server.migration_params()['boot_disk_copy']:
             self.log.info('Image-based instance, boot_disk_copy disabled: skipping boot volume')
         else:
             raise RuntimeError('No known boot device found for this instance!')
@@ -537,8 +537,8 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    ser_srv = server.Server.from_data(module.params['data'])
-    params, info = ser_srv.params_and_info()
+    ser_server = server.Server.from_data(module.params['data'])
+    params, info = ser_server.params_and_info()
 
     # Required parameters
     source_conversion_host_id = module.params['conversion_host']['id']
@@ -560,16 +560,14 @@ def run_module():
         ssh_key_path,
         ssh_user,
         source_instance_id,
+        ser_server,
         source_conversion_host_address=source_conversion_host_address,
         state_file=state_file,
         log_file=log_file,
         boot_volume_prefix=boot_volume_prefix,
         timeout=timeout,
     )
-    # FIXME: Make ser_srv another initialization parameter of
-    # OpenStackSourceHost, it is also generally related to the whole
-    # workload migration and contains important data.
-    source_host.prepare_exports(ser_srv)
+    source_host.prepare_exports()
     result['transfer_uuid'] = source_host.transfer_uuid
     result['volume_map'] = source_host.volume_map
 
