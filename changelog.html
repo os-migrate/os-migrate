@@ -227,6 +227,15 @@
 <div class="section" id="new">
 <h3>New<a class="headerlink" href="#new" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Ability to specify boot volume params when source VM has no boot
+volume. [Jiri Stransky]</p>
+<p>When the source VM does not have a boot volume, its boot disk should
+be copied (<cite>boot_disk_copy</cite> is <cite>true</cite>), then a boot volume will be
+created only in destination. Since there was no boot volume serialized
+in the workload YAML, we need an alternative way to allow editing
+volume creation parameters. New <cite>boot_volume_params</cite> migration
+parameter is introduced for this purpose.</p>
+</li>
 <li><p>Customizable attached volume properties in workload migration. [Jiri
 Stransky]</p>
 <p>Attached volumes are now exported in the ‘params’ section of workload

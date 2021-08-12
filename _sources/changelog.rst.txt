@@ -7,6 +7,15 @@ Changelog
 
 New
 ~~~
+- Ability to specify boot volume params when source VM has no boot
+  volume. [Jiri Stransky]
+
+  When the source VM does not have a boot volume, its boot disk should
+  be copied (`boot_disk_copy` is `true`), then a boot volume will be
+  created only in destination. Since there was no boot volume serialized
+  in the workload YAML, we need an alternative way to allow editing
+  volume creation parameters. New `boot_volume_params` migration
+  parameter is introduced for this purpose.
 - Customizable attached volume properties in workload migration. [Jiri
   Stransky]
 
