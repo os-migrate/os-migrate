@@ -25,6 +25,7 @@
         name: os_migrate.os_migrate.conversion_host
         tasks_from: delete.yml
       vars:
+        os_migrate_conversion_host_name: "{{ os_migrate_src_conversion_host_name }}"
         os_migrate_conversion_auth: "{{ os_migrate_src_auth }}"
         os_migrate_conversion_auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
         os_migrate_conversion_region_name: "{{ os_migrate_src_region_name|default(omit) }}"
@@ -39,6 +40,7 @@
         name: os_migrate.os_migrate.conversion_host
         tasks_from: delete.yml
       vars:
+        os_migrate_conversion_host_name: "{{ os_migrate_dst_conversion_host_name }}"
         os_migrate_conversion_auth: "{{ os_migrate_dst_auth }}"
         os_migrate_conversion_auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
         os_migrate_conversion_region_name: "{{ os_migrate_dst_region_name|default(omit) }}"

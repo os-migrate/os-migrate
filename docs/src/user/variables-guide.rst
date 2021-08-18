@@ -86,6 +86,22 @@ Conversion host variables
 The following variables are those that need to be configured prior to
 running os_migrate.
 
+Conversion host name
+~~~~~~~~~~~~~~~~~~~~
+
+The conversion hosts might be configured using different names,
+this is in case an operator needs to have them registered
+with the subscription manager and avoid collisions with the names.
+
+The conversion hosts names can be customized using the
+following variables::
+
+    os_migrate_src_conversion_host_name
+    os_migrate_dst_conversion_host_name
+
+By default, these variables have the same value
+for both conversion hosts `os_migrate_conv`.
+
 Conversion host external network
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
