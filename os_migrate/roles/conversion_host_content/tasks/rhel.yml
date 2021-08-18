@@ -37,6 +37,12 @@
   ansible.builtin.debug:
     msg: "{{ rhsm_subscription_result }}"
 
+- name: enabling RHSM repositories
+  community.general.rhsm_repository:
+    name: "{{ os_migrate_conversion_rhsm_repositories }}"
+    state: enabled
+  when: os_migrate_conversion_rhsm_repositories is defined
+
 - name: update all packages
   ansible.builtin.yum:
     name: '*'
