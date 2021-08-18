@@ -5,3 +5,6 @@ os_migrate_conversion_host_content_install: true
 # os_migrate_conversion_rhsm_password: password
 os_migrate_conversion_rhsm_retries: 5
 os_migrate_conversion_rhsm_delay: 10
+
+os_migrate_conversion_host_pre_content_hook: false
+os_migrate_conversion_host_post_content_hook: false

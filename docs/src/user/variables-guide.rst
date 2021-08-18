@@ -217,6 +217,35 @@ following string `weak_password_disabled_by_default`.
 The user enabled to access the conversion hosts with password-based authentication
 is the one defined in the `os_migrate_conversion_host_ssh_user` variable.
 
+Running custom bash scripts in the conversion hosts
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It is possible to run custom bash scripts in the conversion
+hosts before and after configuring their content.
+The content of the conversion hosts is a set of required packages
+and in the case of using RHEL then the configuration of the
+subscription manager.
+
+The variables allowing to run the custom scripts are::
+
+    os_migrate_src_conversion_host_pre_content_hook
+    os_migrate_src_conversion_host_post_content_hook
+    os_migrate_dst_conversion_host_pre_content_hook
+    os_migrate_dst_conversion_host_post_content_hook
+
+The Ansible module used to achieve this is shell,
+so users can execute a simple one-liner command, or more
+complex scripts like the following examples::
+
+    os_migrate_src_conversion_host_pre_content_hook: |
+      ls -ltah
+      echo "hello world"
+      df -h
+
+or::
+
+    os_migrate_src_conversion_host_pre_content_hook: "echo 'this is a simple command'"
+
 OpenStack REST API TLS variables
 --------------------------------
 
