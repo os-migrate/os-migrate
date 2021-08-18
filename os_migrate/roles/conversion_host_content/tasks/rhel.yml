@@ -1,41 +1,44 @@
-- name: register and auto-subscribe to available content.
-  community.general.redhat_subscription:
-    state: present
-    # These params default to omitting:
-    auto_attach: "{{ os_migrate_conversion_rhsm_auto_attach|default(omit) }}"
-    activationkey: "{{ os_migrate_conversion_rhsm_activationkey|default(omit) }}"
-    consumer_id: "{{ os_migrate_conversion_rhsm_consumer_id|default(omit) }}"
-    consumer_name: "{{ os_migrate_conversion_rhsm_consumer_name|default(omit) }}"
-    consumer_type: "{{ os_migrate_conversion_rhsm_consumer_type|default(omit) }}"
-    environment: "{{ os_migrate_conversion_rhsm_environment|default(omit) }}"
-    force_register: "{{ os_migrate_conversion_rhsm_force_register|default(omit) }}"
-    org_id: "{{ os_migrate_conversion_rhsm_org_id|default(omit) }}"
-    password: "{{ os_migrate_conversion_rhsm_password|default(omit) }}"
-    pool: "{{ os_migrate_conversion_rhsm_pool|default(omit) }}"
-    pool_ids: "{{ os_migrate_conversion_rhsm_pool_ids|default(omit) }}"
-    release: "{{ os_migrate_conversion_rhsm_release|default(omit) }}"
-    rhsm_baseurl: "{{ os_migrate_conversion_rhsm_rhsm_baseurl|default(omit) }}"
-    rhsm_repo_ca_cert: "{{ os_migrate_conversion_rhsm_rhsm_repo_ca_cert|default(omit) }}"
-    server_hostname: "{{ os_migrate_conversion_rhsm_server_hostname|default(omit) }}"
-    server_insecure: "{{ os_migrate_conversion_rhsm_server_insecure|default(omit) }}"
-    server_proxy_hostname: "{{ os_migrate_conversion_rhsm_server_proxy_hostname|default(omit) }}"
-    server_proxy_password: "{{ os_migrate_conversion_rhsm_server_proxy_password|default(omit) }}"
-    server_proxy_port: "{{ os_migrate_conversion_rhsm_server_proxy_port|default(omit) }}"
-    server_proxy_user: "{{ os_migrate_conversion_rhsm_server_proxy_user|default(omit) }}"
-    syspurpose: "{{ os_migrate_conversion_rhsm_syspurpose|default(omit) }}"
-    username: "{{ os_migrate_conversion_rhsm_username|default(omit) }}"
-  register: rhsm_subscription_result
-  until: "'subscribed_pool_ids' in rhsm_subscription_result and not rhsm_subscription_result.failed"
-  retries: "{{ os_migrate_conversion_rhsm_retries }}"
-  delay: "{{ os_migrate_conversion_rhsm_delay }}"
+- name: run the rhsm tasks
+  block:
+    - name: register and auto-subscribe to available content.
+      community.general.redhat_subscription:
+        state: present
+        # These params default to omitting:
+        auto_attach: "{{ os_migrate_conversion_rhsm_auto_attach|default(omit) }}"
+        activationkey: "{{ os_migrate_conversion_rhsm_activationkey|default(omit) }}"
+        consumer_id: "{{ os_migrate_conversion_rhsm_consumer_id|default(omit) }}"
+        consumer_name: "{{ os_migrate_conversion_rhsm_consumer_name|default(omit) }}"
+        consumer_type: "{{ os_migrate_conversion_rhsm_consumer_type|default(omit) }}"
+        environment: "{{ os_migrate_conversion_rhsm_environment|default(omit) }}"
+        force_register: "{{ os_migrate_conversion_rhsm_force_register|default(omit) }}"
+        org_id: "{{ os_migrate_conversion_rhsm_org_id|default(omit) }}"
+        password: "{{ os_migrate_conversion_rhsm_password|default(omit) }}"
+        pool: "{{ os_migrate_conversion_rhsm_pool|default(omit) }}"
+        pool_ids: "{{ os_migrate_conversion_rhsm_pool_ids|default(omit) }}"
+        release: "{{ os_migrate_conversion_rhsm_release|default(omit) }}"
+        rhsm_baseurl: "{{ os_migrate_conversion_rhsm_rhsm_baseurl|default(omit) }}"
+        rhsm_repo_ca_cert: "{{ os_migrate_conversion_rhsm_rhsm_repo_ca_cert|default(omit) }}"
+        server_hostname: "{{ os_migrate_conversion_rhsm_server_hostname|default(omit) }}"
+        server_insecure: "{{ os_migrate_conversion_rhsm_server_insecure|default(omit) }}"
+        server_proxy_hostname: "{{ os_migrate_conversion_rhsm_server_proxy_hostname|default(omit) }}"
+        server_proxy_password: "{{ os_migrate_conversion_rhsm_server_proxy_password|default(omit) }}"
+        server_proxy_port: "{{ os_migrate_conversion_rhsm_server_proxy_port|default(omit) }}"
+        server_proxy_user: "{{ os_migrate_conversion_rhsm_server_proxy_user|default(omit) }}"
+        syspurpose: "{{ os_migrate_conversion_rhsm_syspurpose|default(omit) }}"
+        username: "{{ os_migrate_conversion_rhsm_username|default(omit) }}"
+      register: rhsm_subscription_result
+      until: "'subscribed_pool_ids' in rhsm_subscription_result and not rhsm_subscription_result.failed"
+      retries: "{{ os_migrate_conversion_rhsm_retries }}"
+      delay: "{{ os_migrate_conversion_rhsm_delay }}"
+
+    - name: log the subscription manager output
+      ansible.builtin.debug:
+        msg: "{{ rhsm_subscription_result }}"
   when:
     - >-
+      os_migrate_conversion_rhsm_manage and (
       os_migrate_conversion_rhsm_username is defined or
-      os_migrate_conversion_rhsm_org_id is defined
-
-- name: log the subscription manager output
-  ansible.builtin.debug:
-    msg: "{{ rhsm_subscription_result }}"
+      os_migrate_conversion_rhsm_org_id is defined)
 
 - name: enabling RHSM repositories
   community.general.rhsm_repository:

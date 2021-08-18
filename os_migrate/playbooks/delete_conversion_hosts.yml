@@ -15,8 +15,8 @@
   tasks:
     - name: unregister the conversion hosts
       ansible.builtin.include_role:
-        name: os_migrate.os_migrate.conversion_host
-        tasks_from: unregister.yml
+        name: os_migrate.os_migrate.conversion_host_content
+        tasks_from: rhsm_unregister.yml
 
 - hosts: migrator
   tasks:
