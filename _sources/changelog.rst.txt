@@ -7,6 +7,11 @@ Changelog
 
 New
 ~~~
+- Allow running scripts in the conversion hosts. [Carlos Camacho]
+
+  This commit allows to run custom bash scripts in
+  the conversion hosts before and after the content
+  playbook.
 - Include additional RHSM repositories. [Carlos Camacho]
 
   This commit allows to enable a list of new RHSM

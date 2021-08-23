@@ -105,6 +105,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-image-name">Conversion host image name</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-rhel-variables">Conversion host RHEL variables</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#enabling-password-based-ssh-access-to-the-conversion-hosts">Enabling password-based SSH access to the conversion hosts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#running-custom-bash-scripts-in-the-conversion-hosts">Running custom bash scripts in the conversion hosts</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#openstack-rest-api-tls-variables">OpenStack REST API TLS variables</a></li>
@@ -383,6 +384,34 @@ is set by default to <cite>false</cite>, and the variable
 following string <cite>weak_password_disabled_by_default</cite>.</p>
 <p>The user enabled to access the conversion hosts with password-based authentication
 is the one defined in the <cite>os_migrate_conversion_host_ssh_user</cite> variable.</p>
+</div>
+<div class="section" id="running-custom-bash-scripts-in-the-conversion-hosts">
+<h3>Running custom bash scripts in the conversion hosts<a class="headerlink" href="#running-custom-bash-scripts-in-the-conversion-hosts" title="Permalink to this headline">¶</a></h3>
+<p>It is possible to run custom bash scripts in the conversion
+hosts before and after configuring their content.
+The content of the conversion hosts is a set of required packages
+and in the case of using RHEL then the configuration of the
+subscription manager.</p>
+<p>The variables allowing to run the custom scripts are:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_host_pre_content_hook</span>
+<span class="n">os_migrate_src_conversion_host_post_content_hook</span>
+<span class="n">os_migrate_dst_conversion_host_pre_content_hook</span>
+<span class="n">os_migrate_dst_conversion_host_post_content_hook</span>
+</pre></div>
+</div>
+<p>The Ansible module used to achieve this is shell,
+so users can execute a simple one-liner command, or more
+complex scripts like the following examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_host_pre_content_hook</span><span class="p">:</span> <span class="o">|</span>
+  <span class="n">ls</span> <span class="o">-</span><span class="n">ltah</span>
+  <span class="n">echo</span> <span class="s2">&quot;hello world&quot;</span>
+  <span class="n">df</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_host_pre_content_hook</span><span class="p">:</span> <span class="s2">&quot;echo &#39;this is a simple command&#39;&quot;</span>
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="openstack-rest-api-tls-variables">
