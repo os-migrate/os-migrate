@@ -525,7 +525,7 @@ class OpenStackDestinationHost(OpenStackHostBase):
 
                 cmd = ['sudo', '--preserve-env=LIBGUESTFS_BACKEND',
                        'virt-sparsify', '--in-place', overlay]
-                with open(self.log_file, 'a') as log_fd:
+                with open(self.log_file, 'a', encoding='utf8') as log_fd:
                     img_sub = self.shell.cmd_sub(cmd,
                                                  stdout=log_fd,
                                                  stderr=subprocess.STDOUT,

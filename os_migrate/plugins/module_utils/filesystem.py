@@ -35,7 +35,7 @@ def load_resources_file(file_path):
 
     Returns: Structure (dict) of the loaded file.
     """
-    with open(file_path, 'r') as f:
+    with open(file_path, 'r', encoding='utf8') as f:
         file_struct = yaml.load(f)
 
     file_os_migrate_version = file_struct.get('os_migrate_version', None)
@@ -49,5 +49,5 @@ def _write_resources_file(file_path, file_struct):
     """Write `file_struct` resources file structure into a file at
     `file_path`.
     """
-    with open(file_path, 'w') as f:
+    with open(file_path, 'w', encoding='utf8') as f:
         f.write(yaml.dump(file_struct))
