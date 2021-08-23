@@ -7,6 +7,10 @@ Changelog
 
 New
 ~~~
+- Include additional RHSM repositories. [Carlos Camacho]
+
+  This commit allows to enable a list of new RHSM
+  repositories in the conversion hosts.
 - Ability to specify boot volume params when source VM has no boot
   volume. [Jiri Stransky]
 
