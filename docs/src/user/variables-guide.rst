@@ -196,6 +196,15 @@ Ansible module. In OS Migrate they are named as follows::
     os_migrate_conversion_rhsm_syspurpose
     os_migrate_conversion_rhsm_username
 
+Additionally is possible to enable specific repositories in the
+conversion hosts using the following variable::
+
+    os_migrate_conversion_rhsm_repositories
+
+The `os_migrate_conversion_rhsm_repositories` variable is a
+list of those repositories that will be enabled on the conversion
+host.
+
 Enabling password-based SSH access to the conversion hosts
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
