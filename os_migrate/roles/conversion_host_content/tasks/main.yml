@@ -6,6 +6,10 @@
           Conversion Host OS is
           {{ ansible_distribution }} {{ ansible_distribution_version }}
 
+    - name: running pre content hook
+      ansible.builtin.shell: "{{ os_migrate_conversion_host_pre_content_hook }}"
+      when: os_migrate_conversion_host_pre_content_hook is string
+
     - name: Include CentOS tasks
       ansible.builtin.include_tasks: centos.yml
       when: ansible_distribution in ['CentOS']
@@ -13,3 +17,7 @@
     - name: Include RHEL tasks
       ansible.builtin.include_tasks: rhel.yml
       when: ansible_distribution in ['RedHat']
+
+    - name: running post content hook
+      ansible.builtin.shell: "{{ os_migrate_conversion_host_post_content_hook }}"
+      when: os_migrate_conversion_host_post_content_hook is string
