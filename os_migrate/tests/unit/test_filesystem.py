@@ -32,7 +32,7 @@ class TestFilesystem(unittest.TestCase):
     def test_write_or_replace_resource_existing_file(self):
         with utils.tmp_dir_context() as tmp_dir:
             file_path = path.join(tmp_dir, 'resources.yml')
-            with open(file_path, 'w') as f:
+            with open(file_path, 'w', encoding='utf8') as f:
                 f.write(yaml.dump(fixtures.minimal_resource_file_struct()))
 
             minimal2 = fixtures.MinimalResource.from_data(
@@ -65,18 +65,18 @@ class TestFilesystem(unittest.TestCase):
             file_path = path.join(tmp_dir, 'resources.yml')
 
             struct = fixtures.minimal_resource_file_struct()
-            with open(file_path, 'w') as f:
+            with open(file_path, 'w', encoding='utf8') as f:
                 f.write(yaml.dump(struct))
             self.assertEqual(filesystem.load_resources_file(file_path), struct)
 
             struct['os_migrate_version'] = '0.0.never-released'
-            with open(file_path, 'w') as f:
+            with open(file_path, 'w', encoding='utf8') as f:
                 f.write(yaml.dump(struct))
             with self.assertRaises(exc.DataVersionMismatch):
                 filesystem.load_resources_file(file_path)
 
             del struct['os_migrate_version']
-            with open(file_path, 'w') as f:
+            with open(file_path, 'w', encoding='utf8') as f:
                 f.write(yaml.dump(struct))
             with self.assertRaises(exc.DataVersionMismatch):
                 filesystem.load_resources_file(file_path)

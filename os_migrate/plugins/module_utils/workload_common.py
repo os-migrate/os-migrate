@@ -25,7 +25,7 @@ PORT_LOCK_FILE = '/var/lock/v2v-migration-lock'  # Lock for the port map
 try:
     from subprocess import DEVNULL
 except ImportError:
-    DEVNULL = open(os.devnull, 'r+')
+    DEVNULL = open(os.devnull, 'r+', encoding='utf8')
 
 
 def use_lock(lock_file):
@@ -128,7 +128,7 @@ class OpenStackHostBase():
         if self.state_file is None:
             return
         self.volume_map[dev_path]['progress'] = progress
-        with open(self.state_file, 'w') as state:
+        with open(self.state_file, 'w', encoding='utf8') as state:
             all_progress = {}
             for path, mapping in self.volume_map.items():
                 all_progress[path] = mapping['progress']
