@@ -100,6 +100,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#conversion-host-variables">Conversion host variables</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#conversion-host-name">Conversion host name</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-external-network">Conversion host external network</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-flavor-name">Conversion host flavor name</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-image-name">Conversion host image name</a></li>
@@ -259,6 +260,21 @@ copy into your variables file and customize:</p>
 <h2>Conversion host variables<a class="headerlink" href="#conversion-host-variables" title="Permalink to this headline">¶</a></h2>
 <p>The following variables are those that need to be configured prior to
 running os_migrate.</p>
+<div class="section" id="conversion-host-name">
+<h3>Conversion host name<a class="headerlink" href="#conversion-host-name" title="Permalink to this headline">¶</a></h3>
+<p>The conversion hosts might be configured using different names,
+this is in case an operator needs to have them registered
+with the subscription manager and avoid collisions with the names.</p>
+<p>The conversion hosts names can be customized using the
+following variables:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_host_name</span>
+<span class="n">os_migrate_dst_conversion_host_name</span>
+</pre></div>
+</div>
+<p>By default, these variables have the same value
+for both conversion hosts <cite>os_migrate_conv_src</cite>
+and <cite>os_migrate_conv_dst</cite> respectively.</p>
+</div>
 <div class="section" id="conversion-host-external-network">
 <h3>Conversion host external network<a class="headerlink" href="#conversion-host-external-network" title="Permalink to this headline">¶</a></h3>
 <p>The external network configuration allows the connection of the

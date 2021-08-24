@@ -7,6 +7,10 @@ Changelog
 
 New
 ~~~
+- Allow configuring the conversion hosts names. [Carlos Camacho]
+
+  This commit allows to configure the conversion hosts
+  names.
 - Allow running scripts in the conversion hosts. [Carlos Camacho]
 
   This commit allows to run custom bash scripts in
