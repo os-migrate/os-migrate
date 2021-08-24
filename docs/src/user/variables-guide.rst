@@ -272,6 +272,19 @@ or::
 
     os_migrate_src_conversion_host_pre_content_hook: "echo 'this is a simple command'"
 
+Disabling the subscription manager tasks
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It is possible to disable the subscription manager
+native tasks by setting to false the following variable::
+
+    os_migrate_conversion_rhsm_manage
+
+This will skip the tasks related to RHSM when using RHEL
+in the conversion hosts. Disabling RHSM can be useful in
+those cases where the operator has custom scripts they
+need to use instead the standard Ansible module.
+
 OpenStack REST API TLS variables
 --------------------------------
 
