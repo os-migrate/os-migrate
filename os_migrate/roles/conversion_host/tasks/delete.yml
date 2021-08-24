@@ -1,6 +1,6 @@
 - name: delete os_migrate conversion host
   openstack.cloud.server:
-    name: "{{ os_migrate_conversion_host_name }}"
+    name: "{{ item }}"
     state: absent
     delete_fip: yes
     wait: yes
@@ -11,6 +11,13 @@
     ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
+  loop:
+    # We make sure we remove those conversion hosts using the
+    # old convention name
+    - os_migrate_conv
+    - os_migrate_conv_src
+    - os_migrate_conv_dst
+    - "{{ os_migrate_conversion_host_name }}"
 
 - name: delete os_migrate conversion keypair
   openstack.cloud.keypair:

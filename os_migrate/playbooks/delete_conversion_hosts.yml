@@ -49,3 +49,137 @@
         os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
         os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
       when: os_migrate_delete_dst_conversion_host|default(true)|bool
+
+# - hosts: migrator
+#   tasks:
+#
+#     - name: delete the src os_migrate_conv conversion hosts
+#       ansible.builtin.include_role:
+#         name: os_migrate.os_migrate.conversion_host
+#         tasks_from: delete.yml
+#       vars:
+#         os_migrate_conversion_host_name: "{{ item }}"
+#         os_migrate_conversion_auth: "{{ os_migrate_src_auth }}"
+#         os_migrate_conversion_auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+#         os_migrate_conversion_region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+#         os_migrate_conversion_validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+#         os_migrate_conversion_ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+#         os_migrate_conversion_client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+#         os_migrate_conversion_client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+#       loop:
+#         - os_migrate_conv
+#         - os_migrate_conv_src
+#         - "{{ os_migrate_src_conversion_host_name }}"
+#       when: os_migrate_delete_src_conversion_host|default(true)|bool
+#
+#     - name: delete the dst os_migrate_conv conversion hosts
+#       ansible.builtin.include_role:
+#         name: os_migrate.os_migrate.conversion_host
+#         tasks_from: delete.yml
+#       vars:
+#         os_migrate_conversion_host_name: "{{ item }}"
+#         os_migrate_conversion_auth: "{{ os_migrate_dst_auth }}"
+#         os_migrate_conversion_auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+#         os_migrate_conversion_region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+#         os_migrate_conversion_validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+#         os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+#         os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+#         os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+#       loop:
+#         - os_migrate_conv
+#         - os_migrate_conv_dst
+#         - "{{ os_migrate_dst_conversion_host_name }}"
+#       when: os_migrate_delete_dst_conversion_host|default(true)|bool
+
+# - hosts: migrator
+#   tasks:
+#
+#     - name: delete the src os_migrate_conv conversion host
+#       ansible.builtin.include_role:
+#         name: os_migrate.os_migrate.conversion_host
+#         tasks_from: delete.yml
+#       vars:
+#         os_migrate_conversion_host_name: "os_migrate_conv"
+#         os_migrate_conversion_auth: "{{ os_migrate_src_auth }}"
+#         os_migrate_conversion_auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+#         os_migrate_conversion_region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+#         os_migrate_conversion_validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+#         os_migrate_conversion_ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+#         os_migrate_conversion_client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+#         os_migrate_conversion_client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+#       when: os_migrate_delete_src_conversion_host|default(true)|bool
+#
+#     - name: delete the dst os_migrate_conv conversion host
+#       ansible.builtin.include_role:
+#         name: os_migrate.os_migrate.conversion_host
+#         tasks_from: delete.yml
+#       vars:
+#         os_migrate_conversion_host_name: "os_migrate_conv"
+#         os_migrate_conversion_auth: "{{ os_migrate_dst_auth }}"
+#         os_migrate_conversion_auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+#         os_migrate_conversion_region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+#         os_migrate_conversion_validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+#         os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+#         os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+#         os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+#       when: os_migrate_delete_dst_conversion_host|default(true)|bool
+#
+#     - name: delete the src os_migrate_conv_src conversion host
+#       ansible.builtin.include_role:
+#         name: os_migrate.os_migrate.conversion_host
+#         tasks_from: delete.yml
+#       vars:
+#         os_migrate_conversion_host_name: "os_migrate_conv_src"
+#         os_migrate_conversion_auth: "{{ os_migrate_src_auth }}"
+#         os_migrate_conversion_auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+#         os_migrate_conversion_region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+#         os_migrate_conversion_validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+#         os_migrate_conversion_ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+#         os_migrate_conversion_client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+#         os_migrate_conversion_client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+#       when: os_migrate_delete_src_conversion_host|default(true)|bool
+#
+#     - name: delete the dst os_migrate_conv_dst conversion host
+#       ansible.builtin.include_role:
+#         name: os_migrate.os_migrate.conversion_host
+#         tasks_from: delete.yml
+#       vars:
+#         os_migrate_conversion_host_name: "os_migrate_conv_dst"
+#         os_migrate_conversion_auth: "{{ os_migrate_dst_auth }}"
+#         os_migrate_conversion_auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+#         os_migrate_conversion_region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+#         os_migrate_conversion_validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+#         os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+#         os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+#         os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+#       when: os_migrate_delete_dst_conversion_host|default(true)|bool
+#
+#     - name: delete the src {{ os_migrate_src_conversion_host_name }} conversion host
+#       ansible.builtin.include_role:
+#         name: os_migrate.os_migrate.conversion_host
+#         tasks_from: delete.yml
+#       vars:
+#         os_migrate_conversion_host_name: "{{ os_migrate_src_conversion_host_name }}"
+#         os_migrate_conversion_auth: "{{ os_migrate_src_auth }}"
+#         os_migrate_conversion_auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+#         os_migrate_conversion_region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+#         os_migrate_conversion_validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+#         os_migrate_conversion_ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+#         os_migrate_conversion_client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+#         os_migrate_conversion_client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+#       when: os_migrate_delete_src_conversion_host|default(true)|bool
+#
+#     - name: delete the dst {{ os_migrate_dst_conversion_host_name }} conversion host
+#       ansible.builtin.include_role:
+#         name: os_migrate.os_migrate.conversion_host
+#         tasks_from: delete.yml
+#       vars:
+#         os_migrate_conversion_host_name: "{{ os_migrate_dst_conversion_host_name }}"
+#         os_migrate_conversion_auth: "{{ os_migrate_dst_auth }}"
+#         os_migrate_conversion_auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+#         os_migrate_conversion_region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+#         os_migrate_conversion_validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+#         os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+#         os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+#         os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+#       when: os_migrate_delete_dst_conversion_host|default(true)|bool
