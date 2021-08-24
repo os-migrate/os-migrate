@@ -25,6 +25,7 @@
     groups:
       - conversion_hosts
       - "{{ inventory_group }}"
+    os_migrate_conversion_host_name: "{{ os_migrate_conversion_host_name }}"
     ansible_ssh_host: "{{ _server_info.openstack_servers[0].accessIPv4 }}"
     ansible_ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
     ansible_ssh_private_key_file: "{{ os_migrate_conversion_keypair_private_path }}"
