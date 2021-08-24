@@ -107,6 +107,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-rhel-variables">Conversion host RHEL variables</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#enabling-password-based-ssh-access-to-the-conversion-hosts">Enabling password-based SSH access to the conversion hosts</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#running-custom-bash-scripts-in-the-conversion-hosts">Running custom bash scripts in the conversion hosts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#disabling-the-subscription-manager-tasks">Disabling the subscription manager tasks</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#openstack-rest-api-tls-variables">OpenStack REST API TLS variables</a></li>
@@ -428,6 +429,18 @@ complex scripts like the following examples:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_host_pre_content_hook</span><span class="p">:</span> <span class="s2">&quot;echo &#39;this is a simple command&#39;&quot;</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="disabling-the-subscription-manager-tasks">
+<h3>Disabling the subscription manager tasks<a class="headerlink" href="#disabling-the-subscription-manager-tasks" title="Permalink to this headline">¶</a></h3>
+<p>It is possible to disable the subscription manager
+native tasks by setting to false the following variable:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_conversion_rhsm_manage</span>
+</pre></div>
+</div>
+<p>This will skip the tasks related to RHSM when using RHEL
+in the conversion hosts. Disabling RHSM can be useful in
+those cases where the operator has custom scripts they
+need to use instead the standard Ansible module.</p>
 </div>
 </div>
 <div class="section" id="openstack-rest-api-tls-variables">
