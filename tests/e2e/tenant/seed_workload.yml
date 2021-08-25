@@ -29,15 +29,3 @@
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-
-# In order to be able to migrate the VMS they must be turned off
-- name: Shutdown osm_server
-  openstack.cloud.server_action:
-    auth: "{{ os_migrate_src_auth }}"
-    server: osm_server
-    action: stop
-    wait: yes
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"

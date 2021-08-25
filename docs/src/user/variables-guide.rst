@@ -306,3 +306,10 @@ need to set TLS-related variables.
    Migrator host should authenticate itself using a TLS key +
    certificate when talking to source/destination APIs, set these
    variables.
+
+Workload import/export variables
+--------------------------------
+
+- ``os_migrate_workload_stop_before_migration`` - Set to true if you wish
+  for os_migrate to stop your workloads/vms prior to migration. Note that
+  only workloads/vms in `SHUTOFF` state will be migrated.

@@ -34,6 +34,24 @@
       dst_filters: "{{ os_migrate_dst_filters }}"
     when: prelim.changed
 
+  # Stop VM if not stopped and if config set to true
+  - name: perform workload stop if os_migrate_workload_stop_before_migration is true
+    openstack.cloud.server_action:
+      auth: "{{ os_migrate_src_auth }}"
+      auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+      region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+      server: "{{ item['_info']['id'] }}"
+      action: stop
+      wait: yes
+      timeout: "{{ os_migrate_timeout }}"
+      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    when:
+      - prelim.changed
+      - os_migrate_workload_stop_before_migration
+
   - name: perform required checks to ensure source workload is ready
     os_migrate.os_migrate.import_workload_src_check:
       auth: "{{ os_migrate_src_auth }}"

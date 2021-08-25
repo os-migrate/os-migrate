@@ -125,8 +125,8 @@ def run_module():
     #: ``SUSPENDED``, ``UNKNOWN``, or ``VERIFY_RESIZE``.
     # Make sure source instance is shutdown before proceeding.
     if info['status'] != 'SHUTOFF':
-        msg = "Cannot migrate instance {} because it is not in state SHUTOFF!"
-        module.fail_json(msg=msg.format(params['name']), **result)
+        msg = "Cannot migrate instance {} because it is not in state SHUTOFF! Currently in state {}."
+        module.fail_json(msg=msg.format(params['name'], info['status']), **result)
 
     module.exit_json(**result)
 
