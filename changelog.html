@@ -227,6 +227,10 @@
 <div class="section" id="new">
 <h3>New<a class="headerlink" href="#new" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Conditionally stop VMs before migration. [Philip Roche]</p>
+<p>Set os_migrate_workload_stop_before_migration to true to stop VMs before migration occurs.</p>
+<p>Default is false but set to true for e2e tests</p>
+</li>
 <li><p>Allow disabling the RHSM tasks. [Carlos Camacho]</p>
 <p>This commit allows to disable the execution
 of the RHSM tasks.</p>

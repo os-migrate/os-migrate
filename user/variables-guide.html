@@ -111,6 +111,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#openstack-rest-api-tls-variables">OpenStack REST API TLS variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#workload-import-export-variables">Workload import/export variables</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="migration-params-guide.html">Migration Parameters Guide</a></li>
@@ -461,6 +462,14 @@ be used to validate the source/destination API certificates.</p></li>
 Migrator host should authenticate itself using a TLS key +
 certificate when talking to source/destination APIs, set these
 variables.</p></li>
+</ul>
+</div>
+<div class="section" id="workload-import-export-variables">
+<h2>Workload import/export variables<a class="headerlink" href="#workload-import-export-variables" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">os_migrate_workload_stop_before_migration</span></code> - Set to true if you wish
+for os_migrate to stop your workloads/vms prior to migration. Note that
+only workloads/vms in <cite>SHUTOFF</cite> state will be migrated.</p></li>
 </ul>
 </div>
 </div>

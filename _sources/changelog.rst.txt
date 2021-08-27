@@ -7,6 +7,11 @@ Changelog
 
 New
 ~~~
+- Conditionally stop VMs before migration. [Philip Roche]
+
+  Set os_migrate_workload_stop_before_migration to true to stop VMs before migration occurs.
+
+  Default is false but set to true for e2e tests
 - Allow disabling the RHSM tasks. [Carlos Camacho]
 
   This commit allows to disable the execution
