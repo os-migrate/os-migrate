@@ -227,6 +227,12 @@
 <div class="section" id="new">
 <h3>New<a class="headerlink" href="#new" title="Permalink to this headline">¶</a></h3>
 <ul>
+<li><p>Add a floating IP after creating the server instance. [Carlos Camacho]</p>
+<p>This commit disables the auto floating IP allocation when the
+conversion host is created and explicitly assigns the floating
+IP once the instance is running. Also allows to specify custom
+floating IPs.</p>
+</li>
 <li><p>Conditionally stop VMs before migration. [Philip Roche]</p>
 <p>Set os_migrate_workload_stop_before_migration to true to stop VMs before migration occurs.</p>
 <p>Default is false but set to true for e2e tests</p>

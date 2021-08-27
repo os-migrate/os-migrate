@@ -7,6 +7,12 @@ Changelog
 
 New
 ~~~
+- Add a floating IP after creating the server instance. [Carlos Camacho]
+
+  This commit disables the auto floating IP allocation when the
+  conversion host is created and explicitly assigns the floating
+  IP once the instance is running. Also allows to specify custom
+  floating IPs.
 - Conditionally stop VMs before migration. [Philip Roche]
 
   Set os_migrate_workload_stop_before_migration to true to stop VMs before migration occurs.

@@ -133,6 +133,17 @@ The variables to be configured are::
 Usually, ‘m1.medium’ will suffice this requirement, but again, it can
 be different between deployments.
 
+Conversion hosts specific floating IPs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Each conversion host needs to have a floating IP,
+this floating IP can be assigned automatically or
+defined by the operator with the usage of the
+following variables::
+
+    os_migrate_src_conversion_floating_ip_address
+    os_migrate_dst_conversion_floating_ip_address
+
 Conversion host image name
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 

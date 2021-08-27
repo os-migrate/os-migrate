@@ -103,6 +103,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-name">Conversion host name</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-external-network">Conversion host external network</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-flavor-name">Conversion host flavor name</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conversion-hosts-specific-floating-ips">Conversion hosts specific floating IPs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-image-name">Conversion host image name</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-rhel-variables">Conversion host RHEL variables</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#enabling-password-based-ssh-access-to-the-conversion-hosts">Enabling password-based SSH access to the conversion hosts</a></li>
@@ -303,6 +304,17 @@ have at least a volume with 20GB.</p>
 </div>
 <p>Usually, ‘m1.medium’ will suffice this requirement, but again, it can
 be different between deployments.</p>
+</div>
+<div class="section" id="conversion-hosts-specific-floating-ips">
+<h3>Conversion hosts specific floating IPs<a class="headerlink" href="#conversion-hosts-specific-floating-ips" title="Permalink to this headline">¶</a></h3>
+<p>Each conversion host needs to have a floating IP,
+this floating IP can be assigned automatically or
+defined by the operator with the usage of the
+following variables:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_floating_ip_address</span>
+<span class="n">os_migrate_dst_conversion_floating_ip_address</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="conversion-host-image-name">
 <h3>Conversion host image name<a class="headerlink" href="#conversion-host-image-name" title="Permalink to this headline">¶</a></h3>
