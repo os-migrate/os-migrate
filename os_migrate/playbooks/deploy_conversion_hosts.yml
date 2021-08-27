@@ -21,6 +21,7 @@
         os_migrate_conversion_net_mtu: "{{ os_migrate_src_conversion_net_mtu|default(omit) }}"
         os_migrate_conversion_subnet_dns_nameservers:
           "{{ os_migrate_src_conversion_subnet_dns_nameservers|default(omit) }}"
+        os_migrate_conversion_floating_ip_address: "{{ os_migrate_src_conversion_floating_ip_address|default(false) }}"
       when: os_migrate_deploy_src_conversion_host|default(true)|bool
 
     - name: deploy the dst conversion host inventory
@@ -43,6 +44,7 @@
         os_migrate_conversion_net_mtu: "{{ os_migrate_dst_conversion_net_mtu|default(omit) }}"
         os_migrate_conversion_subnet_dns_nameservers:
           "{{ os_migrate_dst_conversion_subnet_dns_nameservers|default(omit) }}"
+        os_migrate_conversion_floating_ip_address: "{{ os_migrate_dst_conversion_floating_ip_address|default(false) }}"
       when: os_migrate_deploy_dst_conversion_host|default(true)|bool
 
     - name: prepare the conversion host link
