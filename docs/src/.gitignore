@@ -1,4 +1,5 @@
-_build/*
 **/__pycache__
 
-changelog.rst
+/_build
+/changelog.rst
+/images/plantuml/render

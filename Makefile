@@ -150,8 +150,11 @@ test-unit: reinstall
 
 # DOCS
 
-docs: reinstall
+docs: reinstall docs-diagrams
 	./scripts/docs-build.sh
+
+docs-diagrams:
+	plantuml -SDpi=150 -output render ./docs/src/images/plantuml/*.plantuml
 
 
 # TOOLBOX
