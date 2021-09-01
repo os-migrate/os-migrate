@@ -98,6 +98,8 @@ Fix
 
 Other
 ~~~~~
+- Oth: User documentation on the inner workings of workload migration.
+  [Jiri Stransky]
 - Docs: Add password-based authentication variable docs. [Carlos
   Camacho]
 

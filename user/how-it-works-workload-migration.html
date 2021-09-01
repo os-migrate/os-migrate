@@ -1,0 +1,331 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>How it works: Workload migration &mdash; os-migrate  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Documented roles in os-migrate" href="../roles.html" />
+    <link rel="prev" title="Migration Parameters Guide" href="migration-params-guide.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> os-migrate
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="README.html">OS Migrate User Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="install-from-galaxy.html">Installation from Galaxy (recommended)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install-from-source.html">Installation from source (when customizing)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upgrade.html">Upgrading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="walkthrough.html">OS Migrate Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage-notes.html">General usage notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="variables-guide.html">Variables Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migration-params-guide.html">Migration Parameters Guide</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">How it works: Workload migration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#data-flow">Data flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#migration-sequence">Migration sequence</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../roles.html">Documented roles in os-migrate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Documented modules in os-migrate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devel/README.html">OS Migrate Developer Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">os-migrate</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="README.html">OS Migrate User Documentation</a> &raquo;</li>
+        
+      <li>How it works: Workload migration</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/user/how-it-works-workload-migration.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="how-it-works-workload-migration">
+<h1>How it works: Workload migration<a class="headerlink" href="#how-it-works-workload-migration" title="Permalink to this headline">¶</a></h1>
+<p>The information described in this page is not necessary knowledge for
+using OS Migrate workload migration. However, knowing how the
+migration works under the hood may be useful for troubleshooting or
+forming deeper understanding of OS Migrate.</p>
+<div class="section" id="data-flow">
+<h2>Data flow<a class="headerlink" href="#data-flow" title="Permalink to this headline">¶</a></h2>
+<p>The workload migration utilizes so called <em>conversion hosts</em> to
+transfer data from the source cloud to the destination cloud.</p>
+<p>The conversion hosts are temporarily deployed in the source &amp;
+destination projects. Being in the same project as the source (and
+destination, respectively) VMs ensures that the conversion hosts will
+have access to the data that needs to be migrated (snapshots and
+volumes).</p>
+<div class="figure align-default">
+<a class="reference internal image-reference" href="https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig5.png?raw=true"><img alt="Workload migration (data flow)" src="https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig5.png?raw=true" style="width: 75%;" /></a>
+</div>
+</div>
+<div class="section" id="migration-sequence">
+<h2>Migration sequence<a class="headerlink" href="#migration-sequence" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">export_workloads.yml</span></code> playbook simply exports workload metadata
+into <code class="docutils literal notranslate"><span class="pre">workloads.yml</span></code>.</p>
+<p>The actual main migration sequence happens inside
+<code class="docutils literal notranslate"><span class="pre">import_workloads.yml</span></code> playbook and the <code class="docutils literal notranslate"><span class="pre">import_workloads</span></code>
+role. The initial common steps are:</p>
+<ul class="simple">
+<li><p>The resources loaded from <code class="docutils literal notranslate"><span class="pre">workloads.yml</span></code> are validated.</p></li>
+<li><p>Resources are filtered according to <code class="docutils literal notranslate"><span class="pre">os_migrate_workloads_filter</span></code>.</p></li>
+<li><p>Reachability of source &amp; destination conversion hosts is verified.</p></li>
+</ul>
+<p>Then the role starts iterating over all workloads that passed the
+filter. The steps performed for each workload (Nova Server) are:</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">import_workload_prelim</span></code> module creates log and state files
+under <code class="docutils literal notranslate"><span class="pre">{{</span> <span class="pre">os_migrate_data_dir</span> <span class="pre">}}/workload_logs</span></code>. It also takes
+care of skipping migration of VMs that already exist in the
+destination, and skipping of conversion hosts, should such
+migration be attempted.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">import_workload_dst_check</span></code> module checks whether migration
+prerequisites are satisfied in the destination cloud/project. This
+means verifying that resources which are referenced by name from
+the workload serialization can be de-referenced in the destination
+cloud. In other words, this verifies the networks, subnets etc.,
+that the destination VM should be attached to, indeed exist in the
+destination cloud.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">os_migrate_workload_stop_before_migration</span></code> is <code class="docutils literal notranslate"><span class="pre">true</span></code>, the VM
+in the source cloud is stopped.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">import_workload_src_check</span></code> checks whether the source workload
+is ready to be migrated. This means verifying that the Nova Server
+is <code class="docutils literal notranslate"><span class="pre">SHUTOFF</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">import_workload_export_volumes</span></code> module prepares data for
+transfer to the destination cloud:</p>
+<ul>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">boot_disk_copy</span></code> is <code class="docutils literal notranslate"><span class="pre">true</span></code>, a snapshot of the source VM is
+created, converted to a Cinder volume and attached to the source
+conversion host.</p></li>
+<li><p>Additional Cinder volumes attached to the source VM are detached
+from it and attached to the source conversion host.</p></li>
+<li><p>All VM’s volumes (boot &amp; additional) on the conversion host are
+exported as NBD drives, listening on localhost only.</p></li>
+</ul>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">import_workload_transfer_volumes</span></code> copies data from source to
+destination:</p>
+<ul>
+<li><p>SSH port forwarding is created for the NBD drives of the source
+conversion host, so that they are accessible on the destination
+conversion host, again on localhost only. (The data transfer
+mechanism could be described as “NBD over SSH”.)</p></li>
+<li><p>Cinder volumes are created in the destination project for both
+the boot disk and additional volumes (as applicable). The
+destination volume sizes match the volume sizes in the source
+cloud. The volumes are attached to the destination conversion
+host.</p></li>
+<li><p>Sparsification of the NBDs is performed, only for recognizable
+filesystems that the <code class="docutils literal notranslate"><span class="pre">virt-sparsify</span></code> tool supports. This
+significantly speeds up copying of empty space on supported
+filesystems.</p></li>
+<li><p>Data is copied from the NBDs to the respective destination Cinder
+volumes.</p></li>
+<li><p>SSH port forwarding for the NBDs are closed, and volumes are
+detached from the destination conversion host.</p></li>
+</ul>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">import_workload_create_instance</span></code> creates new Nova server in
+the destination cloud according to the data from the resource
+serialization, and using the copied Cinder volumes as applicable.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">import_workload_src_cleanup</span></code> cleans up after the migration in
+the source cloud. It closes the NBD exports, detaches volumes from
+the conversion host, deletes the temporary boot disk snapshot
+volume and re-attaches any additional volumes back onto the
+source VM (as applicable).</p></li>
+<li><p>In case of failure during the migration, the
+<code class="docutils literal notranslate"><span class="pre">import_workload_src_cleanup</span></code> module is executed too, and an
+extra <code class="docutils literal notranslate"><span class="pre">import_workload_dst_failure_cleanup</span></code> module is executed,
+which aims to clean up failed partial migration from the
+destination cloud. (In case of successful migration, no further
+clean up is necessary in the destination cloud.)</p></li>
+</ul>
+<a class="reference internal image-reference" href="../_images/workload-migration-sequence.png"><img alt="Sequence diagram of workload migration internal actions" src="../_images/workload-migration-sequence.png" style="width: 100%;" /></a>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../roles.html" class="btn btn-neutral float-right" title="Documented roles in os-migrate" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="migration-params-guide.html" class="btn btn-neutral float-left" title="Migration Parameters Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, os-migrate.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
