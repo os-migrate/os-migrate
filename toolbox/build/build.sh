@@ -15,8 +15,10 @@ dnf -y install \
     findutils \
     gcc \
     iputils \
+    java-11-openjdk \
     jq \
     make \
+    plantuml \
     python3-devel \
     python3-openstackclient \
     "$ANSIBLE_PYTHON" \

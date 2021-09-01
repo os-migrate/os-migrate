@@ -14,3 +14,4 @@ to another.
    usage-notes.rst
    variables-guide.rst
    migration-params-guide.rst
+   how-it-works-workload-migration.rst

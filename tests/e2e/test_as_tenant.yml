@@ -59,7 +59,9 @@
       ansible.builtin.include_tasks: tenant/seed_pre_workload.yml
       args:
         apply:
-          tags: test_pre_workload
+          tags:
+            - test_seed
+            - test_pre_workload
       tags: always
 
     - name: run the pre workloads
@@ -76,6 +78,7 @@
       args:
         apply:
           tags:
+            - test_seed
             - test_workload
             - test_image_workload_boot_nocopy
       tags: always
