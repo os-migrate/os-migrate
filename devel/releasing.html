@@ -186,8 +186,8 @@ tests:</p>
 grep -lr <span class="s2">&quot;os_migrate_version: </span><span class="nv">$OLD_VERSION</span><span class="s2">&quot;</span> ./tests <span class="p">|</span> xargs sed -i -e <span class="s2">&quot;s/^os_migrate_version: </span><span class="nv">$OLD_VERSION</span><span class="s2">/os_migrate_version: </span><span class="nv">$NEW_VERSION</span><span class="s2">/&quot;</span>
 </pre></div>
 </div>
-<p>Test that the changes didn’t break tests:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span><span class="o">-</span><span class="n">fast</span>
+<p>A build is required to update const.py:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span>
 </pre></div>
 </div>
 <p>Create a pull request with these changes. Once it’s merged, check out
