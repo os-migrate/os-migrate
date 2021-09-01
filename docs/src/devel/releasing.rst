@@ -18,11 +18,11 @@ tests:
    sed -i -e "s/^version: $OLD_VERSION/version: $NEW_VERSION/" ./os_migrate/galaxy.yml
    grep -lr "os_migrate_version: $OLD_VERSION" ./tests | xargs sed -i -e "s/^os_migrate_version: $OLD_VERSION/os_migrate_version: $NEW_VERSION/"
 
-Test that the changes didn’t break tests:
+A build is required to update const.py:
 
 ::
 
-   ./toolbox/run make test-fast
+   ./toolbox/run make
 
 Create a pull request with these changes. Once it’s merged, check out
 the merge commit and release to galaxy:
