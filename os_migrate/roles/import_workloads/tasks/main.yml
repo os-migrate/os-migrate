@@ -1,3 +1,8 @@
+- name: include the conversion hosts inventory
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.conversion_host
+    tasks_from: conv_hosts_inventory.yml
+
 - name: validate loaded resources
   os_migrate.os_migrate.validate_resource_files:
     paths:
