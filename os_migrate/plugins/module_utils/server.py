@@ -248,3 +248,22 @@ class Server(resource.Resource):
         refs['volumes'] = params['volumes']
 
         return refs
+
+    def dst_prerequisites_errors(self, conn, filters=None):
+        """Get messages for unmet destination cloud prerequisites including keypairs.
+
+        Returns: list of strings (error messages), empty when prerequisites
+        are met
+        """
+        errors = super().dst_prerequisites_errors(conn, filters)
+
+        # Parent class dst_prerequisites_errors does not validate keypairs exist in destination cloud.
+        # To do this we do a lookup to see if keypair name exists and append to errors list if not
+        params = self.params()
+        try:
+            conn.compute.find_keypair(params['key_name'], ignore_missing=False)
+        except (openstack.exceptions.ResourceFailure,
+                openstack.exceptions.ResourceNotFound,
+                openstack.exceptions.DuplicateResource) as e:
+            errors.append("Destination keypair prerequisites not met: {0}".format(e))
+        return errors

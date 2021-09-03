@@ -6,6 +6,7 @@ import unittest
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import server
+from ansible_collections.os_migrate.os_migrate.tests.unit.test_keypair import sdk_keypair
 
 
 def sdk_server():
@@ -143,7 +144,7 @@ def server_refs():
 
 
 class Server(server.Server):
-    def _refs_from_ser(self, conn):
+    def _refs_from_ser(self, conn, filters=None):
         return server_refs()
 
     @staticmethod
@@ -256,3 +257,30 @@ class TestServer(unittest.TestCase):
             }
         ])
         self.assertTrue('image_id' not in sdk_params)
+
+    def test_keypair_dst_prerequisites_errors(self):
+        # When checking the prerequisites for a server/workload migration are present in destination environment
+        # we explicitly ensure that the keypair in the server/workload metadata is present.
+        # This test gates any regression where we try and migrate a server/workload where the keypair in the server
+        # metadata is not present in the destination environment
+        srv = Server.from_sdk(None, sdk_server())
+        conn = unittest.mock.Mock()
+
+        # This test ensures that if the keypair is present then no keypair error is present.
+        with unittest.mock.patch.object(conn.compute, 'find_keypair') as mocked_find_keypair:
+            # Mock `conn.compute.find_keypair` to return a dummy keypair object
+            mocked_find_keypair.return_value = sdk_keypair()
+            errors = srv.dst_prerequisites_errors(conn, None)
+            # Assert that the errors list is empty
+            self.assertFalse(errors)
+
+        # More importantly this test ensures that if the keypair is not present then
+        # 'Destination keypair prerequisites not met: Keypair not found' is present in the errors list.
+        with unittest.mock.patch.object(conn.compute, 'find_keypair') as mocked_find_keypair:
+            mocked_find_keypair.side_effect = openstack.exceptions.ResourceNotFound("Keypair not found")
+            errors = srv.dst_prerequisites_errors(conn, None)
+            # Assert that the errors list is not empty
+            self.assertTrue(errors)
+            # Assert that the "'Destination keypair prerequisites not met: Keypair not found'" text present in
+            # the errors list
+            self.assertIn('Destination keypair prerequisites not met: Keypair not found', errors)
