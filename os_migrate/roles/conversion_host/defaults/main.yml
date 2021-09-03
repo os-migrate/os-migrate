@@ -16,6 +16,8 @@ os_migrate_conversion_subnet_cidr: 192.168.10.0/24
 os_migrate_conversion_subnet_alloc_start: 192.168.10.10
 os_migrate_conversion_subnet_alloc_end: 192.168.10.99
 
+os_migrate_conversion_delete_fip: yes
+
 os_migrate_conversion_router_name: os_migrate_conv
 os_migrate_conversion_router_ip: 192.168.10.1
 
