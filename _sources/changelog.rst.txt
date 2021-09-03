@@ -7,6 +7,20 @@ Changelog
 
 Fix
 ~~~
+- Validate keypairs exist in destination cloud before migrating
+  workload. [Philip Roche]
+
+  dst_prerequisites_errorsclass method is used to validate prerequisites
+  before migrating workloads but the parent class dst_prerequisites_errors
+  does not validate keypairs exist in destination cloud. To do this we do
+  a lookup to see if keypair name exists and append to errors list if not
+
+
+0.10.1 (2021-09-02)
+-------------------
+
+Fix
+~~~
 - Make explicit the conversion hosts inventory update. [Carlos Camacho]
 
 
