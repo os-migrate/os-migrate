@@ -13,13 +13,17 @@
         portip: 192.168.10.10
   register: _osm_router
 
+- name: Get router information
+  ansible.builtin.debug:
+    var: _osm_router
+
 - name: get auth token
   openstack.cloud.auth:
     auth: "{{ os_migrate_src_auth }}"
 
 - name: set tags on router
   ansible.builtin.command:
-    cmd: openstack router set --tag test_tag_1 --tag test_tag_2 {{ _osm_router.id }}
+    cmd: openstack router set --tag test_tag_1 --tag test_tag_2 {{ _osm_router.router.id }}
   environment:
     OS_AUTH_TYPE: token
     OS_AUTH_URL: "{{ os_migrate_src_auth.auth_url }}"
