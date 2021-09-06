@@ -5,6 +5,14 @@ Changelog
 (unreleased)
 ------------
 
+New
+~~~
+- Allow deleting or detaching the conversion hosts FIPs. [Carlos
+  Camacho]
+
+  This commit enables users to detach or demove floating IPs
+  when deleting the conversion hosts.
+
 Fix
 ~~~
 - Validate keypairs exist in destination cloud before migrating

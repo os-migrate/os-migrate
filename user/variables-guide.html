@@ -104,6 +104,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-external-network">Conversion host external network</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-flavor-name">Conversion host flavor name</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-hosts-specific-floating-ips">Conversion hosts specific floating IPs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conversion-hosts-detach-or-remove-floating-ips">Conversion hosts detach or remove floating IPs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-image-name">Conversion host image name</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-rhel-variables">Conversion host RHEL variables</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#enabling-password-based-ssh-access-to-the-conversion-hosts">Enabling password-based SSH access to the conversion hosts</a></li>
@@ -309,11 +310,23 @@ be different between deployments.</p>
 <div class="section" id="conversion-hosts-specific-floating-ips">
 <h3>Conversion hosts specific floating IPs<a class="headerlink" href="#conversion-hosts-specific-floating-ips" title="Permalink to this headline">¶</a></h3>
 <p>Each conversion host needs to have a floating IP,
-this floating IP can be assigned automatically or
+these floating IPs can be assigned automatically or
 defined by the operator with the usage of the
 following variables:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_floating_ip_address</span>
 <span class="n">os_migrate_dst_conversion_floating_ip_address</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="conversion-hosts-detach-or-remove-floating-ips">
+<h3>Conversion hosts detach or remove floating IPs<a class="headerlink" href="#conversion-hosts-detach-or-remove-floating-ips" title="Permalink to this headline">¶</a></h3>
+<p>Once the conversion hosts are removed, the required and
+assigned floating IPs need to be detached or removed.</p>
+<p>The following variables allow to change the behavior
+of deleting of detaching the floating IP when deleting the conversion
+hosts (default: yes):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_host_delete_fip</span>
+<span class="n">os_migrate_dst_conversion_host_delete_fip</span>
 </pre></div>
 </div>
 </div>

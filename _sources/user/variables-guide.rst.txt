@@ -137,12 +137,25 @@ Conversion hosts specific floating IPs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Each conversion host needs to have a floating IP,
-this floating IP can be assigned automatically or
+these floating IPs can be assigned automatically or
 defined by the operator with the usage of the
 following variables::
 
     os_migrate_src_conversion_floating_ip_address
     os_migrate_dst_conversion_floating_ip_address
+
+Conversion hosts detach or remove floating IPs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Once the conversion hosts are removed, the required and
+assigned floating IPs need to be detached or removed.
+
+The following variables allow to change the behavior
+of deleting of detaching the floating IP when deleting the conversion
+hosts (default: yes)::
+
+    os_migrate_src_conversion_host_delete_fip
+    os_migrate_dst_conversion_host_delete_fip
 
 Conversion host image name
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
