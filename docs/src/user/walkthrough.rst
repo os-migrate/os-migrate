@@ -376,7 +376,7 @@ transfer.
 
 .. code:: bash
 
-   $OSM_CMD $OSM_DIR/deploy_conversion_hosts.yml
+   $OSM_CMD $OSM_DIR/playbooks/deploy_conversion_hosts.yml
 
 Export
 ~~~~~~
