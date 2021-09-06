@@ -15,6 +15,13 @@ Fix
   does not validate keypairs exist in destination cloud. To do this we do
   a lookup to see if keypair name exists and append to errors list if not
 
+Other
+~~~~~
+- Docs: fix walkthrough links. [Carlos Camacho]
+
+  This commit fixes some wrong links
+  in the docs
+
 
 0.10.1 (2021-09-02)
 -------------------

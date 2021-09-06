@@ -463,7 +463,7 @@ You can edit the exported ``workloads.yml`` to adjust desired
 properties for the servers which will be created in the destination
 cloud during migration. You can also edit migration parameters to
 control how a workload should be migrated. Refer to
-`Migration Parameters Guide <migration-params-guide.rst>`_
+`Migration Parameters Guide <migration-params-guide.html>`_
 for more information.
 
 Ansible Variables
@@ -472,7 +472,7 @@ Ansible Variables
 In addition to the migration parameters in the resource YAML files,
 you can alter the behavior of OS Migrate via Ansible variables,
 e.g. to specify a subset of resources/workloads that will be exported
-or imported. Refer to the `Variables Guide <variables-guide.rst>`_ for
+or imported. Refer to the `Variables Guide <variables-guide.html>`_ for
 details.
 
 Migration
