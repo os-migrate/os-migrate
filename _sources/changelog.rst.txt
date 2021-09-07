@@ -25,6 +25,11 @@ Fix
 
 Other
 ~~~~~
+- Oth: Improve workload data flow diagram. [Jiri Stransky]
+
+  The data flow diagram in "OS Migrate Walkthrough" and "How It Works:
+  Workload Migration" now has more clarity on how (meta)data travels
+  during workload migration.
 - Docs: fix walkthrough links. [Carlos Camacho]
 
   This commit fixes some wrong links

@@ -22,8 +22,9 @@ direct database access or other methods to export or import data. The
 Ansible playbooks contained in OS Migrate are idempotent. If a command
 fails, you can retry with the same command.
 
-.. figure:: https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig1.png?sanitize=true
+.. figure:: ../images/plantuml/render/pcm-birds-eye.png
    :alt: OSP-OSP Migration Overview
+   :width: 80%
 
    OSP-OSP Migration Overview
 
@@ -227,15 +228,15 @@ For a full list of available playbooks, run:
 Diagrams
 ~~~~~~~~
 
-.. figure:: https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig3.png?raw=true
+.. figure:: ../images/plantuml/render/pre-workload-migration-workflow.png
    :alt: Pre-workload Migration (workflow)
    :width: 50%
 
    Pre-workload Migration (workflow)
 
-.. figure:: https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig2.png?raw=true
+.. figure:: ../images/plantuml/render/pre-workload-migration-data-flow.png
    :alt: Pre-workload Migration (data flow)
-   :width: 75%
+   :width: 50%
 
    Pre-workload Migration (data flow)
 
@@ -289,7 +290,7 @@ Process Summary
 This flowchart illustrates the high-level migration workflow, from a
 user’s point of view:
 
-.. figure:: https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig4.png?raw=true
+.. figure:: ../images/plantuml/render/workload-migration-workflow.png
    :alt: Workload migration (workflow)
    :width: 50%
 
@@ -303,9 +304,9 @@ from CentOS 8 or RHEL 8 cloud images.
 
 The following diagram helps explain the need for a conversion host VM:
 
-.. figure:: https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig5.png?raw=true
+.. figure:: ../images/plantuml/render/workload-migration-data-flow.png
    :alt: Workload migration (data flow)
-   :width: 75%
+   :width: 80%
 
    Workload migration (data flow)
 
