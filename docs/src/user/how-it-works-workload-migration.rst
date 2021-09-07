@@ -18,9 +18,11 @@ destination, respectively) VMs ensures that the conversion hosts will
 have access to the data that needs to be migrated (snapshots and
 volumes).
 
-.. figure:: https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/walkthrough/2020-06-24-osp-migrate-fig5.png?raw=true
+.. figure:: ../images/plantuml/render/workload-migration-data-flow.png
    :alt: Workload migration (data flow)
-   :width: 75%
+   :width: 80%
+
+   Workload migration (data flow)
 
 Migration sequence
 ------------------
@@ -118,5 +120,7 @@ filter. The steps performed for each workload (Nova Server) are:
    clean up is necessary in the destination cloud.)
 
 .. image:: ../images/plantuml/render/workload-migration-sequence.png
-  :width: 100%
-  :alt: Sequence diagram of workload migration internal actions
+   :width: 100%
+   :alt: Sequence diagram of workload migration internal actions
+
+   Sequence diagram of workload migration internal actions

@@ -14,6 +14,7 @@ dnf -y install \
     cargo \
     findutils \
     gcc \
+    graphviz \
     iputils \
     java-11-openjdk \
     jq \

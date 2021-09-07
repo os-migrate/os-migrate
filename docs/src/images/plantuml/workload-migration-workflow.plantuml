@@ -1,0 +1,34 @@
+@startuml
+
+skinparam LegendFontSize 10
+skinparam NoteFontSize 9
+
+title Workload migration (workflow)
+
+start
+
+:[A] Deploy CH to src and dst;
+
+:[A] Export metadata from src;
+
+if (Edits wanted?) then (yes)
+    :Edit metadata serializations;
+else (no)
+endif
+
+:[A] Validate resource files;
+
+:[A] Migrate VMs\nwith attached volumes;
+
+:[A] Remove CH from src and dst;
+
+stop
+
+legend bottom
+    [A] = Ansible playbook from OS-Migrate
+    CH = conversion host
+    src = source cloud
+    dst = destination cloud
+endlegend
+
+@enduml

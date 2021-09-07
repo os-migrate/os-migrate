@@ -1,0 +1,28 @@
+@startuml
+
+skinparam NoteFontSize 10
+
+title OSP-OSP Migration, birds-eye view
+
+start
+
+partition "TripleO (cloud scope)" {
+    :Deploy a destination cloud;
+}
+
+partition "OS-Migrate (tenant scope)" {
+    :Pre-workload migration;
+    note right
+        Anything to replicate ahead of workloads,
+        e.g. networking resources, images, ...
+    end note
+
+    :Workload migration;
+    note right
+        Moving instances and attached volumes
+    end note
+}
+
+stop
+
+@enduml
