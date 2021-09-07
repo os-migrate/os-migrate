@@ -20,7 +20,7 @@ volumes).
 
 .. figure:: ../images/plantuml/render/workload-migration-data-flow.png
    :alt: Workload migration (data flow)
-   :width: 75%
+   :width: 80%
 
    Workload migration (data flow)
 

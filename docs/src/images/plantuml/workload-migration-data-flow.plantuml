@@ -20,7 +20,7 @@ cloud Destination {
 }
 
 src_res -right-> src_ch
-src_ch -right-> dst_ch
+src_ch -right-> dst_ch : Binary data
 dst_ch -right-> dst_res
 
 
@@ -28,9 +28,10 @@ node Migrator {
     file "Serialized\nmetadata" as ser_res
 }
 
-src_res .down.> ser_res : Export\nmetadata
-ser_res .up.> src_ch : Trigger\nmigration
-ser_res .up.> dst_ch
+src_res .down.> ser_res : Metadata
+ser_res -[dotted]up-> src_ch : Trigger binary\ndata migration
+ser_res -[dotted]up-> dst_ch
+ser_res .up.> dst_res : Create a VM using\nmetadata and\ncopied binary data
 
 ser_res .down.> ser_res : Edit
 
