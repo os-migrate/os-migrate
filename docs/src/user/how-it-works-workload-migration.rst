@@ -119,7 +119,7 @@ filter. The steps performed for each workload (Nova Server) are:
    destination cloud. (In case of successful migration, no further
    clean up is necessary in the destination cloud.)
 
-.. image:: ../images/plantuml/render/workload-migration-sequence.png
+.. figure:: ../images/plantuml/render/workload-migration-sequence.png
    :width: 100%
    :alt: Sequence diagram of workload migration internal actions
 
