@@ -3,6 +3,7 @@ __metaclass__ = type
 
 import openstack
 import unittest
+from unittest import mock
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import server
@@ -264,10 +265,10 @@ class TestServer(unittest.TestCase):
         # This test gates any regression where we try and migrate a server/workload where the keypair in the server
         # metadata is not present in the destination environment
         srv = Server.from_sdk(None, sdk_server())
-        conn = unittest.mock.Mock()
+        conn = mock.Mock()
 
         # This test ensures that if the keypair is present then no keypair error is present.
-        with unittest.mock.patch.object(conn.compute, 'find_keypair') as mocked_find_keypair:
+        with mock.patch.object(conn.compute, 'find_keypair') as mocked_find_keypair:
             # Mock `conn.compute.find_keypair` to return a dummy keypair object
             mocked_find_keypair.return_value = sdk_keypair()
             errors = srv.dst_prerequisites_errors(conn, None)
@@ -276,7 +277,7 @@ class TestServer(unittest.TestCase):
 
         # More importantly this test ensures that if the keypair is not present then
         # 'Destination keypair prerequisites not met: Keypair not found' is present in the errors list.
-        with unittest.mock.patch.object(conn.compute, 'find_keypair') as mocked_find_keypair:
+        with mock.patch.object(conn.compute, 'find_keypair') as mocked_find_keypair:
             mocked_find_keypair.side_effect = openstack.exceptions.ResourceNotFound("Keypair not found")
             errors = srv.dst_prerequisites_errors(conn, None)
             # Assert that the errors list is not empty
@@ -284,3 +285,12 @@ class TestServer(unittest.TestCase):
             # Assert that the "'Destination keypair prerequisites not met: Keypair not found'" text present in
             # the errors list
             self.assertIn('Destination keypair prerequisites not met: Keypair not found', errors)
+
+        # This test ensures that if the keypair is not present no lookup is performed.
+        srv.data['params']['key_name'] = None
+        with mock.patch.object(conn.compute, 'find_keypair') as mocked_find_keypair:
+            errors = srv.dst_prerequisites_errors(conn, None)
+            # Assert that the keypair lookup was not performed
+            mocked_find_keypair.assert_not_called()
+            # Assert that the errors list is empty
+            self.assertFalse(errors)
