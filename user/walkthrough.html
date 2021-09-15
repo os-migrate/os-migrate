@@ -1,73 +1,34 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>OS Migrate Walkthrough &mdash; os-migrate  documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="General usage notes" href="usage-notes.html" />
     <link rel="prev" title="Upgrading" href="upgrade.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> os-migrate
-          
-
-          
           </a>
-
-          
-            
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -75,18 +36,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="README.html">OS Migrate User Documentation</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="install-from-galaxy.html">Installation from Galaxy (recommended)</a></li>
@@ -131,75 +81,33 @@
 <li class="toctree-l1"><a class="reference internal" href="../devel/README.html">OS Migrate Developer Documentation</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">os-migrate</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="README.html">OS Migrate User Documentation</a> &raquo;</li>
-        
       <li>OS Migrate Walkthrough</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../_sources/user/walkthrough.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="os-migrate-walkthrough">
-<h1>OS Migrate Walkthrough<a class="headerlink" href="#os-migrate-walkthrough" title="Permalink to this headline">¶</a></h1>
+             
+  <section id="os-migrate-walkthrough">
+<h1>OS Migrate Walkthrough<a class="headerlink" href="#os-migrate-walkthrough" title="Permalink to this headline"></a></h1>
 <p>OS Migrate is a framework for OpenStack parallel cloud migration
 (migrating content between OpenStack tenants which are not necessarily
 in the same cloud). It’s a collection of Ansible playbooks that provide
@@ -218,10 +126,12 @@ in the original cluster, they can be gradually added to the new cluster.</p>
 direct database access or other methods to export or import data. The
 Ansible playbooks contained in OS Migrate are idempotent. If a command
 fails, you can retry with the same command.</p>
-<div class="figure align-default" id="id2">
+<figure class="align-default" id="id2">
 <a class="reference internal image-reference" href="../_images/pcm-birds-eye.png"><img alt="OSP-OSP Migration Overview" src="../_images/pcm-birds-eye.png" style="width: 80%;" /></a>
-<p class="caption"><span class="caption-text">OSP-OSP Migration Overview</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
-</div>
+<figcaption>
+<p><span class="caption-text">OSP-OSP Migration Overview</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
 <p>The migration is generally performed in this sequence:</p>
 <ul class="simple">
 <li><p>prerequisites: prepare authentication info, parameter files,</p></li>
@@ -232,10 +142,10 @@ workloads keep running in the source cloud,</p></li>
 source cloud and moves them into the destination cloud (VMs,
 volumes).</p></li>
 </ul>
-<div class="section" id="prerequisites">
-<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="authentication">
-<h3>Authentication<a class="headerlink" href="#authentication" title="Permalink to this headline">¶</a></h3>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline"></a></h2>
+<section id="authentication">
+<h3>Authentication<a class="headerlink" href="#authentication" title="Permalink to this headline"></a></h3>
 <p>Users are encouraged to use os-migrate using specific credentials for
 each project/tenant, this means <strong>not using the admin user to execute
 the resources migration</strong> (unless the resource is owned by the admin
@@ -257,9 +167,9 @@ completed, by removing the group, all the references in all the projects
 will be removed automatically.</p>
 </li>
 </ul>
-</div>
-<div class="section" id="parameter-file">
-<h3>Parameter file<a class="headerlink" href="#parameter-file" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="parameter-file">
+<h3>Parameter file<a class="headerlink" href="#parameter-file" title="Permalink to this headline"></a></h3>
 <p>Let’s create an <code class="docutils literal notranslate"><span class="pre">os-migrate-vars.yml</span></code> file with Ansible variables:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_src_auth</span><span class="p">:</span>
   <span class="nt">auth_url</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">http://192.168.0.13.199/v3</span>
@@ -289,8 +199,8 @@ sure to use a separate data directory for each source project.</strong> In
 other words, when changing <code class="docutils literal notranslate"><span class="pre">os_migrate_src_auth</span></code> or
 <code class="docutils literal notranslate"><span class="pre">os_migrate_src_region_name</span></code>, make sure to also change
 <code class="docutils literal notranslate"><span class="pre">os_migrate_data_dir</span></code>.</p>
-<div class="section" id="a-note-about-keystone-v2">
-<h4>A note about Keystone v2<a class="headerlink" href="#a-note-about-keystone-v2" title="Permalink to this headline">¶</a></h4>
+<section id="a-note-about-keystone-v2">
+<h4>A note about Keystone v2<a class="headerlink" href="#a-note-about-keystone-v2" title="Permalink to this headline"></a></h4>
 <p>As depicted in content of the previously defined <code class="docutils literal notranslate"><span class="pre">os-migrate-vars.yml</span></code>
 file, the parameters <code class="docutils literal notranslate"><span class="pre">os_migrate_src_auth</span></code> and <code class="docutils literal notranslate"><span class="pre">os_migrate_dst_auth</span></code>
 refer to the usage of Keystone v3. In the case of a user needing to
@@ -311,10 +221,10 @@ following error will be raised:</p>
 <p>Notice that the parameters <code class="docutils literal notranslate"><span class="pre">project_domain_name</span></code> and
 <code class="docutils literal notranslate"><span class="pre">user_domain_name</span></code> are removed and the <code class="docutils literal notranslate"><span class="pre">auth_url</span></code> parameter points
 to the Keystone v2 endpoint.</p>
-</div>
-</div>
-<div class="section" id="shortcuts">
-<h3>Shortcuts<a class="headerlink" href="#shortcuts" title="Permalink to this headline">¶</a></h3>
+</section>
+</section>
+<section id="shortcuts">
+<h3>Shortcuts<a class="headerlink" href="#shortcuts" title="Permalink to this headline"></a></h3>
 <p>We will use the OS Migrate collection path and an ansible-playbook
 command with the following arguments routinely, so let’s save them as
 variables in the shell:</p>
@@ -322,10 +232,10 @@ variables in the shell:</p>
 <span class="nb">export</span> <span class="nv">OSM_CMD</span><span class="o">=</span><span class="s2">&quot;ansible-playbook -v -i </span><span class="nv">$OSM_DIR</span><span class="s2">/localhost_inventory.yml -e @os-migrate-vars.yml&quot;</span>
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="pre-workload-migration">
-<h2>Pre-workload migration<a class="headerlink" href="#pre-workload-migration" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="pre-workload-migration">
+<h2>Pre-workload migration<a class="headerlink" href="#pre-workload-migration" title="Permalink to this headline"></a></h2>
 <p>Workloads require the support of several resources in a given cloud to
 operate properly. Some of these resources include networks, subnets,
 routers, router interfaces, security groups, and security group rules.
@@ -335,8 +245,8 @@ resources if desired, and importing them into the destination cloud.</p>
 <p>Exporting or importing resources is enabled by running the corresponding
 playbook from OS Migrate. Let’s look at a concrete example. To export
 the networks, run the “export_networks” playbook.</p>
-<div class="section" id="export-and-import">
-<h3>Export and import<a class="headerlink" href="#export-and-import" title="Permalink to this headline">¶</a></h3>
+<section id="export-and-import">
+<h3>Export and import<a class="headerlink" href="#export-and-import" title="Permalink to this headline"></a></h3>
 <p>To export the networks:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">$OSM_CMD</span> <span class="nv">$OSM_DIR</span>/playbooks/export_networks.yml
 </pre></div>
@@ -391,26 +301,30 @@ keypairs.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ls <span class="nv">$OSM_DIR</span>/playbooks
 </pre></div>
 </div>
-</div>
-<div class="section" id="diagrams">
-<h3>Diagrams<a class="headerlink" href="#diagrams" title="Permalink to this headline">¶</a></h3>
-<div class="figure align-default" id="id3">
+</section>
+<section id="diagrams">
+<h3>Diagrams<a class="headerlink" href="#diagrams" title="Permalink to this headline"></a></h3>
+<figure class="align-default" id="id3">
 <a class="reference internal image-reference" href="../_images/pre-workload-migration-workflow.png"><img alt="Pre-workload Migration (workflow)" src="../_images/pre-workload-migration-workflow.png" style="width: 50%;" /></a>
-<p class="caption"><span class="caption-text">Pre-workload Migration (workflow)</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
-</div>
-<div class="figure align-default" id="id4">
+<figcaption>
+<p><span class="caption-text">Pre-workload Migration (workflow)</span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id4">
 <a class="reference internal image-reference" href="../_images/pre-workload-migration-data-flow.png"><img alt="Pre-workload Migration (data flow)" src="../_images/pre-workload-migration-data-flow.png" style="width: 50%;" /></a>
-<p class="caption"><span class="caption-text">Pre-workload Migration (data flow)</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
-</div>
-</div>
-<div class="section" id="demo">
-<h3>Demo<a class="headerlink" href="#demo" title="Permalink to this headline">¶</a></h3>
+<figcaption>
+<p><span class="caption-text">Pre-workload Migration (data flow)</span><a class="headerlink" href="#id4" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="demo">
+<h3>Demo<a class="headerlink" href="#demo" title="Permalink to this headline"></a></h3>
 <p><a class="reference external" href="https://youtu.be/e7KXy5Hq4CMA">Pre-workload migration recorded demo</a>:</p>
 <p><a class="reference external" href="https://youtu.be/e7KXy5Hq4CMA"><img alt="Watch the video1" src="https://img.youtube.com/vi/e7KXy5Hq4CM/maxresdefault.jpg" /></a></p>
-</div>
-</div>
-<div class="section" id="workload-migration">
-<h2>Workload migration<a class="headerlink" href="#workload-migration" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="workload-migration">
+<h2>Workload migration<a class="headerlink" href="#workload-migration" title="Permalink to this headline"></a></h2>
 <p>Workload information is exported in a similar method to networks,
 security groups, etc. as in the previous sections. Run the
 “export_workloads” playbook, and edit the resulting workloads.yml as
@@ -442,24 +356,28 @@ the migration data directory. Data transfer is handled by the
 import_workloads playbook. The data is transfered directly between the
 clouds, meaning both clouds have to be running and reachable at the
 same time. The following sections describe the process in more detail.</p>
-<div class="section" id="process-summary">
-<h3>Process Summary<a class="headerlink" href="#process-summary" title="Permalink to this headline">¶</a></h3>
+<section id="process-summary">
+<h3>Process Summary<a class="headerlink" href="#process-summary" title="Permalink to this headline"></a></h3>
 <p>This flowchart illustrates the high-level migration workflow, from a
 user’s point of view:</p>
-<div class="figure align-default" id="id5">
+<figure class="align-default" id="id5">
 <a class="reference internal image-reference" href="../_images/workload-migration-workflow.png"><img alt="Workload migration (workflow)" src="../_images/workload-migration-workflow.png" style="width: 50%;" /></a>
-<p class="caption"><span class="caption-text">Workload migration (workflow)</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
-</div>
+<figcaption>
+<p><span class="caption-text">Workload migration (workflow)</span><a class="headerlink" href="#id5" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
 <p>The process involves the deployment of a “conversion host” on source
 and destination clouds. A conversion host is an OpenStack server which
 will be used to transfer binary volume data from the source to the
 destination cloud. The conversion hosts are expected to be created
 from CentOS 8 or RHEL 8 cloud images.</p>
 <p>The following diagram helps explain the need for a conversion host VM:</p>
-<div class="figure align-default" id="id6">
+<figure class="align-default" id="id6">
 <a class="reference internal image-reference" href="../_images/workload-migration-data-flow.png"><img alt="Workload migration (data flow)" src="../_images/workload-migration-data-flow.png" style="width: 80%;" /></a>
-<p class="caption"><span class="caption-text">Workload migration (data flow)</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
-</div>
+<figcaption>
+<p><span class="caption-text">Workload migration (data flow)</span><a class="headerlink" href="#id6" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
 <p>This shows that volumes on the source and destination clouds are
 removed from their original VMs and attached to their respective
 conversion hosts, and then transferred over the network from the
@@ -487,9 +405,9 @@ copy the data to the new attached volumes</p></li>
 configurations of OpenStack using as much of an API-only approach as
 possible, while allowing the use of libguestfs-based tooling to minimize
 total data transfer.</p>
-</div>
-<div class="section" id="preparation">
-<h3>Preparation<a class="headerlink" href="#preparation" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="preparation">
+<h3>Preparation<a class="headerlink" href="#preparation" title="Permalink to this headline"></a></h3>
 <p>We’ll put additional parameters into <code class="docutils literal notranslate"><span class="pre">os-migrate-vars.yml</span></code>:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_conversion_external_network_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">public</span>
 <span class="nt">os_migrate_conversion_flavor_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">m1.large</span>
@@ -504,9 +422,9 @@ Currently it should be a
 or
 <a class="reference external" href="https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.3/x86_64/product-software">RHEL 8 KVM Guest Image</a>.</p>
 <p>When using RHEL as conversion host, make sure to set the necessary <a class="reference external" href="https://os-migrate.github.io/os-migrate/user/variables-guide.html#conversion-host-rhel-variables">RHEL variables</a>.</p>
-</div>
-<div class="section" id="conversion-host-deployment">
-<h3>Conversion host deployment<a class="headerlink" href="#conversion-host-deployment" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="conversion-host-deployment">
+<h3>Conversion host deployment<a class="headerlink" href="#conversion-host-deployment" title="Permalink to this headline"></a></h3>
 <p>The conversion host deployment playbook creates the servers, installs
 additional required packages, and authorizes the destination conversion
 host to connect to the source conversion host for the actual data
@@ -514,9 +432,9 @@ transfer.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">$OSM_CMD</span> <span class="nv">$OSM_DIR</span>/playbooks/deploy_conversion_hosts.yml
 </pre></div>
 </div>
-</div>
-<div class="section" id="export">
-<h3>Export<a class="headerlink" href="#export" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="export">
+<h3>Export<a class="headerlink" href="#export" title="Permalink to this headline"></a></h3>
 <p>Before migrating workloads, the destination cloud must have imported all
 other resources (networks, security groups, etc.) or the migration will
 fail. Matching named resources (including flavor names) must exist on
@@ -587,26 +505,26 @@ host server.</p>
   <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">openstack.compute.Server</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="migration-parameters">
-<h3>Migration parameters<a class="headerlink" href="#migration-parameters" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="migration-parameters">
+<h3>Migration parameters<a class="headerlink" href="#migration-parameters" title="Permalink to this headline"></a></h3>
 <p>You can edit the exported <code class="docutils literal notranslate"><span class="pre">workloads.yml</span></code> to adjust desired
 properties for the servers which will be created in the destination
 cloud during migration. You can also edit migration parameters to
 control how a workload should be migrated. Refer to
 <a class="reference external" href="migration-params-guide.html">Migration Parameters Guide</a>
 for more information.</p>
-</div>
-<div class="section" id="ansible-variables">
-<h3>Ansible Variables<a class="headerlink" href="#ansible-variables" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="ansible-variables">
+<h3>Ansible Variables<a class="headerlink" href="#ansible-variables" title="Permalink to this headline"></a></h3>
 <p>In addition to the migration parameters in the resource YAML files,
 you can alter the behavior of OS Migrate via Ansible variables,
 e.g. to specify a subset of resources/workloads that will be exported
 or imported. Refer to the <a class="reference external" href="variables-guide.html">Variables Guide</a> for
 details.</p>
-</div>
-<div class="section" id="migration">
-<h3>Migration<a class="headerlink" href="#migration" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="migration">
+<h3>Migration<a class="headerlink" href="#migration" title="Permalink to this headline"></a></h3>
 <p>Then run the import_workloads playbook to migrate the workloads:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">$OSM_CMD</span> <span class="nv">$OSM_DIR</span>/playbooks/import_workloads.yml
 </pre></div>
@@ -616,69 +534,52 @@ destination cloud. Servers are “skipped” if they match the name or
 ID of the specified conversion host. If there is already an server
 on the destination matching the name of the current server, it will
 be marked “ok” and no extra work will be performed.</p>
-</div>
-<div class="section" id="cleanup-of-conversion-hosts">
-<h3>Cleanup of conversion hosts<a class="headerlink" href="#cleanup-of-conversion-hosts" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="cleanup-of-conversion-hosts">
+<h3>Cleanup of conversion hosts<a class="headerlink" href="#cleanup-of-conversion-hosts" title="Permalink to this headline"></a></h3>
 <p>When you are done migrating workloads in given tenants, delete their
 conversion hosts via the delete_conversion_hosts playbook:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">$OSM_CMD</span> <span class="nv">$OSM_DIR</span>/playbooks/delete_conversion_hosts.yml
 </pre></div>
 </div>
-</div>
-<div class="section" id="id1">
-<h3>Demo<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="id1">
+<h3>Demo<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h3>
 <p><a class="reference external" href="https://youtu.be/gEKvgIZqrQY">Workload migration recorded demo</a>:</p>
 <p><a class="reference external" href="https://youtu.be/gEKvgIZqrQY"><img alt="Watch the video2" src="https://img.youtube.com/vi/gEKvgIZqrQY/maxresdefault.jpg" /></a></p>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="usage-notes.html" class="btn btn-neutral float-right" title="General usage notes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="upgrade.html" class="btn btn-neutral float-left" title="Upgrading" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="usage-notes.html" class="btn btn-neutral float-right" title="General usage notes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2020, os-migrate.
-
-    </p>
+    <p>&#169; Copyright 2020, os-migrate.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

@@ -15,6 +15,12 @@ New
 
 Fix
 ~~~
+- Only perform keypair lookup in dst if server has keypair. [Philip
+  Roche]
+
+  When validating workload migration we should only validate if the keypair
+  specified in the workload/vm is present in the destination environment if the
+  workload/vm has a keypair associated with it.
 - Validate keypairs exist in destination cloud before migrating
   workload. [Philip Roche]
 

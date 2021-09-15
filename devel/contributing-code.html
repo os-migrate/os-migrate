@@ -1,73 +1,34 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Contributing Code &mdash; os-migrate  documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Contributing Documentation" href="contributing-docs.html" />
     <link rel="prev" title="General Contribution Guidelines" href="contributing-general.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> os-migrate
-          
-
-          
           </a>
-
-          
-            
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -75,18 +36,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../user/README.html">OS Migrate User Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../roles.html">Documented roles in os-migrate</a></li>
@@ -114,83 +64,41 @@
 </li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">os-migrate</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="README.html">OS Migrate Developer Documentation</a> &raquo;</li>
-        
       <li>Contributing Code</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../_sources/devel/contributing-code.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="contributing-code">
-<h1>Contributing Code<a class="headerlink" href="#contributing-code" title="Permalink to this headline">¶</a></h1>
+             
+  <section id="contributing-code">
+<h1>Contributing Code<a class="headerlink" href="#contributing-code" title="Permalink to this headline"></a></h1>
 <p>As an open source project, OS Migrate welcomes contributions from the
 community at large. The following guide provides information on how to
 add a new role to the project and where additional testing or
 documentation artifacts should be added. This isn’t an exhaustive
 reference and is a living document subject to change as needed when
 the project formalizes any practice or pattern.</p>
-<div class="section" id="adding-a-new-role">
-<h2>Adding a New Role<a class="headerlink" href="#adding-a-new-role" title="Permalink to this headline">¶</a></h2>
+<section id="adding-a-new-role">
+<h2>Adding a New Role<a class="headerlink" href="#adding-a-new-role" title="Permalink to this headline"></a></h2>
 <p>The most common contribution to OS Migrate is adding a new role to
 support the export or import of resources. The construction of the roles
 will likely follow a similar pattern. Each role also has specific unit
@@ -211,8 +119,8 @@ idempotency, and updates as a minimum. Additional tests as necessary.</p></li>
 <li><p>Add documentation within classes and roles/playbooks as required.
 Update developer or user documentation as needed.</p></li>
 </ul>
-<div class="section" id="creating-the-role-skeleton-automatically">
-<h3>Creating the role skeleton automatically<a class="headerlink" href="#creating-the-role-skeleton-automatically" title="Permalink to this headline">¶</a></h3>
+<section id="creating-the-role-skeleton-automatically">
+<h3>Creating the role skeleton automatically<a class="headerlink" href="#creating-the-role-skeleton-automatically" title="Permalink to this headline"></a></h3>
 <p>Adding roles into os-migrate can be easily achieved by
 creating the role structure skeleton automatically.</p>
 <p>From the repository root directory execute:</p>
@@ -225,9 +133,9 @@ creating the role structure skeleton automatically.</p>
 </div>
 <p>This command will generate the role, the default variables file,
 and the documentation stub.</p>
-</div>
-<div class="section" id="resources">
-<h3>Resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="resources">
+<h3>Resources<a class="headerlink" href="#resources" title="Permalink to this headline"></a></h3>
 <p>Resources are the primary data structures that are exported from and
 imported to clouds. In
 <code class="docutils literal notranslate"><span class="pre">os_migrate/plugins/module_utils/resource.py</span></code>, there is a
@@ -252,9 +160,9 @@ looked at when we’re making sure the import behavior is idempotent.
 I.e. when we re-run import playbooks, things that already got
 imported before are not attempted to be imported again.</p></li>
 </ul>
-</div>
-<div class="section" id="export-roles">
-<h3>Export Roles<a class="headerlink" href="#export-roles" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="export-roles">
+<h3>Export Roles<a class="headerlink" href="#export-roles" title="Permalink to this headline"></a></h3>
 <p>In the <code class="docutils literal notranslate"><span class="pre">defaults/main.yml</span></code> file, at a minimum you will need to
 define the <code class="docutils literal notranslate"><span class="pre">os_migrate_[resource]_filter</span></code> variable to support
 filtering of resources by the name property.</p>
@@ -283,9 +191,9 @@ module</a>
 , creating a collection of name/id pairs for export, filtering the names
 for specific resources, and then calling the module you created for
 export.</p>
-</div>
-<div class="section" id="import-roles">
-<h3>Import Roles<a class="headerlink" href="#import-roles" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="import-roles">
+<h3>Import Roles<a class="headerlink" href="#import-roles" title="Permalink to this headline"></a></h3>
 <p>In the <code class="docutils literal notranslate"><span class="pre">defaults/main.yml</span></code> file, at a minimum you will need to
 define the same <code class="docutils literal notranslate"><span class="pre">os_migrate_[resource]_filter</span></code> variable as with
 export, and <code class="docutils literal notranslate"><span class="pre">import_[resource]_validate_file:</span> <span class="pre">true</span></code> variable to set
@@ -313,9 +221,9 @@ following default content:</p>
 data. A common pattern is validating the data file created by the
 associated export role, reading the data file and then calling the
 module you created for import.</p>
-</div>
-<div class="section" id="necessary-documentation">
-<h3>Necessary Documentation<a class="headerlink" href="#necessary-documentation" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="necessary-documentation">
+<h3>Necessary Documentation<a class="headerlink" href="#necessary-documentation" title="Permalink to this headline"></a></h3>
 <p>If this is your first time adding a pull request to the os-migrate
 repository, add your author information to <code class="docutils literal notranslate"><span class="pre">galaxy.yml</span></code>.</p>
 <p>In each Ansible module in <code class="docutils literal notranslate"><span class="pre">os_migrate/plugins/modules</span></code>, there is a
@@ -324,56 +232,39 @@ documentation on what the module does and an example of how you would
 use it in a playbook.</p>
 <p>Each new role must have a <code class="docutils literal notranslate"><span class="pre">README.md</span></code> file as a requirement for
 Ansible Galaxy publishing.</p>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="contributing-docs.html" class="btn btn-neutral float-right" title="Contributing Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="contributing-general.html" class="btn btn-neutral float-left" title="General Contribution Guidelines" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contributing-docs.html" class="btn btn-neutral float-right" title="Contributing Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2020, os-migrate.
-
-    </p>
+    <p>&#169; Copyright 2020, os-migrate.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
