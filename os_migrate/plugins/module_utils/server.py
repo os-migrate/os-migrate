@@ -259,11 +259,14 @@ class Server(resource.Resource):
 
         # Parent class dst_prerequisites_errors does not validate keypairs exist in destination cloud.
         # To do this we do a lookup to see if keypair name exists and append to errors list if not
+        # Only perform this check if params['key_name'] is truthy (not empty string and not None)
         params = self.params()
-        try:
-            conn.compute.find_keypair(params['key_name'], ignore_missing=False)
-        except (openstack.exceptions.ResourceFailure,
-                openstack.exceptions.ResourceNotFound,
-                openstack.exceptions.DuplicateResource) as e:
-            errors.append("Destination keypair prerequisites not met: {0}".format(e))
+        if 'key_name' in params and params['key_name']:
+            try:
+                conn.compute.find_keypair(params['key_name'], ignore_missing=False)
+            except (openstack.exceptions.ResourceFailure,
+                    openstack.exceptions.ResourceNotFound,
+                    openstack.exceptions.DuplicateResource) as e:
+                errors.append("Destination keypair prerequisites not met: {0}".format(e))
+
         return errors
