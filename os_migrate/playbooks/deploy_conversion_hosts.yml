@@ -86,18 +86,20 @@
 - hosts: os_migrate_conv_src
   any_errors_fatal: true
   tasks:
-    - name: install the conversion host content
-      ansible.builtin.include_role:
-        name: os_migrate.os_migrate.conversion_host_content
-      when: os_migrate_conversion_host_content_install|default(true)|bool
-  vars:
-    ansible_become_user: root
-    ansible_become: true
-    os_migrate_conversion_host_pre_content_hook: "{{ os_migrate_src_conversion_host_pre_content_hook|default(false) }}"
-    os_migrate_conversion_host_post_content_hook: "{{ os_migrate_src_conversion_host_post_content_hook|default(false) }}"
-
+    - name: set src conversion host facts
+      ansible.builtin.set_fact:
+        os_migrate_conversion_host_pre_content_hook: "{{ os_migrate_src_conversion_host_pre_content_hook|default(false) }}"
+        os_migrate_conversion_host_post_content_hook: "{{ os_migrate_src_conversion_host_post_content_hook|default(false) }}"
 
 - hosts: os_migrate_conv_dst
+  any_errors_fatal: true
+  tasks:
+    - name: set dst conversion host facts
+      ansible.builtin.set_fact:
+        os_migrate_conversion_host_pre_content_hook: "{{ os_migrate_dst_conversion_host_pre_content_hook|default(false) }}"
+        os_migrate_conversion_host_post_content_hook: "{{ os_migrate_dst_conversion_host_post_content_hook|default(false) }}"
+
+- hosts: conversion_hosts
   any_errors_fatal: true
   tasks:
     - name: install the conversion host content
@@ -107,5 +109,3 @@
   vars:
     ansible_become_user: root
     ansible_become: true
-    os_migrate_conversion_host_pre_content_hook: "{{ os_migrate_dst_conversion_host_pre_content_hook|default(false) }}"
-    os_migrate_conversion_host_post_content_hook: "{{ os_migrate_dst_conversion_host_post_content_hook|default(false) }}"
