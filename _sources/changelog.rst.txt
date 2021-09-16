@@ -13,8 +13,27 @@ New
   This commit enables users to detach or demove floating IPs
   when deleting the conversion hosts.
 
+Changes
+~~~~~~~
+- Install conversion host content in parallel again. [Jiri Stransky]
+
+  Content installation went from parallelized to non-parallelized when
+  we introduced pre/post-content hooks, so that we could feed different
+  variable values per host.
+
+  This commit keeps the per-host variables by setting them via the
+  `set_fact` module prior to executing the `conversion_host_content`
+  role. The role itself then does not need per-host variables and runs
+  in parallel on both conversion hosts. This can speed up the
+  conversion host deployment playbook noticeably.
+
 Fix
 ~~~
+- Remove unnecessary 10s delay in conversion host discovery. [Jiri
+  Stransky]
+
+  Probably `sleep` (pause between attempts) was meant instead of `delay`
+  (pause before the first attempt). Use a 5 second `sleep`.
 - Only perform keypair lookup in dst if server has keypair. [Philip
   Roche]
 
