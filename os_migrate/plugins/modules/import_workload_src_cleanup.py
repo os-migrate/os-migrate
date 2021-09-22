@@ -18,7 +18,7 @@ short_description: Clean up temporary volumes after a workload migration
 
 extends_documentation_fragment: openstack
 
-version_added: "2.9"
+version_added: "2.9.0"
 
 author: "OpenStack tenant migration tools (@os-migrate)"
 
@@ -411,6 +411,7 @@ class OpenStackSourceHostCleanup(OpenStackHostBase):
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
+        auth=dict(type='dict', no_log=True, required=True),
         data=dict(type='dict', required=True),
         conversion_host=dict(type='dict', required=True),
         ssh_key_path=dict(type='str', required=True),

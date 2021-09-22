@@ -18,7 +18,7 @@ short_description: Get routers info
 
 extends_documentation_fragment: openstack
 
-version_added: "2.9"
+version_added: "2.9.0"
 
 author: "OpenStack tenant migration tools (@os-migrate)"
 
@@ -92,6 +92,7 @@ except ImportError:
 
 def main():
     argument_spec = openstack_full_argument_spec(
+        auth=dict(type='dict', no_log=True, required=True),
         filters=dict(required=False, type='dict', default={}),
     )
 

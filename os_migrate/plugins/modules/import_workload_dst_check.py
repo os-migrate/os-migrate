@@ -18,7 +18,7 @@ short_description: Export OpenStack instance information
 
 extends_documentation_fragment: openstack
 
-version_added: "2.9"
+version_added: "2.9.0"
 
 author: "OpenStack tenant migration tools (@os-migrate)"
 
@@ -59,7 +59,7 @@ options:
   dst_filters:
     description:
       - Options for filtering the migration idempotence lookup, e.g. by project.
-    required: true
+    required: false
     type: dict
   cloud:
     description:
@@ -102,6 +102,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import serve
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
+        auth=dict(type='dict', no_log=True, required=True),
         data=dict(type='dict', required=True),
         dst_filters=dict(type='dict', required=False, default={}),
     )

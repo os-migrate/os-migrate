@@ -65,7 +65,7 @@ class Keypair(resource.Resource):
         user_name = self.data.get('params', {}).get('user_ref', {}).get('name', '')
         user_domain = self.data.get('params', {}).get('user_ref', {}).get('domain_name', '')
         if res_type and res_name:
-            return '{0}:{1}:{2}:{3}'.format(res_type, res_name, user_name, user_domain)
+            return f'{res_type}:{res_name}:{user_name}:{user_domain}'
         return None
 
     @staticmethod

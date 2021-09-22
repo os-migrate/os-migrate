@@ -3,11 +3,14 @@ ansible>=2.9.1,<2.10
 openstacksdk
 
 # test
-ansible-lint==4.1.0
+ansible-lint==4.3.7
 bashate>=2.0.0
 flake8==3.7.7
 openstackclient>=0.5.5
 pylint>=2.4.0
+pytest
+mock
+pytest-mock
 pytest-xdist>=1.30.0
 pycodestyle>=2.5.0
 voluptuous>=0.11.7

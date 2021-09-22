@@ -18,7 +18,7 @@ short_description: Create NBD exports of OpenStack volumes
 
 extends_documentation_fragment: openstack
 
-version_added: "2.9"
+version_added: "2.9.0"
 
 author: "OpenStack tenant migration tools (@os-migrate)"
 
@@ -67,6 +67,7 @@ options:
       - Used to attach destination volumes to the new instance in the right order.
     required: true
     type: list
+    elements: dict
 '''
 
 EXAMPLES = '''
@@ -228,8 +229,9 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import serve
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
+        auth=dict(type='dict', no_log=True, required=True),
         data=dict(type='dict', required=True),
-        block_device_mapping=dict(type='list', required=True),
+        block_device_mapping=dict(type='list', required=True, elements='dict'),
     )
 
     result = dict(

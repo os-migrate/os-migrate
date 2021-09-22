@@ -18,7 +18,7 @@ short_description: Import OpenStack network
 
 extends_documentation_fragment: openstack
 
-version_added: "2.9"
+version_added: "2.9.0"
 
 author: "OpenStack tenant migration tools (@os-migrate)"
 
@@ -49,7 +49,7 @@ options:
   filters:
     description:
       - Options for filtering existing resources to be looked up, e.g. by project.
-    required: true
+    required: false
     type: dict
   availability_zone:
     description:
@@ -91,6 +91,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import netwo
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
+        auth=dict(type='dict', no_log=True, required=True),
         data=dict(type='dict', required=True),
         filters=dict(type='dict', required=False, default={}),
     )

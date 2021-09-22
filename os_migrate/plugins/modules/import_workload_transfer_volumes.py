@@ -18,7 +18,7 @@ short_description: Create destination volumes and transfer source data.
 
 extends_documentation_fragment: openstack
 
-version_added: "2.9"
+version_added: "2.9.0"
 
 author: "OpenStack tenant migration tools (@os-migrate)"
 
@@ -358,7 +358,7 @@ class OpenStackDestinationHost(OpenStackHostBase):
         forward_ports = ['-N', '-T']
         for path, mapping in self.volume_map.items():
             port = self._find_free_port()
-            forward = '{0}:localhost:{1}'.format(port, mapping['port'])
+            forward = f"{port}:localhost:{mapping['port']}"
             forward_ports.extend(['-L', forward])
             url = 'nbd://localhost:' + str(port) + '/' + self.transfer_uuid
             self.volume_map[path]['url'] = url
@@ -563,6 +563,7 @@ class OpenStackDestinationHost(OpenStackHostBase):
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
+        auth=dict(type='dict', no_log=True, required=True),
         data=dict(type='dict', required=True),
         conversion_host=dict(type='dict', required=True),
         ssh_key_path=dict(type='str', required=True),

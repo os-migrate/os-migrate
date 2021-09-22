@@ -92,13 +92,9 @@ class ServerFloatingIP(resource.Resource):
 
         # still failing after max retries
         raise exc.CannotConverge(
-            "Floating IP for server '{0}' ('{1}') is meant to attach "
-            "to a port with fixed IP '{2}', but no such port was found "
-            "on that server.".format(
-                sdk_srv['name'],
-                sdk_srv['id'],
-                params['fixed_ip_address'],
-            )
+            f"Floating IP for server '{sdk_srv['name']}' ('{sdk_srv['id']}') is meant to attach "
+            f"to a port with fixed IP '{params['fixed_ip_address']}', but no such port was found "
+            "on that server."
         )
 
     @staticmethod

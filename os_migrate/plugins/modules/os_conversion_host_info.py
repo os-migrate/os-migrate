@@ -18,7 +18,7 @@ short_description: Get information about an OpenStack conversion host instance
 
 extends_documentation_fragment: openstack
 
-version_added: "2.9"
+version_added: "2.9.0"
 
 author: "OpenStack tenant migration tools (@os-migrate)"
 
@@ -34,7 +34,7 @@ options:
   filters:
     description:
       - Options for filtering the host, e.g. by project.
-    required: true
+    required: false
     type: dict
   auth:
     description:
@@ -84,12 +84,16 @@ openstack_conversion_host:
     contains:
         address:
             description: IP (v4) address of the specified instance
+            type: str
         name:
             description: Name of the specified instance
+            type: str
         id:
             description: ID of the specified instance
+            type: str
         status:
             description: Current status of the specified instance (ACTIVE, SHUTOFF, etc.)
+            type: str
 '''
 
 from ansible.module_utils.basic import AnsibleModule
@@ -105,6 +109,7 @@ except ImportError:
 
 def main():
     argument_spec = openstack_full_argument_spec(
+        auth=dict(type='dict', no_log=True, required=True),
         server=dict(type='str', required=True),
         filters=dict(required=False, type='dict', default={}),
     )

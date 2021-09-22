@@ -18,7 +18,7 @@ short_description: Export OpenStack router
 
 extends_documentation_fragment: openstack
 
-version_added: "2.9"
+version_added: "2.9.0"
 
 author: "OpenStack tenant migration tools (@os-migrate)"
 
@@ -93,6 +93,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
+        auth=dict(type='dict', no_log=True, required=True),
         path=dict(type='str', required=True),
         name=dict(type='str', required=True),
     )

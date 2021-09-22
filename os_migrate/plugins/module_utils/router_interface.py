@@ -72,7 +72,7 @@ class RouterInterface(resource.Resource):
                     or (port['device_id'] and port['device_id'] != refs['device_id'])):
                 raise exc.CannotConverge(
                     "Port with IP address for router import exists, and it is assigned "
-                    "to a different device: {0}".format(port.to_dict())
+                    f"to a different device: {port.to_dict()}"
                 )
 
             if self._port_needs_update(self.from_sdk(conn, port)):
@@ -107,10 +107,9 @@ class RouterInterface(resource.Resource):
             return matching_ports[0]
         else:
             raise exc.CannotConverge(
-                "When creating a port for router '{0}', multiple "
+                f"When creating a port for router '{refs['device_ref']['name']}', multiple "
                 "existing ports were found owning addresses that should "
-                "belong to a single port on the router. The ports are: {1}"
-                .format(refs['device_ref']['name'], matching_ports)
+                f"belong to a single port on the router. The ports are: {matching_ports}"
             )
 
     def _port_needs_update(self, other):

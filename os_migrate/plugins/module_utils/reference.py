@@ -26,10 +26,10 @@ def image_id(conn, ref, required=True):
     matches = list(conn.image.images(**filters))
 
     if len(matches) > 1:
-        raise DuplicateResource("More than one image found for query: {0}".format(filters))
+        raise DuplicateResource(f"More than one image found for query: {filters}")
     if len(matches) < 1:
         if required:
-            raise ResourceFailure("No image found for query: {0}".format(filters))
+            raise ResourceFailure(f"No image found for query: {filters}")
         else:
             return None
     return matches[0]['id']

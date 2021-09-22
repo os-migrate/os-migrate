@@ -136,7 +136,14 @@ test-sanity: reinstall
 		source /root/venv/bin/activate; \
 	fi; \
 	cd /root/.ansible/collections/ansible_collections/os_migrate/os_migrate; \
-	ansible-test sanity --skip-test import
+    # Only target the version of python3 in the activate virtual environment. Do not target; \
+    # any other discovered python runtimes.; \
+    TARGET_PYTHON_RUNTIME=$$(which python3); \
+    TARGET_PYTHON_VERSION=$$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")'); \
+	echo "Running Ansible sanity tests with $${TARGET_PYTHON_RUNTIME} python interpreter \
+	      version $${TARGET_PYTHON_VERSION}"; \
+	ansible-test sanity --skip-test import --python $${TARGET_PYTHON_VERSION} \
+	                    --python-interpreter $${TARGET_PYTHON_RUNTIME} --local
 
 test-unit: reinstall
 	set -euo pipefail; \
@@ -145,7 +152,13 @@ test-unit: reinstall
 		source /root/venv/bin/activate; \
 	fi; \
 	cd /root/.ansible/collections/ansible_collections/os_migrate/os_migrate; \
-	ansible-test units
+    # Only target the version of python3 in the activate virtual environment. Do not target; \
+    # any other discovered python runtimes.; \
+    TARGET_PYTHON_RUNTIME=$$(which python3); \
+	TARGET_PYTHON_VERSION=$$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")'); \
+	echo "Running Ansible unit tests with $${TARGET_PYTHON_RUNTIME} python interpreter \
+	      version $${TARGET_PYTHON_VERSION}"; \
+	ansible-test units --python $${TARGET_PYTHON_VERSION} --python-interpreter $${TARGET_PYTHON_RUNTIME} --local
 
 
 # DOCS
