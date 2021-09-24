@@ -136,15 +136,13 @@ class Server(resource.Resource):
             lambda mapping: str(mapping['boot_index']) != '-1', block_device_mapping))) > 0
         if migration_params['boot_disk_copy'] and not has_boot_volume:
             raise exc.InconsistentState(
-                ("Instance '{0}' ({1}) has boot_disk_copy enabled but block device mapping "
-                 "has no boot volume: {2}").format(
-                     params['name'], info['id'], block_device_mapping),
+                (f"Instance '{params['name']}' ({info['id']}) has boot_disk_copy enabled but block device mapping "
+                 f"has no boot volume: {block_device_mapping}")
             )
         if not migration_params['boot_disk_copy'] and has_boot_volume:
             raise exc.InconsistentState(
-                ("Instance '{0}' ({1}) has boot_disk_copy disabled but block device mapping "
-                 "has a boot volume: {2}").format(
-                     params['name'], info['id'], block_device_mapping)
+                (f"Instance '{params['name']}' ({info['id']}) has boot_disk_copy disabled but block device mapping "
+                 f"has a boot volume: {block_device_mapping}")
             )
 
         image_id = sdk_params.get('image_id', None)
@@ -159,9 +157,8 @@ class Server(resource.Resource):
                 })
             else:
                 raise exc.InconsistentState(
-                    ("Instance '{0}' ({1}) has neither boot volume nor image reference. "
-                     "Block device mapping: {2}").format(
-                         params['name'], info['id'], block_device_mapping)
+                    (f"Instance '{params['name']}' ({info['id']}) has neither boot volume nor image reference. "
+                     f"Block device mapping: {block_device_mapping}")
                 )
         elif 'image_id' in sdk_params:
             del sdk_params['image_id']
@@ -175,8 +172,7 @@ class Server(resource.Resource):
             except exc.InconsistentState as e:
                 params, info = self.params_and_info()
                 raise exc.InconsistentState(
-                    "Error creating network parameters for server '{0}' ({1}): {2}"
-                    .format(params['name'], info['id'], e)
+                    f"Error creating network parameters for server '{params['name']}' ({info['id']}): {e}"
                 ) from e
 
     @staticmethod
@@ -267,6 +263,6 @@ class Server(resource.Resource):
             except (openstack.exceptions.ResourceFailure,
                     openstack.exceptions.ResourceNotFound,
                     openstack.exceptions.DuplicateResource) as e:
-                errors.append("Destination keypair prerequisites not met: {0}".format(e))
+                errors.append(f"Destination keypair prerequisites not met: {e}")
 
         return errors

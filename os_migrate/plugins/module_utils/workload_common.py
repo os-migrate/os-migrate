@@ -103,8 +103,7 @@ class OpenStackHostBase():
         self.log.setLevel(logging.DEBUG)
 
         if self._converter() is None:
-            raise RuntimeError('Cannot find instance {0}'.format(
-                               self.conversion_host_id))
+            raise RuntimeError(f'Cannot find instance {self.conversion_host_id}')
 
         self.shell = RemoteShell(self._converter_address(), ssh_user, ssh_key_path)
         self.shell.test_ssh_connection()
@@ -183,12 +182,11 @@ class OpenStackHostBase():
                                    name, dev_path)
             else:
                 raise RuntimeError('Got unexpected disk list after attaching '
-                                   'volume to {0} conversion host instance. '
+                                   f'volume to {name} conversion host instance. '
                                    'Failing migration procedure to avoid '
                                    'assigning volumes incorrectly. New '
-                                   'disks(s) inside VM: {1}, disk provided by '
-                                   'OpenStack: {2}'.format(name, new_disks,
-                                                           dev_path))
+                                   f'disks(s) inside VM: {new_disks}, disk provided by '
+                                   f'OpenStack: {dev_path}')
             self.volume_map[path] = update_func(mapping, dev_path)
 
     def _get_attachment(self, volume, vm):
@@ -220,7 +218,7 @@ class OpenStackHostBase():
         """
         try:
             cmd = ['sudo', 'bash', '-c',
-                   '"test -e {0} || echo [] > {0}"'.format(PORT_MAP_FILE)]
+                   f'"test -e {PORT_MAP_FILE} || echo [] > {PORT_MAP_FILE}"']
             result = self.shell.cmd_out(cmd)
             if result:
                 self.log.debug('Port write result: %s', result)

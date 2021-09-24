@@ -42,7 +42,7 @@ def create_resources_from_struct(struct_resources, cls_map):
             errors.append("Cannot parse resource due to missing 'type'.")
             continue
         if not cls_map.get(struct_res['type']):
-            errors.append("Unknown resource type '{0}'.".format(struct_res['type']))
+            errors.append(f"Unknown resource type '{struct_res['type']}'.")
             continue
         resources.append(cls_map[struct_res['type']].from_data(struct_res))
 

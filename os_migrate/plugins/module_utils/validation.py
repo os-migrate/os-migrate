@@ -31,7 +31,7 @@ def _resource_data_errors(resources):
     for resource in resources:
         res_data_errors = resource.data_errors()
         if res_data_errors:
-            errors.append("{0}: {1}".format(resource.debug_id(), ' '.join(res_data_errors)))
+            errors.append(f"{resource.debug_id()}: {' '.join(res_data_errors)}")
     return errors
 
 
@@ -51,7 +51,7 @@ def _resource_duplicate_name_errors(resources):
     for import_id, count in import_id_counts.items():
         if count > 1:
             errors.append(
-                "Resource duplication: {0} resources with import identity '{1}'. "
-                "This would result in duplicit imports.".format(count, import_id))
+                f"Resource duplication: {count} resources with import identity '{import_id}'. "
+                "This would result in duplicit imports.")
 
     return errors

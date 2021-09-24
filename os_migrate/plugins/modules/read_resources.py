@@ -16,7 +16,7 @@ module: read_resources
 
 short_description: Import OpenStack network
 
-version_added: "2.9"
+version_added: "2.9.0"
 
 author: "OpenStack tenant migration tools (@os-migrate)"
 
@@ -55,11 +55,11 @@ resources:
         params:
             description: Resource parameters important for import.
             returned: success
-            type: complex
+            type: dict
         info:
             description: Additional resource information, not needed for import.
             returned: success
-            type: complex
+            type: dict
 '''
 
 from ansible.module_utils.basic import AnsibleModule

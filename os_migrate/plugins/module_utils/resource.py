@@ -113,8 +113,7 @@ class Resource():
         Returns: OpenStack SDK object
 
         """
-        raise NotImplementedError("_create_sdk_res not implemented for {0}."
-                                  .format(cls))
+        raise NotImplementedError(f"_create_sdk_res not implemented for {cls}.")
 
     # Must be overriden in child class if `create_or_update` isn't
     # overriden.
@@ -125,8 +124,7 @@ class Resource():
 
         Returns: OpenStack SDK object
         """
-        raise NotImplementedError("_find_sdk_res not implemented for {0}."
-                                  .format(cls))
+        raise NotImplementedError(f"_find_sdk_res not implemented for {cls}.")
 
     # Used when creating Resource from SDK object, should be overriden
     # in majority of child classes.
@@ -199,8 +197,7 @@ class Resource():
         Returns: OpenStack SDK object
 
         """
-        raise NotImplementedError("_update_sdk_res not implemented for {0}."
-                                  .format(cls))
+        raise NotImplementedError(f"_update_sdk_res not implemented for {cls}.")
 
     # ===== PUBLIC INSTANCE METHODS (alphabetic sort) =====
 
@@ -253,7 +250,7 @@ class Resource():
         params, info = self.params_and_info()
         name = params.get('name', '')
         id_ = info.get('id', '')
-        return "{0}:{1}:{2}".format(self.resource_type, name, id_)
+        return f"{self.resource_type}:{name}:{id_}"
 
     def import_id(self):
         """Get an identity string (somewhat human readable) of the resource
@@ -280,7 +277,7 @@ class Resource():
         res_type = self.data.get('type', None)
         res_name = self.data.get('params', {}).get('name', None)
         if res_type and res_name:
-            return '{0}:{1}'.format(res_type, res_name)
+            return f'{res_type}:{res_name}'
         return None
 
     def dst_prerequisites_errors(self, conn, filters=None):
@@ -293,7 +290,7 @@ class Resource():
         try:
             self._refs_from_ser(conn, filters)
         except (os_exc.ResourceFailure, os_exc.ResourceNotFound, os_exc.DuplicateResource) as e:
-            errors.append("Destination prerequisites not met: {0}".format(e))
+            errors.append(f"Destination prerequisites not met: {e}")
         return errors
 
     def info(self):
@@ -515,7 +512,7 @@ class Resource():
         mig_params = self.migration_params()
         for mig_param in self.migration_param_defaults.keys():
             if mig_param not in mig_params:
-                errors.append('Missing _migration_params.{0}.'.format(mig_param))
+                errors.append(f'Missing _migration_params.{mig_param}.')
         return errors
 
     # Can be overriden in some subclasses.
@@ -528,7 +525,7 @@ class Resource():
         params = self.params()
         for param in self.params_from_sdk + self.params_from_refs:
             if param not in params:
-                errors.append('Missing params.{0}.'.format(param))
+                errors.append(f'Missing params.{param}.')
         return errors
 
     # Can be overridden in some subclasses.
@@ -545,5 +542,5 @@ class Resource():
             # Check to see if name is present and if so is it empty.
             # _validation_params_errors check will catch if it is not present.
             if name_param_key in params.keys() and not params.get(name_param_key, ''):
-                errors.append('params.{0} is empty.'.format(name_param_key))
+                errors.append(f'params.{name_param_key} is empty.')
         return errors

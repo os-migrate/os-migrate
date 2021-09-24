@@ -43,15 +43,11 @@ def stringfilter(items, queries, attribute=None):
             string = _get_nested_value(item, key_path)
             if not isinstance(string, str):
                 raise errors.AnsibleFilterError(
-                    "stringfilter: value under '{0}' in '{1}' is not string: {2}"
-                    .format(attribute, pformat(item), pformat(string))
+                    f"stringfilter: value under '{attribute}' in '{pformat(item)}' is not string: {pformat(string)}"
                 )
         else:
             if not isinstance(item, str):
-                raise errors.AnsibleFilterError(
-                    "stringfilter: list item is not string: {0}"
-                    .format(pformat(item))
-                )
+                raise errors.AnsibleFilterError(f"stringfilter: list item is not string: {pformat(item)}")
             string = item
 
         for query in queries:
@@ -65,8 +61,7 @@ def stringfilter(items, queries, attribute=None):
                     break
             else:
                 raise errors.AnsibleFilterError(
-                    "stringfilter: unrecognized query: {0}"
-                    .format(pformat(query))
+                    f"stringfilter: unrecognized query: {pformat(query)}"
                 )
     return result
 
@@ -80,14 +75,13 @@ def _get_nested_value(dct, key_path):
     key = key_path[0]
     if not isinstance(dct, dict):
         raise errors.AnsibleFilterError(
-            "stringfilter: looking for key '{0}' "
-            "but list item is not dict: {1}".format(key, pformat(dct))
+            f"stringfilter: looking for key '{key}' "
+            f"but list item is not dict: {pformat(dct)}"
         )
     if key not in dct:
         raise errors.AnsibleFilterError(
-            "stringfilter: key is '{0}' "
-            "but it was not found in dict: {1}"
-            .format(key, pformat(dct))
+            f"stringfilter: key is '{key}' "
+            f"but it was not found in dict: {pformat(dct)}"
         )
     value = dct[key]
     if len(key_path) > 1:

@@ -18,7 +18,7 @@ short_description: Preliminary actions required to import an OpenStack instance
 
 extends_documentation_fragment: openstack
 
-version_added: "2.9"
+version_added: "2.9.0"
 
 author: "OpenStack tenant migration tools (@os-migrate)"
 
@@ -49,7 +49,7 @@ options:
   dst_filters:
     description:
       - Options for filtering the migration idempotence lookup, e.g. by project.
-    required: true
+    required: false
     type: dict
   src_conversion_host:
     description:
@@ -64,7 +64,7 @@ options:
   log_dir:
     description:
       - Directory for storing log and state files.
-    required: true
+    required: false
     type: str
   availability_zone:
     description:
@@ -179,8 +179,14 @@ state_file:
 '''
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.openstack \
-    import openstack_full_argument_spec, openstack_cloud_from_module
+# Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
+try:
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
+        import openstack_full_argument_spec, openstack_cloud_from_module
+except ImportError:
+    # If this fails fall back to ansible < 3 imports
+    from ansible.module_utils.openstack \
+        import openstack_full_argument_spec, openstack_cloud_from_module
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import server
 
@@ -189,6 +195,7 @@ import os
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
+        auth=dict(type='dict', no_log=True, required=True),
         dst_filters=dict(type='dict', required=False, default={}),
         src_conversion_host=dict(type='dict', required=True),
         data=dict(type='dict', required=True),
@@ -218,11 +225,11 @@ def run_module():
 
     # Assume an existing VM with the same name means it was already migrated.
     # With Nova, the 'name' parameter for list request is a regular expression.
-    server_name_regex = "^{0}$".format(server_name)
+    server_name_regex = f"^{server_name}$"
     if len(list(conn.compute.servers(
             details=False, name=server_name_regex, **module.params['dst_filters']))) > 0:
         module.exit_json(
-            msg="VM '{0}' already exists on destination, skipping.".format(server_name), **result)
+            msg=f"VM '{server_name}' already exists on destination, skipping.", **result)
 
     result['log_file'] = os.path.join(log_dir, server_name) + '.log'
     result['state_file'] = os.path.join(log_dir, server_name) + '.state'

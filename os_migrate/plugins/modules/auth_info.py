@@ -18,7 +18,7 @@ short_description: Fetch information about authenticated user/project
 
 extends_documentation_fragment: openstack
 
-version_added: "2.9"
+version_added: "2.9.0"
 
 author: "OpenStack tenant migration tools (@os-migrate)"
 
@@ -76,12 +76,21 @@ openstack_routers:
 '''
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.openstack \
-    import openstack_full_argument_spec, openstack_cloud_from_module
+
+# Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
+try:
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
+        import openstack_full_argument_spec, openstack_cloud_from_module
+except ImportError:
+    # If this fails fall back to ansible < 3 imports
+    from ansible.module_utils.openstack \
+        import openstack_full_argument_spec, openstack_cloud_from_module
 
 
 def run_module():
-    argument_spec = openstack_full_argument_spec()
+    argument_spec = openstack_full_argument_spec(
+        auth=dict(type='dict', no_log=True, required=True),
+    )
     # TODO: check the del
     # del argument_spec['cloud']
 

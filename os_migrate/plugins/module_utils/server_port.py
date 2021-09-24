@@ -51,9 +51,8 @@ class ServerPort(resource.Resource):
         if len(refs['fixed_ips']) != 1:
             message = (
                 "Using simple port creation via Nova is only supported for a single "
-                "IP address per port, but on network '{0}' it has these addresses: {1}."
-                .format(refs['network_ref'].get('name', ''),
-                        refs['fixed_ips_refs'])
+                f"IP address per port, but on network '{refs['network_ref'].get('name', '')}' "
+                f"it has these addresses: {refs['fixed_ips_refs']}."
             )
             raise exc.InconsistentState(message)
 
