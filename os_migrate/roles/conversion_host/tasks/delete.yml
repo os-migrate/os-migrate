@@ -3,7 +3,7 @@
     name: "{{ os_migrate_conversion_host_name }}"
     state: absent
     delete_fip: "{{ os_migrate_conversion_delete_fip|default(omit) }}"
-    wait: yes
+    wait: true
     auth: "{{ os_migrate_conversion_auth }}"
     auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_conversion_region_name|default(omit) }}"

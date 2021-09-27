@@ -2,7 +2,7 @@
   hosts: migrator
   tasks:
     - name: prepare the environment
-      ansible.builtin.import_tasks: common/prep.yml
+      ansible.builtin.import_tasks: tasks/common/prep.yml
 
 - name: Make sure conversion hosts are cleaned up
   ansible.builtin.import_playbook:
@@ -27,7 +27,7 @@
   hosts: migrator
   tasks:
     - name: clean workloads
-      ansible.builtin.include_tasks: tenant/clean_workload.yml
+      ansible.builtin.include_tasks: tasks/tenant/clean_workload.yml
       args:
         apply:
           tags:
@@ -38,7 +38,7 @@
       tags: always
 
     - name: clean pre workloads
-      ansible.builtin.include_tasks: tenant/clean_pre_workload.yml
+      ansible.builtin.include_tasks: tasks/tenant/clean_pre_workload.yml
       args:
         apply:
           tags:
@@ -48,7 +48,7 @@
 
     # pre-workload seed & migrate
     - name: seed pre workloads
-      ansible.builtin.include_tasks: tenant/seed_pre_workload.yml
+      ansible.builtin.include_tasks: tasks/tenant/seed_pre_workload.yml
       args:
         apply:
           tags:
@@ -57,7 +57,7 @@
       tags: always
 
     - name: run the pre workloads
-      ansible.builtin.include_tasks: tenant/run_pre_workload.yml
+      ansible.builtin.include_tasks: tasks/tenant/run_pre_workload.yml
       args:
         apply:
           tags: test_pre_workload
@@ -74,7 +74,7 @@
     # * floating_ip_mode: auto
     #
     - name: seed the workloads
-      ansible.builtin.include_tasks: tenant/seed_workload.yml
+      ansible.builtin.include_tasks: tasks/tenant/seed_workload.yml
       args:
         apply:
           tags:
@@ -86,7 +86,7 @@
         workload_image: osm_image
 
     - name: run the workloads
-      ansible.builtin.include_tasks: tenant/run_workload.yml
+      ansible.builtin.include_tasks: tasks/tenant/run_workload.yml
       args:
         apply:
           tags:
@@ -95,7 +95,7 @@
       tags: always
 
     - name: clean the workloads
-      ansible.builtin.include_tasks: tenant/clean_workload.yml
+      ansible.builtin.include_tasks: tasks/tenant/clean_workload.yml
       args:
         apply:
           tags:
@@ -115,7 +115,7 @@
     # * floating_ip_mode: existing
     #
     - name: seed the workloads
-      ansible.builtin.include_tasks: tenant/seed_workload.yml
+      ansible.builtin.include_tasks: tasks/tenant/seed_workload.yml
       args:
         apply:
           tags:
@@ -126,7 +126,7 @@
         workload_image: "{{ os_migrate_src_osm_server_image }}"
 
     - name: run the workloads
-      ansible.builtin.include_tasks: tenant/run_workload.yml
+      ansible.builtin.include_tasks: tasks/tenant/run_workload.yml
       args:
         apply:
           tags:
@@ -138,7 +138,7 @@
         set_floating_ip_mode: 'existing'
 
     - name: clean the workloads
-      ansible.builtin.include_tasks: tenant/clean_workload.yml
+      ansible.builtin.include_tasks: tasks/tenant/clean_workload.yml
       args:
         apply:
           tags:
@@ -150,7 +150,7 @@
 
     # pre-workload cleanup
     - name: clean pre workloads
-      ansible.builtin.include_tasks: tenant/clean_pre_workload.yml
+      ansible.builtin.include_tasks: tasks/tenant/clean_pre_workload.yml
       args:
         apply:
           tags:

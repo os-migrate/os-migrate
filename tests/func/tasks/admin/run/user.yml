@@ -1,0 +1,39 @@
+- name: export users
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.export_users
+  vars:
+    os_migrate_users_filter:
+      - regex: '^osm_'
+
+# TODO: Set domain to osmdst_domain when we support migrating domains.
+
+- name: set destination user name
+  ansible.builtin.replace:
+    path: "{{ os_migrate_data_dir }}/users.yml"
+    regexp: "name: osm_user"
+    replace: "name: osmdst_user"
+
+- name: set destination project name
+  ansible.builtin.replace:
+    path: "{{ os_migrate_data_dir }}/users.yml"
+    regexp: "name: osm_project"
+    replace: "name: osmdst_project"
+
+- name: load exported data
+  ansible.builtin.set_fact:
+    user_resources: "{{ (lookup('file',
+                           os_migrate_data_dir +
+                           '/users.yml') | from_yaml)
+                   ['resources'] }}"
+
+- name: verify data contents
+  ansible.builtin.assert:
+    that:
+      - (user_resources |
+        json_query("[?params.name ==
+        'osmdst_user'].params.name")
+        == ['osmdst_user'])
+
+- name: import users
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.import_users

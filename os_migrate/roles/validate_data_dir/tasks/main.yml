@@ -6,7 +6,8 @@
       - "*.yml"
   register: resource_files_result
 
-- ansible.builtin.fail:
+- name: fail if no resources are found
+  ansible.builtin.fail:
     msg: No resource files found.
   when: resource_files_result.files | count < 1
 

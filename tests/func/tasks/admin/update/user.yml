@@ -1,0 +1,47 @@
+- name: change item in file for update test
+  ansible.builtin.replace:
+    path: "{{ os_migrate_data_dir }}/users.yml"
+    regexp: "    description: test user"
+    replace: "    description: 'osmdst_user_updated'"
+    backup: true
+
+- name: scan available users before update test
+  openstack.cloud.identity_user_info:
+    auth: "{{ os_migrate_dst_auth }}"
+    filters:
+      name: osmdst_user
+  register: dst_users_info_before
+
+- name: get original description
+  ansible.builtin.set_fact:
+    original_desc: |-
+      {{ dst_users_info_before['openstack_users'] | json_query(
+        "[?name=='osmdst_user'].description") }}
+
+- name: import users
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.import_users
+
+- name: scan available users after update test
+  openstack.cloud.identity_user_info:
+    auth: "{{ os_migrate_dst_auth }}"
+    filters:
+      name: osmdst_user
+  register: dst_users_info_after
+
+- name: get changed description
+  ansible.builtin.set_fact:
+    changed_desc: |-
+      {{ dst_users_info_after['openstack_users'] | json_query(
+        "[?name=='osmdst_user'].description") }}
+
+- name: ensure description for osmdst_user changed
+  ansible.builtin.assert:
+    that:
+      - original_desc == ['test user']
+      - changed_desc == ['osmdst_user_updated']
+    fail_msg: |
+      dst_users_info_before description:
+      {{ original_desc }}
+      dst_users_info_after description:
+      {{ changed_desc }}

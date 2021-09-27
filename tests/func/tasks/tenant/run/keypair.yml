@@ -1,0 +1,20 @@
+- name: export keypairs
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.export_keypairs
+
+- name: load exported data
+  ansible.builtin.set_fact:
+    keypair_resources: "{{ (lookup('file',
+                                  os_migrate_data_dir +
+                                  '/keypairs.yml') | from_yaml)
+                   ['resources'] }}"
+
+- name: verify data contents
+  ansible.builtin.assert:
+    that:
+      - (keypair_resources | json_query("[?params.name ==
+                            'osm_keypair'].params.type") == ['ssh'])
+
+- name: import keypairs
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.import_keypairs

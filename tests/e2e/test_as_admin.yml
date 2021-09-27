@@ -2,23 +2,23 @@
   hosts: migrator
   tasks:
     - name: prepate the test
-      ansible.builtin.import_tasks: common/prep.yml
+      ansible.builtin.import_tasks: tasks/common/prep.yml
 
 - name: Migration tests
   hosts: migrator
   tasks:
     - name: clean the environment
-      ansible.builtin.include_tasks: admin/clean.yml
+      ansible.builtin.include_tasks: tasks/admin/clean.yml
       args:
         apply:
           tags: test_clean_before
       tags: always
     - name: seed the environment
-      ansible.builtin.import_tasks: admin/seed.yml
+      ansible.builtin.import_tasks: tasks/admin/seed.yml
     - name: run the tests
-      ansible.builtin.import_tasks: admin/run.yml
+      ansible.builtin.import_tasks: tasks/admin/run.yml
     - name: clean the environment
-      ansible.builtin.include_tasks: admin/clean.yml
+      ansible.builtin.include_tasks: tasks/admin/clean.yml
       args:
         apply:
           tags: test_clean_after

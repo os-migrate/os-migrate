@@ -1,0 +1,36 @@
+- name: create osm_router
+  openstack.cloud.router:
+    auth: "{{ os_migrate_src_auth }}"
+    name: osm_router
+    state: present
+    network: "{{ test_router_external_network|default('public') }}"
+    interfaces:
+      - net: osm_net
+        subnet: osm_subnet
+        portip: 192.168.0.10
+      - net: osm_net
+        subnet: osm_router_subnet
+        portip: 192.168.10.10
+  register: _osm_router
+
+- name: Get router information
+  ansible.builtin.debug:
+    var: _osm_router
+
+- name: get auth token
+  openstack.cloud.auth:
+    auth: "{{ os_migrate_src_auth }}"
+
+- name: set tags on router
+  ansible.builtin.command:
+    cmd: openstack router set --tag test_tag_1 --tag test_tag_2 {{ _osm_router.router.id }}
+  register: _result
+  changed_when: "_result.rc == 0"
+  environment:
+    OS_AUTH_TYPE: token
+    OS_AUTH_URL: "{{ os_migrate_src_auth.auth_url }}"
+    OS_TOKEN: "{{ auth_token }}"
+    OS_PROJECT_ID: "{{ os_migrate_src_auth.project_id|default('') }}"
+    OS_PROJECT_NAME: "{{ os_migrate_src_auth.project_name|default('') }}"
+    OS_PROJECT_DOMAIN_ID: "{{ os_migrate_src_auth.project_domain_id|default('') }}"
+    OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_src_auth.project_domain_name|default('') }}"

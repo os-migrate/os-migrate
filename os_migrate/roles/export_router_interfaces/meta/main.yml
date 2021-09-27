@@ -1,6 +1,8 @@
 ---
 galaxy_info:
   author: os-migrate
+  role_name: export_router_interfaces
+  namespace: os_migrate
   description: os-migrate resource
   company: Red Hat
   license: Apache-2.0
@@ -9,6 +11,6 @@ galaxy_info:
     - name: Fedora
       versions:
         - 30
-  galaxy_tags: ["os-migrate"]
+  galaxy_tags: ["osmigrate"]
 dependencies:
   - role: os_migrate.os_migrate.prelude_src
