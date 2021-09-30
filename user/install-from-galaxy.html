@@ -41,8 +41,8 @@
 <li class="toctree-l1 current"><a class="reference internal" href="README.html">OS Migrate User Documentation</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Installation from Galaxy (recommended)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#installation">Installation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#using-virtualenv">Using virtualenv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-virtualenv-for-prerequisites">Using virtualenv for prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installation-of-os-migrate-collection">Installation of OS Migrate collection</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="install-from-source.html">Installation from source (when customizing)</a></li>
@@ -93,7 +93,9 @@ source</a>.</p>
 <section id="prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline"></a></h2>
 <ul class="simple">
-<li><p>Ansible 2.9</p></li>
+<li><p>Ansible 2.9 or newer.</p></li>
+<li><p>Ansible must run using Python 3. (When using Ansible from RHEL
+packages, this means running on RHEL 8 or newer.)</p></li>
 <li><p>Additional package requirements from Ansible modules:
 <code class="docutils literal notranslate"><span class="pre">iputils</span> <span class="pre">python3-openstackclient</span> <span class="pre">python3-openstacksdk</span></code></p></li>
 <li><p>OpenStack SDK version should be 0.36 or newer.</p>
@@ -105,8 +107,19 @@ other users (playbooks <code class="docutils literal notranslate"><span class="p
 </li>
 </ul>
 </section>
-<section id="installation">
-<span id="installation-1"></span><h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h2>
+<section id="using-virtualenv-for-prerequisites">
+<h2>Using virtualenv for prerequisites<a class="headerlink" href="#using-virtualenv-for-prerequisites" title="Permalink to this headline"></a></h2>
+<p>If your distribution doesn’t ship the required dependency versions,
+you can use virtualenv, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>python3 -m venv $HOME/os_migrate_venv
+source $HOME/os_migrate_venv/bin/activate
+python3 -m pip install --upgrade &#39;openstacksdk&gt;=0.36&#39;
+python3 -m pip install --upgrade &#39;ansible&gt;=2.9.1,&lt;2.10&#39;
+</pre></div>
+</div>
+</section>
+<section id="installation-of-os-migrate-collection">
+<span id="installation-1"></span><h2>Installation of OS Migrate collection<a class="headerlink" href="#installation-of-os-migrate-collection" title="Permalink to this headline"></a></h2>
 <p>To install latest release:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ansible-galaxy collection install os_migrate.os_migrate
 </pre></div>
@@ -116,17 +129,6 @@ other users (playbooks <code class="docutils literal notranslate"><span class="p
 </pre></div>
 </div>
 <p>You can find available releases at <a class="reference external" href="https://galaxy.ansible.com/os_migrate/os_migrate">OS Migrate Galaxy page</a>.</p>
-</section>
-<section id="using-virtualenv">
-<h2>Using virtualenv<a class="headerlink" href="#using-virtualenv" title="Permalink to this headline"></a></h2>
-<p>If your distribution doesn’t ship the required dependency versions,
-you can use virtualenv, e.g.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>python3 -m venv $HOME/os_migrate_venv
-source $HOME/os_migrate_venv/bin/activate
-python3 -m pip install --upgrade &#39;openstacksdk&gt;=0.36&#39;
-python3 -m pip install --upgrade &#39;ansible&gt;=2.9.1,&lt;2.10&#39;
-</pre></div>
-</div>
 </section>
 </section>
 
