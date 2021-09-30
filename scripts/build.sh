@@ -8,11 +8,12 @@ set -euxo pipefail
 
 # Uninstall any dependencies if defined
 if [ -n "${OS_MIGRATE_REQUIREMENTS_UNINSTALL_BEFORE_OVERRIDE:-}" ]; then
-    python3 -m pip uninstall -y ${OS_MIGRATE_REQUIREMENTS_UNINSTALL_BEFORE_OVERRIDE}
+    python3 -m pip uninstall --yes ${OS_MIGRATE_REQUIREMENTS_UNINSTALL_BEFORE_OVERRIDE}
 fi
 
 # Apply virtualenv version overrides if defined
 if [ -n "${OS_MIGRATE_REQUIREMENTS_OVERRIDE:-}" ]; then
+    python3 -m pip install --upgrade pip
     python3 -m pip \
         install \
         --upgrade \

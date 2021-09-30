@@ -23,6 +23,7 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: [3.7]
+        ansible-version: [2.9, 3.4, 4.5]
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
@@ -86,6 +87,8 @@ jobs:
           REUSE_TOOLBOX=1 NO_VAGRANT=1 make toolbox-build
       - name: Run all the tests non OpenStack dependant
         run: |
+          export OS_MIGRATE_REQUIREMENTS_UNINSTALL_BEFORE_OVERRIDE='ansible ansible-base ansible-core'
+          export OS_MIGRATE_REQUIREMENTS_OVERRIDE='toolbox/build/venv-requirements-ansible-${{ matrix.ansible-version }}.txt'
           ./toolbox/run make test-fast
 
   functional:
@@ -95,6 +98,7 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: [3.7]
+        ansible-version: [2.9, 3.4, 4.5]
     services:
       rabbitmq:
         image: rabbitmq:latest
@@ -370,4 +374,6 @@ jobs:
           rm tests/clouds.yaml
       - name: Run functional tests
         run: |
+          export OS_MIGRATE_REQUIREMENTS_UNINSTALL_BEFORE_OVERRIDE='ansible ansible-base ansible-core'
+          export OS_MIGRATE_REQUIREMENTS_OVERRIDE='toolbox/build/venv-requirements-ansible-${{ matrix.ansible-version }}.txt'
           ./toolbox/run make test-func
