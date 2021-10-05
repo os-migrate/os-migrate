@@ -16,7 +16,7 @@ install: os_migrate-os_migrate-latest.tar.gz
 		source /root/venv/bin/activate; \
 	fi; \
 	cd releases; \
-	ansible-galaxy collection install --force os_migrate-os_migrate-latest.tar.gz
+	ansible-galaxy collection install $(OS_MIGRATE_INSTALL_ARGS) --force os_migrate-os_migrate-latest.tar.gz
 
 clean:
 	ls releases/os_migrate-os_migrate*.tar.gz | xargs rm
