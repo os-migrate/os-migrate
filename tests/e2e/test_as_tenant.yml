@@ -63,8 +63,16 @@
           tags: test_pre_workload
       tags: always
 
-    # server from tenant-owned image with attached volume,
-    # migration w/o boot volume copy
+    # Workload migration scenario:
+    #
+    # * Attached volume
+    #
+    # * From tenant-owned image
+    #
+    # * boot_disk_copy: false
+    #
+    # * floating_ip_mode: auto
+    #
     - name: seed the workloads
       ansible.builtin.include_tasks: tenant/seed_workload.yml
       args:
@@ -96,8 +104,16 @@
             - test_image_workload_boot_nocopy_clean
       tags: always
 
-    # server from public image with attached volume,
-    # migration with boot volume copy
+    # Workload migration scenario:
+    #
+    # * Attached volume
+    #
+    # * From public image
+    #
+    # * boot_disk_copy: true
+    #
+    # * floating_ip_mode: existing
+    #
     - name: seed the workloads
       ansible.builtin.include_tasks: tenant/seed_workload.yml
       args:
@@ -118,7 +134,8 @@
             - test_image_workload_boot_copy
       tags: always
       vars:
-        set_boot_volume_copy: true
+        set_boot_disk_copy: true
+        set_floating_ip_mode: 'existing'
 
     - name: clean the workloads
       ansible.builtin.include_tasks: tenant/clean_workload.yml

@@ -3,9 +3,10 @@ __metaclass__ = type
 
 import openstack
 import unittest
+from unittest import mock
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
-    import const, server_floating_ip
+    import exc, const, server_floating_ip
 
 
 def sdk_server_floating_ip():
@@ -118,3 +119,60 @@ class TestServerFloatingIP(unittest.TestCase):
                 'qos_policy_id': 'uuid-test-qos-policy',
             }
         )
+
+    def test_find_my_server_port(self):
+        sdk_srv = {'id': 'uuid-test-server'}
+        port1 = {'fixed_ips': [{'ip_address': '192.168.30.3'}, {'ip_address': '192.168.30.5'}]}
+        port2 = {'fixed_ips': [{'ip_address': '192.168.20.6'}, {'ip_address': '192.168.20.7'}]}
+        conn = mock.Mock()
+        conn.network.ports.return_value = [port1, port2]
+
+        sdk_net = sdk_server_floating_ip()
+        fip = ServerFloatingIP.from_sdk(None, sdk_net)  # conn=None
+
+        self.assertEqual(port2, fip._find_my_server_port(conn, sdk_srv))
+        conn.network.ports.assert_called_with(device_id='uuid-test-server')
+
+    def test_find_specified_detached_floating_ip(self):
+        found_fip = {'port_id': None}
+        conn = mock.Mock()
+        conn.network.ips.return_value = [found_fip]
+
+        sdk_net = sdk_server_floating_ip()
+        fip = ServerFloatingIP.from_sdk(None, sdk_net)  # conn=None
+
+        self.assertEqual(found_fip, fip._find_specified_detached_floating_ip(conn))
+        conn.network.ips.assert_called_with(floating_ip_address='172.20.9.135')
+
+    def test_find_specified_detached_floating_ip_not_found(self):
+        conn = mock.Mock()
+        conn.network.ips.return_value = []
+
+        sdk_net = sdk_server_floating_ip()
+        fip = ServerFloatingIP.from_sdk(None, sdk_net)  # conn=None
+
+        self.assertEqual(None, fip._find_specified_detached_floating_ip(conn))
+        conn.network.ips.assert_called_with(floating_ip_address='172.20.9.135')
+
+    def test_find_specified_detached_floating_ip_required_but_not_found(self):
+        conn = mock.Mock()
+        conn.network.ips.return_value = []
+
+        sdk_net = sdk_server_floating_ip()
+        fip = ServerFloatingIP.from_sdk(None, sdk_net)  # conn=None
+
+        with self.assertRaises(exc.CannotConverge):
+            fip._find_specified_detached_floating_ip(conn, required=True)
+        conn.network.ips.assert_called_with(floating_ip_address='172.20.9.135')
+
+    def test_find_specified_detached_floating_ip_attached(self):
+        found_fip = {'port_id': 'uuid-test-port'}
+        conn = mock.Mock()
+        conn.network.ips.return_value = [found_fip]
+
+        sdk_net = sdk_server_floating_ip()
+        fip = ServerFloatingIP.from_sdk(None, sdk_net)  # conn=None
+
+        with self.assertRaises(exc.CannotConverge):
+            fip._find_specified_detached_floating_ip(conn)
+        conn.network.ips.assert_called_with(floating_ip_address='172.20.9.135')
