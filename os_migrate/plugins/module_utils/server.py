@@ -95,6 +95,9 @@ class Server(resource.Resource):
 
         self.update_sdk_params_block_device_mapping(sdk_params, block_device_mapping)
         sdk_srv = conn.compute.create_server(**sdk_params)
+        # Wait for the server before we attach Floating IPs, otherwise
+        # we may hit "Instance network is not ready yet" error.
+        sdk_srv = conn.compute.wait_for_server(sdk_srv, failures=['ERROR'], wait=600)
         self._create_floating_ips(conn, sdk_srv)
         return sdk_srv
 

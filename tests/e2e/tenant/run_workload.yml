@@ -21,7 +21,11 @@
         path: "{{ os_migrate_data_dir }}/workloads.yml"
         regexp: "boot_disk_copy: false"
         replace: "boot_disk_copy: true"
-      when: set_boot_volume_copy|default(false)|bool
+      when: set_boot_disk_copy|default(false)|bool
+
+    - name: create and set existing FIP
+      ansible.builtin.include_tasks: run_workload_existing_fip.yml
+      when: set_floating_ip_mode|default('') == 'existing'
 
     - name: load exported data
       ansible.builtin.set_fact:
