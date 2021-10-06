@@ -127,25 +127,31 @@ default for workload migration will be used (prefix + VM name).</p>
 parameters. Instead, edit the serialized volume in the <code class="docutils literal notranslate"><span class="pre">volumes</span></code>
 section of the workload’s <code class="docutils literal notranslate"><span class="pre">params</span></code>.</p>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">floating_ip_mode</span></code> controls whether floating IPs should be created
-for workloads:</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">auto</span></code> (default): Create floating IP(s) on the same
-interface(s) of destination server where the exported source
-server had its floating IP(s).</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">floating_ip_mode</span></code> controls whether and how floating IPs should be
+created for workloads:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">skip</span></code>: Do not create any floating IPs on the destination
+server.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">new</span></code>: Create a new floating IP (auto-assigned address).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">existing</span></code>: Assume the floating IP address as specified in
+the workload serialization is already assigned to the
+destination project, but not attached. Attach this floating
+IP. If this is not possible for some reason, fail.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">auto</span></code> (default): Attempt the <code class="docutils literal notranslate"><span class="pre">existing</span></code> method of floating
+IP assignment first, but should it fail, fall back to the
+<code class="docutils literal notranslate"><span class="pre">new</span></code> method instead.</p></li>
+</ul>
+<p>General remarks regarding floating IPs:</p>
 <p>In the <code class="docutils literal notranslate"><span class="pre">workloads.yml</span></code> export, each serialized floating IP
 contains a <code class="docutils literal notranslate"><span class="pre">fixed_ip_address</span></code> property, so a floating IP will
 be created on the port with this address. (When editing
 ports/fixed addresses of a workload, make sure to also edit the
 <code class="docutils literal notranslate"><span class="pre">fixed_ip_address</span></code> properties of its floating IPs accordingly.)</p>
-<p>It is important to note that the floating IP address will be
-automatically selected by the cloud, it will not match the
-floating IP address of the source server. (In most cases, the
-floating IP ranges of src/dst clouds don’t overlap anyway.)</p>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">skip</span></code>: Do not create any floating IPs on the destination
-server.</p></li>
-</ul>
+<p>It is important to note that the address of a newly created
+floating IP will be automatically selected by the cloud, it will
+not match the floating IP address of the source server. (In most
+cases, the floating IP ranges of src/dst clouds don’t overlap
+anyway.)</p>
 </li>
 </ul>
 </section>

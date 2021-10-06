@@ -147,6 +147,21 @@
 <section id="new">
 <h3>New<a class="headerlink" href="#new" title="Permalink to this headline"></a></h3>
 <ul>
+<li><p>Allow using pre-existing floating IPs for migrated servers. [Jiri
+Stransky]</p>
+<p>Two new floating_ip_mode migration parameter values are introduced:
+‘new’ and ‘existing’. The modes now behave this way:</p>
+<ul class="simple">
+<li><p>‘skip’ - Do not create any floating IPs.</p></li>
+<li><p>‘new’ - Create a new floating IP (auto-assigned address).</p></li>
+<li><p>‘existing’ - Assume the floating IP address specified in the
+workload serialization is already assigned to the destination
+project, but not attached. Attach this floating IP. If this is not
+possible for some reason, fail.</p></li>
+<li><p>‘auto’ - Attempt the ‘existing’ method of floating IP assignment,
+but instead of failing, fall back to the ‘new’ method.</p></li>
+</ul>
+</li>
 <li><p>Allow deleting or detaching the conversion hosts FIPs. [Carlos
 Camacho]</p>
 <p>This commit enables users to detach or demove floating IPs

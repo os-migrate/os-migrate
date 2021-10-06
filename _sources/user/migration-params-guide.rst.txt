@@ -45,23 +45,33 @@ Workload migration parameters
    parameters. Instead, edit the serialized volume in the ``volumes``
    section of the workload's ``params``.
 
--  ``floating_ip_mode`` controls whether floating IPs should be created
-   for workloads:
-
-   -  ``auto`` (default): Create floating IP(s) on the same
-      interface(s) of destination server where the exported source
-      server had its floating IP(s).
-
-      In the ``workloads.yml`` export, each serialized floating IP
-      contains a ``fixed_ip_address`` property, so a floating IP will
-      be created on the port with this address. (When editing
-      ports/fixed addresses of a workload, make sure to also edit the
-      ``fixed_ip_address`` properties of its floating IPs accordingly.)
-
-      It is important to note that the floating IP address will be
-      automatically selected by the cloud, it will not match the
-      floating IP address of the source server. (In most cases, the
-      floating IP ranges of src/dst clouds don't overlap anyway.)
+-  ``floating_ip_mode`` controls whether and how floating IPs should be
+   created for workloads:
 
    -  ``skip``: Do not create any floating IPs on the destination
       server.
+
+   -  ``new``: Create a new floating IP (auto-assigned address).
+
+   -  ``existing``: Assume the floating IP address as specified in
+      the workload serialization is already assigned to the
+      destination project, but not attached. Attach this floating
+      IP. If this is not possible for some reason, fail.
+
+   -  ``auto`` (default): Attempt the ``existing`` method of floating
+      IP assignment first, but should it fail, fall back to the
+      ``new`` method instead.
+
+   General remarks regarding floating IPs:
+
+   In the ``workloads.yml`` export, each serialized floating IP
+   contains a ``fixed_ip_address`` property, so a floating IP will
+   be created on the port with this address. (When editing
+   ports/fixed addresses of a workload, make sure to also edit the
+   ``fixed_ip_address`` properties of its floating IPs accordingly.)
+
+   It is important to note that the address of a newly created
+   floating IP will be automatically selected by the cloud, it will
+   not match the floating IP address of the source server. (In most
+   cases, the floating IP ranges of src/dst clouds don't overlap
+   anyway.)
