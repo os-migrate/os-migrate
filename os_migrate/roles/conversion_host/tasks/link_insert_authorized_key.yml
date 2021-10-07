@@ -8,6 +8,6 @@
   ansible.builtin.blockinfile:
     path: "{{ ansible_env['HOME'] }}/.ssh/authorized_keys"
     marker: "# {mark} CONVERSION LINK KEY"
-    create: yes
+    create: true
     mode: 0600
     block: "{{ lookup('file', os_migrate_conversion_link_keypair_private_path + '.pub') }}"

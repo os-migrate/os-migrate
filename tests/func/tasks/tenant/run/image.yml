@@ -1,0 +1,30 @@
+# FIXME: Find a way we can test the whole playbook rather than just
+# the role. Either make sure we're not in a play here and use
+# import_playbook, or spawn an ansible-playbook subprocess? The latter
+# might be actually a more precise way to test the real end-user
+# experience.
+- name: export images
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.export_images
+  vars:
+    os_migrate_images_filter:
+      - regex: '^osm_'
+
+- name: load exported data
+  ansible.builtin.set_fact:
+    image_resources: "{{ (lookup('file',
+                           os_migrate_data_dir +
+                           '/images.yml') | from_yaml)
+                   ['resources'] }}"
+
+- name: verify data contents
+  ansible.builtin.assert:
+    that:
+      - (image_resources |
+        json_query("[?params.name ==
+        'osm_image'].params.min_ram")
+        == [128])
+
+- name: import images
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.import_images

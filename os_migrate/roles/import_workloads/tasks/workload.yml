@@ -15,7 +15,8 @@
       data: "{{ item }}"
     register: prelim
 
-  - ansible.builtin.debug:
+  - name: show progress data
+    ansible.builtin.debug:
       msg:
         - "{{ prelim.server_name }} log file: {{ prelim.log_file }}"
         - "{{ prelim.server_name }} progress file: {{ prelim.state_file }}"
@@ -42,7 +43,7 @@
       region_name: "{{ os_migrate_src_region_name|default(omit) }}"
       server: "{{ item['_info']['id'] }}"
       action: stop
-      wait: yes
+      wait: true
       timeout: "{{ os_migrate_timeout }}"
       validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
       ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
@@ -191,5 +192,6 @@
         - exports is defined and 'volume_map' in exports
         - transfer is defined and 'volume_map' in transfer
 
-    - ansible.builtin.fail:
+    - name: fail if there was a problem in the migration
+      ansible.builtin.fail:
         msg: "Failed to import {{ item.params.name }}."

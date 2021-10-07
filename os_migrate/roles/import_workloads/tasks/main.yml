@@ -31,6 +31,7 @@
   ansible.builtin.file:
     path: "{{ os_migrate_data_dir }}/workload_logs"
     state: directory
+    mode: '0750'
 
 - name: get source conversion host address
   os_migrate.os_migrate.os_conversion_host_info:

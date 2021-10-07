@@ -1,0 +1,55 @@
+- name: change item in file for update test
+  ansible.builtin.replace:
+    path: "{{ os_migrate_data_dir }}/images.yml"
+    regexp: "    min_disk: 1"
+    replace: "    min_disk: 2"
+    backup: true
+
+- name: scan image before update test
+  openstack.cloud.image_info:
+    image: osm_image
+    auth: "{{ os_migrate_dst_auth }}"
+    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+  register: dst_images_info_before
+
+- name: get original description
+  ansible.builtin.set_fact:
+    original_desc: |-
+      {{ dst_images_info_before['openstack_image']['min_disk'] }}
+
+- name: import images
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.import_images
+
+- name: scan available images after update test
+  openstack.cloud.image_info:
+    image: osm_image
+    auth: "{{ os_migrate_dst_auth }}"
+    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+  register: dst_images_info_after
+
+- name: get changed description
+  ansible.builtin.set_fact:
+    changed_desc: |-
+      {{ dst_images_info_after['openstack_image']['min_disk'] }}
+
+- name: ensure min_disk for osm_image changed
+  ansible.builtin.assert:
+    that:
+      - original_desc == "1"
+      - changed_desc == "2"
+    fail_msg: |
+      dst_images_info_before min_disk:
+      {{ original_desc }}
+      dst_images_info_after min_disk:
+      {{ changed_desc }}

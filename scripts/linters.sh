@@ -97,6 +97,7 @@ find \
     ./tests \
     -name "*.yml" \
     -and -not -wholename "./os_migrate/meta/runtime.yml" \
+    -and -not -wholename "./os_migrate/localhost_inventory.yml" \
     -and -not -wholename "./tests/func/tmp/*" \
     -print0 \
     | xargs -0 ansible-lint -v --exclude=os_migrate/meta/runtime.yml

@@ -1,0 +1,57 @@
+- name: change item in file for update test
+  ansible.builtin.replace:
+    path: "{{ os_migrate_data_dir }}/networks.yml"
+    regexp: "    description: ''"
+    replace: "    description: 'osm_net_updated'"
+    backup: true
+
+- name: scan available networks after before test
+  openstack.cloud.networks_info:
+    filters: "{{ os_migrate_dst_filters }}"
+    auth: "{{ os_migrate_dst_auth }}"
+    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+  register: dst_networks_info_before
+
+- name: get original description
+  ansible.builtin.set_fact:
+    original_desc: |-
+      {{ dst_networks_info_before['openstack_networks'] | json_query(
+        "[?name=='osm_net'].description") }}
+
+- name: import networks
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.import_networks
+
+- name: scan available networks after update test
+  openstack.cloud.networks_info:
+    filters: "{{ os_migrate_dst_filters }}"
+    auth: "{{ os_migrate_dst_auth }}"
+    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+  register: dst_networks_info_after
+
+- name: get changed description
+  ansible.builtin.set_fact:
+    changed_desc: |-
+      {{ dst_networks_info_after['openstack_networks'] | json_query(
+        "[?name=='osm_net'].description") }}
+
+- name: ensure description for osm_net changed
+  ansible.builtin.assert:
+    that:
+      - original_desc == ['']
+      - changed_desc == ['osm_net_updated']
+    fail_msg: |
+      dst_networks_info_before description:
+      {{ original_desc }}
+      dst_networks_info_after description:
+      {{ changed_desc }}

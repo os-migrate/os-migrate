@@ -2,23 +2,23 @@
   hosts: migrator
   tasks:
     - name: prepare
-      ansible.builtin.import_tasks: global/prep.yml
+      ansible.builtin.import_tasks: tasks/global/prep.yml
     - name: clean
-      ansible.builtin.include_tasks: admin/clean/all.yml
+      ansible.builtin.include_tasks: tasks/admin/clean/all.yml
       args:
         apply:
           tags: test_clean_before
       tags: always
     - name: seed
-      ansible.builtin.import_tasks: admin/seed/all.yml
+      ansible.builtin.import_tasks: tasks/admin/seed/all.yml
     - name: run
-      ansible.builtin.import_tasks: admin/run/all.yml
+      ansible.builtin.import_tasks: tasks/admin/run/all.yml
     - name: check idempotence
-      ansible.builtin.import_tasks: admin/idempotence/all.yml
+      ansible.builtin.import_tasks: tasks/admin/idempotence/all.yml
     - name: update
-      ansible.builtin.import_tasks: admin/update/all.yml
+      ansible.builtin.import_tasks: tasks/admin/update/all.yml
     - name: clean
-      ansible.builtin.include_tasks: admin/clean/all.yml
+      ansible.builtin.include_tasks: tasks/admin/clean/all.yml
       args:
         apply:
           tags: test_clean_after

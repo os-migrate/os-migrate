@@ -2,6 +2,7 @@
   ansible.builtin.file:
     path: "{{ os_migrate_conversion_keypair_private_path|dirname }}"
     state: directory
+    mode: '0700'
 
 - name: generate a keypair for the conversion host
   community.crypto.openssh_keypair:

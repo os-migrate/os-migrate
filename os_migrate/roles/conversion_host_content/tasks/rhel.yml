@@ -65,4 +65,4 @@
   ansible.builtin.service:
     name: libvirtd
     state: started
-    enabled: yes
+    enabled: true

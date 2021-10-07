@@ -111,7 +111,7 @@ following default content:
        - name: Fedora
          versions:
            - 30
-     galaxy_tags: ["os-migrate"]
+     galaxy_tags: ["osmigrate"]
    dependencies:
      - role: os_migrate.os_migrate.prelude_src
 
@@ -148,7 +148,7 @@ following default content:
        - name: Fedora
          versions:
            - 30
-     galaxy_tags: ["os-migrate"]
+     galaxy_tags: ["osmigrate"]
    dependencies:
      - role: os_migrate.os_migrate.prelude_dst
 

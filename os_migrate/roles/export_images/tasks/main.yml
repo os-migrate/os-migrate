@@ -52,6 +52,7 @@
   ansible.builtin.file:
     path: "{{ os_migrate_image_blobs_dir }}"
     state: directory
+    mode: '0750'
   when: os_migrate_export_images_blobs
 
 - name: export image blobs

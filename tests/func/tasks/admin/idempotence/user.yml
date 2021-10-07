@@ -1,0 +1,70 @@
+### EXPORT IDEMPOTENCE ###
+
+- name: export users
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.export_users
+  vars:
+    os_migrate_users_filter:
+      - regex: '^osm_'
+
+# TODO: Set domain to osmdst_domain when we support migrating domains.
+
+- name: set destination user name
+  ansible.builtin.replace:
+    path: "{{ os_migrate_data_dir }}/users.yml"
+    regexp: "name: osm_user"
+    replace: "name: osmdst_user"
+
+- name: set destination project name
+  ansible.builtin.replace:
+    path: "{{ os_migrate_data_dir }}/users.yml"
+    regexp: "name: osm_project"
+    replace: "name: osmdst_project"
+
+- name: re-load user_resources for idempotency test
+  ansible.builtin.set_fact:
+    user_resources_idem: "{{ (lookup('file', os_migrate_data_dir + '/users.yml')
+                              | from_yaml)
+                              ['resources'] }}"
+
+- name: verify that export file did not change
+  ansible.builtin.assert:
+    that:
+      - user_resources_idem == user_resources
+    fail_msg: |
+      user_resources_idem:
+      {{ user_resources_idem | to_nice_yaml }}
+      user_resources:
+      {{ user_resources | to_nice_yaml }}
+
+### IMPORT IDEMPOTENCE ###
+
+- name: look up osmdst_user dst cloud
+  openstack.cloud.identity_user_info:
+    auth: "{{ os_migrate_dst_auth }}"
+    filters:
+      name: osmdst_user
+  register: user_import_idem_before
+
+- name: import users
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.import_users
+
+- name: look up osmdst_user in dst cloud again
+  openstack.cloud.identity_user_info:
+    auth: "{{ os_migrate_dst_auth }}"
+    filters:
+      name: osmdst_user
+  register: user_import_idem_after
+
+- name: ensure email for osmdst_user did not change
+  ansible.builtin.assert:
+    that:
+      - user_import_idem_before['openstack_users'][0].email != None
+      - "user_import_idem_before['openstack_users'][0]['email'] \
+         == user_import_idem_after['openstack_users'][0]['email']"
+    fail_msg: |
+      user_import_idem_before email:
+      {{ user_import_idem_before['openstack_users'][0].email }}
+      user_import_idem_after email:
+      {{ user_import_idem_after['openstack_users'][0].email }}

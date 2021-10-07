@@ -10,7 +10,8 @@
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
   register: src_workloads_info
 
-- ansible.builtin.debug:
+- name: show servers debug data
+  ansible.builtin.debug:
     msg: "{{ src_workloads_info.openstack_servers }}"
 
 - name: create id-name pairs of workloads to export

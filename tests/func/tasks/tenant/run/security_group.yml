@@ -1,0 +1,53 @@
+# FIXME: Find a way we can test the whole playbook rather than just
+# the role. Either make sure we're not in a play here and use
+# import_playbook, or spawn an ansible-playbook subprocess? The latter
+# might be actually a more precise way to test the real end-user
+# experience.
+- name: export security groups
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.export_security_groups
+  vars:
+    os_migrate_security_groups_filter:
+      - regex: '^osm_'
+
+- name: load exported data
+  ansible.builtin.set_fact:
+    security_group_resources: "{{ (lookup('file',
+                                          os_migrate_data_dir +
+                                          '/security_groups.yml') |
+                                          from_yaml)
+                   ['resources'] }}"
+
+- name: verify data contents
+  ansible.builtin.assert:
+    that:
+      - (security_group_resources |
+        json_query("[?params.name ==
+        'osm_security_group'].params.description")
+        == ['OSM security group'])
+
+- name: import security groups
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.import_security_groups
+
+- name: scan security group rules from osm_security_group
+  os_migrate.os_migrate.os_security_groups_info:
+    filters: "{{ os_migrate_dst_filters }}"
+    auth: "{{ os_migrate_dst_auth }}"
+    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+  register: dst_sg_after_create
+
+- name: ensure imported osm_security_group has no rules
+  ansible.builtin.assert:
+    that:
+      - dst_sg_after_create['openstack_security_groups'] | json_query(
+        "[?name=='osm_security_group'].security_group_rules[0]") | length == 0
+    fail_msg: >-
+      Expected osm_security_group to have no rules, but found:
+        {{ dst_sg_after_create['openstack_security_groups'] |
+           json_query("[?name=='osm_security_group'].security_group_rules[0]") }}
