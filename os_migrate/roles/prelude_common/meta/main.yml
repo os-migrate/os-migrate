@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: os-migrate
-  role_name: prelude_dst
+  role_name: prelude_common
   namespace: os_migrate
   description: os-migrate resource
   company: Red Hat
@@ -12,5 +12,4 @@ galaxy_info:
       versions:
         - 30
   galaxy_tags: ["osmigrate"]
-dependencies:
-  - role: os_migrate.os_migrate.prelude_common
+dependencies: []

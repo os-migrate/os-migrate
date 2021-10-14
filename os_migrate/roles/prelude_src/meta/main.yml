@@ -12,4 +12,5 @@ galaxy_info:
       versions:
         - 30
   galaxy_tags: ["osmigrate"]
-dependencies: []
+dependencies:
+  - role: os_migrate.os_migrate.prelude_common
