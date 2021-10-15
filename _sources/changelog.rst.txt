@@ -2,6 +2,24 @@ Changelog
 =========
 
 
+(unreleased)
+------------
+
+Fix
+~~~
+- Compatibility with PyYAML 6.x, safe YAML. [Jiri Stransky]
+
+  When PyYAML 6.x is used as a dependency, the load_resources_file
+  function crashes with:
+
+  TypeError: load() missing 1 required positional argument: 'Loader'
+
+  The best fix here should be switching to the YAML's safe_load and
+  safe_dump functions. These should be preferred because we do not need
+  to serialize arbitrary Python objects, we serialize basic data types,
+  dicts and lists.
+
+
 0.11.0 (2021-10-08)
 -------------------
 
