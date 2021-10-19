@@ -1,0 +1,37 @@
+---
+# Copyright 2021 os-migrate.
+# All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+- name: get the current openstacksdk version
+  ansible.builtin.shell: |
+    set -eo pipefail
+    python3 -m pip show openstacksdk | grep Version | cut -d' ' -f 2
+  register: _installed_openstacksdk
+  changed_when: "_installed_openstacksdk.rc == 0"
+
+- name: print the current installed version of openstacksdk
+  ansible.builtin.debug:
+    var: _installed_openstacksdk.stdout
+
+- name: fail if the user has an unsupported openstacksdk version
+  ansible.builtin.assert:
+    that:
+      - _installed_openstacksdk.stdout is version('{{ os_migrate_common_minimum_openstacksdk_version|string }}', '>=')
+    fail_msg: |
+      The installed openstacksdk version {{ _installed_openstacksdk.stdout }}
+      must be >= than {{ os_migrate_common_minimum_openstacksdk_version }}
+    success_msg: |
+      The installed openstacksdk version {{ _installed_openstacksdk.stdout }}
+      is >= than {{ os_migrate_common_minimum_openstacksdk_version }}
