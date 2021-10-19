@@ -5,6 +5,14 @@ Changelog
 (unreleased)
 ------------
 
+New
+~~~
+- Include an openstacksdk check in the preludes roles. [Carlos Camacho]
+
+  This commit adds a package version check in the prelude_src
+  and prelude_dst roles so we verify the user has a known working
+  openstacksdk version before running the migrations.
+
 Fix
 ~~~
 - Compatibility with PyYAML 6.x, safe YAML. [Jiri Stransky]
