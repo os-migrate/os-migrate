@@ -22,3 +22,6 @@ RES_TYPE_SERVER_PORT = 'openstack.network.ServerPort'
 RES_TYPE_SERVER_VOLUME = 'openstack.network.ServerVolume'
 RES_TYPE_SUBNET = 'openstack.subnet.Subnet'
 RES_TYPE_USER = 'openstack.user.User'
+
+# References
+REF_AUTH = '%auth%'  # project/domain we're currently authenticated as
