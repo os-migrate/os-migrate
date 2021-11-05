@@ -115,7 +115,7 @@ class Image(resource.Resource):
         return obj
 
     def create_or_update(self, conn, blob_path, filters=None):
-        refs = self._refs_from_ser(conn, filters)
+        refs = self._refs_from_ser(conn)
         sdk_params = self._to_sdk_params(refs)
         sdk_params['filename'] = blob_path
         existing = self._find_sdk_res(conn, sdk_params['name'], filters)
@@ -169,7 +169,7 @@ class Image(resource.Resource):
         refs['ramdisk_ref'] = reference.image_ref(conn, sdk_res['ramdisk_id'])
         return refs
 
-    def _refs_from_ser(self, conn, filters=None):
+    def _refs_from_ser(self, conn):
         refs = {}
         params = self.params()
         refs['kernel_ref'] = params['kernel_ref']

@@ -147,7 +147,7 @@ class RouterInterface(resource.Resource):
 
         return refs
 
-    def _refs_from_ser(self, conn, filters=None):
+    def _refs_from_ser(self, conn):
         refs = {}
         params = self.params()
 

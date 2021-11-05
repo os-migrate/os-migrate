@@ -145,7 +145,7 @@ def server_refs():
 
 
 class Server(server.Server):
-    def _refs_from_ser(self, conn, filters=None):
+    def _refs_from_ser(self, conn):
         return server_refs()
 
     @staticmethod

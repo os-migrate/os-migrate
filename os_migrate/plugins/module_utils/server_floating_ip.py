@@ -148,7 +148,7 @@ class ServerFloatingIP(resource.Resource):
             conn, sdk_res['qos_policy_id'])
         return refs
 
-    def _refs_from_ser(self, conn, filters=None):
+    def _refs_from_ser(self, conn):
         refs = {}
         refs['floating_network_ref'] = self.params()['floating_network_ref']
         refs['floating_network_id'] = reference.network_id(

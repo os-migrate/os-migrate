@@ -49,7 +49,7 @@ class SecurityGroupRule(resource.Resource):
     # there is no API method for updating security group rules.  if you
     # attempt to create a rule that exists, a ConflictException is raised.
     def create_or_update(self, conn, filters=None):
-        refs = self._refs_from_ser(conn, filters)
+        refs = self._refs_from_ser(conn)
         sdk_params = self._to_sdk_params(refs)
         try:
             conn.network.create_security_group_rule(**sdk_params)
@@ -69,7 +69,7 @@ class SecurityGroupRule(resource.Resource):
         refs['remote_group_id'] = sdk_res['remote_group_id']
         return refs
 
-    def _refs_from_ser(self, conn, filters=None):
+    def _refs_from_ser(self, conn):
         refs = {}
         refs['security_group_ref'] = self.params()['security_group_ref']
         refs['security_group_id'] = reference.security_group_id(

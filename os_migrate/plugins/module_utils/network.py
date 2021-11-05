@@ -78,7 +78,7 @@ class Network(resource.Resource):
             conn, sdk_res['qos_policy_id'])
         return refs
 
-    def _refs_from_ser(self, conn, filters=None):
+    def _refs_from_ser(self, conn):
         refs = {}
         refs['qos_policy_ref'] = self.params()['qos_policy_ref']
         refs['qos_policy_id'] = reference.qos_policy_id(

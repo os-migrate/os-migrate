@@ -48,7 +48,7 @@ class User(resource.Resource):
 
         return refs
 
-    def _refs_from_ser(self, conn, filters=None):
+    def _refs_from_ser(self, conn):
         refs = {}
 
         refs['default_project_ref'] = self.params()['default_project_ref']
