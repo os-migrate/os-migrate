@@ -22,7 +22,19 @@
     # We get a floating IP
     # for the workload VM
     auto_ip: true
-    # Wait for the instance to be created
+    userdata: |
+      {%- raw -%}#!/bin/bash
+      set -euf -o pipefail
+      fdisk -l
+      dev='/dev/vdc'
+      sudo umount "$dev"
+      printf "o\nn\np\n1\n\n\nw\n" | sudo fdisk "$dev"
+      sudo mkfs.ext4 "${dev}1"
+      mkdir test_vol
+      sudo mount /dev/vdc1 test_vol
+      cd test_vol
+      dd if=/dev/urandom of=test.txt bs=1M count=1
+      {% endraw %}
     wait: true
     auth: "{{ os_migrate_src_auth }}"
     validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
