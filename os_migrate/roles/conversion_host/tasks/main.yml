@@ -103,6 +103,8 @@
     flavor: "{{ os_migrate_conversion_flavor_name }}"
     image: "{{ os_migrate_conversion_image_name }}"
     key_name: "{{ os_migrate_conversion_keypair_name }}"
+    boot_from_volume: "{{ os_migrate_conversion_host_boot_from_volume|default(omit) }}"
+    volume_size: "{{ os_migrate_conversion_host_volume_size|default(omit) }}"
     terminate_volume: true
     network: "{{ os_migrate_conversion_net_name }}"
     security_groups:
