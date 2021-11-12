@@ -27,7 +27,12 @@ Fix
   to serialize arbitrary Python objects, we serialize basic data types,
   dicts and lists.
 
-  (cherry picked from commit 40982ecc8ad7b32f1b906d67dd998f884bae9de0)
+
+0.11.1 (2021-10-19)
+-------------------
+
+Fix
+~~~
 - Compatibility with PyYAML 6.x, safe YAML. [Jiri Stransky]
 
   When PyYAML 6.x is used as a dependency, the load_resources_file
@@ -39,6 +44,8 @@ Fix
   safe_dump functions. These should be preferred because we do not need
   to serialize arbitrary Python objects, we serialize basic data types,
   dicts and lists.
+
+  (cherry picked from commit 40982ecc8ad7b32f1b906d67dd998f884bae9de0)
 
 
 0.11.0 (2021-10-08)
