@@ -39,7 +39,7 @@ class Keypair(resource.Resource):
     # filters to _find_sdk_res. Keypairs are owned by Users, not
     # Projects.
     def create_or_update(self, conn, filters=None):
-        refs = self._refs_from_ser(conn, filters)
+        refs = self._refs_from_ser(conn)
         sdk_params = self._to_sdk_params(refs)
 
         user_filters = {}
@@ -78,7 +78,7 @@ class Keypair(resource.Resource):
 
         return refs
 
-    def _refs_from_ser(self, conn, filters=None):
+    def _refs_from_ser(self, conn):
         refs = {}
 
         refs['user_ref'] = self.params()['user_ref']

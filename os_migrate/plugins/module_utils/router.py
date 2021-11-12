@@ -90,7 +90,7 @@ class Router(resource.Resource):
 
         return refs
 
-    def _refs_from_ser(self, conn, filters=None):
+    def _refs_from_ser(self, conn):
         refs = {}
         params = self.params()
         refs['external_gateway_refinfo'] = params['external_gateway_refinfo']

@@ -59,7 +59,7 @@ class Project(resource.Resource):
 
         return refs
 
-    def _refs_from_ser(self, conn, filters=None):
+    def _refs_from_ser(self, conn):
         refs = {}
 
         refs['domain_ref'] = self.params()['domain_ref']

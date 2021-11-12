@@ -93,7 +93,7 @@ class Subnet(resource.Resource):
             conn, sdk_res['subnet_pool_id'])
         return refs
 
-    def _refs_from_ser(self, conn, filters=None):
+    def _refs_from_ser(self, conn):
         refs = {}
         refs['network_ref'] = self.params()['network_ref']
         refs['network_id'] = reference.network_id(

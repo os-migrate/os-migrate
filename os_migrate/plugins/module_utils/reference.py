@@ -4,6 +4,9 @@ __metaclass__ = type
 import openstack
 from openstack.exceptions import DuplicateResource, HttpException, ResourceFailure
 
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
+    import const
+
 
 def image_id(conn, ref, required=True):
     """Fetch ID of Image identified by reference dict `ref`. Use
@@ -331,7 +334,7 @@ def user_id(conn, ref, required=True, none_if_auth=False):
     Returns: the ID, or None if not found and not `required`
     Raises: openstack's ResourceNotFound when `required` but not found
     """
-    if ref['name'] == '%auth%':
+    if ref['name'] == const.REF_AUTH:
         if none_if_auth:
             return None
         else:
@@ -352,8 +355,8 @@ def user_ref(conn, id_, required=True, allow_auth=True):
     if allow_auth and id_ == conn.current_user_id:
         return {
             'project_name': None,
-            'name': '%auth%',
-            'domain_name': '%auth%',
+            'name': const.REF_AUTH,
+            'domain_name': const.REF_AUTH,
         }
 
     # User objects don't have project_id, but they have a
@@ -409,11 +412,11 @@ def _fetch_id(conn, get_method, ref, required=True):
 
 
 def _project_id_filters(conn, ref):
-    if ref['project_name'] == '%auth%':
+    if ref['project_name'] == const.REF_AUTH:
         return {'project_id': conn.current_project_id}
 
     domain_filters = {}
-    if ref['domain_name'] is not None and ref['domain_name'] != '%auth%':
+    if ref['domain_name'] is not None and ref['domain_name'] != const.REF_AUTH:
         try:
             domain = conn.identity.find_domain(ref['domain_name'])
             domain_filters = {'domain_id': domain['id']}
@@ -438,7 +441,7 @@ def _fetch_project_name_and_domain_name(conn, project_id):
     # should probably cover any sane use cases, so let's use it always
     # until we get a RFE to do otherwise.
     if project_id == conn.current_project_id:
-        return ('%auth%', '%auth%')
+        return (const.REF_AUTH, const.REF_AUTH)
 
     project_name = None
     domain_name = None

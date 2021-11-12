@@ -34,7 +34,7 @@ class FakeResource(resource.Resource):
     def _find_sdk_res(conn, name_or_id, filters=None):
         return valid_fakeresource_sdk()
 
-    def _refs_from_ser(self, conn, filters=None):
+    def _refs_from_ser(self, conn):
         return {
             'param3name': 'param3nameval',
             'param4name': 'param4nameval',
@@ -280,8 +280,9 @@ class TestResource(unittest.TestCase):
         res = FakeResource.from_data(valid_fakeresource_data())
         self.assertEqual(res.dst_prerequisites_errors(None), [])
 
-        def exception_refs_from_ser(_self, conn, filters=None):
+        def exception_refs_from_ser(_self, conn):
             raise ResourceFailure("Image 'asdf' not found.")
-        res._refs_from_ser = exception_refs_from_ser
+        # from a function to a bound method via __get__
+        res._refs_from_ser = exception_refs_from_ser.__get__(res, res.__class__)
         self.assertEqual(res.dst_prerequisites_errors(None),
                          ["Destination prerequisites not met: Image 'asdf' not found."])

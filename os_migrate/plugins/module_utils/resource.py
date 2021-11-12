@@ -212,7 +212,7 @@ class Resource():
 
         Returns: True if any change was made, False otherwise
         """
-        refs = self._refs_from_ser(conn, filters)
+        refs = self._refs_from_ser(conn)
         sdk_params = self._to_sdk_params(refs)
         existing = self._find_sdk_res(conn, sdk_params['name'], filters)
         if existing:
@@ -288,7 +288,7 @@ class Resource():
         """
         errors = []
         try:
-            self._refs_from_ser(conn, filters)
+            self._refs_from_ser(conn)
         except (os_exc.ResourceFailure, os_exc.ResourceNotFound, os_exc.DuplicateResource) as e:
             errors.append(f"Destination prerequisites not met: {e}")
         return errors
@@ -439,11 +439,10 @@ class Resource():
 
     # Used when creating params for SDK calls, should be overriden in
     # majority of child classes.
-    def _refs_from_ser(self, conn, filters=None):
+    def _refs_from_ser(self, conn):
         """Create a dictionary of references of `self` using OpenStack SDK
         connection `conn` to fetch any necessary info. Get names from
-        `self` and fetch IDs from `conn`. Project-scoped resources to
-        be looked up will be filtered by `filters`.
+        `self` and fetch IDs from `conn`.
 
         Returns: dict with names and ids
         """
