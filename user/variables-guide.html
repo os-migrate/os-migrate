@@ -56,6 +56,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#conversion-hosts-specific-floating-ips">Conversion hosts specific floating IPs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-hosts-detach-or-remove-floating-ips">Conversion hosts detach or remove floating IPs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-image-name">Conversion host image name</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conversion-host-boot-from-volume">Conversion host boot from volume</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-rhel-variables">Conversion host RHEL variables</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#enabling-password-based-ssh-access-to-the-conversion-hosts">Enabling password-based SSH access to the conversion hosts</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#running-custom-bash-scripts-in-the-conversion-hosts">Running custom bash scripts in the conversion hosts</a></li>
@@ -257,6 +258,23 @@ should be a
 <a class="reference external" href="https://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.qcow2">CentOS 8 Cloud Image</a>
 or
 <a class="reference external" href="https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.3/x86_64/product-software">RHEL 8 KVM Guest Image</a>.</p>
+</section>
+<section id="conversion-host-boot-from-volume">
+<h3>Conversion host boot from volume<a class="headerlink" href="#conversion-host-boot-from-volume" title="Permalink to this headline"></a></h3>
+<p>The conversion hosts can be created as boot-from-volume servers in
+either cloud. The variables that control the behavior are:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_host_boot_from_volume</span>
+<span class="n">os_migrate_dst_conversion_host_boot_from_volume</span>
+</pre></div>
+</div>
+<p>The default is <cite>false</cite> (meaning boot from Nova local disk).</p>
+<p>When creating boot-from-volume conversion hosts, it is possible to
+customize the size in GB for the boot volume:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_host_volume_size</span>
+<span class="n">os_migrate_dst_conversion_host_volume_size</span>
+</pre></div>
+</div>
+<p>The size should be 20 or more, the default is 20.</p>
 </section>
 <section id="conversion-host-rhel-variables">
 <h3>Conversion host RHEL variables<a class="headerlink" href="#conversion-host-rhel-variables" title="Permalink to this headline"></a></h3>

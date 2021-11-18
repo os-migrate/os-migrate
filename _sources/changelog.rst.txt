@@ -7,6 +7,15 @@ Changelog
 
 New
 ~~~
+- Allow creating conversion hosts as boot-from-volume servers. [Jiri
+  Stransky]
+
+  The operator can now control if conversion hosts are backed by a local
+  Nova disk (still the default), or if they are created as
+  boot-from-volume. The parameters which control the behavior are:
+
+      os_migrate_src_conversion_host_boot_from_volume
+      os_migrate_dst_conversion_host_boot_from_volume
 - Include an openstacksdk check in the preludes roles. [Carlos Camacho]
 
   This commit adds a package version check in the prelude_src

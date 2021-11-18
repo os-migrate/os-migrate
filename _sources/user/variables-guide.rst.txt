@@ -180,6 +180,26 @@ should be a
 or
 `RHEL 8 KVM Guest Image <https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.3/x86_64/product-software>`_.
 
+Conversion host boot from volume
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The conversion hosts can be created as boot-from-volume servers in
+either cloud. The variables that control the behavior are::
+
+    os_migrate_src_conversion_host_boot_from_volume
+    os_migrate_dst_conversion_host_boot_from_volume
+
+The default is `false` (meaning boot from Nova local disk).
+
+When creating boot-from-volume conversion hosts, it is possible to
+customize the size in GB for the boot volume::
+
+    os_migrate_src_conversion_host_volume_size
+    os_migrate_dst_conversion_host_volume_size
+
+The size should be 20 or more, the default is 20.
+
+
 Conversion host RHEL variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
