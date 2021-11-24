@@ -47,7 +47,7 @@ test-setup-vagrant-devstack:
 	./scripts/auth-from-clouds.sh \
 		--config toolbox/vagrant/env/clouds.yaml \
 		--src devstack \
-		--dst devstack-alt \
+		--dst devstack-alt-member \
 		> tests/auth_tenant.yml
 
 test-setup-vagrant-devstack-admin:
