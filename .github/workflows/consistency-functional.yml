@@ -364,7 +364,7 @@ jobs:
           ./toolbox/run ./scripts/auth-from-clouds.sh \
               --config tests/clouds.yaml \
               --src devstack \
-              --dst devstack-alt \
+              --dst devstack-alt-member \
               > tests/auth_tenant.yml && \
           ./toolbox/run ./scripts/auth-from-clouds.sh \
               --config tests/clouds.yaml \
