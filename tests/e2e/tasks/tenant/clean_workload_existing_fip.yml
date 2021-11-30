@@ -5,6 +5,8 @@
 - name: list osm_fip floating IP IDs
   ansible.builtin.shell: |
     openstack floating ip list -f value -c ID --tag osm_fip
+  args:
+    executable: /bin/bash
   environment:
     OS_AUTH_TYPE: token
     OS_AUTH_URL: "{{ os_migrate_dst_auth.auth_url }}"
@@ -19,6 +21,8 @@
 - name: delete osm_fips floating IPs
   ansible.builtin.shell: |
     openstack floating ip delete {{ item }}
+  args:
+    executable: /bin/bash
   register: _result
   changed_when: "_result.rc == 0"
   environment:

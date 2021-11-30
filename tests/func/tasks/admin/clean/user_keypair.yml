@@ -10,6 +10,8 @@
         OSM_USER_ID=$(openstack user show -f value -c id osm_user)
         nova keypair-delete --user $OSM_USER_ID osm_user_keypair
     fi
+  args:
+    executable: /bin/bash
   register: _result
   changed_when: "_result.rc == 0"
   environment:
@@ -33,6 +35,8 @@
         OSMDST_USER_ID=$(openstack user show -f value -c id osmdst_user)
         nova keypair-delete --user $OSMDST_USER_ID osmdst_user_keypair
     fi
+  args:
+    executable: /bin/bash
   register: _result
   changed_when: "_result.rc == 0"
   environment:

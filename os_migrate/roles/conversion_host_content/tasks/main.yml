@@ -8,6 +8,8 @@
 
     - name: running pre content hook
       ansible.builtin.shell: "{{ os_migrate_conversion_host_pre_content_hook }}"
+      args:
+        executable: /bin/bash
       when: os_migrate_conversion_host_pre_content_hook is string
 
     - name: Include CentOS tasks
@@ -20,4 +22,6 @@
 
     - name: running post content hook
       ansible.builtin.shell: "{{ os_migrate_conversion_host_post_content_hook }}"
+      args:
+        executable: /bin/bash
       when: os_migrate_conversion_host_post_content_hook is string

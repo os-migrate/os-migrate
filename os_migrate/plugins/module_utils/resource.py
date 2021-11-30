@@ -300,7 +300,7 @@ class Resource():
         """
         Returns: True if resource data is well-formed, False otherwise
         """
-        return self.data_errors() == []
+        return not self.data_errors()
 
     # Not meant to be overriden in majority of subclasses.
     def is_same_resource(self, target):

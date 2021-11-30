@@ -96,6 +96,10 @@ def check_tasks(file):
                 if '.' not in task.action:
                     errors.append((file, task.action, "no dot in namespace"))
 
+                if task.action == 'ansible.builtin.shell':
+                    if 'executable' not in task._attributes['args']:
+                        errors.append((file, task.action, "must define the executable as an args, like /bin/bash"))
+
             except AnsibleParserError:
                 pass
             except Exception:

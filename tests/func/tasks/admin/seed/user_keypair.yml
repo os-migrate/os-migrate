@@ -5,6 +5,8 @@
 - name: create keypair for osm_user
   ansible.builtin.shell: |
     openstack keypair create --user osm_user osm_user_keypair >/dev/null
+  args:
+    executable: /bin/bash
   register: _result
   changed_when: "_result.rc == 0"
   environment:
