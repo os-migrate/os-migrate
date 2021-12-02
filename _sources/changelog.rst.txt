@@ -2,6 +2,25 @@ Changelog
 =========
 
 
+(unreleased)
+------------
+
+Fix
+~~~
+- Enforce the executable argument when executing shell. [Carlos Camacho]
+
+  Currently the migrator host is not limited to be only
+  CentOS, Fedora, or RHEL. In the case a user runs OS
+  migrate from a Linux distribution which is not using
+  Bash as the default terminal, options like pipefail
+  might not be availabe (i.e. Ubuntu and ZSH) for
+  those cases we need to make explicit that the shell
+  we will use is Bash.
+
+  This commit enforce to use and set explicitly
+  the executable when running ansible.builtin.shell.
+
+
 0.12.0 (2021-11-19)
 -------------------
 
