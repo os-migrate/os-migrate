@@ -40,7 +40,7 @@ def load_resources_file(file_path):
 
     file_os_migrate_version = file_struct.get('os_migrate_version', None)
     if file_os_migrate_version != const.OS_MIGRATE_VERSION:
-        raise exc.DataVersionMismatch(file_os_migrate_version)
+        raise exc.DataVersionMismatch(file_path, file_os_migrate_version)
 
     return file_struct
 

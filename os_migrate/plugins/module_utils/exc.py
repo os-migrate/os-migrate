@@ -14,12 +14,18 @@ class CannotConverge(Exception):
 
 
 class DataVersionMismatch(Exception):
-    """Data version does not match OS-Migrate version."""
+    """Data file version does not match OS Migrate runtime version."""
 
-    msg_format = "Expected data with os_migrate_version '{}' but got '{}'."
+    msg_format = (
+        "OS Migrate runtime is version '{}', but tried to parse data "
+        "file '{}' with os_migrate_version field set to '{}'. "
+        "(Exported data is not guaranteed to be compatible across versions. "
+        "After upgrading OS Migrate, make sure to remove the old "
+        "YAML exports from the data directory.)"
+    )
 
-    def __init__(self, got_version):
-        message = self.msg_format.format(const.OS_MIGRATE_VERSION, got_version)
+    def __init__(self, file_path, got_version):
+        message = self.msg_format.format(const.OS_MIGRATE_VERSION, file_path, got_version)
         super().__init__(message)
 
 
