@@ -18,6 +18,8 @@
   ansible.builtin.shell: |
     set -eo pipefail
     python3 -m pip show openstacksdk | grep Version | cut -d' ' -f 2
+  args:
+    executable: /bin/bash
   register: _installed_openstacksdk
   changed_when: "_installed_openstacksdk.rc == 0"
 

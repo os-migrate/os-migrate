@@ -6,6 +6,8 @@
   ansible.builtin.shell: |
     openstack floating ip create  -f value -c floating_ip_address \
         --tag osm_fip {{ os_migrate_dst_conversion_external_network_name }}
+  args:
+    executable: /bin/bash
   environment:
     OS_AUTH_TYPE: token
     OS_AUTH_URL: "{{ os_migrate_dst_auth.auth_url }}"
