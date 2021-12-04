@@ -5,6 +5,16 @@ Changelog
 (unreleased)
 ------------
 
+Changes
+~~~~~~~
+- Improve error message on data version mismatch. [Jiri Stransky]
+
+  After upgrading without clearing old exported data, OS Migrate refuses
+  to parse the old data files. The resulting error message was not clear
+  enough about the likely root cause and solution. Path to the
+  problematic file and extra hints are now added to the exception
+  message, as this is a relatively common pitfall.
+
 Fix
 ~~~
 - Enforce the executable argument when executing shell. [Carlos Camacho]
