@@ -5,6 +5,10 @@ Changelog
 (unreleased)
 ------------
 
+New
+~~~
+- Docs page with troubleshooting tips. [Jiri Stransky]
+
 Changes
 ~~~~~~~
 - Improve error message on data version mismatch. [Jiri Stransky]
