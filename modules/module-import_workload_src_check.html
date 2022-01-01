@@ -168,17 +168,17 @@
 </section>
 <section id="e-x-a-m-p-l-e-t-a-s-k-s">
 <h2>Example Tasks<a class="headerlink" href="#e-x-a-m-p-l-e-t-a-s-k-s" title="Permalink to this headline"></a></h2>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ensure workload in source cloud is ready to continue</span>
-  <span class="nt">os_migrate.os_migrate.import_workload_src_check</span><span class="p">:</span>
-    <span class="nt">auth</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_auth</span><span class="nv"> </span><span class="s">}}&#39;</span>
-    <span class="nt">auth_type</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_auth_type|default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span>
-    <span class="nt">region_name</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_region_name|default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span>
-    <span class="nt">validate_certs</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_validate_certs|default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span>
-    <span class="nt">ca_cert</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_ca_cert|default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span>
-    <span class="nt">client_cert</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_client_cert|default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span>
-    <span class="nt">client_key</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_client_key|default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span>
-    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">migration-vm</span>
-  <span class="nt">when</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">prelim.changed</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ensure workload in source cloud is ready to continue</span><span class="w"></span>
+<span class="w">  </span><span class="nt">os_migrate.os_migrate.import_workload_src_check</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">auth</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_auth</span><span class="nv"> </span><span class="s">}}&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">auth_type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_auth_type|default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">region_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_region_name|default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">validate_certs</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_validate_certs|default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ca_cert</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_ca_cert|default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">client_cert</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_client_cert|default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">client_key</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_client_key|default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">migration-vm</span><span class="w"></span>
+<span class="w">  </span><span class="nt">when</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prelim.changed</span><span class="w"></span>
 </pre></div>
 </div>
 </section>

@@ -172,24 +172,24 @@ will be removed automatically.</p>
 <section id="parameter-file">
 <h3>Parameter file<a class="headerlink" href="#parameter-file" title="Permalink to this headline"></a></h3>
 <p>Let’s create an <code class="docutils literal notranslate"><span class="pre">os-migrate-vars.yml</span></code> file with Ansible variables:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_src_auth</span><span class="p">:</span>
-  <span class="nt">auth_url</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">http://192.168.0.13.199/v3</span>
-  <span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">srcpassword</span>
-  <span class="nt">project_domain_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Default</span>
-  <span class="nt">project_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">src</span>
-  <span class="nt">user_domain_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Default</span>
-  <span class="nt">username</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">src</span>
-<span class="nt">os_migrate_src_region_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">regionOne</span>
-<span class="nt">os_migrate_dst_auth</span><span class="p">:</span>
-  <span class="nt">auth_url</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">http://192.167.0.16:5000/v3</span>
-  <span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dstpassword</span>
-  <span class="nt">project_domain_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Default</span>
-  <span class="nt">project_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dst</span>
-  <span class="nt">user_domain_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Default</span>
-  <span class="nt">username</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dst</span>
-<span class="nt">os_migrate_dst_region_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">regionOne</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_src_auth</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">auth_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://192.168.0.13.199/v3</span><span class="w"></span>
+<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">srcpassword</span><span class="w"></span>
+<span class="w">  </span><span class="nt">project_domain_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Default</span><span class="w"></span>
+<span class="w">  </span><span class="nt">project_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">src</span><span class="w"></span>
+<span class="w">  </span><span class="nt">user_domain_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Default</span><span class="w"></span>
+<span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">src</span><span class="w"></span>
+<span class="nt">os_migrate_src_region_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">regionOne</span><span class="w"></span>
+<span class="nt">os_migrate_dst_auth</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">auth_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://192.167.0.16:5000/v3</span><span class="w"></span>
+<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dstpassword</span><span class="w"></span>
+<span class="w">  </span><span class="nt">project_domain_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Default</span><span class="w"></span>
+<span class="w">  </span><span class="nt">project_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dst</span><span class="w"></span>
+<span class="w">  </span><span class="nt">user_domain_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Default</span><span class="w"></span>
+<span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dst</span><span class="w"></span>
+<span class="nt">os_migrate_dst_region_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">regionOne</span><span class="w"></span>
 
-<span class="nt">os_migrate_data_dir</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/home/migrator/os-migrate-data</span>
+<span class="nt">os_migrate_data_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/home/migrator/os-migrate-data</span><span class="w"></span>
 </pre></div>
 </div>
 <p>The file contains the source and destination tenant credentials, a
@@ -211,12 +211,12 @@ following error will be raised:</p>
 </pre></div>
 </div>
 <p>To fix this issue, the user must adjust their auth parameters:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_src_auth</span><span class="p">:</span>
-  <span class="nt">auth_url</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">http://192.168.0.13.199/v2.0</span>
-  <span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">srcpassword</span>
-  <span class="nt">project_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">src</span>
-  <span class="nt">username</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">src</span>
-<span class="nt">os_migrate_src_region_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">regionOne</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_src_auth</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">auth_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://192.168.0.13.199/v2.0</span><span class="w"></span>
+<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">srcpassword</span><span class="w"></span>
+<span class="w">  </span><span class="nt">project_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">src</span><span class="w"></span>
+<span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">src</span><span class="w"></span>
+<span class="nt">os_migrate_src_region_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">regionOne</span><span class="w"></span>
 </pre></div>
 </div>
 <p>Notice that the parameters <code class="docutils literal notranslate"><span class="pre">project_domain_name</span></code> and
@@ -254,39 +254,39 @@ the networks, run the “export_networks” playbook.</p>
 </div>
 <p>This will create networks.yml file in the data directory, similar to
 this:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_version</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.4.0</span>
-<span class="nt">resources</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">_info</span><span class="p">:</span>
-      <span class="nt">availability_zones</span><span class="p">:</span>
-        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">nova</span>
-      <span class="nt">created_at</span><span class="p">:</span> <span class="s">&#39;2020-04-07T14:08:30Z&#39;</span>
-      <span class="nt">id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">a1eb31f6-2cdc-4896-b582-8950dafa34aa</span>
-      <span class="nt">project_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2f444c71265048f7a9d21f81db6f21a4</span>
-      <span class="nt">qos_policy_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-      <span class="nt">revision_number</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">3</span>
-      <span class="nt">status</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ACTIVE</span>
-      <span class="nt">subnet_ids</span><span class="p">:</span>
-        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">a5052e10-5e00-432b-a826-29695677aca0</span>
-        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">d450ffd0-972e-4398-ab49-6ba9e29e2499</span>
-      <span class="nt">updated_at</span><span class="p">:</span> <span class="s">&#39;2020-04-07T14:08:34Z&#39;</span>
-    <span class="nt">params</span><span class="p">:</span>
-      <span class="nt">availability_zone_hints</span><span class="p">:</span> <span class="p p-Indicator">[]</span>
-      <span class="nt">description</span><span class="p">:</span> <span class="s">&#39;&#39;</span>
-      <span class="nt">dns_domain</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-      <span class="nt">is_admin_state_up</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
-      <span class="nt">is_default</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-      <span class="nt">is_port_security_enabled</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
-      <span class="nt">is_router_external</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
-      <span class="nt">is_shared</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
-      <span class="nt">is_vlan_transparent</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-      <span class="nt">mtu</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1450</span>
-      <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">osm_net</span>
-      <span class="nt">provider_network_type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-      <span class="nt">provider_physical_network</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-      <span class="nt">provider_segmentation_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-      <span class="nt">qos_policy_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-      <span class="nt">segments</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-    <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">openstack.network.Network</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.4.0</span><span class="w"></span>
+<span class="nt">resources</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">_info</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">availability_zones</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nova</span><span class="w"></span>
+<span class="w">      </span><span class="nt">created_at</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-04-07T14:08:30Z&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">a1eb31f6-2cdc-4896-b582-8950dafa34aa</span><span class="w"></span>
+<span class="w">      </span><span class="nt">project_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2f444c71265048f7a9d21f81db6f21a4</span><span class="w"></span>
+<span class="w">      </span><span class="nt">qos_policy_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">      </span><span class="nt">revision_number</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"></span>
+<span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ACTIVE</span><span class="w"></span>
+<span class="w">      </span><span class="nt">subnet_ids</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">a5052e10-5e00-432b-a826-29695677aca0</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">d450ffd0-972e-4398-ab49-6ba9e29e2499</span><span class="w"></span>
+<span class="w">      </span><span class="nt">updated_at</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-04-07T14:08:34Z&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">params</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">availability_zone_hints</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span><span class="w"></span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">dns_domain</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">      </span><span class="nt">is_admin_state_up</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="w">      </span><span class="nt">is_default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">      </span><span class="nt">is_port_security_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="w">      </span><span class="nt">is_router_external</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="w">      </span><span class="nt">is_shared</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="w">      </span><span class="nt">is_vlan_transparent</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">      </span><span class="nt">mtu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1450</span><span class="w"></span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">osm_net</span><span class="w"></span>
+<span class="w">      </span><span class="nt">provider_network_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">      </span><span class="nt">provider_physical_network</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">      </span><span class="nt">provider_segmentation_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">      </span><span class="nt">qos_policy_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">      </span><span class="nt">segments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">openstack.network.Network</span><span class="w"></span>
 </pre></div>
 </div>
 <p>You may edit the file as needed and then run the “import_networks”
@@ -330,25 +330,25 @@ keypairs.</p>
 security groups, etc. as in the previous sections. Run the
 “export_workloads” playbook, and edit the resulting workloads.yml as
 desired:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_version</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.4.0</span>
-<span class="nt">resources</span><span class="p">:</span>
-<span class="p p-Indicator">-</span> <span class="nt">_info</span><span class="p">:</span>
-    <span class="nt">addresses</span><span class="p">:</span>
-      <span class="nt">external_network</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">OS-EXT-IPS-MAC:mac_addr</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">fa:16:3e:98:19:a0</span>
-        <span class="l l-Scalar l-Scalar-Plain">OS-EXT-IPS:type</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">fixed</span>
-        <span class="nt">addr</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">10.19.2.41</span>
-        <span class="nt">version</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">4</span>
-    <span class="nt">flavor_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">a96b2815-3525-4eea-9ab4-14ba58e17835</span>
-    <span class="nt">id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0025f062-f684-4e02-9da2-3219e011ec74</span>
-    <span class="nt">status</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SHUTOFF</span>
-  <span class="nt">params</span><span class="p">:</span>
-    <span class="nt">flavor_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">m1.small</span>
-    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">migration-vm</span>
-    <span class="nt">security_group_names</span><span class="p">:</span>
-    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">testing123</span>
-    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">openstack.compute.Server</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.4.0</span><span class="w"></span>
+<span class="nt">resources</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">_info</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">addresses</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">external_network</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OS-EXT-IPS-MAC:mac_addr</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fa:16:3e:98:19:a0</span><span class="w"></span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">OS-EXT-IPS:type</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fixed</span><span class="w"></span>
+<span class="w">        </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.19.2.41</span><span class="w"></span>
+<span class="w">        </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span><span class="w"></span>
+<span class="w">    </span><span class="nt">flavor_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">a96b2815-3525-4eea-9ab4-14ba58e17835</span><span class="w"></span>
+<span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0025f062-f684-4e02-9da2-3219e011ec74</span><span class="w"></span>
+<span class="w">    </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SHUTOFF</span><span class="w"></span>
+<span class="w">  </span><span class="nt">params</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">flavor_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">m1.small</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">migration-vm</span><span class="w"></span>
+<span class="w">    </span><span class="nt">security_group_names</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">testing123</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">openstack.compute.Server</span><span class="w"></span>
 </pre></div>
 </div>
 <p>Note that this playbook only extracts metadata about servers in the
@@ -410,8 +410,8 @@ total data transfer.</p>
 <section id="preparation">
 <h3>Preparation<a class="headerlink" href="#preparation" title="Permalink to this headline"></a></h3>
 <p>We’ll put additional parameters into <code class="docutils literal notranslate"><span class="pre">os-migrate-vars.yml</span></code>:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_conversion_external_network_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">public</span>
-<span class="nt">os_migrate_conversion_flavor_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">m1.large</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_conversion_external_network_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">public</span><span class="w"></span>
+<span class="nt">os_migrate_conversion_flavor_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">m1.large</span><span class="w"></span>
 </pre></div>
 </div>
 <p>These define the flavor and external network we want to use for our
@@ -448,62 +448,62 @@ host server.</p>
 </pre></div>
 </div>
 <p>The resulting workloads.yml file will look similar to:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_version</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.5.0</span>
-<span class="nt">resources</span><span class="p">:</span>
-<span class="p p-Indicator">-</span> <span class="nt">_info</span><span class="p">:</span>
-    <span class="nt">created_at</span><span class="p">:</span> <span class="s">&#39;2020-11-12T17:55:40Z&#39;</span>
-    <span class="nt">flavor_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cd6258f9-c34b-4a9c-a1e2-8cb81826781e</span>
-    <span class="nt">id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">af615f8c-378a-4a2e-be6a-b4d38a954242</span>
-    <span class="nt">launched_at</span><span class="p">:</span> <span class="s">&#39;2020-11-12T17:56:00.000000&#39;</span>
-    <span class="nt">security_group_ids</span><span class="p">:</span>
-    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">1359ec88-4873-40d2-aa0b-18ad0588f107</span>
-    <span class="nt">status</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SHUTOFF</span>
-    <span class="nt">updated_at</span><span class="p">:</span> <span class="s">&#39;2020-11-12T17:56:30Z&#39;</span>
-    <span class="nt">user_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">48be0a2e86a84682b8e4992a65d39e3e</span>
-  <span class="nt">_migration_params</span><span class="p">:</span>
-    <span class="nt">boot_disk_copy</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
-  <span class="nt">params</span><span class="p">:</span>
-    <span class="nt">availability_zone</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">nova</span>
-    <span class="nt">config_drive</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-    <span class="nt">description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">osm_server</span>
-    <span class="nt">disk_config</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">MANUAL</span>
-    <span class="nt">flavor_ref</span><span class="p">:</span>
-      <span class="nt">domain_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-      <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">m1.xtiny</span>
-      <span class="nt">project_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-    <span class="nt">image_ref</span><span class="p">:</span>
-      <span class="nt">domain_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-      <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cirros-0.4.0-x86_64-disk.img</span>
-      <span class="nt">project_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-    <span class="nt">key_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">osm_key</span>
-    <span class="nt">metadata</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
-    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">osm_server</span>
-    <span class="nt">ports</span><span class="p">:</span>
-    <span class="p p-Indicator">-</span> <span class="nt">_info</span><span class="p">:</span>
-        <span class="nt">device_id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">af615f8c-378a-4a2e-be6a-b4d38a954242</span>
-        <span class="nt">device_owner</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">compute:nova</span>
-        <span class="nt">id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cf5d73c3-089b-456b-abb9-dc5da988844e</span>
-      <span class="nt">_migration_params</span><span class="p">:</span> <span class="p p-Indicator">{}</span>
-      <span class="nt">params</span><span class="p">:</span>
-        <span class="nt">fixed_ips_refs</span><span class="p">:</span>
-        <span class="p p-Indicator">-</span> <span class="nt">ip_address</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">192.168.20.7</span>
-          <span class="nt">subnet_ref</span><span class="p">:</span>
-            <span class="nt">domain_name</span><span class="p">:</span> <span class="s">&#39;%auth%&#39;</span>
-            <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">osm_subnet</span>
-            <span class="nt">project_name</span><span class="p">:</span> <span class="s">&#39;%auth%&#39;</span>
-        <span class="nt">network_ref</span><span class="p">:</span>
-          <span class="nt">domain_name</span><span class="p">:</span> <span class="s">&#39;%auth%&#39;</span>
-          <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">osm_net</span>
-          <span class="nt">project_name</span><span class="p">:</span> <span class="s">&#39;%auth%&#39;</span>
-      <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">openstack.network.ServerPort</span>
-    <span class="nt">scheduler_hints</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-    <span class="nt">security_group_refs</span><span class="p">:</span>
-    <span class="p p-Indicator">-</span> <span class="nt">domain_name</span><span class="p">:</span> <span class="s">&#39;%auth%&#39;</span>
-      <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">osm_security_group</span>
-      <span class="nt">project_name</span><span class="p">:</span> <span class="s">&#39;%auth%&#39;</span>
-    <span class="nt">tags</span><span class="p">:</span> <span class="p p-Indicator">[]</span>
-    <span class="nt">user_data</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">null</span>
-  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">openstack.compute.Server</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5.0</span><span class="w"></span>
+<span class="nt">resources</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">_info</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">created_at</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-11-12T17:55:40Z&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">flavor_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cd6258f9-c34b-4a9c-a1e2-8cb81826781e</span><span class="w"></span>
+<span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">af615f8c-378a-4a2e-be6a-b4d38a954242</span><span class="w"></span>
+<span class="w">    </span><span class="nt">launched_at</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-11-12T17:56:00.000000&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">security_group_ids</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1359ec88-4873-40d2-aa0b-18ad0588f107</span><span class="w"></span>
+<span class="w">    </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SHUTOFF</span><span class="w"></span>
+<span class="w">    </span><span class="nt">updated_at</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-11-12T17:56:30Z&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">user_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">48be0a2e86a84682b8e4992a65d39e3e</span><span class="w"></span>
+<span class="w">  </span><span class="nt">_migration_params</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">boot_disk_copy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="w">  </span><span class="nt">params</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">availability_zone</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nova</span><span class="w"></span>
+<span class="w">    </span><span class="nt">config_drive</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">osm_server</span><span class="w"></span>
+<span class="w">    </span><span class="nt">disk_config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MANUAL</span><span class="w"></span>
+<span class="w">    </span><span class="nt">flavor_ref</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">m1.xtiny</span><span class="w"></span>
+<span class="w">      </span><span class="nt">project_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">    </span><span class="nt">image_ref</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cirros-0.4.0-x86_64-disk.img</span><span class="w"></span>
+<span class="w">      </span><span class="nt">project_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">    </span><span class="nt">key_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">osm_key</span><span class="w"></span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">osm_server</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">_info</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">af615f8c-378a-4a2e-be6a-b4d38a954242</span><span class="w"></span>
+<span class="w">        </span><span class="nt">device_owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">compute:nova</span><span class="w"></span>
+<span class="w">        </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cf5d73c3-089b-456b-abb9-dc5da988844e</span><span class="w"></span>
+<span class="w">      </span><span class="nt">_migration_params</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
+<span class="w">      </span><span class="nt">params</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">fixed_ips_refs</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ip_address</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.20.7</span><span class="w"></span>
+<span class="w">          </span><span class="nt">subnet_ref</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;%auth%&#39;</span><span class="w"></span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">osm_subnet</span><span class="w"></span>
+<span class="w">            </span><span class="nt">project_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;%auth%&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">network_ref</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;%auth%&#39;</span><span class="w"></span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">osm_net</span><span class="w"></span>
+<span class="w">          </span><span class="nt">project_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;%auth%&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">openstack.network.ServerPort</span><span class="w"></span>
+<span class="w">    </span><span class="nt">scheduler_hints</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">    </span><span class="nt">security_group_refs</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;%auth%&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">osm_security_group</span><span class="w"></span>
+<span class="w">      </span><span class="nt">project_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;%auth%&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">user_data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">openstack.compute.Server</span><span class="w"></span>
 </pre></div>
 </div>
 </section>

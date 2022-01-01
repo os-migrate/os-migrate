@@ -34,6 +34,11 @@ Fix
   This commit enforce to use and set explicitly
   the executable when running ansible.builtin.shell.
 
+Other
+~~~~~
+- Docs: Fix link on install-from-galaxy which address to install-from-
+  source. [Juan Badia Payno]
+
 
 0.12.0 (2021-11-19)
 -------------------

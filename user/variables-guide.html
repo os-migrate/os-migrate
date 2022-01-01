@@ -124,16 +124,16 @@ resources being imported into batches.</p>
 string (exact match) or a dictionary with <code class="docutils literal notranslate"><span class="pre">regex</span></code> key (regular
 expression match). A resource is exported if it matches at least one
 of the list items.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_networks_filter</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">my_net</span>
-  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">other_net</span>
-  <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">^myprefix_.*</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_networks_filter</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_net</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">other_net</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^myprefix_.*</span><span class="w"></span>
 </pre></div>
 </div>
 <p>The above example says: Export only networks named <code class="docutils literal notranslate"><span class="pre">my_net</span></code> <strong>or</strong>
 <code class="docutils literal notranslate"><span class="pre">other_net</span></code> <strong>or</strong> starting with <code class="docutils literal notranslate"><span class="pre">myprefix_</span></code>.</p>
 <p>The filters default to:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.*</span><span class="w"></span>
 </pre></div>
 </div>
 <p>meaning “export all resources”. (The set of resources exported will
@@ -147,26 +147,26 @@ use <code class="docutils literal notranslate"><span class="pre">os_migrate_secu
 <code class="docutils literal notranslate"><span class="pre">os_migrate_routers_filter</span></code>.</p>
 <p>List of the currently implemented filters with default values you can
 copy into your variables file and customize:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_flavors_filter</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
-<span class="nt">os_migrate_images_filter</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
-<span class="nt">os_migrate_keypairs_filter</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
-<span class="nt">os_migrate_networks_filter</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
-<span class="nt">os_migrate_projects_filter</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
-<span class="nt">os_migrate_routers_filter</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
-<span class="nt">os_migrate_security_groups_filter</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
-<span class="nt">os_migrate_subnets_filter</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
-<span class="nt">os_migrate_users_filter</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
-<span class="nt">os_migrate_workloads_filter</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">regex</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_flavors_filter</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.*</span><span class="w"></span>
+<span class="nt">os_migrate_images_filter</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.*</span><span class="w"></span>
+<span class="nt">os_migrate_keypairs_filter</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.*</span><span class="w"></span>
+<span class="nt">os_migrate_networks_filter</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.*</span><span class="w"></span>
+<span class="nt">os_migrate_projects_filter</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.*</span><span class="w"></span>
+<span class="nt">os_migrate_routers_filter</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.*</span><span class="w"></span>
+<span class="nt">os_migrate_security_groups_filter</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.*</span><span class="w"></span>
+<span class="nt">os_migrate_subnets_filter</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.*</span><span class="w"></span>
+<span class="nt">os_migrate_users_filter</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.*</span><span class="w"></span>
+<span class="nt">os_migrate_workloads_filter</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.*</span><span class="w"></span>
 </pre></div>
 </div>
 </section>

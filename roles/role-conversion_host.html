@@ -125,51 +125,51 @@ hosts itself.</p>
 <h3>Role Defaults<a class="headerlink" href="#r-o-l-e-d-e-f-a-u-l-t-s" title="Permalink to this headline"></a></h3>
 <dd><p>This section highlights all of the defaults and variables set within the “conversion_host” role.</p>
 </dd>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Required vars:</span>
-<span class="c1"># os_migrate_conversion_external_network_name</span>
-<span class="c1"># os_migrate_conversion_flavor_name</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Required vars:</span><span class="w"></span>
+<span class="c1"># os_migrate_conversion_external_network_name</span><span class="w"></span>
+<span class="c1"># os_migrate_conversion_flavor_name</span><span class="w"></span>
 
-<span class="nt">os_migrate_conversion_net_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">os_migrate_conv</span>
+<span class="nt">os_migrate_conversion_net_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os_migrate_conv</span><span class="w"></span>
 
-<span class="nt">os_migrate_src_conversion_net_mtu</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">omit</span><span class="nv"> </span><span class="s">}}&#39;</span>
-<span class="nt">os_migrate_dst_conversion_net_mtu</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">omit</span><span class="nv"> </span><span class="s">}}&#39;</span>
+<span class="nt">os_migrate_src_conversion_net_mtu</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">omit</span><span class="nv"> </span><span class="s">}}&#39;</span><span class="w"></span>
+<span class="nt">os_migrate_dst_conversion_net_mtu</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">omit</span><span class="nv"> </span><span class="s">}}&#39;</span><span class="w"></span>
 
-<span class="c1"># If we install packages we need a DNS server working</span>
-<span class="nt">os_migrate_src_conversion_subnet_dns_nameservers</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">8.8.8.8</span><span class="p p-Indicator">]</span>
-<span class="nt">os_migrate_dst_conversion_subnet_dns_nameservers</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">8.8.8.8</span><span class="p p-Indicator">]</span>
+<span class="c1"># If we install packages we need a DNS server working</span><span class="w"></span>
+<span class="nt">os_migrate_src_conversion_subnet_dns_nameservers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">8.8.8.8</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="nt">os_migrate_dst_conversion_subnet_dns_nameservers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">8.8.8.8</span><span class="p p-Indicator">]</span><span class="w"></span>
 
-<span class="nt">os_migrate_conversion_subnet_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">os_migrate_conv</span>
-<span class="nt">os_migrate_conversion_subnet_cidr</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">192.168.10.0/24</span>
-<span class="nt">os_migrate_conversion_subnet_alloc_start</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">192.168.10.10</span>
-<span class="nt">os_migrate_conversion_subnet_alloc_end</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">192.168.10.99</span>
+<span class="nt">os_migrate_conversion_subnet_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os_migrate_conv</span><span class="w"></span>
+<span class="nt">os_migrate_conversion_subnet_cidr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.10.0/24</span><span class="w"></span>
+<span class="nt">os_migrate_conversion_subnet_alloc_start</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.10.10</span><span class="w"></span>
+<span class="nt">os_migrate_conversion_subnet_alloc_end</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.10.99</span><span class="w"></span>
 
-<span class="nt">os_migrate_conversion_delete_fip</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="nt">os_migrate_conversion_delete_fip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
 
-<span class="nt">os_migrate_conversion_router_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">os_migrate_conv</span>
-<span class="nt">os_migrate_conversion_router_ip</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">192.168.10.1</span>
+<span class="nt">os_migrate_conversion_router_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os_migrate_conv</span><span class="w"></span>
+<span class="nt">os_migrate_conversion_router_ip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.10.1</span><span class="w"></span>
 
-<span class="nt">os_migrate_conversion_secgroup_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">os_migrate_conv</span>
+<span class="nt">os_migrate_conversion_secgroup_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os_migrate_conv</span><span class="w"></span>
 
-<span class="nt">os_migrate_conversion_keypair_generate</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="nt">os_migrate_conversion_keypair_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">os_migrate_conv</span>
-<span class="nt">os_migrate_conversion_keypair_private_path</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_data_dir</span><span class="nv"> </span><span class="s">}}/conversion/ssh.key&#39;</span>
-<span class="nt">os_migrate_conversion_link_keypair_private_path</span><span class="p">:</span> <span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_data_dir</span><span class="nv"> </span><span class="s">}}/conversion/link-ssh.key&#39;</span>
+<span class="nt">os_migrate_conversion_keypair_generate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="nt">os_migrate_conversion_keypair_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os_migrate_conv</span><span class="w"></span>
+<span class="nt">os_migrate_conversion_keypair_private_path</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_data_dir</span><span class="nv"> </span><span class="s">}}/conversion/ssh.key&#39;</span><span class="w"></span>
+<span class="nt">os_migrate_conversion_link_keypair_private_path</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_data_dir</span><span class="nv"> </span><span class="s">}}/conversion/link-ssh.key&#39;</span><span class="w"></span>
 
-<span class="nt">os_migrate_conversion_host_deploy_timeout</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">180</span>
-<span class="nt">os_migrate_src_conversion_host_boot_from_volume</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="nt">os_migrate_dst_conversion_host_boot_from_volume</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="nt">os_migrate_src_conversion_host_volume_size</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">20</span>
-<span class="nt">os_migrate_dst_conversion_host_volume_size</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">20</span>
-<span class="nt">os_migrate_src_conversion_host_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">os_migrate_conv_src</span>
-<span class="nt">os_migrate_dst_conversion_host_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">os_migrate_conv_dst</span>
-<span class="nt">os_migrate_conversion_image_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">os_migrate_conv</span>
+<span class="nt">os_migrate_conversion_host_deploy_timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">180</span><span class="w"></span>
+<span class="nt">os_migrate_src_conversion_host_boot_from_volume</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="nt">os_migrate_dst_conversion_host_boot_from_volume</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="nt">os_migrate_src_conversion_host_volume_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span><span class="w"></span>
+<span class="nt">os_migrate_dst_conversion_host_volume_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span><span class="w"></span>
+<span class="nt">os_migrate_src_conversion_host_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os_migrate_conv_src</span><span class="w"></span>
+<span class="nt">os_migrate_dst_conversion_host_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os_migrate_conv_dst</span><span class="w"></span>
+<span class="nt">os_migrate_conversion_image_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os_migrate_conv</span><span class="w"></span>
 
-<span class="nt">os_migrate_conversion_host_ssh_user</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cloud-user</span>
-<span class="nt">os_migrate_conversion_host_ssh_user_enable_password_access</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="nt">os_migrate_conversion_host_ssh_user_password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">weak_password_disabled_by_default</span>
-<span class="nt">os_migrate_conversion_host_content_install</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="nt">os_migrate_conversion_host_ssh_user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloud-user</span><span class="w"></span>
+<span class="nt">os_migrate_conversion_host_ssh_user_enable_password_access</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="nt">os_migrate_conversion_host_ssh_user_password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">weak_password_disabled_by_default</span><span class="w"></span>
+<span class="nt">os_migrate_conversion_host_content_install</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
 
-<span class="nt">os_migrate_conversion_floating_ip_address</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">os_migrate_conversion_floating_ip_address</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
 </pre></div>
 </div>
 </section>
