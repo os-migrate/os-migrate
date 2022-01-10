@@ -194,15 +194,25 @@ The concepts and prerequisites are the same for other deployments.
 Prerequisites for e2e test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* Source environment credentials
-* Destination environment credentials
-* Existing images in both source and destination environments
-* Flavors
-* Space requirements
-  - 2 images totalling 1.25GB
-  - 1 volume totalling 1GiB in source environment
-  - 2 volumes totalling 5GiB in destination environment
-  - 2 VMs totalling 35GB disk usage in each environment
+-  Source environment credentials
+
+-  Destination environment credentials
+
+-  Existing images in both source and destination environments
+
+-  Flavors
+
+-  Public network
+
+-  Space requirements
+
+   -  2 images totalling 1.25 GB
+
+   -  1 volume totalling 1 GB in source environment
+
+   -  2 volumes totalling 6 GB in destination environment
+
+   -  2 VMs totalling 35 GB disk usage in each environment
 
 Below are the steps required to satisfy the above requirements and run e2e tests in a test environment, migrating
 resources from one project to another.
@@ -259,11 +269,36 @@ Create flavors
 
 .. code-block::
 
-    openstack flavor create --public --id auto \
+    openstack flavor create --public \
     --ram 256 --disk 5 --vcpus 1 --rxtx-factor 1 m1.xtiny
 
-    openstack flavor create --public --id auto \
-    --ram 512 --disk 30 --vcpus 2 --rxtx-factor 1 m1.large
+    openstack flavor create --public \
+    --ram 2048 --disk 30 --vcpus 2 --rxtx-factor 1 m1.large
+
+Create public network
+^^^^^^^^^^^^^^^^^^^^^
+
+If your OpenStack environment doesn't have a public network created
+yet, you'll need to create one. The parameters below should work if
+you're deploying your OpenStack environment with Infrared Virsh
+plugin. If you deployed using something else, you may need to adjust
+the parameters.
+
+.. code-block::
+
+   openstack network create \
+        --mtu 1500 \
+        --external \
+        --provider-network-type flat \
+        --provider-physical-network datacentre \
+        public
+
+   openstack subnet create \
+       --network public \
+       --gateway 10.0.0.1 \
+       --subnet-range 10.0.0.0/24 \
+       --allocation-pool start=10.0.0.150,end=10.0.0.190 \
+       public
 
 Sample e2e config yaml using the above prerequisites
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
