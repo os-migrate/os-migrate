@@ -55,6 +55,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#create-source-environment-and-destination-environment-projects-and-users">Create source environment and destination environment projects and users</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#create-images">Create images</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#create-flavors">Create flavors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#create-public-network">Create public network</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#sample-e2e-config-yaml-using-the-above-prerequisites">Sample e2e config yaml using the above prerequisites</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#run-e2e-test-using-the-os-migrate-toolbox-and-the-above-config">Run e2e test using the OS Migrate toolbox and the above config</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#expected-output-from-successful-e2e-test-run">Expected output from successful e2e test run</a></li>
@@ -253,11 +254,15 @@ to another existing openstack deployment.</p>
 <li><p>Destination environment credentials</p></li>
 <li><p>Existing images in both source and destination environments</p></li>
 <li><p>Flavors</p></li>
-<li><p>Space requirements
-- 2 images totalling 1.25GB
-- 1 volume totalling 1GiB in source environment
-- 2 volumes totalling 5GiB in destination environment
-- 2 VMs totalling 35GB disk usage in each environment</p></li>
+<li><p>Public network</p></li>
+<li><p>Space requirements</p>
+<ul>
+<li><p>2 images totalling 1.25 GB</p></li>
+<li><p>1 volume totalling 1 GB in source environment</p></li>
+<li><p>2 volumes totalling 6 GB in destination environment</p></li>
+<li><p>2 VMs totalling 35 GB disk usage in each environment</p></li>
+</ul>
+</li>
 </ul>
 <p>Below are the steps required to satisfy the above requirements and run e2e tests in a test environment, migrating
 resources from one project to another.</p>
@@ -309,11 +314,34 @@ resources from one project to another.</p>
 </section>
 <section id="create-flavors">
 <h3>Create flavors<a class="headerlink" href="#create-flavors" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">openstack</span> <span class="n">flavor</span> <span class="n">create</span> <span class="o">--</span><span class="n">public</span> <span class="o">--</span><span class="nb">id</span> <span class="n">auto</span> \
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">openstack</span> <span class="n">flavor</span> <span class="n">create</span> <span class="o">--</span><span class="n">public</span> \
 <span class="o">--</span><span class="n">ram</span> <span class="mi">256</span> <span class="o">--</span><span class="n">disk</span> <span class="mi">5</span> <span class="o">--</span><span class="n">vcpus</span> <span class="mi">1</span> <span class="o">--</span><span class="n">rxtx</span><span class="o">-</span><span class="n">factor</span> <span class="mi">1</span> <span class="n">m1</span><span class="o">.</span><span class="n">xtiny</span>
 
-<span class="n">openstack</span> <span class="n">flavor</span> <span class="n">create</span> <span class="o">--</span><span class="n">public</span> <span class="o">--</span><span class="nb">id</span> <span class="n">auto</span> \
-<span class="o">--</span><span class="n">ram</span> <span class="mi">512</span> <span class="o">--</span><span class="n">disk</span> <span class="mi">30</span> <span class="o">--</span><span class="n">vcpus</span> <span class="mi">2</span> <span class="o">--</span><span class="n">rxtx</span><span class="o">-</span><span class="n">factor</span> <span class="mi">1</span> <span class="n">m1</span><span class="o">.</span><span class="n">large</span>
+<span class="n">openstack</span> <span class="n">flavor</span> <span class="n">create</span> <span class="o">--</span><span class="n">public</span> \
+<span class="o">--</span><span class="n">ram</span> <span class="mi">2048</span> <span class="o">--</span><span class="n">disk</span> <span class="mi">30</span> <span class="o">--</span><span class="n">vcpus</span> <span class="mi">2</span> <span class="o">--</span><span class="n">rxtx</span><span class="o">-</span><span class="n">factor</span> <span class="mi">1</span> <span class="n">m1</span><span class="o">.</span><span class="n">large</span>
+</pre></div>
+</div>
+</section>
+<section id="create-public-network">
+<h3>Create public network<a class="headerlink" href="#create-public-network" title="Permalink to this headline"></a></h3>
+<p>If your OpenStack environment doesn’t have a public network created
+yet, you’ll need to create one. The parameters below should work if
+you’re deploying your OpenStack environment with Infrared Virsh
+plugin. If you deployed using something else, you may need to adjust
+the parameters.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">openstack</span> <span class="n">network</span> <span class="n">create</span> \
+     <span class="o">--</span><span class="n">mtu</span> <span class="mi">1500</span> \
+     <span class="o">--</span><span class="n">external</span> \
+     <span class="o">--</span><span class="n">provider</span><span class="o">-</span><span class="n">network</span><span class="o">-</span><span class="nb">type</span> <span class="n">flat</span> \
+     <span class="o">--</span><span class="n">provider</span><span class="o">-</span><span class="n">physical</span><span class="o">-</span><span class="n">network</span> <span class="n">datacentre</span> \
+     <span class="n">public</span>
+
+<span class="n">openstack</span> <span class="n">subnet</span> <span class="n">create</span> \
+    <span class="o">--</span><span class="n">network</span> <span class="n">public</span> \
+    <span class="o">--</span><span class="n">gateway</span> <span class="mf">10.0.0.1</span> \
+    <span class="o">--</span><span class="n">subnet</span><span class="o">-</span><span class="nb">range</span> <span class="mf">10.0.0.0</span><span class="o">/</span><span class="mi">24</span> \
+    <span class="o">--</span><span class="n">allocation</span><span class="o">-</span><span class="n">pool</span> <span class="n">start</span><span class="o">=</span><span class="mf">10.0.0.150</span><span class="p">,</span><span class="n">end</span><span class="o">=</span><span class="mf">10.0.0.190</span> \
+    <span class="n">public</span>
 </pre></div>
 </div>
 </section>
