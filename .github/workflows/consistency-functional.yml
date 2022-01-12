@@ -133,7 +133,7 @@ jobs:
           sudo dpkg-reconfigure locales
           sudo apt remove mysql-server mysql-server -y
           # MySQL requirements
-          sudo apt install python3-mysqldb libmysqlclient-dev mysql-client -y
+          sudo apt install -y mysql-community-client-plugins mysql-common python3-mysqldb libmysqlclient-dev
           # Httplib2 requirements
           # We need to install this library un purpose, if not the devstack
           # installer will crash as pip is not able to determine if its
@@ -286,6 +286,7 @@ jobs:
           NUMBER_FAKE_NOVA_COMPUTE=2
           CELLSV2_SETUP="singleconductor"
           OS_PLACEMENT_CONFIG_DIR=/etc/nova
+          INSTALL_DATABASE_SERVER_PACKAGES=False
           # Enable only IPv4
           IP_VERSION=4
           # Horizon is enabled by default, but
