@@ -103,8 +103,46 @@ By default, these variables have the same value
 for both conversion hosts `os_migrate_conv_src`
 and `os_migrate_conv_dst` respectively.
 
-Conversion host external network
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Conversion host image name
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The conversion host image is the guest configure to execute the
+instances migrations.
+
+The variables to be configured are::
+
+    os_migrate_src_conversion_image_name
+    os_migrate_dst_conversion_image_name
+
+This image must be accessible to both tenants/projects prior to
+executing the conversion host deployment playbook. The variables
+default to ``os_migrate_conv``, so if a conversion host image is
+uploaded to Glance as public image with this name (in both src and dst
+clouds), these variables do not need to be configured explicitly.
+
+Make sure this image exists in Glance on both clouds.  Currently it
+should be a
+`CentOS 8 Cloud Image <https://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.qcow2>`_
+or
+`RHEL 8 KVM Guest Image <https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.3/x86_64/product-software>`_.
+
+Conversion host flavor name
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The conversion host flavor defines the compute, memory, and storage
+capacity that will be allocated for the conversion hosts. It needs to
+have at least a volume with 20GB.
+
+The variables to be configured are::
+
+    os_migrate_src_conversion_flavor_name
+    os_migrate_dst_conversion_flavor_name
+
+Usually, ‘m1.medium’ will suffice this requirement, but again, it can
+be different between deployments.
+
+Conversion host external network name
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The external network configuration allows the connection of the
 conversion host router for external access, this external network must
@@ -122,20 +160,42 @@ This is not required if you are attaching your conversion host to
 pre-existing network (when
 `os_migrate_src/dst_conversion_manage_network` is `false`).
 
-Conversion host flavor name
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Other conversion host dependency names
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The conversion host flavor defines the compute, memory, and storage
-capacity that will be allocated for the conversion hosts. It needs to
-have at least a volume with 20GB.
+In addition to the name variables described above, it is possible to
+customize names of other conversion host dependency resources::
 
-The variables to be configured are::
+    os_migrate_src_conversion_net_name
+    os_migrate_dst_conversion_net_name
+    os_migrate_src_conversion_subnet_name
+    os_migrate_dst_conversion_subnet_name
+    os_migrate_src_conversion_router_name
+    os_migrate_dst_conversion_router_name
+    os_migrate_src_conversion_secgroup_name
+    os_migrate_dst_conversion_secgroup_name
+    os_migrate_src_conversion_keypair_name
+    os_migrate_dst_conversion_keypair_name
 
-    os_migrate_src_conversion_flavor_name
-    os_migrate_dst_conversion_flavor_name
+Conversion host network management
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Usually, ‘m1.medium’ will suffice this requirement, but again, it can
-be different between deployments.
+It is possible to disable creation and deletion of conversion host
+private network by setting these variables to `false`::
+
+    os_migrate_src_conversion_manage_network
+    os_migrate_dst_conversion_manage_network
+
+This disables creation of the network, the subnet, and the router that
+typically makes the conversion host reachable from outside the cloud.
+
+When disabling network management like this, you'll need pre-existing
+network that the conversion host can attach to and use it to talk to
+the other conversion host. Set these network name variables
+accordingly::
+
+    os_migrate_src_conversion_net_name
+    os_migrate_dst_conversion_net_name
 
 Conversion hosts specific floating IPs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -160,29 +220,6 @@ hosts (default: yes)::
 
     os_migrate_src_conversion_host_delete_fip
     os_migrate_dst_conversion_host_delete_fip
-
-Conversion host image name
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The conversion host image is the guest configure to execute the
-instances migrations.
-
-The variables to be configured are::
-
-    os_migrate_src_conversion_image_name
-    os_migrate_dst_conversion_image_name
-
-This image must be accessible to both tenants/projects prior to
-executing the conversion host deployment playbook. The variables
-default to ``os_migrate_conv``, so if a conversion host image is
-uploaded to Glance as public image with this name (in both src and dst
-clouds), these variables do not need to be configured explicitly.
-
-Make sure this image exists in Glance on both clouds.  Currently it
-should be a
-`CentOS 8 Cloud Image <https://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.qcow2>`_
-or
-`RHEL 8 KVM Guest Image <https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.3/x86_64/product-software>`_.
 
 Conversion host boot from volume
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
