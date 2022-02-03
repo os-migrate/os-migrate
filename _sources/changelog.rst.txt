@@ -21,6 +21,19 @@ Changes
 
 Fix
 ~~~
+- Replace akward openstacksdk version check. [Dmitriy Rabotyagov]
+
+  Using shell for getting pip version leads to several highly possible
+  side effects. As example, you verify opensatcksdk persistance against
+  ENV however following tasks will use ansible_python_interpreter that
+  likely differ if virtualenv is used for ansible.
+
+  Another side effect is that openstacksdk could be installed in venv
+  which is not respected by shell when you provide interpreter for host
+  explicitly.
+
+  With this patch we replace shell with pip_package_info module that
+  collects all installed packages against ansible_python_interpeter.
 - Enforce the executable argument when executing shell. [Carlos Camacho]
 
   Currently the migrator host is not limited to be only
