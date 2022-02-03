@@ -15,25 +15,24 @@
 # under the License.
 
 - name: get the current openstacksdk version
-  ansible.builtin.shell: |
-    set -eo pipefail
-    python3 -m pip show openstacksdk | grep Version | cut -d' ' -f 2
-  args:
-    executable: /bin/bash
+  community.general.pip_package_info:
   register: _installed_openstacksdk
-  changed_when: "_installed_openstacksdk.rc == 0"
+
+- name: set openstacksdk version
+  ansible.builtin.set_fact:
+    _installed_openstacksdk_versions: "{{ _installed_openstacksdk['packages']['pip']['openstacksdk'] | map(attribute='version') | list | first }}"
 
 - name: print the current installed version of openstacksdk
   ansible.builtin.debug:
-    var: _installed_openstacksdk.stdout
+    var: _installed_openstacksdk_versions
 
 - name: fail if the user has an unsupported openstacksdk version
   ansible.builtin.assert:
     that:
-      - _installed_openstacksdk.stdout is version('{{ os_migrate_common_minimum_openstacksdk_version|string }}', '>=')
+      - _installed_openstacksdk_versions is version(os_migrate_common_minimum_openstacksdk_version, '>=')
     fail_msg: |
-      The installed openstacksdk version {{ _installed_openstacksdk.stdout }}
+      The installed openstacksdk version {{ _installed_openstacksdk_versions }}
       must be >= than {{ os_migrate_common_minimum_openstacksdk_version }}
     success_msg: |
-      The installed openstacksdk version {{ _installed_openstacksdk.stdout }}
+      The installed openstacksdk version {{ _installed_openstacksdk_versions }}
       is >= than {{ os_migrate_common_minimum_openstacksdk_version }}
