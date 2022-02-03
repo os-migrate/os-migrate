@@ -2,7 +2,7 @@
   openstack.cloud.server:
     name: "{{ os_migrate_conversion_host_name }}"
     state: absent
-    delete_fip: "{{ os_migrate_conversion_delete_fip|default(omit) }}"
+    delete_fip: "{{ os_migrate_conversion_manage_fip and os_migrate_conversion_delete_fip }}"
     wait: true
     auth: "{{ os_migrate_conversion_auth }}"
     auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"

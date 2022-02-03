@@ -197,8 +197,34 @@ accordingly::
     os_migrate_src_conversion_net_name
     os_migrate_dst_conversion_net_name
 
-Conversion hosts specific floating IPs
+Conversion host floating IP management
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+OS Migrate can be told to not attempt to create any floating IPs on
+the conversion hosts. This can be useful when attaching a conversion
+host to some public network, where its IP address will be
+automatically reachable from outside. The variables to control whether
+conversion hosts should have floating IPs are::
+
+    os_migrate_src_conversion_manage_fip
+    os_migrate_dst_conversion_manage_fip
+
+When the conversion hosts are removed, the required and
+assigned floating IPs need to be detached or removed.
+
+The following variables allow to change the behavior
+of deleting of detaching the floating IP when deleting the conversion
+hosts (default: true)::
+
+    os_migrate_src_conversion_host_delete_fip
+    os_migrate_dst_conversion_host_delete_fip
+
+When the corresponding `..._manage_fip` variable is set to `false`,
+floating IP deletion is not attempted even if `..._delete_fip` is set
+to `true`.
+
+Conversion host specific floating IP
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Each conversion host needs to have a floating IP,
 these floating IPs can be assigned automatically or
@@ -208,18 +234,24 @@ following variables::
     os_migrate_src_conversion_floating_ip_address
     os_migrate_dst_conversion_floating_ip_address
 
-Conversion hosts detach or remove floating IPs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+When using this variable to specify an exact IP address, the floating
+IP must already exist and be available for attaching.
 
-Once the conversion hosts are removed, the required and
-assigned floating IPs need to be detached or removed.
+Attaching conversion hosts onto public networks
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The following variables allow to change the behavior
-of deleting of detaching the floating IP when deleting the conversion
-hosts (default: yes)::
+A combination of variables described earlier can be used to attach the
+conversion hosts directly onto pre-existing public networks. We need
+to make sure that we don't try to create any private network, we don't
+try to create a floating IP, and we set the conversion host network
+names accordingly::
 
-    os_migrate_src_conversion_host_delete_fip
-    os_migrate_dst_conversion_host_delete_fip
+    os_migrate_src_conversion_manage_network: false
+    os_migrate_dst_conversion_manage_network: false
+    os_migrate_src_conversion_manage_fip: false
+    os_migrate_dst_conversion_manage_fip: false
+    os_migrate_src_conversion_net_name: some_public_net_src
+    os_migrate_dst_conversion_net_name: some_public_net_dst
 
 Conversion host boot from volume
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

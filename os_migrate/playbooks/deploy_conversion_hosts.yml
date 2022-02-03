@@ -29,6 +29,7 @@
         os_migrate_conversion_subnet_dns_nameservers:
           "{{ os_migrate_src_conversion_subnet_dns_nameservers|default(omit) }}"
         os_migrate_conversion_manage_network: "{{ os_migrate_src_conversion_manage_network|default(true) }}"
+        os_migrate_conversion_manage_fip: "{{ os_migrate_src_conversion_manage_fip|default(true) }}"
         os_migrate_conversion_floating_ip_address: "{{ os_migrate_src_conversion_floating_ip_address|default(false) }}"
       when: os_migrate_deploy_src_conversion_host|default(true)|bool
 
@@ -60,6 +61,7 @@
         os_migrate_conversion_subnet_dns_nameservers:
           "{{ os_migrate_dst_conversion_subnet_dns_nameservers|default(omit) }}"
         os_migrate_conversion_manage_network: "{{ os_migrate_dst_conversion_manage_network|default(true) }}"
+        os_migrate_conversion_manage_fip: "{{ os_migrate_dst_conversion_manage_fip|default(true) }}"
         os_migrate_conversion_floating_ip_address: "{{ os_migrate_dst_conversion_floating_ip_address|default(false) }}"
       when: os_migrate_deploy_dst_conversion_host|default(true)|bool
 
