@@ -84,7 +84,7 @@ Conversion host variables
 -------------------------
 
 The following variables are those that need to be configured prior to
-running os_migrate.
+running OS Migrate.
 
 Conversion host name
 ~~~~~~~~~~~~~~~~~~~~
@@ -117,6 +117,10 @@ destination clouds respectively, via these variables::
 
     os_migrate_src_conversion_external_network_name
     os_migrate_dst_conversion_external_network_name
+
+This is not required if you are attaching your conversion host to
+pre-existing network (when
+`os_migrate_src/dst_conversion_manage_network` is `false`).
 
 Conversion host flavor name
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
