@@ -133,7 +133,7 @@ jobs:
           sudo dpkg-reconfigure locales
           sudo apt remove mysql-server mysql-server -y
           # MySQL requirements
-          sudo apt install -y mysql-community-client-plugins mysql-common python3-mysqldb libmysqlclient-dev
+          sudo apt install -y mysql-community-client-plugins mysql-common python3-mysqldb
           # Httplib2 requirements
           # We need to install this library un purpose, if not the devstack
           # installer will crash as pip is not able to determine if its
