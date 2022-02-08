@@ -131,9 +131,11 @@ jobs:
         run: |
           sudo locale-gen en_US.UTF-8
           sudo dpkg-reconfigure locales
-          sudo apt remove mysql-server mysql-server -y
+          sudo apt update
+          sudo apt remove --purge mysql-server mysql-client mysql-common -y
+          sudo apt autoremove -y
           # MySQL requirements
-          sudo apt install -y mysql-community-client-plugins mysql-common python3-mysqldb
+          sudo apt install -y mysql-community-client-plugins mysql-client mysql-common
           # Httplib2 requirements
           # We need to install this library un purpose, if not the devstack
           # installer will crash as pip is not able to determine if its
