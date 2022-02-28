@@ -1,6 +1,10 @@
 # Required vars:
-# os_migrate_conversion_external_network_name
 # os_migrate_conversion_flavor_name
+
+# Required if managing network creation/deletion:
+# os_migrate_conversion_external_network_name
+
+os_migrate_conversion_manage_network: true
 
 os_migrate_conversion_net_name: os_migrate_conv
 

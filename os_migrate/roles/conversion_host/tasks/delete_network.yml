@@ -1,20 +1,6 @@
-- name: delete os_migrate conversion host
-  openstack.cloud.server:
-    name: "{{ os_migrate_conversion_host_name }}"
-    state: absent
-    delete_fip: "{{ os_migrate_conversion_manage_fip and os_migrate_conversion_delete_fip }}"
-    wait: true
-    auth: "{{ os_migrate_conversion_auth }}"
-    auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_conversion_region_name|default(omit) }}"
-    validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
-
-- name: delete os_migrate conversion keypair
-  openstack.cloud.keypair:
-    name: "{{ os_migrate_conversion_keypair_name }}"
+- name: delete os_migrate conversion router
+  openstack.cloud.router:
+    name: "{{ os_migrate_conversion_router_name }}"
     state: absent
     auth: "{{ os_migrate_conversion_auth }}"
     auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
@@ -24,9 +10,9 @@
     client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
 
-- name: delete os_migrate conversion security group
-  openstack.cloud.security_group:
-    name: "{{ os_migrate_conversion_secgroup_name }}"
+- name: delete os_migrate conversion subnet
+  openstack.cloud.subnet:
+    name: "{{ os_migrate_conversion_subnet_name }}"
     state: absent
     auth: "{{ os_migrate_conversion_auth }}"
     auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
@@ -36,6 +22,14 @@
     client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
 
-- name: delete a network for the conversion host
-  ansible.builtin.include_tasks: delete_network.yml
-  when: os_migrate_conversion_manage_network | bool
+- name: delete os_migrate conversion net
+  openstack.cloud.network:
+    name: "{{ os_migrate_conversion_net_name }}"
+    state: absent
+    auth: "{{ os_migrate_conversion_auth }}"
+    auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
+    region_name: "{{ os_migrate_conversion_region_name|default(omit) }}"
+    validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
