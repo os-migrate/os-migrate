@@ -126,8 +126,12 @@ hosts itself.</p>
 <dd><p>This section highlights all of the defaults and variables set within the “conversion_host” role.</p>
 </dd>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Required vars:</span><span class="w"></span>
-<span class="c1"># os_migrate_conversion_external_network_name</span><span class="w"></span>
 <span class="c1"># os_migrate_conversion_flavor_name</span><span class="w"></span>
+
+<span class="c1"># Required if managing network creation/deletion:</span><span class="w"></span>
+<span class="c1"># os_migrate_conversion_external_network_name</span><span class="w"></span>
+
+<span class="nt">os_migrate_conversion_manage_network</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
 
 <span class="nt">os_migrate_conversion_net_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os_migrate_conv</span><span class="w"></span>
 

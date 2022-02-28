@@ -84,7 +84,7 @@ Conversion host variables
 -------------------------
 
 The following variables are those that need to be configured prior to
-running os_migrate.
+running OS Migrate.
 
 Conversion host name
 ~~~~~~~~~~~~~~~~~~~~
@@ -102,60 +102,6 @@ following variables::
 By default, these variables have the same value
 for both conversion hosts `os_migrate_conv_src`
 and `os_migrate_conv_dst` respectively.
-
-Conversion host external network
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The external network configuration allows the connection of the
-conversion host router for external access, this external network must
-be able to allocate floating IPs reachable between both conversion
-hosts.
-
-Set the name of the external (public) network to which conversion host
-private subnet will be attached via its router, for source and
-destination clouds respectively, via these variables::
-
-    os_migrate_src_conversion_external_network_name
-    os_migrate_dst_conversion_external_network_name
-
-Conversion host flavor name
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The conversion host flavor defines the compute, memory, and storage
-capacity that will be allocated for the conversion hosts. It needs to
-have at least a volume with 20GB.
-
-The variables to be configured are::
-
-    os_migrate_src_conversion_flavor_name
-    os_migrate_dst_conversion_flavor_name
-
-Usually, ‘m1.medium’ will suffice this requirement, but again, it can
-be different between deployments.
-
-Conversion hosts specific floating IPs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Each conversion host needs to have a floating IP,
-these floating IPs can be assigned automatically or
-defined by the operator with the usage of the
-following variables::
-
-    os_migrate_src_conversion_floating_ip_address
-    os_migrate_dst_conversion_floating_ip_address
-
-Conversion hosts detach or remove floating IPs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Once the conversion hosts are removed, the required and
-assigned floating IPs need to be detached or removed.
-
-The following variables allow to change the behavior
-of deleting of detaching the floating IP when deleting the conversion
-hosts (default: yes)::
-
-    os_migrate_src_conversion_host_delete_fip
-    os_migrate_dst_conversion_host_delete_fip
 
 Conversion host image name
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -179,6 +125,133 @@ should be a
 `CentOS 8 Cloud Image <https://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.qcow2>`_
 or
 `RHEL 8 KVM Guest Image <https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.3/x86_64/product-software>`_.
+
+Conversion host flavor name
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The conversion host flavor defines the compute, memory, and storage
+capacity that will be allocated for the conversion hosts. It needs to
+have at least a volume with 20GB.
+
+The variables to be configured are::
+
+    os_migrate_src_conversion_flavor_name
+    os_migrate_dst_conversion_flavor_name
+
+Usually, ‘m1.medium’ will suffice this requirement, but again, it can
+be different between deployments.
+
+Conversion host external network name
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The external network configuration allows the connection of the
+conversion host router for external access, this external network must
+be able to allocate floating IPs reachable between both conversion
+hosts.
+
+Set the name of the external (public) network to which conversion host
+private subnet will be attached via its router, for source and
+destination clouds respectively, via these variables::
+
+    os_migrate_src_conversion_external_network_name
+    os_migrate_dst_conversion_external_network_name
+
+This is not required if you are attaching your conversion host to
+pre-existing network (when
+`os_migrate_src/dst_conversion_manage_network` is `false`).
+
+Other conversion host dependency names
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In addition to the name variables described above, it is possible to
+customize names of other conversion host dependency resources::
+
+    os_migrate_src_conversion_net_name
+    os_migrate_dst_conversion_net_name
+    os_migrate_src_conversion_subnet_name
+    os_migrate_dst_conversion_subnet_name
+    os_migrate_src_conversion_router_name
+    os_migrate_dst_conversion_router_name
+    os_migrate_src_conversion_secgroup_name
+    os_migrate_dst_conversion_secgroup_name
+    os_migrate_src_conversion_keypair_name
+    os_migrate_dst_conversion_keypair_name
+
+Conversion host network management
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It is possible to disable creation and deletion of conversion host
+private network by setting these variables to `false`::
+
+    os_migrate_src_conversion_manage_network
+    os_migrate_dst_conversion_manage_network
+
+This disables creation of the network, the subnet, and the router that
+typically makes the conversion host reachable from outside the cloud.
+
+When disabling network management like this, you'll need pre-existing
+network that the conversion host can attach to and use it to talk to
+the other conversion host. Set these network name variables
+accordingly::
+
+    os_migrate_src_conversion_net_name
+    os_migrate_dst_conversion_net_name
+
+Conversion host floating IP management
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+OS Migrate can be told to not attempt to create any floating IPs on
+the conversion hosts. This can be useful when attaching a conversion
+host to some public network, where its IP address will be
+automatically reachable from outside. The variables to control whether
+conversion hosts should have floating IPs are::
+
+    os_migrate_src_conversion_manage_fip
+    os_migrate_dst_conversion_manage_fip
+
+When the conversion hosts are removed, the required and
+assigned floating IPs need to be detached or removed.
+
+The following variables allow to change the behavior
+of deleting of detaching the floating IP when deleting the conversion
+hosts (default: true)::
+
+    os_migrate_src_conversion_host_delete_fip
+    os_migrate_dst_conversion_host_delete_fip
+
+When the corresponding `..._manage_fip` variable is set to `false`,
+floating IP deletion is not attempted even if `..._delete_fip` is set
+to `true`.
+
+Conversion host specific floating IP
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Each conversion host needs to have a floating IP,
+these floating IPs can be assigned automatically or
+defined by the operator with the usage of the
+following variables::
+
+    os_migrate_src_conversion_floating_ip_address
+    os_migrate_dst_conversion_floating_ip_address
+
+When using this variable to specify an exact IP address, the floating
+IP must already exist and be available for attaching.
+
+Attaching conversion hosts onto public networks
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A combination of variables described earlier can be used to attach the
+conversion hosts directly onto pre-existing public networks. We need
+to make sure that we don't try to create any private network, we don't
+try to create a floating IP, and we set the conversion host network
+names accordingly::
+
+    os_migrate_src_conversion_manage_network: false
+    os_migrate_dst_conversion_manage_network: false
+    os_migrate_src_conversion_manage_fip: false
+    os_migrate_dst_conversion_manage_fip: false
+    os_migrate_src_conversion_net_name: some_public_net_src
+    os_migrate_dst_conversion_net_name: some_public_net_dst
 
 Conversion host boot from volume
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

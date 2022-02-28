@@ -51,11 +51,14 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#conversion-host-variables">Conversion host variables</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-name">Conversion host name</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#conversion-host-external-network">Conversion host external network</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#conversion-host-flavor-name">Conversion host flavor name</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#conversion-hosts-specific-floating-ips">Conversion hosts specific floating IPs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#conversion-hosts-detach-or-remove-floating-ips">Conversion hosts detach or remove floating IPs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-image-name">Conversion host image name</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conversion-host-flavor-name">Conversion host flavor name</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conversion-host-external-network-name">Conversion host external network name</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#other-conversion-host-dependency-names">Other conversion host dependency names</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conversion-host-network-management">Conversion host network management</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conversion-host-floating-ip-management">Conversion host floating IP management</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conversion-host-specific-floating-ip">Conversion host specific floating IP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#attaching-conversion-hosts-onto-public-networks">Attaching conversion hosts onto public networks</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-boot-from-volume">Conversion host boot from volume</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-rhel-variables">Conversion host RHEL variables</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#enabling-password-based-ssh-access-to-the-conversion-hosts">Enabling password-based SSH access to the conversion hosts</a></li>
@@ -174,7 +177,7 @@ copy into your variables file and customize:</p>
 <section id="conversion-host-variables">
 <h2>Conversion host variables<a class="headerlink" href="#conversion-host-variables" title="Permalink to this headline"></a></h2>
 <p>The following variables are those that need to be configured prior to
-running os_migrate.</p>
+running OS Migrate.</p>
 <section id="conversion-host-name">
 <h3>Conversion host name<a class="headerlink" href="#conversion-host-name" title="Permalink to this headline"></a></h3>
 <p>The conversion hosts might be configured using different names,
@@ -189,56 +192,6 @@ following variables:</p>
 <p>By default, these variables have the same value
 for both conversion hosts <cite>os_migrate_conv_src</cite>
 and <cite>os_migrate_conv_dst</cite> respectively.</p>
-</section>
-<section id="conversion-host-external-network">
-<h3>Conversion host external network<a class="headerlink" href="#conversion-host-external-network" title="Permalink to this headline"></a></h3>
-<p>The external network configuration allows the connection of the
-conversion host router for external access, this external network must
-be able to allocate floating IPs reachable between both conversion
-hosts.</p>
-<p>Set the name of the external (public) network to which conversion host
-private subnet will be attached via its router, for source and
-destination clouds respectively, via these variables:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_external_network_name</span>
-<span class="n">os_migrate_dst_conversion_external_network_name</span>
-</pre></div>
-</div>
-</section>
-<section id="conversion-host-flavor-name">
-<h3>Conversion host flavor name<a class="headerlink" href="#conversion-host-flavor-name" title="Permalink to this headline"></a></h3>
-<p>The conversion host flavor defines the compute, memory, and storage
-capacity that will be allocated for the conversion hosts. It needs to
-have at least a volume with 20GB.</p>
-<p>The variables to be configured are:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_flavor_name</span>
-<span class="n">os_migrate_dst_conversion_flavor_name</span>
-</pre></div>
-</div>
-<p>Usually, ‘m1.medium’ will suffice this requirement, but again, it can
-be different between deployments.</p>
-</section>
-<section id="conversion-hosts-specific-floating-ips">
-<h3>Conversion hosts specific floating IPs<a class="headerlink" href="#conversion-hosts-specific-floating-ips" title="Permalink to this headline"></a></h3>
-<p>Each conversion host needs to have a floating IP,
-these floating IPs can be assigned automatically or
-defined by the operator with the usage of the
-following variables:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_floating_ip_address</span>
-<span class="n">os_migrate_dst_conversion_floating_ip_address</span>
-</pre></div>
-</div>
-</section>
-<section id="conversion-hosts-detach-or-remove-floating-ips">
-<h3>Conversion hosts detach or remove floating IPs<a class="headerlink" href="#conversion-hosts-detach-or-remove-floating-ips" title="Permalink to this headline"></a></h3>
-<p>Once the conversion hosts are removed, the required and
-assigned floating IPs need to be detached or removed.</p>
-<p>The following variables allow to change the behavior
-of deleting of detaching the floating IP when deleting the conversion
-hosts (default: yes):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_host_delete_fip</span>
-<span class="n">os_migrate_dst_conversion_host_delete_fip</span>
-</pre></div>
-</div>
 </section>
 <section id="conversion-host-image-name">
 <h3>Conversion host image name<a class="headerlink" href="#conversion-host-image-name" title="Permalink to this headline"></a></h3>
@@ -259,6 +212,125 @@ should be a
 <a class="reference external" href="https://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.qcow2">CentOS 8 Cloud Image</a>
 or
 <a class="reference external" href="https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.3/x86_64/product-software">RHEL 8 KVM Guest Image</a>.</p>
+</section>
+<section id="conversion-host-flavor-name">
+<h3>Conversion host flavor name<a class="headerlink" href="#conversion-host-flavor-name" title="Permalink to this headline"></a></h3>
+<p>The conversion host flavor defines the compute, memory, and storage
+capacity that will be allocated for the conversion hosts. It needs to
+have at least a volume with 20GB.</p>
+<p>The variables to be configured are:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_flavor_name</span>
+<span class="n">os_migrate_dst_conversion_flavor_name</span>
+</pre></div>
+</div>
+<p>Usually, ‘m1.medium’ will suffice this requirement, but again, it can
+be different between deployments.</p>
+</section>
+<section id="conversion-host-external-network-name">
+<h3>Conversion host external network name<a class="headerlink" href="#conversion-host-external-network-name" title="Permalink to this headline"></a></h3>
+<p>The external network configuration allows the connection of the
+conversion host router for external access, this external network must
+be able to allocate floating IPs reachable between both conversion
+hosts.</p>
+<p>Set the name of the external (public) network to which conversion host
+private subnet will be attached via its router, for source and
+destination clouds respectively, via these variables:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_external_network_name</span>
+<span class="n">os_migrate_dst_conversion_external_network_name</span>
+</pre></div>
+</div>
+<p>This is not required if you are attaching your conversion host to
+pre-existing network (when
+<cite>os_migrate_src/dst_conversion_manage_network</cite> is <cite>false</cite>).</p>
+</section>
+<section id="other-conversion-host-dependency-names">
+<h3>Other conversion host dependency names<a class="headerlink" href="#other-conversion-host-dependency-names" title="Permalink to this headline"></a></h3>
+<p>In addition to the name variables described above, it is possible to
+customize names of other conversion host dependency resources:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_net_name</span>
+<span class="n">os_migrate_dst_conversion_net_name</span>
+<span class="n">os_migrate_src_conversion_subnet_name</span>
+<span class="n">os_migrate_dst_conversion_subnet_name</span>
+<span class="n">os_migrate_src_conversion_router_name</span>
+<span class="n">os_migrate_dst_conversion_router_name</span>
+<span class="n">os_migrate_src_conversion_secgroup_name</span>
+<span class="n">os_migrate_dst_conversion_secgroup_name</span>
+<span class="n">os_migrate_src_conversion_keypair_name</span>
+<span class="n">os_migrate_dst_conversion_keypair_name</span>
+</pre></div>
+</div>
+</section>
+<section id="conversion-host-network-management">
+<h3>Conversion host network management<a class="headerlink" href="#conversion-host-network-management" title="Permalink to this headline"></a></h3>
+<p>It is possible to disable creation and deletion of conversion host
+private network by setting these variables to <cite>false</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_manage_network</span>
+<span class="n">os_migrate_dst_conversion_manage_network</span>
+</pre></div>
+</div>
+<p>This disables creation of the network, the subnet, and the router that
+typically makes the conversion host reachable from outside the cloud.</p>
+<p>When disabling network management like this, you’ll need pre-existing
+network that the conversion host can attach to and use it to talk to
+the other conversion host. Set these network name variables
+accordingly:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_net_name</span>
+<span class="n">os_migrate_dst_conversion_net_name</span>
+</pre></div>
+</div>
+</section>
+<section id="conversion-host-floating-ip-management">
+<h3>Conversion host floating IP management<a class="headerlink" href="#conversion-host-floating-ip-management" title="Permalink to this headline"></a></h3>
+<p>OS Migrate can be told to not attempt to create any floating IPs on
+the conversion hosts. This can be useful when attaching a conversion
+host to some public network, where its IP address will be
+automatically reachable from outside. The variables to control whether
+conversion hosts should have floating IPs are:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_manage_fip</span>
+<span class="n">os_migrate_dst_conversion_manage_fip</span>
+</pre></div>
+</div>
+<p>When the conversion hosts are removed, the required and
+assigned floating IPs need to be detached or removed.</p>
+<p>The following variables allow to change the behavior
+of deleting of detaching the floating IP when deleting the conversion
+hosts (default: true):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_host_delete_fip</span>
+<span class="n">os_migrate_dst_conversion_host_delete_fip</span>
+</pre></div>
+</div>
+<p>When the corresponding <cite>…_manage_fip</cite> variable is set to <cite>false</cite>,
+floating IP deletion is not attempted even if <cite>…_delete_fip</cite> is set
+to <cite>true</cite>.</p>
+</section>
+<section id="conversion-host-specific-floating-ip">
+<h3>Conversion host specific floating IP<a class="headerlink" href="#conversion-host-specific-floating-ip" title="Permalink to this headline"></a></h3>
+<p>Each conversion host needs to have a floating IP,
+these floating IPs can be assigned automatically or
+defined by the operator with the usage of the
+following variables:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_floating_ip_address</span>
+<span class="n">os_migrate_dst_conversion_floating_ip_address</span>
+</pre></div>
+</div>
+<p>When using this variable to specify an exact IP address, the floating
+IP must already exist and be available for attaching.</p>
+</section>
+<section id="attaching-conversion-hosts-onto-public-networks">
+<h3>Attaching conversion hosts onto public networks<a class="headerlink" href="#attaching-conversion-hosts-onto-public-networks" title="Permalink to this headline"></a></h3>
+<p>A combination of variables described earlier can be used to attach the
+conversion hosts directly onto pre-existing public networks. We need
+to make sure that we don’t try to create any private network, we don’t
+try to create a floating IP, and we set the conversion host network
+names accordingly:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_manage_network</span><span class="p">:</span> <span class="n">false</span>
+<span class="n">os_migrate_dst_conversion_manage_network</span><span class="p">:</span> <span class="n">false</span>
+<span class="n">os_migrate_src_conversion_manage_fip</span><span class="p">:</span> <span class="n">false</span>
+<span class="n">os_migrate_dst_conversion_manage_fip</span><span class="p">:</span> <span class="n">false</span>
+<span class="n">os_migrate_src_conversion_net_name</span><span class="p">:</span> <span class="n">some_public_net_src</span>
+<span class="n">os_migrate_dst_conversion_net_name</span><span class="p">:</span> <span class="n">some_public_net_dst</span>
+</pre></div>
+</div>
 </section>
 <section id="conversion-host-boot-from-volume">
 <h3>Conversion host boot from volume<a class="headerlink" href="#conversion-host-boot-from-volume" title="Permalink to this headline"></a></h3>

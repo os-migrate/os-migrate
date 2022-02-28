@@ -7,6 +7,50 @@ Changelog
 
 New
 ~~~
+- Ensure correct mode on conversion host ssh key. [Jiri Stransky]
+
+  Sometimes when using pre-existing key and mounting it into a
+  container, the mode seems to be set wrong (reason not discovered). We
+  now make sure that the conversion host key has mode '0600' before
+  using it, otherwise ssh would refuse to work with it anyway.
+- Allow using conversion hosts without floating IPs. [Jiri Stransky]
+
+  Conversion hosts now can be created without floating IPs. Whether FIPs
+  should be managed or not is controlled via these new variables:
+
+      os_migrate_src_conversion_manage_fip
+      os_migrate_dst_conversion_manage_fip
+
+  Having conversion hosts without FIPs is useful when attaching the
+  hosts directly onto public networks. This use case is described in
+  more detail in the docs (Variables Guide).
+- Customizing src/dst names of conversion host dependency resources.
+  [Jiri Stransky]
+
+  Conversion host dependency resource names can now be customized
+  differently per source/destination cloud. The relevant new variables
+  are:
+
+       os_migrate_src_conversion_net_name
+       os_migrate_dst_conversion_net_name
+       os_migrate_src_conversion_subnet_name
+       os_migrate_dst_conversion_subnet_name
+       os_migrate_src_conversion_router_name
+       os_migrate_dst_conversion_router_name
+       os_migrate_src_conversion_secgroup_name
+       os_migrate_dst_conversion_secgroup_name
+       os_migrate_src_conversion_keypair_name
+       os_migrate_dst_conversion_keypair_name
+- Allow using existing network with conversion hosts. [Jiri Stransky]
+
+  It is now possible to disable creation and deletion of private
+  network+subnet+router for the conversion hosts via new variables:
+
+  os_migrate_src_conversion_manage_network
+  os_migrate_dst_conversion_manage_network
+
+  The hosts will attach to pre-existing network defined by
+  `os_migrate_conversion_net_name`.
 - Docs page with troubleshooting tips. [Jiri Stransky]
 
 Changes

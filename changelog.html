@@ -162,7 +162,50 @@
 <h2>(unreleased)<a class="headerlink" href="#unreleased" title="Permalink to this headline"></a></h2>
 <section id="new">
 <h3>New<a class="headerlink" href="#new" title="Permalink to this headline"></a></h3>
-<ul class="simple">
+<ul>
+<li><p>Ensure correct mode on conversion host ssh key. [Jiri Stransky]</p>
+<p>Sometimes when using pre-existing key and mounting it into a
+container, the mode seems to be set wrong (reason not discovered). We
+now make sure that the conversion host key has mode ‘0600’ before
+using it, otherwise ssh would refuse to work with it anyway.</p>
+</li>
+<li><p>Allow using conversion hosts without floating IPs. [Jiri Stransky]</p>
+<p>Conversion hosts now can be created without floating IPs. Whether FIPs
+should be managed or not is controlled via these new variables:</p>
+<blockquote>
+<div><p>os_migrate_src_conversion_manage_fip
+os_migrate_dst_conversion_manage_fip</p>
+</div></blockquote>
+<p>Having conversion hosts without FIPs is useful when attaching the
+hosts directly onto public networks. This use case is described in
+more detail in the docs (Variables Guide).</p>
+</li>
+<li><p>Customizing src/dst names of conversion host dependency resources.
+[Jiri Stransky]</p>
+<p>Conversion host dependency resource names can now be customized
+differently per source/destination cloud. The relevant new variables
+are:</p>
+<blockquote>
+<div><p>os_migrate_src_conversion_net_name
+os_migrate_dst_conversion_net_name
+os_migrate_src_conversion_subnet_name
+os_migrate_dst_conversion_subnet_name
+os_migrate_src_conversion_router_name
+os_migrate_dst_conversion_router_name
+os_migrate_src_conversion_secgroup_name
+os_migrate_dst_conversion_secgroup_name
+os_migrate_src_conversion_keypair_name
+os_migrate_dst_conversion_keypair_name</p>
+</div></blockquote>
+</li>
+<li><p>Allow using existing network with conversion hosts. [Jiri Stransky]</p>
+<p>It is now possible to disable creation and deletion of private
+network+subnet+router for the conversion hosts via new variables:</p>
+<p>os_migrate_src_conversion_manage_network
+os_migrate_dst_conversion_manage_network</p>
+<p>The hosts will attach to pre-existing network defined by
+<cite>os_migrate_conversion_net_name</cite>.</p>
+</li>
 <li><p>Docs page with troubleshooting tips. [Jiri Stransky]</p></li>
 </ul>
 </section>
