@@ -8,6 +8,7 @@ authors:
   - Ryan Brady <rbrady@redhat.com>
   - Sagi Shnaidman <sshnaidm@redhat.com>
   - Matthew Arnold <marnold@redhat.com>
+  - Adrian Brown <adrbrown@redhat.com>
   # Keep this at the bottom
   - os-migrate (https://github.com/os-migrate)
 description: OpenStack tenant migration tooling

@@ -35,8 +35,13 @@ os_migrate-os_migrate-latest.tar.gz:
 
 # TESTS
 
+# FIXME: Get rid of `dnf -y remove ansible` when possible.
+# Ref: https://github.com/ansible-community/ansible-lint-action/issues/41#issuecomment-933663572
 test-lint: reinstall
 	set -euo pipefail; \
+	if [ -e /.os-migrate-toolbox ]; then \
+		dnf -y remove ansible; \
+	fi; \
 	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
 		echo "Sourcing venv."; \
 		source /root/venv/bin/activate; \
