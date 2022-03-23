@@ -135,12 +135,13 @@
   ansible.builtin.file:
     path: "{{ os_migrate_tests_tmp_dir }}/test_inputs"
     state: directory
-    mode: '0750'
+    mode: 0700
 
 - name: fetch cirros image
   ansible.builtin.get_url:
     url: https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img
     dest: "{{ os_migrate_tests_tmp_dir }}/test_inputs/cirros.img"
+    mode: 0600
 
 - name: create osm_image
   openstack.cloud.image:
