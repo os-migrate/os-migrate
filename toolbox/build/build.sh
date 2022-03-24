@@ -10,6 +10,7 @@ ANSIBLE_PYTHON=python3.8
 
 dnf -y update
 dnf -y install \
+    ansible \
     cargo \
     findutils \
     gcc \
