@@ -6,7 +6,7 @@ import openstack
 import os
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
-    import const, reference, resource
+    import const, exc, reference, resource
 
 
 class Image(resource.Resource):
@@ -114,7 +114,10 @@ class Image(resource.Resource):
                 del params['properties'][key]
         return obj
 
-    def create_or_update(self, conn, blob_path, filters=None):
+    def create_or_update(self, conn, filters=None, blob_path=None):
+        if not blob_path:
+            raise exc.InconsistentState(
+                "create_or_update for Image requires blob_path to be given")
         refs = self._refs_from_ser(conn)
         sdk_params = self._to_sdk_params(refs)
         sdk_params['filename'] = blob_path
