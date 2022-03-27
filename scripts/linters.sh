@@ -92,12 +92,17 @@ python ./scripts/check_fqcn.py
 
 # Ansible lint
 # runtime.yml is skipped until ansible-lint is compatible with it
-find \
-    ./os_migrate \
-    ./tests \
-    -name "*.yml" \
-    -and -not -wholename "./os_migrate/meta/runtime.yml" \
-    -and -not -wholename "./os_migrate/localhost_inventory.yml" \
-    -and -not -wholename "./tests/func/tmp/*" \
-    -print0 \
-    | xargs -0 ansible-lint -v --exclude=os_migrate/meta/runtime.yml
+if [ "$(ansible --version)" -gt 2.9 ];then
+    find \
+        ./os_migrate \
+        ./tests \
+        -name "*.yml" \
+        -and -not -wholename "./os_migrate/meta/runtime.yml" \
+        -and -not -wholename "./os_migrate/localhost_inventory.yml" \
+        -and -not -wholename "./tests/func/tmp/*" \
+        -and -not -wholename "./tests/auth_*" # ansible-lint small fix
+        -print0 \
+        | xargs -0 ansible-lint -v --exclude=os_migrate/meta/runtime.yml
+else
+    echo "Skipping lint for ansible version 2.9"
+fi

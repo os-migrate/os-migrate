@@ -5,8 +5,8 @@ set -euxo pipefail
 if ! virsh pool-list | grep vagrant &> /dev/null; then
     virsh pool-create-as vagrant dir --target $HOME/.local/share/libvirt/vagrant
 fi
-if ! vagrant box list | grep fedora34 &> /dev/null; then
-    vagrant box add --name fedora34 https://download.fedoraproject.org/pub/fedora/linux/releases/34/Cloud/x86_64/images/Fedora-Cloud-Base-Vagrant-34-1.2.x86_64.vagrant-libvirt.box
+if ! vagrant box list | grep fedora35 &> /dev/null; then
+    vagrant box add --name fedora35 https://download.fedoraproject.org/pub/fedora/linux/releases/35/Cloud/x86_64/images/Fedora-Cloud-Base-Vagrant-35-1.2.x86_64.vagrant-libvirt.box
 fi
 
 vagrant up

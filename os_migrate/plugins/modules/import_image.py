@@ -121,7 +121,7 @@ def run_module():
     sdk, conn = openstack_cloud_from_module(module)
     ser_img = image.Image.from_data(module.params['data'])
     result['changed'] = ser_img.create_or_update(
-        conn, module.params['blob_path'], module.params['filters'])
+        conn, module.params['filters'], module.params['blob_path'])
 
     module.exit_json(**result)
 

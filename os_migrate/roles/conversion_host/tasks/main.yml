@@ -79,6 +79,7 @@
     timeout: "{{ os_migrate_conversion_host_deploy_timeout }}"
     auth: "{{ os_migrate_conversion_auth }}"
     auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
+    availability_zone: "{{os_migrate_conversion_availability_zone|default(omit) }}"
     region_name: "{{ os_migrate_conversion_region_name|default(omit) }}"
     validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
     ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"

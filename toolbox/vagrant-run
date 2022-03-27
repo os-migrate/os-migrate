@@ -62,7 +62,6 @@ sudo podman create \
     -v $OS_MIGRATE_DIR:$OS_MIGRATE_DIR \
     \
     -v /dev/net:/dev/net:rw \
-    -v $XDG_RUNTIME_DIR:$XDG_RUNTIME_DIR \
     -v /etc/passwd:/etc/passwd:ro \
     -v /etc/group:/etc/group:ro \
     -v /etc/libvirt:/etc/libvirt:ro \
@@ -75,12 +74,7 @@ sudo podman create \
     -e LC_ALL=C.UTF-8 \
     -e HOME="$HOME" \
     -e SHELL="$SHELL" \
-    -e XDG_CURRENT_DESKTOP="$XDG_CURRENT_DESKTOP" \
     -e XDG_DATA_DIRS="$XDG_DATA_DIRS" \
-    -e XDG_MENU_PREFIX="${XDG_MENU_PREFIX:-gnome-}" \
-    -e XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
-    -e XDG_SESSION_DESKTOP="$XDG_SESSION_DESKTOP" \
-    -e XDG_SESSION_TYPE="$XDG_SESSION_TYPE" \
     -w "$OS_MIGRATE_DIR/toolbox/vagrant" \
     ${OS_MIGRATE_VAGRANT_TOOLBOX_ARGS:-} \
     localhost/os_migrate_toolbox \
