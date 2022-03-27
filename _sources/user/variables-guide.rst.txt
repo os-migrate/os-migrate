@@ -177,6 +177,19 @@ customize names of other conversion host dependency resources::
     os_migrate_src_conversion_keypair_name
     os_migrate_dst_conversion_keypair_name
 
+Conversion host availablility zone management
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Availability zones are defined by attaching specific metadata
+information to an aggregate::
+
+    os_migrate_src_conversion_availability_zone
+    os_migrate_dst_conversion_availability_zone
+
+The conversion host can set logical abstractions for partitioning
+instances to a specific set of hosts belonging to an aggregate.
+
+The default is `false` (meaning no specification provided).
+
 Conversion host network management
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

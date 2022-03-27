@@ -329,7 +329,8 @@ Auth URLs and network names will change based on your environment.
     os_migrate_data_dir: /root/os_migrate/local/migrate-data
 
     os_migrate_conversion_host_ssh_user: centos
-    os_migrate_conversion_external_network_name: nova
+    os_migrate_src_conversion_external_network_name: nova
+    os_migrate_dst_conversion_external_network_name: nova
     os_migrate_conversion_flavor_name: m1.large
     os_migrate_conversion_image_name: CentOS-Stream-GenericCloud-8-20210603.0.x86_64.qcow2
 

@@ -250,7 +250,34 @@ the executable when running ansible.builtin.shell.</p>
 </section>
 <section id="other">
 <h3>Other<a class="headerlink" href="#other" title="Permalink to this headline"></a></h3>
+<ul>
+<li><p>F/dev env setup improvements (#520) [Adrian Brown, Jiri Stransky]</p>
 <ul class="simple">
+<li><p>New: Customize availbility zone for conversion hosts</p></li>
+</ul>
+<p>It is now possible to customize conversion host availability zones via
+these new variables:</p>
+<p>os_migrate_src_conversion_availability_zone
+os_migrate_dst_conversion_availability_zone</p>
+<ul class="simple">
+<li><p>Dev: Don’t run lints with Ansible 2.9</p></li>
+</ul>
+<p>This is to work around an issue with ansible-lint:</p>
+<p><a class="reference external" href="https://github.com/ansible-community/ansible-lint-action/issues/41">https://github.com/ansible-community/ansible-lint-action/issues/41</a></p>
+<ul class="simple">
+<li><p>Dev: Refactor argument ordering to satisfy pylint</p></li>
+</ul>
+<p>We shouldn’t change the ordering of arguments of create_or_update when
+subclassing Resource, we should just add a new parameter at the end.</p>
+<ul class="simple">
+<li><p>dev: allow vagrant on headless servers</p></li>
+<li><p>dev: update vagrant to fedora35</p></li>
+</ul>
+<p>horizon was broken on fedora35, dont need so it is disabled.</p>
+<ul class="simple">
+<li><p>dev: documentation update for variables in e2e setup</p></li>
+</ul>
+</li>
 <li><p>Docs: Fix link on install-from-galaxy which address to install-from-
 source. [Juan Badia Payno]</p></li>
 </ul>

@@ -55,6 +55,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-flavor-name">Conversion host flavor name</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-external-network-name">Conversion host external network name</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#other-conversion-host-dependency-names">Other conversion host dependency names</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conversion-host-availablility-zone-management">Conversion host availablility zone management</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-network-management">Conversion host network management</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-floating-ip-management">Conversion host floating IP management</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-specific-floating-ip">Conversion host specific floating IP</a></li>
@@ -259,6 +260,18 @@ customize names of other conversion host dependency resources:</p>
 <span class="n">os_migrate_dst_conversion_keypair_name</span>
 </pre></div>
 </div>
+</section>
+<section id="conversion-host-availablility-zone-management">
+<h3>Conversion host availablility zone management<a class="headerlink" href="#conversion-host-availablility-zone-management" title="Permalink to this headline"></a></h3>
+<p>Availability zones are defined by attaching specific metadata
+information to an aggregate:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_availability_zone</span>
+<span class="n">os_migrate_dst_conversion_availability_zone</span>
+</pre></div>
+</div>
+<p>The conversion host can set logical abstractions for partitioning
+instances to a specific set of hosts belonging to an aggregate.</p>
+<p>The default is <cite>false</cite> (meaning no specification provided).</p>
 </section>
 <section id="conversion-host-network-management">
 <h3>Conversion host network management<a class="headerlink" href="#conversion-host-network-management" title="Permalink to this headline"></a></h3>

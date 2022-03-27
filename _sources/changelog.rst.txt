@@ -93,6 +93,34 @@ Fix
 
 Other
 ~~~~~
+- F/dev env setup improvements (#520) [Adrian Brown, Jiri Stransky]
+
+  * New: Customize availbility zone for conversion hosts
+
+  It is now possible to customize conversion host availability zones via
+  these new variables:
+
+  os_migrate_src_conversion_availability_zone
+  os_migrate_dst_conversion_availability_zone
+
+  * Dev: Don't run lints with Ansible 2.9
+
+  This is to work around an issue with ansible-lint:
+
+  https://github.com/ansible-community/ansible-lint-action/issues/41
+
+  * Dev: Refactor argument ordering to satisfy pylint
+
+  We shouldn't change the ordering of arguments of create_or_update when
+  subclassing Resource, we should just add a new parameter at the end.
+
+  * dev: allow vagrant on headless servers
+
+  * dev: update vagrant to fedora35
+
+  horizon was broken on fedora35, dont need so it is disabled.
+
+  * dev: documentation update for variables in e2e setup
 - Docs: Fix link on install-from-galaxy which address to install-from-
   source. [Juan Badia Payno]
 
