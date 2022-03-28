@@ -7,6 +7,13 @@ Changelog
 
 New
 ~~~
+- Customize availbility zone for conversion hosts. [adrian]
+
+  It is now possible to customize conversion host availability zones via
+  these new variables:
+
+  os_migrate_src_conversion_availability_zone
+  os_migrate_dst_conversion_availability_zone
 - Ensure correct mode on conversion host ssh key. [Jiri Stransky]
 
   Sometimes when using pre-existing key and mounting it into a
