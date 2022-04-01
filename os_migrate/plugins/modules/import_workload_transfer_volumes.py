@@ -249,7 +249,8 @@ block_device_mapping:
     - Used to attach destination volumes to the new instance in the right order.
   returned: Only after successfully transferring volumes from the source cloud.
   type: dict
-  sample: [{'device_name': 'vdb', 'uuid': 'fa45e86f-e22e-4128-9b01-da63ed11b33d', 'source_type': 'volume'}]
+  sample: [{'boot_index': -1, 'delete_on_termination': false, 'destination_type': 'volume',
+          'device_name': 'vdb', 'source_type': 'volume', 'uuid': '65d9f006-a4e2-46ba-a082-700549d8635a'}]
 volume_map:
   description:
     - Updated mapping of source volume devices to NBD export URLs.
