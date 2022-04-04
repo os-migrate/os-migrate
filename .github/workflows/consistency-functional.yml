@@ -23,7 +23,7 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: [3.7]
-        ansible-version: [2.9, 3.4, 4.5]
+        ansible-version: [2.9, 'latest']
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
@@ -98,7 +98,7 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: [3.7]
-        ansible-version: [2.9, 3.4, 4.5]
+        ansible-version: [2.9, 'latest']
     services:
       rabbitmq:
         image: rabbitmq:latest
