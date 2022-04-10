@@ -2,7 +2,14 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 from copy import deepcopy
-from openstack import exceptions as os_exc
+
+try:
+    from openstack import exceptions as os_exc
+except ImportError as imp_exc:
+    ANOTHER_LIBRARY_IMPORT_ERROR = imp_exc
+else:
+    ANOTHER_LIBRARY_IMPORT_ERROR = None
+
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import const, exc
 
