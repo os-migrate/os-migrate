@@ -1,7 +1,12 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-import openstack
+try:
+    import openstack
+except ImportError as imp_exc:
+    ANOTHER_LIBRARY_IMPORT_ERROR = imp_exc
+else:
+    ANOTHER_LIBRARY_IMPORT_ERROR = None
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import const, reference, resource
