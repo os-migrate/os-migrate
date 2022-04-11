@@ -1,1 +1,1 @@
-ansible-core>=2.12,<2.13
+ansible>=4.5.0,<4.6
