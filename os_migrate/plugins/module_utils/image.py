@@ -2,8 +2,8 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 import hashlib
-import openstack
 import os
+import openstack
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import const, exc, reference, resource

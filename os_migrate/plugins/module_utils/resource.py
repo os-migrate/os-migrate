@@ -3,6 +3,7 @@ __metaclass__ = type
 
 from copy import deepcopy
 from openstack import exceptions as os_exc
+
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import const, exc
 
