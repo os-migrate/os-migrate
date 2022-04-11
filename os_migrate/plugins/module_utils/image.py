@@ -3,16 +3,10 @@ __metaclass__ = type
 
 import hashlib
 import os
+import openstack
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import const, exc, reference, resource
-
-try:
-    import openstack
-except ImportError as imp_exc:
-    ANOTHER_LIBRARY_IMPORT_ERROR = imp_exc
-else:
-    ANOTHER_LIBRARY_IMPORT_ERROR = None
 
 
 class Image(resource.Resource):
