@@ -1,15 +1,3 @@
-- name: validate loaded resources
-  os_migrate.os_migrate.validate_resource_files:
-    paths:
-      - "{{ os_migrate_data_dir }}/security_group_rules.yml"
-  register: security_group_rules_file_validation
-  when: import_security_group_rules_validate_file
-
-- name: stop when errors found
-  ansible.builtin.fail:
-    msg: "{{ security_group_rules_file_validation.errors|join(' ') }}"
-  when: not ( security_group_rules_file_validation.ok | bool )
-
 - name: read security_group_rules resource file
   os_migrate.os_migrate.read_resources:
     path: "{{ os_migrate_data_dir }}/security_group_rules.yml"

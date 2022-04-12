@@ -1,15 +1,3 @@
-- name: validate loaded resources
-  os_migrate.os_migrate.validate_resource_files:
-    paths:
-      - "{{ os_migrate_data_dir }}/router_interfaces.yml"
-  register: router_interfaces_file_validation
-  when: import_router_interfaces_validate_file
-
-- name: stop when errors found
-  ansible.builtin.fail:
-    msg: "{{ router_interfaces_file_validation.errors|join(' ') }}"
-  when: not ( router_interfaces_file_validation.ok | bool )
-
 - name: read router interfaces resource file
   os_migrate.os_migrate.read_resources:
     path: "{{ os_migrate_data_dir }}/router_interfaces.yml"

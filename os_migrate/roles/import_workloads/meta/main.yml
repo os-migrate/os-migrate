@@ -15,3 +15,7 @@ galaxy_info:
 dependencies:
   - role: os_migrate.os_migrate.prelude_src
   - role: os_migrate.os_migrate.prelude_dst
+  - role: os_migrate.os_migrate.validate_resource_files
+    vars:
+      resource_files:
+        - "{{ os_migrate_data_dir }}/workloads.yml"

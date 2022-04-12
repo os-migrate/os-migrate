@@ -1,0 +1,10 @@
+- name: validate resource files
+  os_migrate.os_migrate.validate_resource_files:
+    paths: "{{ resource_files }}"
+  register: "resource_files_validation"
+  when: os_migrate_validate_files
+
+- name: stop when errors found
+  ansible.builtin.fail:
+    msg: "{{ resource_files_validation.errors|join(' ') }}"
+  when: not ( resource_files_validation.ok | bool )

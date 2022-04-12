@@ -1,4 +1,3 @@
-import_users_keypairs_validate_file: true
 os_migrate_keypairs_filter:
   - regex: .*
 os_migrate_users_filter:

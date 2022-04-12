@@ -1,3 +1,2 @@
-import_flavors_validate_file: true
 os_migrate_flavors_filter:
   - regex: .*
