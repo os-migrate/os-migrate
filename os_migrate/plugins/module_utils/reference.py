@@ -1,14 +1,7 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-try:
-    import openstack
-except ImportError as imp_exc:
-    OPENSTACK_IMPORT_ERROR = imp_exc
-else:
-    OPENSTACK_IMPORT_ERROR = None
-
-
+import openstack
 from openstack.exceptions import DuplicateResource, HttpException, ResourceFailure
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
