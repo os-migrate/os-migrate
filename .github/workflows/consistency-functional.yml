@@ -135,7 +135,7 @@ jobs:
           sudo apt remove --purge mysql-server mysql-client mysql-common -y
           sudo apt autoremove -y
           # MySQL requirements
-          sudo apt install -y mysql-community-client-plugins mysql-client mysql-common
+          sudo apt install -y mysql-client mysql-common
           # Httplib2 requirements
           # We need to install this library un purpose, if not the devstack
           # installer will crash as pip is not able to determine if its
