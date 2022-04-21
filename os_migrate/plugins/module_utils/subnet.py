@@ -59,7 +59,7 @@ class Subnet(resource.Resource):
     @classmethod
     def from_sdk(cls, conn, sdk_resource):
         obj = super(Subnet, cls).from_sdk(conn, sdk_resource)
-        obj._sort_param('allocation_pools')
+        obj._sort_param('allocation_pools', by_keys=['start', 'end'])
         obj._sort_param('dns_nameservers')
         obj._sort_param('host_routes', by_keys=['destination', 'nexthop'])
         return obj

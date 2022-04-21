@@ -19,12 +19,19 @@ def sdk_subnet():
         gateway_ip='10.10.10.1',
         host_routes=[
             {'destination': '0.0.0.0/0', 'nexthop': '12.34.56.78'},
+            {'destination': '192.168.10.0/24', 'nexthop': '87.65.43.21'},
         ],
         cidr='10.10.10.0/24',
-        allocation_pools=[{
-            'start': '10.10.10.2',
-            'end': '10.10.10.254'
-        }],
+        allocation_pools=[
+            {
+                'start': '10.10.10.10',
+                'end': '10.10.10.50',
+            },
+            {
+                'start': '10.10.10.80',
+                'end': '10.10.10.90',
+            }
+        ],
         description='test-subnet',
         created_at='2020-02-21T17:34:54Z',
         revision_number=0,
@@ -38,7 +45,9 @@ def serialized_subnet():
     return {
         const.RES_PARAMS: {
             'allocation_pools': [
-                {'start': '10.10.10.2', 'end': '10.10.10.254'}],
+                {'start': '10.10.10.10', 'end': '10.10.10.50'},
+                {'start': '10.10.10.80', 'end': '10.10.10.90'},
+            ],
             'cidr': '10.10.10.0/24',
             'description': 'test-subnet',
             'dns_nameservers': None,
@@ -128,14 +137,18 @@ class TestSubnet(unittest.TestCase):
         params, info = serialized.params_and_info()
 
         self.assertEqual(serialized.type(), 'openstack.subnet.Subnet')
-        self.assertEqual(params['allocation_pools'],
-                         [{'start': '10.10.10.2', 'end': '10.10.10.254'}])
+        self.assertEqual(params['allocation_pools'], [
+            {'start': '10.10.10.10', 'end': '10.10.10.50'},
+            {'start': '10.10.10.80', 'end': '10.10.10.90'},
+        ])
         self.assertEqual(params['cidr'], '10.10.10.0/24')
         self.assertEqual(params['description'], 'test-subnet')
         self.assertEqual(params['dns_nameservers'], [])
         self.assertEqual(params['gateway_ip'], '10.10.10.1')
-        self.assertEqual(params['host_routes'],
-                         [{'destination': '0.0.0.0/0', 'nexthop': '12.34.56.78'}])
+        self.assertEqual(params['host_routes'], [
+            {'destination': '0.0.0.0/0', 'nexthop': '12.34.56.78'},
+            {'destination': '192.168.10.0/24', 'nexthop': '87.65.43.21'},
+        ])
         self.assertEqual(params['ip_version'], 4)
         self.assertEqual(params['ipv6_address_mode'], None)
         self.assertEqual(params['ipv6_ra_mode'], None)
@@ -169,8 +182,10 @@ class TestSubnet(unittest.TestCase):
         refs = sub._refs_from_ser(None)  # conn=None
         sdk_params = sub._to_sdk_params(refs)
 
-        self.assertEqual(sdk_params['allocation_pools'],
-                         [{'start': '10.10.10.2', 'end': '10.10.10.254'}])
+        self.assertEqual(sdk_params['allocation_pools'], [
+            {'start': '10.10.10.10', 'end': '10.10.10.50'},
+            {'start': '10.10.10.80', 'end': '10.10.10.90'},
+        ])
         self.assertEqual(sdk_params['cidr'], '10.10.10.0/24')
         self.assertEqual(sdk_params['description'], 'test-subnet')
         self.assertEqual(sdk_params['gateway_ip'], '10.10.10.1')
