@@ -2,6 +2,17 @@ Changelog
 =========
 
 
+(unreleased)
+------------
+
+Fix
+~~~
+- Export of subnets with multiple allocation pools. [Jiri Stransky]
+
+  Subnets with multiple allocation pools previously crashed on export
+  due to an issue with parameter sorting. This is now fixed.
+
+
 0.13.0 (2022-03-30)
 -------------------
 
