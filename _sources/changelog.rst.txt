@@ -5,6 +5,10 @@ Changelog
 (unreleased)
 ------------
 
+New
+~~~
+- Introduced validate_resource_files role (#532) [Adrian Brown]
+
 Fix
 ~~~
 - Export of subnets with multiple allocation pools. [Jiri Stransky]
