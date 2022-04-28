@@ -1,15 +1,3 @@
-- name: validate loaded resources
-  os_migrate.os_migrate.validate_resource_files:
-    paths:
-      - "{{ os_migrate_data_dir }}/flavors.yml"
-  register: flavors_file_validation
-  when: import_flavors_validate_file
-
-- name: stop when errors found
-  ansible.builtin.fail:
-    msg: "{{ flavors_file_validation.errors|join(' ') }}"
-  when: not ( flavors_file_validation.ok | bool )
-
 - name: read flavors resource file
   os_migrate.os_migrate.read_resources:
     path: "{{ os_migrate_data_dir }}/flavors.yml"

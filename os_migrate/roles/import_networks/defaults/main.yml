@@ -1,3 +1,2 @@
-import_networks_validate_file: true
 os_migrate_networks_filter:
   - regex: .*

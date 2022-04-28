@@ -3,18 +3,6 @@
     name: os_migrate.os_migrate.conversion_host
     tasks_from: conv_hosts_inventory.yml
 
-- name: validate loaded resources
-  os_migrate.os_migrate.validate_resource_files:
-    paths:
-      - "{{ os_migrate_data_dir }}/workloads.yml"
-  register: workloads_file_validation
-  when: import_workloads_validate_file
-
-- name: stop when errors found
-  ansible.builtin.fail:
-    msg: "{{ workloads_file_validation.errors|join(' ') }}"
-  when: not ( workloads_file_validation.ok | bool )
-
 - name: read workloads resource file
   os_migrate.os_migrate.read_resources:
     path: "{{ os_migrate_data_dir }}/workloads.yml"
