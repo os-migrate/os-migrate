@@ -14,11 +14,21 @@ fi
 # Apply virtualenv version overrides if defined
 if [ -n "${OS_MIGRATE_REQUIREMENTS_OVERRIDE:-}" ]; then
     python3 -m pip install --upgrade pip
+
+    # Workaround for ERROR: Could not install packages due to an
+    #     OSError: [Errno 39] Directory not empty: '__pycache__'
+    PYTHON_SITE_PACKAGES_DIR=$(python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+    if [[ "$OS_MIGRATE_REQUIREMENTS_OVERRIDE" =~ "openstacksdk" ]]; then
+        find "$PYTHON_SITE_PACKAGES_DIR/openstack" -depth -type d -name __pycache__ -exec rm -r '{}' \;
+    fi
+    if [[ "$OS_MIGRATE_REQUIREMENTS_OVERRIDE" =~ "openstackclient" ]]; then
+        find "$PYTHON_SITE_PACKAGES_DIR/openstackclient" -depth -type d -name __pycache__ -exec rm -r '{}' \;
+    fi
+
     python3 -m pip \
         install \
         --upgrade \
-        -r "$OS_MIGRATE_REQUIREMENTS_OVERRIDE" \
-        --no-cache-dir
+        -r "$OS_MIGRATE_REQUIREMENTS_OVERRIDE"
 fi
 
 # update version in const.py based on galaxy.yml

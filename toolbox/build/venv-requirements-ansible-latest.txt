@@ -1,1 +1,3 @@
 ansible-core>=2.12,<2.13
+openstacksdk
+python-openstackclient
