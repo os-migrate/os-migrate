@@ -2,22 +2,22 @@
 wheel
 
 # runtime
-ansible-core>=2.12,<2.13
+ansible-core
 openstacksdk
 
 # test
 ansible-lint
-bashate>=2.0.0
-flake8==3.7.7
-openstackclient>=0.5.5
-pylint>=2.4.0
+bashate
+flake8
+pylint
 pytest
 mock
 pytest-mock
-pytest-xdist>=1.30.0
-pycodestyle>=2.5.0
-voluptuous>=0.11.7
-yamllint>=1.20.0
+pytest-xdist
+pycodestyle
+python-openstackclient
+voluptuous
+yamllint
 
 # docs
 gitchangelog
