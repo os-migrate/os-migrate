@@ -39,10 +39,11 @@ set -x
 # ci debug todo:
 # We need to be sure we use the latest versions of
 # pip, virtualenv and setuptools
-python3 -m pip install pip==22.1b1
+python3 -m pip install pip<21.0
 python3 -m pip install --upgrade \
                         virtualenv \
-                        setuptools
+                        setuptools \
+			pip --use-deprecated=legacy-resolver
 python3 -m pip install --upgrade -r /build/venv-requirements.txt
 
 cp /build/venv-wrapper /usr/local/bin/venv-wrapper
