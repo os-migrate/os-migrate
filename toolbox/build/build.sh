@@ -39,7 +39,7 @@ set -x
 # ci debug todo:
 # We need to be sure we use the latest versions of
 # pip, virtualenv and setuptools
-python3 -m pip install pip==23.1.3
+python3 -m pip install pip==22.1b1
 python3 -m pip install --upgrade \
                         virtualenv \
                         setuptools

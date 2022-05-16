@@ -14,9 +14,7 @@ jobs:
         run: |
           sudo locale-gen en_US.UTF-8
           sudo dpkg-reconfigure locales
-          # pip backtracking bug upgrading to latest
-          # sudo python -m pip install --upgrade pip
-          sudo python -m pip install pip==21.1.3
+          sudo python -m pip install --upgrade pip
           sudo pip install tox
           sudo apt install software-properties-common build-essential findutils -y
       - name: Configure podman
