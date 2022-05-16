@@ -36,10 +36,11 @@ fi
 set +x
 source /root/venv/bin/activate
 set -x
+# ci debug todo:
 # We need to be sure we use the latest versions of
 # pip, virtualenv and setuptools
+python3 -m pip install pip==23.1.3
 python3 -m pip install --upgrade \
-                        pip \
                         virtualenv \
                         setuptools
 python3 -m pip install --upgrade -r /build/venv-requirements.txt
