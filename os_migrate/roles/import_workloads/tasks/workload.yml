@@ -1,4 +1,5 @@
-- block:
+- name: import a workload
+  block:
   - name: preliminary setup for workload import
     os_migrate.os_migrate.import_workload_prelim:
       auth: "{{ os_migrate_dst_auth }}"
