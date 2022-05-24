@@ -1,0 +1,28 @@
+- name: remove osm_user_project_role_assignment
+  openstack.cloud.role_assignment:
+    auth: "{{ item['auth'] }}"
+    project: "{{ item['project'] }}"
+    role: "{{ item['role'] }}"
+    user: "{{ item['user'] }}"
+    state: absent
+  # When osm_role doesn't exist at all, the module will fail rather
+  # than reporting 'ok'. So we ignore that failure.
+  failed_when: false
+  loop:
+    - auth: "{{ os_migrate_src_auth }}"
+      project: osm_project
+      role: osm_role
+      user: osm_user
+    - auth: "{{ os_migrate_dst_auth }}"
+      project: osmdst_project
+      role: osm_role
+      user: osmdst_user
+
+- name: create osm_role
+  openstack.cloud.identity_role:
+    auth: "{{ item['auth'] }}"
+    name: osm_role
+    state: absent
+  loop:
+    - auth: "{{ os_migrate_src_auth }}"
+    - auth: "{{ os_migrate_dst_auth }}"

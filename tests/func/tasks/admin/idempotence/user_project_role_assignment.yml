@@ -1,0 +1,39 @@
+### EXPORT IDEMPOTENCE ###
+
+- name: export user project role assignment
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.export_user_project_role_assignment
+  vars:
+    os_migrate_user_filter:
+      - regex: '^osm_'
+
+# TODO: Set domain to osmdst_domain when we support migrating domains.
+
+- name: set destination role assignment project name
+  ansible.builtin.replace:
+    path: "{{ os_migrate_data_dir }}/user_project_role_assignments.yml"
+    regexp: "name: osm_project"
+    replace: "name: osmdst_project"
+
+- name: set destination role assignment user name
+  ansible.builtin.replace:
+    path: "{{ os_migrate_data_dir }}/user_project_role_assignments.yml"
+    regexp: "name: osm_user"
+    replace: "name: osmdst_user"
+
+- name: re-load project_resources for idempotency test
+  ansible.builtin.set_fact:
+    user_project_role_assignments_resources_idem: "{{ (lookup('file',
+                                os_migrate_data_dir +
+                                '/user_project_role_assignments.yml') | from_yaml)
+                        ['resources'] }}"
+
+- name: verify that export file did not change
+  ansible.builtin.assert:
+    that:
+      - user_project_role_assignments_resources_idem == user_project_role_assignments_resources
+    fail_msg: |
+      user_project_role_assignments_resources_idem:
+      {{ user_project_role_assignments_resources_idem | to_nice_yaml }}
+      user_project_role_assignments_resources:
+      {{ user_project_role_assignments_resources | to_nice_yaml }}
