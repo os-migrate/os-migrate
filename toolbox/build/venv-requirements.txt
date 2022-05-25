@@ -3,7 +3,7 @@ wheel
 
 # runtime
 ansible-core
-openstacksdk
+openstacksdk<0.99
 
 # test
 ansible-lint
