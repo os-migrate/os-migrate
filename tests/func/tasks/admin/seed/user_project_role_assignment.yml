@@ -1,0 +1,15 @@
+- name: create osm_role
+  openstack.cloud.identity_role:
+    auth: "{{ item['auth'] }}"
+    name: osm_role
+    state: present
+  loop:
+    - auth: "{{ os_migrate_src_auth }}"
+    - auth: "{{ os_migrate_dst_auth }}"
+
+- name: create role assignment
+  openstack.cloud.role_assignment:
+    auth: "{{ os_migrate_src_auth }}"
+    role: osm_role
+    project: osm_project
+    user: osm_user

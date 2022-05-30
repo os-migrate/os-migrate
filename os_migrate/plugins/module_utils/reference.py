@@ -374,6 +374,35 @@ def user_ref(conn, id_, required=True, allow_auth=True):
     return ref
 
 
+def role_id(conn, ref, required=True):
+    """Fetch ID of a Role identified by reference dict `ref`. Use
+    OpenStack SDK connection `conn` to fetch the info. If `required`,
+    ensure the fetch is successful.
+    Returns: the ID, or None if not found and not `required`
+    Raises: openstack's ResourceNotFound when `required` but not found
+    """
+    return _fetch_id(conn, conn.identity.find_role, ref, required)
+
+
+def role_ref(conn, id_, required=True):
+    """Create reference dict for a Role identified by ID `id_`. Use
+    OpenStack SDK connection `conn` to fetch the info. If `required`,
+    ensure the fetch is successful.
+    Returns: the ref dict, or None if not found and not `required`
+    Raises: openstack's ResourceNotFound when `required` but not found
+    """
+    ref = _fetch_ref(conn, conn.identity.find_role, id_, required, get_project_info=False)
+    if ref is None:
+        return
+
+    role = conn.identity.find_role(id_)
+    if role is not None and role['domain_id'] is not None:
+        domain = conn.identity.find_domain(role['domain_id'])
+        ref['domain_name'] = domain['name']
+
+    return ref
+
+
 def _fetch_ref(conn, get_method, id_, required=True, get_project_info=True):
     if id_ is None:
         return None

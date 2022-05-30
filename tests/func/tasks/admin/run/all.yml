@@ -15,6 +15,14 @@
         - test_user
   tags: always
 
+- name: Include user project role assignment tasks
+  ansible.builtin.include_tasks: user_project_role_assignment.yml
+  args:
+    apply:
+      tags:
+        - test_user_project_role_assignment
+  tags: always
+
 - name: Include user keypair tasks
   ansible.builtin.include_tasks: user_keypair.yml
   args:
