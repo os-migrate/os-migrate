@@ -14,6 +14,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -86,9 +87,9 @@
            <div itemprop="articleBody">
              
   <section id="os-migrate-design">
-<h1>OS Migrate Design<a class="headerlink" href="#os-migrate-design" title="Permalink to this headline"></a></h1>
+<h1>OS Migrate Design<a class="headerlink" href="#os-migrate-design" title="Permalink to this heading"></a></h1>
 <section id="high-level-development-goals">
-<h2>High-level development goals<a class="headerlink" href="#high-level-development-goals" title="Permalink to this headline"></a></h2>
+<h2>High-level development goals<a class="headerlink" href="#high-level-development-goals" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>I/O-based. Fetch metadata and/or content from source cloud -&gt; write
 them as outputs -&gt; read them as inputs -&gt; push it to the destination
@@ -150,7 +151,7 @@ running OS Migrate manually and/or has tweaked it to their needs.</p></li>
 </ul>
 </section>
 <section id="challenges-of-the-problem-domain">
-<h2>Challenges of the problem domain<a class="headerlink" href="#challenges-of-the-problem-domain" title="Permalink to this headline"></a></h2>
+<h2>Challenges of the problem domain<a class="headerlink" href="#challenges-of-the-problem-domain" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>Generally, admins can view resources of all projects, but cannot
 create resources in those projects (unless they have a role in the
@@ -183,7 +184,7 @@ per resource type.</p></li>
 </ul>
 </section>
 <section id="basic-ansible-workflow-design">
-<h2>Basic Ansible workflow design<a class="headerlink" href="#basic-ansible-workflow-design" title="Permalink to this headline"></a></h2>
+<h2>Basic Ansible workflow design<a class="headerlink" href="#basic-ansible-workflow-design" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>The challenge and a goal here is to give meaningful Ansible log
 output for debugging. This means, for example, that we shouldn’t have
@@ -259,7 +260,7 @@ change those tags any time without breaking user expectations.</p></li>
 </ul>
 </section>
 <section id="misc">
-<h2>Misc<a class="headerlink" href="#misc" title="Permalink to this headline"></a></h2>
+<h2>Misc<a class="headerlink" href="#misc" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>Naming conventions - <a class="reference external" href="https://github.com/ansible/galaxy/issues/1128#issuecomment-454519526">underscores rather than hyphens in
 Ansible</a>.</p>

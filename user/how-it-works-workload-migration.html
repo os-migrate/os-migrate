@@ -14,6 +14,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -86,13 +87,13 @@
            <div itemprop="articleBody">
              
   <section id="how-it-works-workload-migration">
-<h1>How it works: Workload migration<a class="headerlink" href="#how-it-works-workload-migration" title="Permalink to this headline"></a></h1>
+<h1>How it works: Workload migration<a class="headerlink" href="#how-it-works-workload-migration" title="Permalink to this heading"></a></h1>
 <p>The information described in this page is not necessary knowledge for
 using OS Migrate workload migration. However, knowing how the
 migration works under the hood may be useful for troubleshooting or
 forming deeper understanding of OS Migrate.</p>
 <section id="data-flow">
-<h2>Data flow<a class="headerlink" href="#data-flow" title="Permalink to this headline"></a></h2>
+<h2>Data flow<a class="headerlink" href="#data-flow" title="Permalink to this heading"></a></h2>
 <p>The workload migration utilizes so called <em>conversion hosts</em> to
 transfer data from the source cloud to the destination cloud.</p>
 <p>The conversion hosts are temporarily deployed in the source &amp;
@@ -108,7 +109,7 @@ volumes).</p>
 </figure>
 </section>
 <section id="migration-sequence">
-<h2>Migration sequence<a class="headerlink" href="#migration-sequence" title="Permalink to this headline"></a></h2>
+<h2>Migration sequence<a class="headerlink" href="#migration-sequence" title="Permalink to this heading"></a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">export_workloads.yml</span></code> playbook simply exports workload metadata
 into <code class="docutils literal notranslate"><span class="pre">workloads.yml</span></code>.</p>
 <p>The actual main migration sequence happens inside

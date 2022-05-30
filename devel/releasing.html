@@ -14,6 +14,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -80,7 +81,7 @@
            <div itemprop="articleBody">
              
   <section id="releasing-the-os-migrate-collection">
-<h1>Releasing the OS Migrate collection<a class="headerlink" href="#releasing-the-os-migrate-collection" title="Permalink to this headline"></a></h1>
+<h1>Releasing the OS Migrate collection<a class="headerlink" href="#releasing-the-os-migrate-collection" title="Permalink to this heading"></a></h1>
 <p>Set env vars with old and new versions:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>OLD_VERSION=$(./toolbox/run bash -c &#39;cat os_migrate/galaxy.yml | shyaml get-value version&#39;)
 echo &quot;OLD_VERSION=$OLD_VERSION&quot;

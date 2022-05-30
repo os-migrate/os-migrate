@@ -14,11 +14,12 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Module - os_routers_info" href="module-os_routers_info.html" />
+    <link rel="next" title="Module - os_role_assignments_info" href="module-os_role_assignments_info.html" />
     <link rel="prev" title="Module - os_conversion_host_info" href="module-os_conversion_host_info.html" /> 
 </head>
 
@@ -54,6 +55,7 @@
 <li class="toctree-l2"><a class="reference internal" href="module-export_security_group_rules.html">Module - export_security_group_rules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="module-export_subnet.html">Module - export_subnet</a></li>
 <li class="toctree-l2"><a class="reference internal" href="module-export_user.html">Module - export_user</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module-export_user_project_role_assignment.html">Module - export_user_project_role_assignment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="module-export_workload.html">Module - export_workload</a></li>
 <li class="toctree-l2"><a class="reference internal" href="module-import_flavor.html">Module - import_flavor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="module-import_image.html">Module - import_image</a></li>
@@ -84,6 +86,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#e-x-a-m-p-l-e-t-a-s-k-s">Example Tasks</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="module-os_role_assignments_info.html">Module - os_role_assignments_info</a></li>
 <li class="toctree-l2"><a class="reference internal" href="module-os_routers_info.html">Module - os_routers_info</a></li>
 <li class="toctree-l2"><a class="reference internal" href="module-os_security_groups_info.html">Module - os_security_groups_info</a></li>
 <li class="toctree-l2"><a class="reference internal" href="module-read_resources.html">Module - read_resources</a></li>
@@ -120,7 +123,7 @@
            <div itemprop="articleBody">
              
   <section id="module-os-keypairs-info">
-<h1>Module - os_keypairs_info<a class="headerlink" href="#module-os-keypairs-info" title="Permalink to this headline"></a></h1>
+<h1>Module - os_keypairs_info<a class="headerlink" href="#module-os-keypairs-info" title="Permalink to this heading"></a></h1>
 <p>This module provides for the following ansible plugin:</p>
 <blockquote>
 <div><ul class="simple">
@@ -128,11 +131,11 @@
 </ul>
 </div></blockquote>
 <section id="m-o-d-u-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">
-<h2>Module Documentation<a class="headerlink" href="#m-o-d-u-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n" title="Permalink to this headline"></a></h2>
+<h2>Module Documentation<a class="headerlink" href="#m-o-d-u-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n" title="Permalink to this heading"></a></h2>
 <p><p>List keypairs information</p>
 </p>
 <section id="o-p-t-i-o-n-s">
-<h3>Options<a class="headerlink" href="#o-p-t-i-o-n-s" title="Permalink to this headline"></a></h3>
+<h3>Options<a class="headerlink" href="#o-p-t-i-o-n-s" title="Permalink to this heading"></a></h3>
 <dl class="field-list">
 <dt class="field-odd">filters</dt>
 <dd class="field-odd"><p>Options for filtering the Keypairs info.</p>
@@ -155,7 +158,7 @@
 </dl>
 </section>
 <section id="a-u-t-h-o-r-s">
-<h3>Authors<a class="headerlink" href="#a-u-t-h-o-r-s" title="Permalink to this headline"></a></h3>
+<h3>Authors<a class="headerlink" href="#a-u-t-h-o-r-s" title="Permalink to this heading"></a></h3>
 <dl class="field-list">
 <dt class="field-odd"></dt>
 <dd class="field-odd"><p>OpenStack tenant migration tools (&#64;os-migrate)</p>
@@ -164,7 +167,7 @@
 </section>
 </section>
 <section id="e-x-a-m-p-l-e-t-a-s-k-s">
-<h2>Example Tasks<a class="headerlink" href="#e-x-a-m-p-l-e-t-a-s-k-s" title="Permalink to this headline"></a></h2>
+<h2>Example Tasks<a class="headerlink" href="#e-x-a-m-p-l-e-t-a-s-k-s" title="Permalink to this heading"></a></h2>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">os_keypairs_info</span><span class="p">:</span><span class="w"></span>
 <span class="w">    </span><span class="nt">cloud</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">srccloud</span><span class="w"></span>
 </pre></div>
@@ -177,7 +180,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="module-os_conversion_host_info.html" class="btn btn-neutral float-left" title="Module - os_conversion_host_info" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="module-os_routers_info.html" class="btn btn-neutral float-right" title="Module - os_routers_info" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="module-os_role_assignments_info.html" class="btn btn-neutral float-right" title="Module - os_role_assignments_info" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

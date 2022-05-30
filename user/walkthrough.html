@@ -14,6 +14,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -108,7 +109,7 @@
            <div itemprop="articleBody">
              
   <section id="os-migrate-walkthrough">
-<h1>OS Migrate Walkthrough<a class="headerlink" href="#os-migrate-walkthrough" title="Permalink to this headline"></a></h1>
+<h1>OS Migrate Walkthrough<a class="headerlink" href="#os-migrate-walkthrough" title="Permalink to this heading"></a></h1>
 <p>OS Migrate is a framework for OpenStack parallel cloud migration
 (migrating content between OpenStack tenants which are not necessarily
 in the same cloud). It’s a collection of Ansible playbooks that provide
@@ -144,9 +145,9 @@ source cloud and moves them into the destination cloud (VMs,
 volumes).</p></li>
 </ul>
 <section id="prerequisites">
-<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline"></a></h2>
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading"></a></h2>
 <section id="authentication">
-<h3>Authentication<a class="headerlink" href="#authentication" title="Permalink to this headline"></a></h3>
+<h3>Authentication<a class="headerlink" href="#authentication" title="Permalink to this heading"></a></h3>
 <p>Users are encouraged to use os-migrate using specific credentials for
 each project/tenant, this means <strong>not using the admin user to execute
 the resources migration</strong> (unless the resource is owned by the admin
@@ -170,7 +171,7 @@ will be removed automatically.</p>
 </ul>
 </section>
 <section id="parameter-file">
-<h3>Parameter file<a class="headerlink" href="#parameter-file" title="Permalink to this headline"></a></h3>
+<h3>Parameter file<a class="headerlink" href="#parameter-file" title="Permalink to this heading"></a></h3>
 <p>Let’s create an <code class="docutils literal notranslate"><span class="pre">os-migrate-vars.yml</span></code> file with Ansible variables:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_src_auth</span><span class="p">:</span><span class="w"></span>
 <span class="w">  </span><span class="nt">auth_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://192.168.0.13.199/v3</span><span class="w"></span>
@@ -201,7 +202,7 @@ other words, when changing <code class="docutils literal notranslate"><span clas
 <code class="docutils literal notranslate"><span class="pre">os_migrate_src_region_name</span></code>, make sure to also change
 <code class="docutils literal notranslate"><span class="pre">os_migrate_data_dir</span></code>.</p>
 <section id="a-note-about-keystone-v2">
-<h4>A note about Keystone v2<a class="headerlink" href="#a-note-about-keystone-v2" title="Permalink to this headline"></a></h4>
+<h4>A note about Keystone v2<a class="headerlink" href="#a-note-about-keystone-v2" title="Permalink to this heading"></a></h4>
 <p>As depicted in content of the previously defined <code class="docutils literal notranslate"><span class="pre">os-migrate-vars.yml</span></code>
 file, the parameters <code class="docutils literal notranslate"><span class="pre">os_migrate_src_auth</span></code> and <code class="docutils literal notranslate"><span class="pre">os_migrate_dst_auth</span></code>
 refer to the usage of Keystone v3. In the case of a user needing to
@@ -225,7 +226,7 @@ to the Keystone v2 endpoint.</p>
 </section>
 </section>
 <section id="shortcuts">
-<h3>Shortcuts<a class="headerlink" href="#shortcuts" title="Permalink to this headline"></a></h3>
+<h3>Shortcuts<a class="headerlink" href="#shortcuts" title="Permalink to this heading"></a></h3>
 <p>We will use the OS Migrate collection path and an ansible-playbook
 command with the following arguments routinely, so let’s save them as
 variables in the shell:</p>
@@ -236,7 +237,7 @@ variables in the shell:</p>
 </section>
 </section>
 <section id="pre-workload-migration">
-<h2>Pre-workload migration<a class="headerlink" href="#pre-workload-migration" title="Permalink to this headline"></a></h2>
+<h2>Pre-workload migration<a class="headerlink" href="#pre-workload-migration" title="Permalink to this heading"></a></h2>
 <p>Workloads require the support of several resources in a given cloud to
 operate properly. Some of these resources include networks, subnets,
 routers, router interfaces, security groups, and security group rules.
@@ -247,7 +248,7 @@ resources if desired, and importing them into the destination cloud.</p>
 playbook from OS Migrate. Let’s look at a concrete example. To export
 the networks, run the “export_networks” playbook.</p>
 <section id="export-and-import">
-<h3>Export and import<a class="headerlink" href="#export-and-import" title="Permalink to this headline"></a></h3>
+<h3>Export and import<a class="headerlink" href="#export-and-import" title="Permalink to this heading"></a></h3>
 <p>To export the networks:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">$OSM_CMD</span> <span class="nv">$OSM_DIR</span>/playbooks/export_networks.yml
 </pre></div>
@@ -304,7 +305,7 @@ keypairs.</p>
 </div>
 </section>
 <section id="diagrams">
-<h3>Diagrams<a class="headerlink" href="#diagrams" title="Permalink to this headline"></a></h3>
+<h3>Diagrams<a class="headerlink" href="#diagrams" title="Permalink to this heading"></a></h3>
 <figure class="align-default" id="id3">
 <a class="reference internal image-reference" href="../_images/pre-workload-migration-workflow.png"><img alt="Pre-workload Migration (workflow)" src="../_images/pre-workload-migration-workflow.png" style="width: 50%;" /></a>
 <figcaption>
@@ -319,13 +320,13 @@ keypairs.</p>
 </figure>
 </section>
 <section id="demo">
-<h3>Demo<a class="headerlink" href="#demo" title="Permalink to this headline"></a></h3>
+<h3>Demo<a class="headerlink" href="#demo" title="Permalink to this heading"></a></h3>
 <p><a class="reference external" href="https://youtu.be/e7KXy5Hq4CMA">Pre-workload migration recorded demo</a>:</p>
 <p><a class="reference external" href="https://youtu.be/e7KXy5Hq4CMA"><img alt="Watch the video1" src="https://img.youtube.com/vi/e7KXy5Hq4CM/maxresdefault.jpg" /></a></p>
 </section>
 </section>
 <section id="workload-migration">
-<h2>Workload migration<a class="headerlink" href="#workload-migration" title="Permalink to this headline"></a></h2>
+<h2>Workload migration<a class="headerlink" href="#workload-migration" title="Permalink to this heading"></a></h2>
 <p>Workload information is exported in a similar method to networks,
 security groups, etc. as in the previous sections. Run the
 “export_workloads” playbook, and edit the resulting workloads.yml as
@@ -358,7 +359,7 @@ import_workloads playbook. The data is transfered directly between the
 clouds, meaning both clouds have to be running and reachable at the
 same time. The following sections describe the process in more detail.</p>
 <section id="process-summary">
-<h3>Process Summary<a class="headerlink" href="#process-summary" title="Permalink to this headline"></a></h3>
+<h3>Process Summary<a class="headerlink" href="#process-summary" title="Permalink to this heading"></a></h3>
 <p>This flowchart illustrates the high-level migration workflow, from a
 user’s point of view:</p>
 <figure class="align-default" id="id5">
@@ -408,7 +409,7 @@ possible, while allowing the use of libguestfs-based tooling to minimize
 total data transfer.</p>
 </section>
 <section id="preparation">
-<h3>Preparation<a class="headerlink" href="#preparation" title="Permalink to this headline"></a></h3>
+<h3>Preparation<a class="headerlink" href="#preparation" title="Permalink to this heading"></a></h3>
 <p>We’ll put additional parameters into <code class="docutils literal notranslate"><span class="pre">os-migrate-vars.yml</span></code>:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_conversion_external_network_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">public</span><span class="w"></span>
 <span class="nt">os_migrate_conversion_flavor_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">m1.large</span><span class="w"></span>
@@ -425,7 +426,7 @@ or
 <p>When using RHEL as conversion host, make sure to set the necessary <a class="reference external" href="https://os-migrate.github.io/os-migrate/user/variables-guide.html#conversion-host-rhel-variables">RHEL variables</a>.</p>
 </section>
 <section id="conversion-host-deployment">
-<h3>Conversion host deployment<a class="headerlink" href="#conversion-host-deployment" title="Permalink to this headline"></a></h3>
+<h3>Conversion host deployment<a class="headerlink" href="#conversion-host-deployment" title="Permalink to this heading"></a></h3>
 <p>The conversion host deployment playbook creates the servers, installs
 additional required packages, and authorizes the destination conversion
 host to connect to the source conversion host for the actual data
@@ -435,7 +436,7 @@ transfer.</p>
 </div>
 </section>
 <section id="export">
-<h3>Export<a class="headerlink" href="#export" title="Permalink to this headline"></a></h3>
+<h3>Export<a class="headerlink" href="#export" title="Permalink to this heading"></a></h3>
 <p>Before migrating workloads, the destination cloud must have imported all
 other resources (networks, security groups, etc.) or the migration will
 fail. Matching named resources (including flavor names) must exist on
@@ -508,7 +509,7 @@ host server.</p>
 </div>
 </section>
 <section id="migration-parameters">
-<h3>Migration parameters<a class="headerlink" href="#migration-parameters" title="Permalink to this headline"></a></h3>
+<h3>Migration parameters<a class="headerlink" href="#migration-parameters" title="Permalink to this heading"></a></h3>
 <p>You can edit the exported <code class="docutils literal notranslate"><span class="pre">workloads.yml</span></code> to adjust desired
 properties for the servers which will be created in the destination
 cloud during migration. You can also edit migration parameters to
@@ -517,7 +518,7 @@ control how a workload should be migrated. Refer to
 for more information.</p>
 </section>
 <section id="ansible-variables">
-<h3>Ansible Variables<a class="headerlink" href="#ansible-variables" title="Permalink to this headline"></a></h3>
+<h3>Ansible Variables<a class="headerlink" href="#ansible-variables" title="Permalink to this heading"></a></h3>
 <p>In addition to the migration parameters in the resource YAML files,
 you can alter the behavior of OS Migrate via Ansible variables,
 e.g. to specify a subset of resources/workloads that will be exported
@@ -525,7 +526,7 @@ or imported. Refer to the <a class="reference external" href="variables-guide.ht
 details.</p>
 </section>
 <section id="migration">
-<h3>Migration<a class="headerlink" href="#migration" title="Permalink to this headline"></a></h3>
+<h3>Migration<a class="headerlink" href="#migration" title="Permalink to this heading"></a></h3>
 <p>Then run the import_workloads playbook to migrate the workloads:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">$OSM_CMD</span> <span class="nv">$OSM_DIR</span>/playbooks/import_workloads.yml
 </pre></div>
@@ -537,7 +538,7 @@ on the destination matching the name of the current server, it will
 be marked “ok” and no extra work will be performed.</p>
 </section>
 <section id="cleanup-of-conversion-hosts">
-<h3>Cleanup of conversion hosts<a class="headerlink" href="#cleanup-of-conversion-hosts" title="Permalink to this headline"></a></h3>
+<h3>Cleanup of conversion hosts<a class="headerlink" href="#cleanup-of-conversion-hosts" title="Permalink to this heading"></a></h3>
 <p>When you are done migrating workloads in given tenants, delete their
 conversion hosts via the delete_conversion_hosts playbook:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">$OSM_CMD</span> <span class="nv">$OSM_DIR</span>/playbooks/delete_conversion_hosts.yml
@@ -545,7 +546,7 @@ conversion hosts via the delete_conversion_hosts playbook:</p>
 </div>
 </section>
 <section id="id1">
-<h3>Demo<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h3>
+<h3>Demo<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
 <p><a class="reference external" href="https://youtu.be/gEKvgIZqrQY">Workload migration recorded demo</a>:</p>
 <p><a class="reference external" href="https://youtu.be/gEKvgIZqrQY"><img alt="Watch the video2" src="https://img.youtube.com/vi/gEKvgIZqrQY/maxresdefault.jpg" /></a></p>
 </section>

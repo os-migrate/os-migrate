@@ -14,6 +14,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -87,12 +88,12 @@
            <div itemprop="articleBody">
              
   <section id="installation-from-galaxy-recommended">
-<h1>Installation from Galaxy (recommended)<a class="headerlink" href="#installation-from-galaxy-recommended" title="Permalink to this headline"></a></h1>
+<h1>Installation from Galaxy (recommended)<a class="headerlink" href="#installation-from-galaxy-recommended" title="Permalink to this heading"></a></h1>
 <p>This document describes the recommended method of installing OS Migrate,
 from Ansible Galaxy. Alternatively, you can <a class="reference external" href="install-from-source.html">install from
 source</a>.</p>
 <section id="prerequisites">
-<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline"></a></h2>
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>Ansible 2.9 or newer.</p></li>
 <li><p>Ansible must run using Python 3. (When using Ansible from RHEL
@@ -109,7 +110,7 @@ other users (playbooks <code class="docutils literal notranslate"><span class="p
 </ul>
 </section>
 <section id="using-virtualenv-for-prerequisites">
-<h2>Using virtualenv for prerequisites<a class="headerlink" href="#using-virtualenv-for-prerequisites" title="Permalink to this headline"></a></h2>
+<h2>Using virtualenv for prerequisites<a class="headerlink" href="#using-virtualenv-for-prerequisites" title="Permalink to this heading"></a></h2>
 <p>If your distribution doesn’t ship the required dependency versions,
 you can use virtualenv, e.g.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>python3 -m venv $HOME/os_migrate_venv
@@ -120,7 +121,7 @@ python3 -m pip install --upgrade &#39;ansible&gt;=2.9.1,&lt;2.10&#39;
 </div>
 </section>
 <section id="installation-of-os-migrate-collection">
-<span id="installation-1"></span><h2>Installation of OS Migrate collection<a class="headerlink" href="#installation-of-os-migrate-collection" title="Permalink to this headline"></a></h2>
+<span id="installation-1"></span><h2>Installation of OS Migrate collection<a class="headerlink" href="#installation-of-os-migrate-collection" title="Permalink to this heading"></a></h2>
 <p>To install latest release:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ansible-galaxy collection install os_migrate.os_migrate
 </pre></div>

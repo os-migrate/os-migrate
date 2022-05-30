@@ -14,6 +14,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -101,9 +102,9 @@
            <div itemprop="articleBody">
              
   <section id="development-environment-setup">
-<h1>Development Environment Setup<a class="headerlink" href="#development-environment-setup" title="Permalink to this headline"></a></h1>
+<h1>Development Environment Setup<a class="headerlink" href="#development-environment-setup" title="Permalink to this heading"></a></h1>
 <section id="prerequisites">
-<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline"></a></h2>
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>Local clone of the os-migrate git repo from
 <a class="reference external" href="https://github.com/os-migrate/os-migrate">https://github.com/os-migrate/os-migrate</a></p></li>
@@ -112,7 +113,7 @@ for running rootless development environment containers.</p></li>
 </ul>
 </section>
 <section id="development-environment">
-<h2>Development environment<a class="headerlink" href="#development-environment" title="Permalink to this headline"></a></h2>
+<h2>Development environment<a class="headerlink" href="#development-environment" title="Permalink to this heading"></a></h2>
 <p>Build a container image with tools to be used for building and testing
 the project:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">toolbox</span><span class="o">-</span><span class="n">build</span>
@@ -132,7 +133,7 @@ command as parameter(s) to the <cite>./toolbox/run</cite> script:</p>
 </div>
 </section>
 <section id="sanity-and-unit-tests">
-<h2>Sanity and unit tests<a class="headerlink" href="#sanity-and-unit-tests" title="Permalink to this headline"></a></h2>
+<h2>Sanity and unit tests<a class="headerlink" href="#sanity-and-unit-tests" title="Permalink to this heading"></a></h2>
 <p>You can run sanity tests this way:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span><span class="o">-</span><span class="n">sanity</span>
 </pre></div>
@@ -148,7 +149,7 @@ command as parameter(s) to the <cite>./toolbox/run</cite> script:</p>
 </div>
 </section>
 <section id="vagrant-for-functional-tests">
-<h2>Vagrant for functional tests<a class="headerlink" href="#vagrant-for-functional-tests" title="Permalink to this headline"></a></h2>
+<h2>Vagrant for functional tests<a class="headerlink" href="#vagrant-for-functional-tests" title="Permalink to this heading"></a></h2>
 <p>To run functional tests, you’ll need to connect to OpenStack cloud(s)
 where tenant resources can be managed. As a developer, the easiest way
 is to run a local virtualized all-in-one OpenStack cloud. OS Migrate has
@@ -206,7 +207,7 @@ scratch later, run:</p>
 </div>
 </section>
 <section id="running-functional-tests">
-<h2>Running functional tests<a class="headerlink" href="#running-functional-tests" title="Permalink to this headline"></a></h2>
+<h2>Running functional tests<a class="headerlink" href="#running-functional-tests" title="Permalink to this heading"></a></h2>
 <p>Functional tests expect <code class="docutils literal notranslate"><span class="pre">tests/func/auth_tenant.yml</span></code> and
 <code class="docutils literal notranslate"><span class="pre">tests/func/auth_admin.yml</span></code> files to exist and contain
 <code class="docutils literal notranslate"><span class="pre">os_migrate_src_auth</span></code> and <code class="docutils literal notranslate"><span class="pre">os_migrate_dst_auth</span></code> variables
@@ -241,14 +242,14 @@ e.g.:</p>
 </div>
 </section>
 <section id="running-e2e-tests">
-<h2>Running e2e tests<a class="headerlink" href="#running-e2e-tests" title="Permalink to this headline"></a></h2>
+<h2>Running e2e tests<a class="headerlink" href="#running-e2e-tests" title="Permalink to this heading"></a></h2>
 <p>OS Migrate also has a suite of end to end, e2e, tests which tests a migration from one existing openstack deployment
 to another existing openstack deployment.</p>
 <p>You can also test with a single existing openstack deployment migrating from one project to another.</p>
 <p>These docs cover the testing of a single existing openstack deployment migrating from one project to another scenario.</p>
 <p>The concepts and prerequisites are the same for other deployments.</p>
 <section id="prerequisites-for-e2e-test">
-<h3>Prerequisites for e2e test<a class="headerlink" href="#prerequisites-for-e2e-test" title="Permalink to this headline"></a></h3>
+<h3>Prerequisites for e2e test<a class="headerlink" href="#prerequisites-for-e2e-test" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>Source environment credentials</p></li>
 <li><p>Destination environment credentials</p></li>
@@ -268,7 +269,7 @@ to another existing openstack deployment.</p>
 resources from one project to another.</p>
 </section>
 <section id="create-source-environment-and-destination-environment-projects-and-users">
-<h3>Create source environment and destination environment projects and users<a class="headerlink" href="#create-source-environment-and-destination-environment-projects-and-users" title="Permalink to this headline"></a></h3>
+<h3>Create source environment and destination environment projects and users<a class="headerlink" href="#create-source-environment-and-destination-environment-projects-and-users" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create the src user in the default domain with password &#39;redhat&#39;</span>
 <span class="n">openstack</span> <span class="n">user</span> <span class="n">create</span> <span class="o">--</span><span class="n">domain</span> <span class="n">default</span> <span class="o">--</span><span class="n">password</span> <span class="n">redhat</span> <span class="n">src</span>
 
@@ -300,7 +301,7 @@ resources from one project to another.</p>
 </div>
 </section>
 <section id="create-images">
-<h3>Create images<a class="headerlink" href="#create-images" title="Permalink to this headline"></a></h3>
+<h3>Create images<a class="headerlink" href="#create-images" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Download images</span>
 <span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">cloud</span><span class="o">.</span><span class="n">centos</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">centos</span><span class="o">/</span><span class="mi">8</span><span class="o">-</span><span class="n">stream</span><span class="o">/</span><span class="n">x86_64</span><span class="o">/</span><span class="n">images</span><span class="o">/</span><span class="n">CentOS</span><span class="o">-</span><span class="n">Stream</span><span class="o">-</span><span class="n">GenericCloud</span><span class="o">-</span><span class="mi">8</span><span class="o">-</span><span class="mf">20210603.0</span><span class="o">.</span><span class="n">x86_64</span><span class="o">.</span><span class="n">qcow2</span>
 <span class="n">wget</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">download</span><span class="o">.</span><span class="n">cirros</span><span class="o">-</span><span class="n">cloud</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="mf">0.4.0</span><span class="o">/</span><span class="n">cirros</span><span class="o">-</span><span class="mf">0.4.0</span><span class="o">-</span><span class="n">x86_64</span><span class="o">-</span><span class="n">disk</span><span class="o">.</span><span class="n">img</span>
@@ -313,7 +314,7 @@ resources from one project to another.</p>
 </div>
 </section>
 <section id="create-flavors">
-<h3>Create flavors<a class="headerlink" href="#create-flavors" title="Permalink to this headline"></a></h3>
+<h3>Create flavors<a class="headerlink" href="#create-flavors" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">openstack</span> <span class="n">flavor</span> <span class="n">create</span> <span class="o">--</span><span class="n">public</span> \
 <span class="o">--</span><span class="n">ram</span> <span class="mi">256</span> <span class="o">--</span><span class="n">disk</span> <span class="mi">5</span> <span class="o">--</span><span class="n">vcpus</span> <span class="mi">1</span> <span class="o">--</span><span class="n">rxtx</span><span class="o">-</span><span class="n">factor</span> <span class="mi">1</span> <span class="n">m1</span><span class="o">.</span><span class="n">xtiny</span>
 
@@ -323,7 +324,7 @@ resources from one project to another.</p>
 </div>
 </section>
 <section id="create-public-network">
-<h3>Create public network<a class="headerlink" href="#create-public-network" title="Permalink to this headline"></a></h3>
+<h3>Create public network<a class="headerlink" href="#create-public-network" title="Permalink to this heading"></a></h3>
 <p>If your OpenStack environment doesn’t have a public network created
 yet, you’ll need to create one. The parameters below should work if
 you’re deploying your OpenStack environment with Infrared Virsh
@@ -346,7 +347,7 @@ the parameters.</p>
 </div>
 </section>
 <section id="sample-e2e-config-yaml-using-the-above-prerequisites">
-<h3>Sample e2e config yaml using the above prerequisites<a class="headerlink" href="#sample-e2e-config-yaml-using-the-above-prerequisites" title="Permalink to this headline"></a></h3>
+<h3>Sample e2e config yaml using the above prerequisites<a class="headerlink" href="#sample-e2e-config-yaml-using-the-above-prerequisites" title="Permalink to this heading"></a></h3>
 <p>Also see <a class="reference external" href="https://github.com/os-migrate/os-migrate/blob/main/tests/e2e/tenant/scenario_variables.yml">https://github.com/os-migrate/os-migrate/blob/main/tests/e2e/tenant/scenario_variables.yml</a></p>
 <p>Auth URLs and network names will change based on your environment.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_auth</span><span class="p">:</span>
@@ -390,7 +391,7 @@ the parameters.</p>
 </div>
 </section>
 <section id="run-e2e-test-using-the-os-migrate-toolbox-and-the-above-config">
-<h3>Run e2e test using the OS Migrate toolbox and the above config<a class="headerlink" href="#run-e2e-test-using-the-os-migrate-toolbox-and-the-above-config" title="Permalink to this headline"></a></h3>
+<h3>Run e2e test using the OS Migrate toolbox and the above config<a class="headerlink" href="#run-e2e-test-using-the-os-migrate-toolbox-and-the-above-config" title="Permalink to this heading"></a></h3>
 <p>Copy the above config to file <cite>custom-config.yaml</cite> in the <cite>local</cite> directory of your local <cite>os-migrate</cite> source.</p>
 <p>Run the full test suite using the above config.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">OS_MIGRATE_E2E_TEST_ARGS</span><span class="o">=</span><span class="s1">&#39;-e @/root/os_migrate/local/custom-config.yaml&#39;</span> <span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span><span class="o">-</span><span class="n">e2e</span><span class="o">-</span><span class="n">tenant</span>
@@ -398,7 +399,7 @@ the parameters.</p>
 </div>
 </section>
 <section id="expected-output-from-successful-e2e-test-run">
-<h3>Expected output from successful e2e test run<a class="headerlink" href="#expected-output-from-successful-e2e-test-run" title="Permalink to this headline"></a></h3>
+<h3>Expected output from successful e2e test run<a class="headerlink" href="#expected-output-from-successful-e2e-test-run" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PLAY</span> <span class="n">RECAP</span> <span class="o">********************************************************************************************************</span>
 <span class="n">localhost</span>                  <span class="p">:</span> <span class="n">ok</span><span class="o">=</span><span class="mi">318</span>  <span class="n">changed</span><span class="o">=</span><span class="mi">110</span>  <span class="n">unreachable</span><span class="o">=</span><span class="mi">0</span>    <span class="n">failed</span><span class="o">=</span><span class="mi">0</span>    <span class="n">skipped</span><span class="o">=</span><span class="mi">27</span>   <span class="n">rescued</span><span class="o">=</span><span class="mi">0</span>    <span class="n">ignored</span><span class="o">=</span><span class="mi">0</span>
 <span class="n">os_migrate_conv_dst</span>        <span class="p">:</span> <span class="n">ok</span><span class="o">=</span><span class="mi">12</span>   <span class="n">changed</span><span class="o">=</span><span class="mi">5</span>    <span class="n">unreachable</span><span class="o">=</span><span class="mi">0</span>    <span class="n">failed</span><span class="o">=</span><span class="mi">0</span>    <span class="n">skipped</span><span class="o">=</span><span class="mi">3</span>    <span class="n">rescued</span><span class="o">=</span><span class="mi">0</span>    <span class="n">ignored</span><span class="o">=</span><span class="mi">0</span>
@@ -430,7 +431,7 @@ the parameters.</p>
 </div>
 </section>
 <section id="optional-tags-to-pass-to-e2e-tests">
-<h3>Optional tags to pass to e2e tests<a class="headerlink" href="#optional-tags-to-pass-to-e2e-tests" title="Permalink to this headline"></a></h3>
+<h3>Optional tags to pass to e2e tests<a class="headerlink" href="#optional-tags-to-pass-to-e2e-tests" title="Permalink to this heading"></a></h3>
 <p>There are a set of tags that can be used to filter which tasks to run during test.</p>
 <ul class="simple">
 <li><p>test_clean_before</p></li>
@@ -443,12 +444,12 @@ the parameters.</p>
 </ul>
 </section>
 <section id="optional-playbook-variable">
-<h3>Optional playbook variable<a class="headerlink" href="#optional-playbook-variable" title="Permalink to this headline"></a></h3>
+<h3>Optional playbook variable<a class="headerlink" href="#optional-playbook-variable" title="Permalink to this heading"></a></h3>
 <p>There is also an optional variable <cite>test_clean_conversion_hosts_after</cite> which can be set to <cite>false</cite> if you do not wish
 to clean up conversion hosts after test is complete.</p>
 </section>
 <section id="environment-variables">
-<h3>Environment variables<a class="headerlink" href="#environment-variables" title="Permalink to this headline"></a></h3>
+<h3>Environment variables<a class="headerlink" href="#environment-variables" title="Permalink to this heading"></a></h3>
 <p>The following environment variables can be used when running e2e tests.</p>
 <ul>
 <li><p><cite>OS_MIGRATE_E2E_TEST_ARGS</cite>: All of the above tags and playbook variables can be set using the

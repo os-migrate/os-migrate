@@ -14,6 +14,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -90,7 +91,7 @@
            <div itemprop="articleBody">
              
   <section id="contributing-code">
-<h1>Contributing Code<a class="headerlink" href="#contributing-code" title="Permalink to this headline"></a></h1>
+<h1>Contributing Code<a class="headerlink" href="#contributing-code" title="Permalink to this heading"></a></h1>
 <p>As an open source project, OS Migrate welcomes contributions from the
 community at large. The following guide provides information on how to
 add a new role to the project and where additional testing or
@@ -98,7 +99,7 @@ documentation artifacts should be added. This isn’t an exhaustive
 reference and is a living document subject to change as needed when
 the project formalizes any practice or pattern.</p>
 <section id="adding-a-new-role">
-<h2>Adding a New Role<a class="headerlink" href="#adding-a-new-role" title="Permalink to this headline"></a></h2>
+<h2>Adding a New Role<a class="headerlink" href="#adding-a-new-role" title="Permalink to this heading"></a></h2>
 <p>The most common contribution to OS Migrate is adding a new role to
 support the export or import of resources. The construction of the roles
 will likely follow a similar pattern. Each role also has specific unit
@@ -120,7 +121,7 @@ idempotency, and updates as a minimum. Additional tests as necessary.</p></li>
 Update developer or user documentation as needed.</p></li>
 </ul>
 <section id="creating-the-role-skeleton-automatically">
-<h3>Creating the role skeleton automatically<a class="headerlink" href="#creating-the-role-skeleton-automatically" title="Permalink to this headline"></a></h3>
+<h3>Creating the role skeleton automatically<a class="headerlink" href="#creating-the-role-skeleton-automatically" title="Permalink to this heading"></a></h3>
 <p>Adding roles into os-migrate can be easily achieved by
 creating the role structure skeleton automatically.</p>
 <p>From the repository root directory execute:</p>
@@ -135,7 +136,7 @@ creating the role structure skeleton automatically.</p>
 and the documentation stub.</p>
 </section>
 <section id="resources">
-<h3>Resources<a class="headerlink" href="#resources" title="Permalink to this headline"></a></h3>
+<h3>Resources<a class="headerlink" href="#resources" title="Permalink to this heading"></a></h3>
 <p>Resources are the primary data structures that are exported from and
 imported to clouds. In
 <code class="docutils literal notranslate"><span class="pre">os_migrate/plugins/module_utils/resource.py</span></code>, there is a
@@ -162,7 +163,7 @@ imported before are not attempted to be imported again.</p></li>
 </ul>
 </section>
 <section id="export-roles">
-<h3>Export Roles<a class="headerlink" href="#export-roles" title="Permalink to this headline"></a></h3>
+<h3>Export Roles<a class="headerlink" href="#export-roles" title="Permalink to this heading"></a></h3>
 <p>In the <code class="docutils literal notranslate"><span class="pre">defaults/main.yml</span></code> file, at a minimum you will need to
 define the <code class="docutils literal notranslate"><span class="pre">os_migrate_[resource]_filter</span></code> variable to support
 filtering of resources by the name property.</p>
@@ -193,7 +194,7 @@ for specific resources, and then calling the module you created for
 export.</p>
 </section>
 <section id="import-roles">
-<h3>Import Roles<a class="headerlink" href="#import-roles" title="Permalink to this headline"></a></h3>
+<h3>Import Roles<a class="headerlink" href="#import-roles" title="Permalink to this heading"></a></h3>
 <p>In the <code class="docutils literal notranslate"><span class="pre">defaults/main.yml</span></code> file, at a minimum you will need to
 define the same <code class="docutils literal notranslate"><span class="pre">os_migrate_[resource]_filter</span></code> variable as with
 export, and <code class="docutils literal notranslate"><span class="pre">import_[resource]_validate_file:</span> <span class="pre">true</span></code> variable to set
@@ -223,7 +224,7 @@ associated export role, reading the data file and then calling the
 module you created for import.</p>
 </section>
 <section id="necessary-documentation">
-<h3>Necessary Documentation<a class="headerlink" href="#necessary-documentation" title="Permalink to this headline"></a></h3>
+<h3>Necessary Documentation<a class="headerlink" href="#necessary-documentation" title="Permalink to this heading"></a></h3>
 <p>If this is your first time adding a pull request to the os-migrate
 repository, add your author information to <code class="docutils literal notranslate"><span class="pre">galaxy.yml</span></code>.</p>
 <p>In each Ansible module in <code class="docutils literal notranslate"><span class="pre">os_migrate/plugins/modules</span></code>, there is a
