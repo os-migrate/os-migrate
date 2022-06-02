@@ -33,7 +33,7 @@ options:
     type: dict
   auth:
     description:
-      - Dictionary with parameters for chosen auth type.
+      - Required if 'cloud' parameter not used.
     required: true
     type: dict
   auth_type:
@@ -53,7 +53,8 @@ options:
     type: str
   cloud:
     description:
-      - Ignored. Present for backwards compatibility.
+      - Cloud from clouds.yaml to use.
+      - Required if 'auth' parameter is not used.
     required: false
     type: raw
 '''
@@ -92,7 +93,6 @@ except ImportError:
 
 def main():
     argument_spec = openstack_full_argument_spec(
-        auth=dict(type='dict', no_log=True, required=True),
         filters=dict(required=False, type='dict', default={}),
     )
 
