@@ -65,7 +65,7 @@ def serialized_role_assignment():
             'user_id': 'uuid-test-user',
             'id': 'uuid-test-user-project-role-assignment'
         },
-        const.RES_TYPE: 'openstack.identity.UserProjectRoleAssignment'
+        const.RES_TYPE: 'openstack.identity.RoleAssignment'
     }
 
 
@@ -84,7 +84,7 @@ class RoleAssignment(unittest.TestCase):
         sdk_role = sdk_role_assignment()
         assignment = Assignment.from_sdk(None, sdk_role)
         params, info = assignment.params_and_info()
-        self.assertEqual(assignment.type(), 'openstack.identity.UserProjectRoleAssignment')
+        self.assertEqual(assignment.type(), 'openstack.identity.RoleAssignment')
         self.assertEqual(params['project_ref'], {
             'name': 'test-project',
             'project_name': None,

@@ -1,0 +1,2 @@
+os_migrate_user_filter:
+  - regex: .*
