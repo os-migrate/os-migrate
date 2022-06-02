@@ -1,4 +1,6 @@
 - hosts: migrator
+  environment:
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   tasks:
     - name: delete the conversion hosts inventory
       ansible.builtin.include_role:
@@ -11,6 +13,8 @@
   # Unregistration is best-effort. If the conversion hosts faced some
   # issues and are unreachable, we don't want the host deletion to
   # fail too.
+  environment:
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   ignore_unreachable: true
   tasks:
     - name: unregister the conversion hosts
@@ -19,6 +23,8 @@
         tasks_from: rhsm_unregister.yml
 
 - hosts: migrator
+  environment:
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   tasks:
     - name: delete the src conversion host
       ansible.builtin.include_role:

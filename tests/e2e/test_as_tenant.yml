@@ -25,6 +25,8 @@
 
 - name: Migration tests
   hosts: migrator
+  environment:
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   tasks:
     - name: clean workloads
       ansible.builtin.include_tasks: tasks/tenant/clean_workload.yml

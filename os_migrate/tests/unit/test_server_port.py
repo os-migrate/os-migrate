@@ -146,3 +146,50 @@ class TestServerPort(unittest.TestCase):
         sp = ServerPort.from_sdk(None, sdk_server_port(too_many_ips=True))
         with self.assertRaises(exc.InconsistentState):
             sp.nova_sdk_params(None)
+
+    def test_ports_sorted_by_nova_order(self):
+        sdk_port_stubs = [
+            {
+                'fixed_ips': [{'ip_address': '192.168.22.11'}],
+                'id': 'uuid-test-server-port-2',
+            },
+            {
+                'fixed_ips': [{'ip_address': '192.168.3.11'}],
+                'id': 'uuid-test-server-port-3',
+            },
+            {
+                'fixed_ips': [{'ip_address': '192.168.111.11'}],
+                'id': 'uuid-test-server-port-1',
+            },
+        ]
+        sdk_server_stub = {
+            'addresses': {
+                'net-1': [
+                    {'OS-EXT-IPS:type': 'fixed',
+                     'addr': '192.168.111.11',
+                     'version': 4},
+                    {'OS-EXT-IPS:type': 'floating',
+                     'addr': '10.19.2.50',
+                     'version': 4},
+                ],
+                'net-2': [
+                    {'OS-EXT-IPS:type': 'fixed',
+                     'addr': '192.168.22.11',
+                     'version': 4},
+                ],
+                'net-3': [
+                    {'OS-EXT-IPS:type': 'fixed',
+                     'addr': '192.168.3.11',
+                     'version': 4},
+                    {'OS-EXT-IPS:type': 'floating',
+                     'addr': '10.19.2.51',
+                     'version': 4},
+                ],
+            },
+        }
+        sorted_ports = server_port._ports_sorted_by_nova_order(sdk_server_stub, sdk_port_stubs)
+        sorted_ids = list(map(lambda p: p['id'], sorted_ports))
+        self.assertEqual(
+            sorted_ids,
+            ['uuid-test-server-port-1', 'uuid-test-server-port-2', 'uuid-test-server-port-3']
+        )
