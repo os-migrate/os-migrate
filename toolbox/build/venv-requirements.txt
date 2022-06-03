@@ -6,21 +6,22 @@ ansible-core
 openstacksdk<0.99
 
 # test
-ansible-lint
-bashate
-flake8
-pylint
-pytest
-mock
-pytest-mock
-pytest-xdist
-pycodestyle
 python-openstackclient
-voluptuous
-yamllint
+
+ansible-lint==6.2.1
+bashate==2.1.0
+flake8==4.0.1
+mock==4.0.3
+pylint==2.13.9
+pycodestyle==2.8.0
+pytest==7.1.2
+pytest-mock==3.7.0
+pytest-xdist==2.5.0
+voluptuous==0.13.1
+yamllint==1.26.3
 
 # docs
-gitchangelog
-ruamel.yaml
-sphinx-rtd-theme
-markdown
+gitchangelog==3.0.4
+markdown==3.3.7
+ruamel.yaml==0.17.21
+sphinx-rtd-theme==1.0.0
