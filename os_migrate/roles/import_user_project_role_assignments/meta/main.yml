@@ -1,0 +1,16 @@
+---
+galaxy_info:
+  author: os-migrate
+  role_name: import_user_project_role_assignment
+  namespace: os_migrate
+  description: os-migrate resource
+  company: Red Hat
+  license: Apache-2.0
+  min_ansible_version: 2.9
+  platforms:
+    - name: Fedora
+      versions:
+        - 30
+  galaxy_tags: ["osmigrate"]
+dependencies:
+  - role: os_migrate.os_migrate.prelude_dst

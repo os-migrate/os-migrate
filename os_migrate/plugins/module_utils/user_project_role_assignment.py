@@ -64,26 +64,27 @@ class UserProjectRoleAssignment(resource.Resource):
 
         return refs
 
-    # def create_or_update(self, conn, filters=None):
-    #     """Create the resource `self` in the target OpenStack cloud connection
-    #     `conn`, or update it if it already exists but needs to be
-    #     updated, or do nothing if it already matches desired
-    #     state. Existing resources to be looked up for idempotence
-    #     purposes will be filtered by `filters`.
+    def create_or_update(self, conn, filters=None):
+        """Create the resource `self` in the target OpenStack cloud connection
+        `conn`, or update it if it already exists but needs to be
+        updated, or do nothing if it already matches desired
+        state. Existing resources to be looked up for idempotence
+        purposes will be filtered by `filters`.
 
-    #     Returns: True if any change was made, False otherwise
-    #     """
-    #     refs = self._refs_from_ser(conn)
-    #     sdk_params = self._to_sdk_params(refs)
-    #     exists = conn.identity.validate_user_has_project_role(
-    #         sdk_params['project_id'], sdk_params['user_id'], sdk_params['role_id']
-    #     )
-    #     if not exists:
-    #         conn.identity.assign_project_to_user(
-    #             sdk_params['project_id'], sdk_params['user_id'], sdk_params['role_id']
-    #         )
-    #         return True
-    #     return False
+        Returns: True if any change was made, False otherwise
+        """
+
+        refs = self._refs_from_ser(conn)
+        sdk_params = self._to_sdk_params(refs)
+        exists = conn.identity.role_assignments(**sdk_params)
+
+        if not exists:
+            conn.identity.assign_project_role_to_user(
+                sdk_params['project_id'], sdk_params['user_id'], sdk_params['role_id']
+            )
+            return True
+
+        return False
 
     def _is_same_resource(self, target_data):
         """Check if `target_data` dict is the same resource as self.
@@ -101,16 +102,3 @@ class UserProjectRoleAssignment(resource.Resource):
                      target_data[const.RES_INFO].get('user_id', '__undefined2__'))
 
         return same_project and same_role and same_user
-
-    # @staticmethod
-    # def _create_sdk_res(conn, sdk_params):
-    #     conn.identity.assign_project_to_user(
-    #         sdk_params['project_id'], sdk_params['user_id'], sdk_params['role_id']
-    #     )
-    #     return conn.identity.validate_user_has_project_role(
-    #         sdk_params['project_id'], sdk_params['user_id'], sdk_params['role_id']
-    #     )
-
-    # @staticmethod
-    # def _find_sdk_res(conn, name_or_id, filters=None):
-    #     return conn.identity.role_assignments(name_or_id, **(filters or {}))

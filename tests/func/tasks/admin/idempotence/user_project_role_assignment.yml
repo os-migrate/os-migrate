@@ -2,7 +2,7 @@
 
 - name: export user project role assignment
   ansible.builtin.include_role:
-    name: os_migrate.os_migrate.export_user_project_role_assignment
+    name: os_migrate.os_migrate.export_user_project_role_assignments
   vars:
     os_migrate_user_filter:
       - regex: '^osm_'
@@ -37,3 +37,33 @@
       {{ user_project_role_assignments_resources_idem | to_nice_yaml }}
       user_project_role_assignments_resources:
       {{ user_project_role_assignments_resources | to_nice_yaml }}
+
+### IMPORT IDEMPOTENCE ###
+
+- name: look up osm_role dst cloud
+  openstack.cloud.identity_role:
+    auth: "{{ os_migrate_dst_auth }}"
+    name: osm_role
+  register: role_assignment_import_idem_before
+
+- name: import user project role assignment
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.import_user_project_role_assignments
+
+- name: look up osm_role in dst cloud again
+  openstack.cloud.identity_role:
+    auth: "{{ os_migrate_dst_auth }}"
+    name: osm_role
+  register: role_assignment_import_idem_after
+
+- name: ensure osm_role did not change
+  ansible.builtin.assert:
+    that:
+      - role_assignment_import_idem_before['role'].name != None
+      - "role_assignment_import_idem_before['role']['name'] \
+         == role_assignment_import_idem_after['role']['name']"
+    fail_msg: |
+      role_assignment_import_idem_before name:
+      {{ role_assignment_import_idem_before['role'].name }}
+      role_assignment_import_idem_after name:
+      {{ role_assignment_import_idem_after['role'].name }}

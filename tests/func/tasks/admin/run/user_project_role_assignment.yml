@@ -1,6 +1,6 @@
 - name: export user project role assignment
   ansible.builtin.include_role:
-    name: os_migrate.os_migrate.export_user_project_role_assignment
+    name: os_migrate.os_migrate.export_user_project_role_assignments
   vars:
     os_migrate_user_filter:
       - regex: '^osm_'
@@ -24,14 +24,14 @@
                            '/user_project_role_assignments.yml') | from_yaml)
                    ['resources'] }}"
 
-# - name: verify data contents
-#   ansible.builtin.assert:
-#     that:
-#       - (user_project_role_assignments_resources |
-#         json_query("[?params.project_ref.name ==
-#         'osmdst_project'].params.project_ref.name")
-#         == ['osmdst_project'])
+- name: verify role assignment  data contents
+  ansible.builtin.assert:
+    that:
+      - (user_project_role_assignments_resources |
+        json_query("[?params.project_ref.name ==
+        'osmdst_project'].params.project_ref.name")
+        == ['osmdst_project'])
 
-# - name: import projects
-#   ansible.builtin.include_role:
-#     name: os_migrate.os_migrate.import_projects
+- name: import user project role assignments
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.import_user_project_role_assignments
