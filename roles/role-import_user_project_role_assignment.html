@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Role - validate_resource_files &mdash; os-migrate  documentation</title>
+  <title>Role - import_user_project_role_assignments &mdash; os-migrate  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -19,8 +19,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Documented modules in os-migrate" href="../modules.html" />
-    <link rel="prev" title="Role - validate_data_dir" href="role-validate_data_dir.html" /> 
+    <link rel="next" title="Role - import_users" href="role-import_users.html" />
+    <link rel="prev" title="Role - import_subnets" href="role-import_subnets.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -67,7 +67,13 @@
 <li class="toctree-l2"><a class="reference internal" href="role-import_security_group_rules.html">Role - import_security_group_rules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-import_security_groups.html">Role - import_security_groups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-import_subnets.html">Role - import_subnets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="role-import_user_project_role_assignment.html">Role - import_user_project_role_assignments</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Role - import_user_project_role_assignments</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#r-o-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">Role Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#r-o-l-e-d-e-f-a-u-l-t-s">Role Defaults</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="role-import_users.html">Role - import_users</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-import_users_keypairs.html">Role - import_users_keypairs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-import_workloads.html">Role - import_workloads</a></li>
@@ -75,13 +81,7 @@
 <li class="toctree-l2"><a class="reference internal" href="role-prelude_dst.html">Role - prelude_dst</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-prelude_src.html">Role - prelude_src</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-validate_data_dir.html">Role - validate_data_dir</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Role - validate_resource_files</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#r-o-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">Role Documentation</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#r-o-l-e-d-e-f-a-u-l-t-s">Role Defaults</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="role-validate_resource_files.html">Role - validate_resource_files</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../modules.html">Documented modules in os-migrate</a></li>
@@ -104,9 +104,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../roles.html">Documented roles in os-migrate</a> &raquo;</li>
-      <li>Role - validate_resource_files</li>
+      <li>Role - import_user_project_role_assignments</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/roles/role-validate_resource_files.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/roles/role-import_user_project_role_assignment.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -114,18 +114,23 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="role-validate-resource-files">
-<h1>Role - validate_resource_files<a class="headerlink" href="#role-validate-resource-files" title="Permalink to this heading"></a></h1>
+  <section id="role-import-user-project-role-assignments">
+<h1>Role - import_user_project_role_assignments<a class="headerlink" href="#role-import-user-project-role-assignments" title="Permalink to this heading"></a></h1>
 <section id="r-o-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">
 <h2>Role Documentation<a class="headerlink" href="#r-o-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n" title="Permalink to this heading"></a></h2>
-<p>The role validate_resource_files
-will validate the serialized data of the resource file.</p>
-<p>For further information about the role validate_resource_files refer to the
-<a href="https://os-migrate.github.io/os-migrate/roles/role-validate_resource_files.html">official docs</a>.</p><section id="r-o-l-e-d-e-f-a-u-l-t-s">
+<p>The role import_user_project_role_assignment
+will validate the serialized data of the
+exported user project role assignments,
+will read the exported metadata, and it
+will create the resources in the destination tenant.</p>
+<p>For further information about the role 
+import_user_project_role_assignment refer to the
+<a href="https://os-migrate.github.io/os-migrate/roles/role-import_user_project_role_assignment.html">official docs</a>.</p><section id="r-o-l-e-d-e-f-a-u-l-t-s">
 <h3>Role Defaults<a class="headerlink" href="#r-o-l-e-d-e-f-a-u-l-t-s" title="Permalink to this heading"></a></h3>
-<dd><p>This section highlights all of the defaults and variables set within the “validate_resource_files” role.</p>
+<dd><p>This section highlights all of the defaults and variables set within the “import_user_project_role_assignments” role.</p>
 </dd>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_validate_files</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_user_filter</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.*</span><span class="w"></span>
 </pre></div>
 </div>
 </section>
@@ -136,8 +141,8 @@ will validate the serialized data of the resource file.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="role-validate_data_dir.html" class="btn btn-neutral float-left" title="Role - validate_data_dir" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../modules.html" class="btn btn-neutral float-right" title="Documented modules in os-migrate" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="role-import_subnets.html" class="btn btn-neutral float-left" title="Role - import_subnets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="role-import_users.html" class="btn btn-neutral float-right" title="Role - import_users" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

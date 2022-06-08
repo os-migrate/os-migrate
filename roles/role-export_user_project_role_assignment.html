@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Role - export_users &mdash; os-migrate  documentation</title>
+  <title>Role - export_user_project_role_assignments &mdash; os-migrate  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -53,7 +53,7 @@
 <li class="toctree-l2"><a class="reference internal" href="role-export_security_group_rules.html">Role - export_security_group_rules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-export_security_groups.html">Role - export_security_groups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-export_subnets.html">Role - export_subnets</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Role - export_users</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Role - export_user_project_role_assignments</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#r-o-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">Role Documentation</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#r-o-l-e-d-e-f-a-u-l-t-s">Role Defaults</a></li>
 </ul>
@@ -73,6 +73,7 @@
 <li class="toctree-l2"><a class="reference internal" href="role-import_security_group_rules.html">Role - import_security_group_rules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-import_security_groups.html">Role - import_security_groups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-import_subnets.html">Role - import_subnets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="role-import_user_project_role_assignment.html">Role - import_user_project_role_assignments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-import_users.html">Role - import_users</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-import_users_keypairs.html">Role - import_users_keypairs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role-import_workloads.html">Role - import_workloads</a></li>
@@ -103,7 +104,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../roles.html">Documented roles in os-migrate</a> &raquo;</li>
-      <li>Role - export_users</li>
+      <li>Role - export_user_project_role_assignments</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/roles/role-export_user_project_role_assignment.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -113,8 +114,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="role-export-users">
-<h1>Role - export_users<a class="headerlink" href="#role-export-users" title="Permalink to this heading"></a></h1>
+  <section id="role-export-user-project-role-assignments">
+<h1>Role - export_user_project_role_assignments<a class="headerlink" href="#role-export-user-project-role-assignments" title="Permalink to this heading"></a></h1>
 <section id="r-o-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">
 <h2>Role Documentation<a class="headerlink" href="#r-o-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n" title="Permalink to this heading"></a></h2>
 <p>The role export_user_project_role_assignment
@@ -127,9 +128,9 @@ the result in the output folder.</p>
 export_user_project_role_assignment refer to the
 <a href="https://os-migrate.github.io/os-migrate/roles/role-export_user_project_role_assignment.html">official docs</a>.</p><section id="r-o-l-e-d-e-f-a-u-l-t-s">
 <h3>Role Defaults<a class="headerlink" href="#r-o-l-e-d-e-f-a-u-l-t-s" title="Permalink to this heading"></a></h3>
-<dd><p>This section highlights all of the defaults and variables set within the “export_user_project_role_assignment” role.</p>
+<dd><p>This section highlights all of the defaults and variables set within the “export_user_project_role_assignments” role.</p>
 </dd>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_user_project_role_assignment_filter</span><span class="p">:</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_user_filter</span><span class="p">:</span><span class="w"></span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.*</span><span class="w"></span>
 </pre></div>
 </div>
