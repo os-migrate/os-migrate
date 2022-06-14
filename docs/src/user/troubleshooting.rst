@@ -34,3 +34,25 @@ Common issues
    data files. This option should be used with caution, but it may
    prove useful in special scenarios, e.g. if external causes prevent
    re-exporting the data.
+
+- ``AnsibleCensoringStringIssue: workloads.yml setup task altering
+  log_file path during preliminary import workload steps. (As a 
+  result susequent import tasks are failing due to non-existent path
+  error.)``
+
+  OS Migrate uses OpenStack modules to build their argument spec by 
+  using a function in OpenStack module utils. When project names are
+  marked as ``no_log`` it causes values to be censored in the 
+  response. This is seen here in the import workloads setup task  where
+  ``/home/project_name/workloads/import_workloads.yml`` becomes 
+  ``/home/******/workloads/import_workloads.yml``. 
+
+  OS Migrate cannot specify that only the password in the credentials 
+  dictionary should be treated as a secret, instead the whole 
+  credentials dictionary is marked as a secret.
+
+  A workaround to this is to sanitize the project name with something
+  in a pre-migration playbook that sets up storage directories for 
+  OS Migrate variables or data. This can prove beneficial in the 
+  event of users running into censored string issues relating to 
+  ansible.
