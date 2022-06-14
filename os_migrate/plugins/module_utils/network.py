@@ -50,6 +50,7 @@ class Network(resource.Resource):
     ]
     skip_falsey_sdk_params = [
         'availability_zone_hints',
+        'dns_domain'
     ]
 
     @classmethod
