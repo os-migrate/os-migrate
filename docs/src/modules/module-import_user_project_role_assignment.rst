@@ -1,5 +1,5 @@
 ===================================================
-Module - import_export_user_project_role_assignment
+Module - import_user_project_role_assignment
 ===================================================
 
 
