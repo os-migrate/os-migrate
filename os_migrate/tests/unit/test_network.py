@@ -162,3 +162,12 @@ class TestNetwork(unittest.TestCase):
         # disallowed params when creating a network
         self.assertNotIn('availability_zones', sdk_params)
         self.assertNotIn('revision_number', sdk_params)
+
+    def test_network_import_when_dns_domain_is_false(self):
+        ser = serialized_network()
+        ser['params']['dns_domain'] = ''
+        net = Network.from_data(ser)
+        refs = net._refs_from_ser(None)
+        sdk_params = net._to_sdk_params(refs)
+
+        self.assertNotIn('dns_domain', sdk_params)
