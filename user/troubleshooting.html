@@ -120,6 +120,25 @@ data files. This option should be used with caution, but it may
 prove useful in special scenarios, e.g. if external causes prevent
 re-exporting the data.</p>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AnsibleCensoringStringIssue:</span> <span class="pre">workloads.yml</span> <span class="pre">setup</span> <span class="pre">task</span> <span class="pre">altering</span>
+<span class="pre">log_file</span> <span class="pre">path</span> <span class="pre">during</span> <span class="pre">preliminary</span> <span class="pre">import</span> <span class="pre">workload</span> <span class="pre">steps.</span> <span class="pre">(As</span> <span class="pre">a</span>
+<span class="pre">result</span> <span class="pre">susequent</span> <span class="pre">import</span> <span class="pre">tasks</span> <span class="pre">are</span> <span class="pre">failing</span> <span class="pre">due</span> <span class="pre">to</span> <span class="pre">non-existent</span> <span class="pre">path</span>
+<span class="pre">error.)</span></code></p>
+<p>OS Migrate uses OpenStack modules to build their argument spec by
+using a function in OpenStack module utils. When project names are
+marked as <code class="docutils literal notranslate"><span class="pre">no_log</span></code> it causes values to be censored in the
+response. This is seen here in the import workloads setup task  where
+<code class="docutils literal notranslate"><span class="pre">/home/project_name/workloads/import_workloads.yml</span></code> becomes
+<code class="docutils literal notranslate"><span class="pre">/home/******/workloads/import_workloads.yml</span></code>.</p>
+<p>OS Migrate cannot specify that only the password in the credentials
+dictionary should be treated as a secret, instead the whole
+credentials dictionary is marked as a secret.</p>
+<p>A workaround to this is to sanitize the project name with something
+in a pre-migration playbook that sets up storage directories for
+OS Migrate variables or data. This can prove beneficial in the
+event of users running into censored string issues relating to
+ansible.</p>
+</li>
 </ul>
 </section>
 </section>
