@@ -14,6 +14,7 @@ New
 
 Fix
 ~~~
+- Update to resource type. [cloudguruab]
 - Export of subnets with multiple allocation pools. [Jiri Stransky]
 
   Subnets with multiple allocation pools previously crashed on export
