@@ -56,3 +56,27 @@ Common issues
   OS Migrate variables or data. This can prove beneficial in the 
   event of users running into censored string issues relating to 
   ansible.
+
+- ``KeypairMigrationPitfalls: Keys are not seen by user performing
+  migrations. When a user creates keypairs and assigns those keypairs
+  to its inteded resource its noted that users used in the migration
+  process can access the inteded resources but not the required keys.
+  This leads to checks failing since the user can't check if the key
+  exist in the source cloud.``
+
+  OS Migrate has an export_user_keypairs.yml which escalates using admin
+  privileges. By default it iterates over all users and all their keys,
+  but it listens for filter variables which can help scope down the export.
+
+  How to use those key exports depends on how the workload migration 
+  should be done. Either the keys can be uploaded to destination to the 
+  respective users via import_users_keypairs.yml playbook, and destination
+  credentials for workload migration have to be of the users who can see the
+  keys. 
+
+  An alternative for the following issues is the user_ref.name and
+  user_ref.domain_name in the exported YAML could be edited from actual
+  names to %auth% values, and that data file could then be used with
+  import_keypairs.yml (run as a tenant user, not admin), which would import
+  all the various keys under a single user, and that user could then
+  perform the migration, having all the necessary public keys.
