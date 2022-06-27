@@ -12,6 +12,11 @@ New
 - User project role assignments export. [Adrian Brown]
 - Introduced validate_resource_files role (#532) [Adrian Brown]
 
+Changes
+~~~~~~~
+- Documentation for keypair migration pitfalls and solutions.
+  [cloudguruab]
+
 Fix
 ~~~
 - Update to resource type. [cloudguruab]
