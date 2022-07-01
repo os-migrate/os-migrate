@@ -1,13 +1,23 @@
 clouds:
   src:
     os_migrate_src_auth:
-      auth_url:
-      project_name: demo
-      username: demo
-      password: 0penstack
-    os_migrate_src_auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
-    os_migrate_src_region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+      auth_url: http://10.0.0.131:5000/v3
+      password: redhat
+      project_domain_name: Default
+      project_name: src
+      user_domain_name: Default
+      username: src
+      auth_type: password
+    os_migrate_src_auth_type: password
+    os_migrate_src_region_name: regionOne
   dst:
-    os_migrate_dst_auth: "{{ os_migrate_dst_auth|default(omit) }}"
-    os_migrate_dst_auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
-    os_migrate_dst_region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+    os_migrate_dst_auth:
+      auth_url: http://10.0.0.131:5000/v3
+      password: redhat
+      project_domain_name: Default
+      project_name: dst
+      user_domain_name: Default
+      username: dst
+      auth_type: password
+    os_migrate_dst_auth_type: password
+    os_migrate_dst_region_name: regionOne
