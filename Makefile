@@ -107,7 +107,7 @@ test-e2e-tenant: reinstall
 		-e os_migrate_data_dir=$(ROOT_DIR)/tests/e2e/tmp/data \
 		-e os_migrate_conversion_host_key=$(ROOT_DIR)/tests/e2e/tmpdata/conversion/ssh.key \
 		-e @$(ROOT_DIR)/tests/auth_tenant.yml \
-		-e @$(ROOT_DIR)/tests/e2e/tasks/tenant/scenario_variables.yml \
+		-e @$(ROOT_DIR)/tests/e2e/tasks/demo/scenario_variables.yml \
 		$(OS_MIGRATE_E2E_TEST_ARGS) test_as_tenant.yml
 
 test-e2e-admin: reinstall

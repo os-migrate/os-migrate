@@ -2,7 +2,7 @@
   hosts: migrator
   tasks:
     - name: check independent
-      ansible.builtin.import_tasks: tasks/tenant/independent/all.yml
+      ansible.builtin.import_tasks: tasks/demo/independent/all.yml
   tags:
     - test_independent
 
@@ -12,21 +12,21 @@
     - name: prepare
       ansible.builtin.import_tasks: tasks/global/prep.yml
     - name: clean
-      ansible.builtin.include_tasks: tasks/tenant/clean/all.yml
+      ansible.builtin.include_tasks: tasks/demo/clean/all.yml
       args:
         apply:
           tags: test_clean_before
       tags: always
     - name: seed
-      ansible.builtin.import_tasks: tasks/tenant/seed/all.yml
+      ansible.builtin.import_tasks: tasks/demo/seed/all.yml
     - name: run
-      ansible.builtin.import_tasks: tasks/tenant/run/all.yml
+      ansible.builtin.import_tasks: tasks/demo/run/all.yml
     - name: check idempotence
-      ansible.builtin.import_tasks: tasks/tenant/idempotence/all.yml
+      ansible.builtin.import_tasks: tasks/demo/idempotence/all.yml
     - name: update
-      ansible.builtin.import_tasks: tasks/tenant/update/all.yml
+      ansible.builtin.import_tasks: tasks/demo/update/all.yml
     - name: clean
-      ansible.builtin.include_tasks: tasks/tenant/clean/all.yml
+      ansible.builtin.include_tasks: tasks/demo/clean/all.yml
       args:
         apply:
           tags: test_clean_after

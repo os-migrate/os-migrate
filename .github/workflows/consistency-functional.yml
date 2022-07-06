@@ -361,6 +361,9 @@ jobs:
         run: |
           echo "- Get endpoints"
           openstack --os-cloud devstack-admin --os-region RegionOne endpoint list
+      - name: Get clouds.yaml content
+        run: |
+          cat /etc/openstack/clouds.yaml
       - name: Connect functional tests to devstack
         run: |
           cp /etc/openstack/clouds.yaml tests/clouds.yaml && \
