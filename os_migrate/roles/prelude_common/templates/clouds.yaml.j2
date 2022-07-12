@@ -1,0 +1,9 @@
+clouds:
+  src:
+    os_migrate_src_auth: {{os_migrate_src_auth|to_nice_yaml(indent=2)|indent(2)}}
+    os_migrate_src_auth_type: {{os_migrate_src_auth_type|to_nice_yaml(indent=2)|indent(2)}}
+    os_migrate_src_region_name: {{os_migrate_src_region_name|to_nice_yaml(indent=2)|indent(2)}}
+  dst:
+    os_migrate_dst_auth: {{os_migrate_dst_auth|to_nice_yaml(indent=2)|indent(2)}}
+    os_migrate_dst_auth_type: {{os_migrate_dst_auth_type|to_nice_yaml(indent=2)|indent(2)}}
+    os_migrate_dst_region_name: {{os_migrate_dst_region_name|to_nice_yaml(indent=2)|indent(2)}}

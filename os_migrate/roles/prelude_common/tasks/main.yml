@@ -36,3 +36,8 @@
     success_msg: |
       The installed openstacksdk version {{ _installed_openstacksdk_versions }}
       is >= than {{ os_migrate_common_minimum_openstacksdk_version }}
+
+- name: write auth file
+  ansible.builtin.template:
+    src: clouds.yaml.j2
+    dest: "{{ os_migrate_data_dir }}/clouds.yaml"
