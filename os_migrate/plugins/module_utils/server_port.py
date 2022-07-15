@@ -6,11 +6,46 @@ import openstack
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import exc, const, reference, resource
 
+SERVER_PORT_ORDER_MAX = 1000
+
 
 def server_ports(conn, sdk_ser):
     # the device_owner part after the colon varies - it is the availability zone
-    return filter(lambda p: p.get('device_owner', '').startswith('compute:'),
-                  conn.network.ports(device_id=sdk_ser['id']))
+    sdk_ports = filter(lambda p: p.get('device_owner', '').startswith('compute:'),
+                       conn.network.ports(device_id=sdk_ser['id']))
+    return _ports_sorted_by_nova_order(sdk_ser, sdk_ports)
+
+
+# This function is O(n^3) but we're dealing with very small numbers.
+# E.g. even if we had a VM with 20 NICs and each NIC had 20 IPs (which
+# is unlikely to ever happen), we'd be looking at 8000 loops max.
+def _ports_sorted_by_nova_order(sdk_ser, sdk_ports):
+    ordered_ports = list(map(lambda p: [SERVER_PORT_ORDER_MAX, p], sdk_ports))
+    nova_ips_sorted = _nova_fixed_ips_sorted(sdk_ser)
+    for idx, ip in enumerate(nova_ips_sorted):
+        for ordered_port in ordered_ports:
+            if _neutron_port_has_fixed_ip(ordered_port[1], ip):
+                ordered_port[0] = idx
+                continue
+    sorted_ports = sorted(ordered_ports, key=lambda ordered_port: ordered_port[0])
+    return map(lambda ordered_port: ordered_port[1], sorted_ports)
+
+
+def _nova_fixed_ips_sorted(sdk_ser):
+    ips_sorted = []
+    for net in sdk_ser['addresses']:
+        for addr in sdk_ser['addresses'][net]:
+            if addr.get('OS-EXT-IPS:type') != 'fixed':
+                continue
+            ips_sorted.append(addr['addr'])
+    return ips_sorted
+
+
+def _neutron_port_has_fixed_ip(sdk_port, ip):
+    for addr in sdk_port['fixed_ips']:
+        if addr.get('ip_address') == ip:
+            return True
+    return False
 
 
 class ServerPort(resource.Resource):
