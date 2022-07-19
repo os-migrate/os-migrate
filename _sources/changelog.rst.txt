@@ -7,6 +7,22 @@ Changelog
 
 New
 ~~~
+- Sort exported server ports as they appear in Nova API. [Jiri Stransky]
+
+  We export server port info from Neutron API, because it gives more
+  information about the port. However, querying ports from Neutron seems
+  to give a somewhat random order of the ports.
+
+  Now we still export the same Neutron info about ports, but we sort
+  them based on the order in which the VM IP addresses appear in
+  OpenStack SDK's 'compute.get_server' return value.
+
+  This approach cannot guarantee that the original order of NICs is
+  preserved during migration (Nova does not guarantee NIC ordering [1]),
+  but it makes it more likely that the NIC order will be preserved
+  during migration.
+
+  [1] https://bugzilla.redhat.com/show_bug.cgi?id=1798126
 - Skip serialization if dns_domain is false. [cloudguruab]
 - Import user project role assignment. [cloudguruab]
 - User project role assignments export. [Adrian Brown]

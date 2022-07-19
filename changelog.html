@@ -169,7 +169,20 @@
 <h2>(unreleased)<a class="headerlink" href="#unreleased" title="Permalink to this heading"></a></h2>
 <section id="new">
 <h3>New<a class="headerlink" href="#new" title="Permalink to this heading"></a></h3>
-<ul class="simple">
+<ul>
+<li><p>Sort exported server ports as they appear in Nova API. [Jiri Stransky]</p>
+<p>We export server port info from Neutron API, because it gives more
+information about the port. However, querying ports from Neutron seems
+to give a somewhat random order of the ports.</p>
+<p>Now we still export the same Neutron info about ports, but we sort
+them based on the order in which the VM IP addresses appear in
+OpenStack SDK’s ‘compute.get_server’ return value.</p>
+<p>This approach cannot guarantee that the original order of NICs is
+preserved during migration (Nova does not guarantee NIC ordering [1]),
+but it makes it more likely that the NIC order will be preserved
+during migration.</p>
+<p>[1] <a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=1798126">https://bugzilla.redhat.com/show_bug.cgi?id=1798126</a></p>
+</li>
 <li><p>Skip serialization if dns_domain is false. [cloudguruab]</p></li>
 <li><p>Import user project role assignment. [cloudguruab]</p></li>
 <li><p>User project role assignments export. [Adrian Brown]</p></li>
