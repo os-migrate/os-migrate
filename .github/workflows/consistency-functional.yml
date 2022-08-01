@@ -3,6 +3,8 @@ on:
   push:
     paths-ignore:
       - 'docs/**'
+    branches:
+      - main
   pull_request:
   # Run the functional tests every 8 hours.
   # This will help to identify faster if
