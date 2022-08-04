@@ -23,9 +23,7 @@
 
 - name: get source conversion host address
   os_migrate.os_migrate.os_conversion_host_info:
-    auth: "{{ os_migrate_src_auth }}"
-    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+    cloud: dst
     server: "{{ hostvars['os_migrate_conv_src'].os_migrate_conversion_host_name }}"
     filters: "{{ os_migrate_src_filters }}"
     validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
@@ -41,9 +39,7 @@
 
 - name: get destination conversion host address
   os_migrate.os_migrate.os_conversion_host_info:
-    auth: "{{ os_migrate_dst_auth }}"
-    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+    cloud: dst
     server: "{{ hostvars['os_migrate_conv_dst'].os_migrate_conversion_host_name }}"
     filters: "{{ os_migrate_dst_filters }}"
     validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
