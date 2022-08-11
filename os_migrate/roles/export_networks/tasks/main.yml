@@ -6,7 +6,6 @@
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  environment: env
   register: src_networks_info
 
 - name: create id-name pairs of networks to export
@@ -32,5 +31,4 @@
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-  environment: env
   loop: "{{ export_networks_ids_names }}"
