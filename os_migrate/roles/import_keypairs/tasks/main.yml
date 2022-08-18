@@ -12,7 +12,7 @@
 
 - name: import keypairs
   os_migrate.os_migrate.import_keypair:
-    cloud: src
+    cloud: dst
     data: "{{ item }}"
     validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
     ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
