@@ -1,4 +1,6 @@
 - hosts: migrator
+  environment:
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
   tasks:
     - name: deploy the src conversion host inventory

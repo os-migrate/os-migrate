@@ -40,4 +40,4 @@
 - name: write to auth file
   ansible.builtin.template:
     src: clouds.yaml.j2
-    dest: "{{ os_migrate_data_dir }}/clouds.yaml"
+    dest: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
