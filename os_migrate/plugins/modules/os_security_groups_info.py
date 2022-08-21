@@ -38,7 +38,7 @@ options:
     type: str
   cloud:
     description:
-      - Ignored. Present for backwards compatibility.
+      - Cloud resource from clouds.yml file
     required: false
     type: raw
 '''
