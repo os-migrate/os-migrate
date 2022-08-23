@@ -13,6 +13,7 @@ fi
 
 # Apply virtualenv version overrides if defined
 if [ -n "${OS_MIGRATE_REQUIREMENTS_OVERRIDE:-}" ]; then
+    python3 -m pip cache purge && rm -rf $(python3 -m pip cache dir)
     python3 -m pip install --upgrade pip
 
     # Workaround for ERROR: Could not install packages due to an
