@@ -17,7 +17,7 @@
     host: "{{ hostvars['os_migrate_conv_src']['ansible_ssh_host'] }}"
     search_regex: OpenSSH
     sleep: 5
-    timeout: 600
+    timeout: 900
 
 - name: wait for dst conversion host reachability
   ansible.builtin.wait_for:
@@ -25,4 +25,4 @@
     host: "{{ hostvars['os_migrate_conv_dst']['ansible_ssh_host'] }}"
     search_regex: OpenSSH
     sleep: 5
-    timeout: 600
+    timeout: 900
