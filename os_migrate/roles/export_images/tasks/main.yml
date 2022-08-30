@@ -2,9 +2,7 @@
 # the filters manually below.
 - name: scan available images
   openstack.cloud.image_info:
-    auth: "{{ os_migrate_src_auth }}"
-    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+    cloud: src
     validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
@@ -37,9 +35,7 @@
 
 - name: export image metadata
   os_migrate.os_migrate.export_image_meta:
-    auth: "{{ os_migrate_src_auth }}"
-    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+    cloud: src
     path: "{{ os_migrate_data_dir }}/images.yml"
     name: "{{ item['id'] }}"
     validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
@@ -57,9 +53,7 @@
 
 - name: export image blobs
   os_migrate.os_migrate.export_image_blob:
-    auth: "{{ os_migrate_src_auth }}"
-    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+    cloud: src
     blob_path: "{{ os_migrate_image_blobs_dir }}/{{ item['id'] }}-{{ item['name'] }}"
     name: "{{ item['id'] }}"
     validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
