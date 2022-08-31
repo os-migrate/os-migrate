@@ -34,7 +34,7 @@ options:
   auth:
     description:
       - Required if 'cloud' parameter not used.
-    required: true
+    required: false
     type: dict
   auth_type:
     description:
