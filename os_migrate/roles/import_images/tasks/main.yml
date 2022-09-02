@@ -12,9 +12,7 @@
 
 - name: import images
   os_migrate.os_migrate.import_image:
-    auth: "{{ os_migrate_dst_auth }}"
-    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+    cloud: dst
     data: "{{ item }}"
     blob_path: >-
       {{ os_migrate_image_blobs_dir }}/{{ item['_info']['id'] }}-{{ item['params']['name'] }}
