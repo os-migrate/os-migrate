@@ -28,7 +28,7 @@
 
 - name: look up osm_keypair dst cloud
   os_migrate.os_migrate.os_keypairs_info:
-    auth: "{{ os_migrate_dst_auth }}"
+    cloud: dst
   register: keypair_import_idem_before
 
 - name: import keypairs
@@ -37,7 +37,7 @@
 
 - name: look up osm_keypair in dst cloud again
   os_migrate.os_migrate.os_keypairs_info:
-    auth: "{{ os_migrate_dst_auth }}"
+    cloud: dst
   register: keypair_import_idem_after
 
 - name: ensure fingerprint for osm_keypair did not change
