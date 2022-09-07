@@ -28,8 +28,8 @@ description:
 options:
   auth:
     description:
-      - Dictionary with parameters for chosen auth type.
-    required: true
+      - Required if 'cloud' param not used.
+    required: false
     type: dict
   auth_type:
     description:
@@ -72,7 +72,8 @@ options:
     type: str
   cloud:
     description:
-      - Ignored. Present for backwards compatibility.
+      - Cloud resource from clouds.yml
+      - Required if 'auth' param not used.
     required: false
     type: raw
 '''
@@ -103,7 +104,6 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import serve
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        auth=dict(type='dict', no_log=True, required=True),
         path=dict(type='str', required=True),
         name=dict(type='str', required=True),
         migration_params=dict(type='dict', required=False, default={}),
