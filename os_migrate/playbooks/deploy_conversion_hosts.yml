@@ -72,6 +72,8 @@
       when: os_migrate_link_conversion_hosts|default(true)|bool
 
 - hosts: os_migrate_conv_src
+  environment:
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
   tasks:
     - name: insert the auth keys in src
@@ -81,6 +83,8 @@
       when: os_migrate_link_conversion_hosts|default(true)|bool
 
 - hosts: os_migrate_conv_dst
+  environment:
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
   tasks:
     - name: insert the auth keys in dst
@@ -90,6 +94,8 @@
       when: os_migrate_link_conversion_hosts|default(true)|bool
 
 - hosts: conversion_hosts
+  environment:
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
   tasks:
     - name: enable ssh_user password access to the conversion hosts
@@ -102,6 +108,8 @@
     ansible_become: true
 
 - hosts: os_migrate_conv_src
+  environment:
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
   tasks:
     - name: set src conversion host facts
@@ -110,6 +118,8 @@
         os_migrate_conversion_host_post_content_hook: "{{ os_migrate_src_conversion_host_post_content_hook|default(false) }}"
 
 - hosts: os_migrate_conv_dst
+  environment:
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
   tasks:
     - name: set dst conversion host facts
@@ -118,6 +128,8 @@
         os_migrate_conversion_host_post_content_hook: "{{ os_migrate_dst_conversion_host_post_content_hook|default(false) }}"
 
 - hosts: conversion_hosts
+  environment:
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
   tasks:
     - name: install the conversion host content
