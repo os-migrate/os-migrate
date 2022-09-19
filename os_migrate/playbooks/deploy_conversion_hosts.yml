@@ -78,7 +78,7 @@
   tasks:
     - name: insert the auth keys in src
       ansible.builtin.include_role:
-        name: os_migrate.os_migrate.conversion_host
+        name: os_migrate.os_migrate.conversion_host_content
         tasks_from: link_insert_authorized_key.yml
       when: os_migrate_link_conversion_hosts|default(true)|bool
 
@@ -89,7 +89,7 @@
   tasks:
     - name: insert the auth keys in dst
       ansible.builtin.include_role:
-        name: os_migrate.os_migrate.conversion_host
+        name: os_migrate.os_migrate.conversion_host_content
         tasks_from: link_insert_private_key.yml
       when: os_migrate_link_conversion_hosts|default(true)|bool
 
@@ -100,7 +100,7 @@
   tasks:
     - name: enable ssh_user password access to the conversion hosts
       ansible.builtin.include_role:
-        name: os_migrate.os_migrate.conversion_host
+        name: os_migrate.os_migrate.conversion_host_content
         tasks_from: enable_password_access.yml
       when: os_migrate_conversion_host_ssh_user_enable_password_access|default(false)|bool
   vars:
