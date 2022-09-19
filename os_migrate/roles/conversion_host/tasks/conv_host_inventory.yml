@@ -1,9 +1,7 @@
 - name: discover conversion host
   openstack.cloud.server_info:
     server: "{{ os_migrate_conversion_host_name }}*"
-    auth: "{{ os_migrate_conversion_auth }}"
-    auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_conversion_region_name|default(omit) }}"
+    cloud: "{{ os_migrate_conversion_cloud }}"
     validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
     ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"

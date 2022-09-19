@@ -14,9 +14,7 @@
 - name: create os_migrate conversion security group
   openstack.cloud.security_group:
     name: "{{ os_migrate_conversion_secgroup_name }}"
-    auth: "{{ os_migrate_conversion_auth }}"
-    auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_conversion_region_name|default(omit) }}"
+    cloud: "{{ os_migrate_conversion_cloud }}"
     validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
     ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
@@ -29,9 +27,7 @@
     protocol: tcp
     port_range_min: 22
     port_range_max: 22
-    auth: "{{ os_migrate_conversion_auth }}"
-    auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_conversion_region_name|default(omit) }}"
+    cloud: "{{ os_migrate_conversion_cloud }}"
     validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
     ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
@@ -42,9 +38,7 @@
     security_group: "{{ os_migrate_conversion_secgroup_name }}"
     remote_ip_prefix: 0.0.0.0/0
     protocol: icmp
-    auth: "{{ os_migrate_conversion_auth }}"
-    auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_conversion_region_name|default(omit) }}"
+    cloud: "{{ os_migrate_conversion_cloud }}"
     validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
     ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
@@ -54,9 +48,7 @@
   openstack.cloud.keypair:
     name: "{{ os_migrate_conversion_keypair_name }}"
     public_key_file: "{{ os_migrate_conversion_keypair_private_path }}.pub"
-    auth: "{{ os_migrate_conversion_auth }}"
-    auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_conversion_region_name|default(omit) }}"
+    cloud: "{{ os_migrate_conversion_cloud }}"
     validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
     ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
@@ -77,10 +69,8 @@
     auto_ip: false
     wait: true
     timeout: "{{ os_migrate_conversion_host_deploy_timeout }}"
-    auth: "{{ os_migrate_conversion_auth }}"
-    auth_type: "{{ os_migrate_conversion_auth_type|default(omit) }}"
+    cloud: "{{ os_migrate_conversion_cloud }}"
     availability_zone: "{{ os_migrate_conversion_availability_zone|default(omit) }}"
-    region_name: "{{ os_migrate_conversion_region_name|default(omit) }}"
     validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
     ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"

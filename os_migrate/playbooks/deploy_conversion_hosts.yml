@@ -17,9 +17,7 @@
         os_migrate_conversion_host_boot_from_volume: "{{ os_migrate_src_conversion_host_boot_from_volume|default(omit) }}"
         os_migrate_conversion_host_volume_size: "{{ os_migrate_src_conversion_host_volume_size|default(omit) }}"
         os_migrate_conversion_availability_zone: "{{ os_migrate_src_conversion_availability_zone|default(omit) }}"
-        os_migrate_conversion_auth: "{{ os_migrate_src_auth }}"
-        os_migrate_conversion_auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
-        os_migrate_conversion_region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+        os_migrate_conversion_cloud: src
         os_migrate_conversion_validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
         os_migrate_conversion_ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
         os_migrate_conversion_client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
@@ -50,9 +48,7 @@
         os_migrate_conversion_host_boot_from_volume: "{{ os_migrate_dst_conversion_host_boot_from_volume|default(omit) }}"
         os_migrate_conversion_host_volume_size: "{{ os_migrate_dst_conversion_host_volume_size|default(omit) }}"
         os_migrate_conversion_availability_zone: "{{ os_migrate_dst_conversion_availability_zone|default(omit) }}"
-        os_migrate_conversion_auth: "{{ os_migrate_dst_auth }}"
-        os_migrate_conversion_auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
-        os_migrate_conversion_region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+        os_migrate_conversion_cloud: dst
         os_migrate_conversion_validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
         os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
         os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
@@ -76,29 +72,35 @@
       when: os_migrate_link_conversion_hosts|default(true)|bool
 
 - hosts: os_migrate_conv_src
+  environment:
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
   tasks:
     - name: insert the auth keys in src
       ansible.builtin.include_role:
-        name: os_migrate.os_migrate.conversion_host
+        name: os_migrate.os_migrate.conversion_host_content
         tasks_from: link_insert_authorized_key.yml
       when: os_migrate_link_conversion_hosts|default(true)|bool
 
 - hosts: os_migrate_conv_dst
+  environment:
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
   tasks:
     - name: insert the auth keys in dst
       ansible.builtin.include_role:
-        name: os_migrate.os_migrate.conversion_host
+        name: os_migrate.os_migrate.conversion_host_content
         tasks_from: link_insert_private_key.yml
       when: os_migrate_link_conversion_hosts|default(true)|bool
 
 - hosts: conversion_hosts
+  environment:
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
   tasks:
     - name: enable ssh_user password access to the conversion hosts
       ansible.builtin.include_role:
-        name: os_migrate.os_migrate.conversion_host
+        name: os_migrate.os_migrate.conversion_host_content
         tasks_from: enable_password_access.yml
       when: os_migrate_conversion_host_ssh_user_enable_password_access|default(false)|bool
   vars:
@@ -106,6 +108,8 @@
     ansible_become: true
 
 - hosts: os_migrate_conv_src
+  environment:
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
   tasks:
     - name: set src conversion host facts
@@ -114,6 +118,8 @@
         os_migrate_conversion_host_post_content_hook: "{{ os_migrate_src_conversion_host_post_content_hook|default(false) }}"
 
 - hosts: os_migrate_conv_dst
+  environment:
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
   tasks:
     - name: set dst conversion host facts
@@ -122,6 +128,8 @@
         os_migrate_conversion_host_post_content_hook: "{{ os_migrate_dst_conversion_host_post_content_hook|default(false) }}"
 
 - hosts: conversion_hosts
+  environment:
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
   tasks:
     - name: install the conversion host content
