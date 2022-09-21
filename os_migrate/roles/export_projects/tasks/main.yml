@@ -1,8 +1,6 @@
 - name: scan available projects
   openstack.cloud.project_info:
-    auth: "{{ os_migrate_src_auth }}"
-    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+    cloud: src
     validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
@@ -25,9 +23,7 @@
 
 - name: export project
   os_migrate.os_migrate.export_project:
-    auth: "{{ os_migrate_src_auth }}"
-    auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+    cloud: src
     path: "{{ os_migrate_data_dir }}/projects.yml"
     name: "{{ item['id'] }}"
     validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"

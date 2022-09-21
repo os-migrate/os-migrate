@@ -12,9 +12,7 @@
 
 - name: import networks
   os_migrate.os_migrate.import_network:
-    auth: "{{ os_migrate_dst_auth }}"
-    auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
-    region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
+    cloud: dst
     data: "{{ item }}"
     filters: "{{ os_migrate_dst_filters }}"
     validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"

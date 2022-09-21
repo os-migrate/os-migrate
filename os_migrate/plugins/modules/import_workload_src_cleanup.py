@@ -28,8 +28,8 @@ description:
 options:
   auth:
     description:
-      - Dictionary with parameters for chosen auth type on the destination cloud.
-    required: true
+      - Required if 'cloud' param not used
+    required: false
     type: dict
   auth_type:
     description:
@@ -48,7 +48,8 @@ options:
     type: str
   cloud:
     description:
-      - Ignored. Present for backwards compatibility.
+      - Cloud resource from clouds.yml
+      - Required if 'auth' param not used
     required: false
     type: raw
   validate_certs:
@@ -411,7 +412,6 @@ class OpenStackSourceHostCleanup(OpenStackHostBase):
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        auth=dict(type='dict', no_log=True, required=True),
         data=dict(type='dict', required=True),
         conversion_host=dict(type='dict', required=True),
         ssh_key_path=dict(type='str', required=True),
