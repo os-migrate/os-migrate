@@ -145,7 +145,7 @@
 <dd class="field-even"><p>List of scope types to filter the assignments. Supported types 'project', 'system', 'domain'. None means don't filter anything.</p>
 </dd>
 <dt class="field-odd">auth</dt>
-<dd class="field-odd"><p>Dictionary with parameters for chosen auth type.</p>
+<dd class="field-odd"><p>Required if 'cloud' param not used.</p>
 </dd>
 <dt class="field-even">auth_type</dt>
 <dd class="field-even"><p>Auth type plugin for OpenStack. Can be omitted if using password authentication.</p>
@@ -157,7 +157,8 @@
 <dd class="field-even"><p>Availability zone.</p>
 </dd>
 <dt class="field-odd">cloud</dt>
-<dd class="field-odd"><p>Ignored. Present for backwards compatibility.</p>
+<dd class="field-odd"><p>Cloud resource from clouds.yml</p>
+<p>Required if 'auth' param not used.</p>
 </dd>
 </dl>
 </section>

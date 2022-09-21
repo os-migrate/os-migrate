@@ -142,7 +142,7 @@
 <dd class="field-odd"><p>Options for filtering the Routers info.</p>
 </dd>
 <dt class="field-even">auth</dt>
-<dd class="field-even"><p>Dictionary with parameters for chosen auth type.</p>
+<dd class="field-even"><p>Required if 'cloud' parameter not used.</p>
 </dd>
 <dt class="field-odd">auth_type</dt>
 <dd class="field-odd"><p>Auth type plugin for OpenStack. Can be omitted if using password authentication.</p>
@@ -154,7 +154,8 @@
 <dd class="field-odd"><p>Availability zone.</p>
 </dd>
 <dt class="field-even">cloud</dt>
-<dd class="field-even"><p>Ignored. Present for backwards compatibility.</p>
+<dd class="field-even"><p>Cloud configuration from clouds.yml</p>
+<p>Required if 'auth' param not used.</p>
 </dd>
 </dl>
 </section>

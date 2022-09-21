@@ -7,6 +7,26 @@ Changelog
 
 New
 ~~~
+- Conversion host updates. [cloudguruab]
+- Update to auth on missed ansible parts. [cloudguruab]
+- Use clouds.yml for auth config on project resources (#563) [Adrian
+  Brown]
+- Use cloud config for auth on workload resources (#569) [Adrian Brown]
+- Use clouds config for auth on users resources (#568) [Adrian Brown]
+- Use cloud config for auth on subnet resource (#566) [Adrian Brown]
+- Use cloud config for auth on security group resources (#565) [Adrian
+  Brown]
+- Use clouds.yml config for auth on routers resource (#564) [Adrian
+  Brown]
+- Use clouds.yml config for auth on flavor resources (#562) [Adrian
+  Brown]
+- Use clouds.yml config for auth on image resources (#561) [Adrian
+  Brown]
+- Use clouds.yaml in keypair migration. [cloudguruab]
+- Use clouds.yaml auth approach in network import/export. [cloudguruab]
+- Use clouds.yaml auth approach in network import/export (#559) [Adrian
+  Brown]
+- Write auth config to clouds.yaml (#552) [Adrian Brown]
 - Sort exported server ports as they appear in Nova API. [Jiri Stransky]
 
   We export server port info from Neutron API, because it gives more

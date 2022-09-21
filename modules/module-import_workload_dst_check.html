@@ -139,7 +139,7 @@
 <h3>Options<a class="headerlink" href="#o-p-t-i-o-n-s" title="Permalink to this heading"></a></h3>
 <dl class="field-list">
 <dt class="field-odd">auth</dt>
-<dd class="field-odd"><p>Dictionary with parameters for chosen auth type.</p>
+<dd class="field-odd"><p>Required if 'cloud' param not used</p>
 </dd>
 <dt class="field-even">auth_type</dt>
 <dd class="field-even"><p>Auth type plugin for OpenStack. Can be omitted if using password authentication.</p>
@@ -160,7 +160,8 @@
 <dd class="field-odd"><p>Options for filtering the migration idempotence lookup, e.g. by project.</p>
 </dd>
 <dt class="field-even">cloud</dt>
-<dd class="field-even"><p>Ignored. Present for backwards compatibility.</p>
+<dd class="field-even"><p>Cloud resource from clouds.yml</p>
+<p>Required if 'auth' param not used.</p>
 </dd>
 </dl>
 </section>
