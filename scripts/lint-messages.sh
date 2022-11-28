@@ -5,7 +5,7 @@ DIR=$(dirname $(realpath $0))
 
 # The start of the range can be bumped up over time to something that
 # all live branches include. Currently pointing to initial commit.
-LINT_COMMITS_RANGE="19bf84d9e85ce414a5f3c65ecc885913a5049026..HEAD"
+LINT_COMMITS_RANGE="5fbc97f9f7988d8dfe7ceb857473ebfc6bce9c95..HEAD"
 
 function lint_commits_in_range {
     while read -r rev; do
@@ -17,11 +17,7 @@ function lint_commit {
     local rev="$1"
     local commit_msg;
     commit_msg=$(git log --format=%B -n 1 "$rev")
-<<<<<<< HEAD
     "$DIR"/lint-message.sh <<<"$commit_msg"
-=======
-    "$DIR"/lint-commit-message.sh <<<"$commit_msg"
->>>>>>> 48316fa (new: lint commit messages within range)
 }
 
 lint_commits_in_range "$LINT_COMMITS_RANGE"

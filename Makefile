@@ -190,9 +190,5 @@ toolbox-clean:
 # LINT COMMITS
 
 lint-commit-messages: 
-	set -euo pipefail; \
-	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
-		echo "Sourcing venv."; \
-		source /root/venv/bin/activate; \
-	fi; \
+	git log --oneline
 	./scripts/lint-messages.sh
