@@ -17,11 +17,7 @@ function lint_commit {
     local rev="$1"
     local commit_msg;
     commit_msg=$(git log --format=%B -n 1 "$rev")
-<<<<<<< HEAD
     "$DIR"/lint-message.sh <<<"$commit_msg"
-=======
-    "$DIR"/lint-commit-message.sh <<<"$commit_msg"
->>>>>>> 48316fa (new: lint commit messages within range)
 }
 
 lint_commits_in_range "$LINT_COMMITS_RANGE"
