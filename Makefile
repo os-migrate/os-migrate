@@ -190,4 +190,5 @@ toolbox-clean:
 # LINT COMMITS
 
 lint-commit-messages: 
+	git rev-parse HEAD
 	./scripts/lint-messages.sh
