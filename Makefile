@@ -190,5 +190,4 @@ toolbox-clean:
 # LINT COMMITS
 
 lint-commit-messages: 
-	git rev-list --no-merges HEAD
 	./scripts/lint-messages.sh
