@@ -2,6 +2,14 @@ Changelog
 =========
 
 
+(unreleased)
+------------
+
+New
+~~~
+- Validate changelog using lint-commit-messages target. [Jiří Stránský]
+
+
 0.14.0 (2022-09-22)
 -------------------
 
