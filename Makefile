@@ -185,3 +185,9 @@ toolbox-build:
 
 toolbox-clean:
 	podman rmi localhost/os_migrate_toolbox:latest
+
+
+# LINT COMMITS
+
+lint-commit-messages:
+	./scripts/lint-messages.sh

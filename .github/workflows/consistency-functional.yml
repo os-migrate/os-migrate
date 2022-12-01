@@ -28,6 +28,8 @@ jobs:
         ansible-version: [2.9, 'latest']
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
         with:
@@ -92,6 +94,12 @@ jobs:
           export OS_MIGRATE_REQUIREMENTS_UNINSTALL_BEFORE_OVERRIDE='ansible ansible-base ansible-core'
           export OS_MIGRATE_REQUIREMENTS_OVERRIDE='toolbox/build/venv-requirements-ansible-${{ matrix.ansible-version }}.txt'
           ./toolbox/run make test-fast
+      - name: Validate changelog
+        run: |
+          set -x
+          git log --oneline | head -n50
+          make lint-commit-messages
+
 
   functional:
     needs: build
