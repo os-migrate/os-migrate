@@ -127,7 +127,7 @@ test-e2e-admin: reinstall
 		-e @$(ROOT_DIR)/tests/e2e/tasks/admin/scenario_variables.yml \
 		$(OS_MIGRATE_E2E_TEST_ARGS) test_as_admin.yml
 
-test-fast: test-lint test-sanity test-unit lint-commit-messages
+test-fast: test-lint test-sanity test-unit
 
 test-sanity: reinstall
 	set -euo pipefail; \
@@ -189,10 +189,8 @@ toolbox-clean:
 
 # LINT COMMITS
 
-lint-commit-messages: 
-	set -euo pipefail; \
-	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
-		echo "Sourcing venv."; \
-		source /root/venv/bin/activate; \
-	fi; \
+lint-commit-messages:
+	git branch
+	git status
+	git rev-list --no-merges HEAD
 	./scripts/lint-messages.sh

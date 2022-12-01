@@ -28,10 +28,23 @@ jobs:
         ansible-version: [2.9, 'latest']
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Validate changelog - debugging
+        run: |
+          set -x
+          git branch
+          git status
+          git log --oneline | head -n50
+          git rev-list --no-merges HEAD
+          git rev-list --no-merges 5fbc97f9f7988d8dfe7ceb857473ebfc6bce9c95..HEAD || true
+          git rev-list --no-merges e0359b14779e12c70dd8ebbacf09a47fdd020d5b..HEAD || true
+          git rev-list --no-merges d8e45f09f6994794aced24bbceddb7cca00d1e0a..HEAD || true
+          false
       - name: Install dependencies
         run: |
           sudo locale-gen en_US.UTF-8
@@ -92,6 +105,19 @@ jobs:
           export OS_MIGRATE_REQUIREMENTS_UNINSTALL_BEFORE_OVERRIDE='ansible ansible-base ansible-core'
           export OS_MIGRATE_REQUIREMENTS_OVERRIDE='toolbox/build/venv-requirements-ansible-${{ matrix.ansible-version }}.txt'
           ./toolbox/run make test-fast
+      - name: Validate changelog
+        run: |
+          set -x
+          git switch -c "pull-request"
+          git branch
+          git status
+          git rev-list --no-merges HEAD
+          git rev-list --no-merges 5fbc97f9f7988d8dfe7ceb857473ebfc6bce9c95..HEAD
+          git rev-list --no-merges e0359b14779e12c70dd8ebbacf09a47fdd020d5b..HEAD
+          git rev-list --no-merges d8e45f09f6994794aced24bbceddb7cca00d1e0a..HEAD
+          git log --oneline | head -n50
+          ./toolbox/run make lint-commit-messages
+
 
   functional:
     needs: build
