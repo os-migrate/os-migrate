@@ -11,7 +11,7 @@ function lint_commits_in_range {
     while read -r rev; do
         lint_commit "$rev"
     # done < <(git rev-list --no-merges "$LINT_COMMITS_RANGE")
-    done < <(git rev-list --no-merges -n 1 HEAD)
+    done < <(git log -n 5 --no-merges --pretty=format:%H)
 }
 
 function lint_commit {

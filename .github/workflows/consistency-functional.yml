@@ -92,9 +92,6 @@ jobs:
           export OS_MIGRATE_REQUIREMENTS_UNINSTALL_BEFORE_OVERRIDE='ansible ansible-base ansible-core'
           export OS_MIGRATE_REQUIREMENTS_OVERRIDE='toolbox/build/venv-requirements-ansible-${{ matrix.ansible-version }}.txt'
           ./toolbox/run make test-fast
-      - name: Checkout the current commit hash
-        run: |
-          git rev-list --no-merges "5fbc97f9f7988d8dfe7ceb857473ebfc6bce9c95..HEAD"
 
   functional:
     needs: build

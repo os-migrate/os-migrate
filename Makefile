@@ -190,5 +190,5 @@ toolbox-clean:
 # LINT COMMITS
 
 lint-commit-messages: 
-	git rev-parse HEAD
+	git log -n 5 --no-merges --pretty=format:%H
 	./scripts/lint-messages.sh
