@@ -28,6 +28,8 @@ jobs:
         ansible-version: [2.9, 'latest']
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
         with:
@@ -92,6 +94,12 @@ jobs:
           export OS_MIGRATE_REQUIREMENTS_UNINSTALL_BEFORE_OVERRIDE='ansible ansible-base ansible-core'
           export OS_MIGRATE_REQUIREMENTS_OVERRIDE='toolbox/build/venv-requirements-ansible-${{ matrix.ansible-version }}.txt'
           ./toolbox/run make test-fast
+      - name: Validate changelog
+        run: |
+          set -x
+          git log --oneline | head -n50
+          make lint-commit-messages
+
 
   functional:
     needs: build
@@ -143,11 +151,15 @@ jobs:
           # installer will crash as pip is not able to determine if its
           # installed or not
           sudo apt install python3-httplib2 -y
-          # We keep pinning pip due to:
-          # https://bugs.launchpad.net/devstack/+bug/1906367
-          sudo python -m pip install --upgrade 'pip<20.3'
+          sudo apt remove postgresql-client-common
+          sudo apt install postgresql-client-common=238
+          sudo apt install postgresql-common
+          sudo python -m pip install --upgrade pip
           sudo python -m pip install --upgrade virtualenv
-          sudo python -m pip install --upgrade setuptools
+
+          # https://github.com/pypa/setuptools/issues/3772
+          sudo python -m pip install --upgrade 'setuptools<66'
+          sudo python -m pip install --upgrade easy_install
       - name: Configure podman
         run: |
           mkdir -p ~/.config/containers
@@ -335,6 +347,7 @@ jobs:
         run: |
           # Hacks to make Devstack install fine. See also:
           # https://github.com/openstack/devstack/blob/83821a11ac1d6738b63cb10878b8aaa02e153374/tools/fixup_stuff.sh#L88-L96
+          sudo pip install --upgrade pip
           sudo rm -rf /usr/lib/python3/dist-packages/httplib2-*.egg-info
           sudo rm -rf /usr/lib/python3/dist-packages/pyasn1_modules-*.egg-info
           sudo rm -rf /usr/lib/python3/dist-packages/PyYAML-*.egg-info
