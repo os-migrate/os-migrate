@@ -65,7 +65,7 @@ Common issues
   exist in the source cloud.``
 
   OS Migrate has an export_user_keypairs.yml which escalates using admin
-  privileges. By default it iterates over all users and their keys,
+  privileges. By default it iterates over all users and keys,
   but it listens for filter variables which can help scope down the export.
 
   How to use those key exports depends on how the workload migration 
