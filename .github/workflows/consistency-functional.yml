@@ -142,6 +142,7 @@ jobs:
           sudo locale-gen en_US.UTF-8
           sudo dpkg-reconfigure locales
           sudo apt update
+          sudo apt upgrade -y
           sudo apt remove --purge mysql-server mysql-client mysql-common -y
           sudo apt autoremove -y
           # MySQL requirements
