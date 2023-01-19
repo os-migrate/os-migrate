@@ -156,7 +156,6 @@ jobs:
           sudo apt install postgresql-common
           sudo python -m pip install --upgrade pip
           sudo python -m pip install --upgrade virtualenv
-
           # https://github.com/pypa/setuptools/issues/3772
           sudo python -m pip install --upgrade 'setuptools<66'
           sudo python -m pip install --upgrade easy_install
@@ -347,7 +346,6 @@ jobs:
         run: |
           # Hacks to make Devstack install fine. See also:
           # https://github.com/openstack/devstack/blob/83821a11ac1d6738b63cb10878b8aaa02e153374/tools/fixup_stuff.sh#L88-L96
-          sudo pip install --upgrade pip
           sudo rm -rf /usr/lib/python3/dist-packages/httplib2-*.egg-info
           sudo rm -rf /usr/lib/python3/dist-packages/pyasn1_modules-*.egg-info
           sudo rm -rf /usr/lib/python3/dist-packages/PyYAML-*.egg-info
