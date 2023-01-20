@@ -147,7 +147,7 @@ ansible.</p>
 <span class="pre">This</span> <span class="pre">leads</span> <span class="pre">to</span> <span class="pre">checks</span> <span class="pre">failing</span> <span class="pre">since</span> <span class="pre">the</span> <span class="pre">user</span> <span class="pre">can't</span> <span class="pre">check</span> <span class="pre">if</span> <span class="pre">the</span> <span class="pre">key</span>
 <span class="pre">exist</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">source</span> <span class="pre">cloud.</span></code></p>
 <p>OS Migrate has an export_user_keypairs.yml which escalates using admin
-privileges. By default it iterates over all users and all their keys,
+privileges. By default it iterates over all users and their keys,
 but it listens for filter variables which can help scope down the export.</p>
 <p>How to use those key exports depends on how the workload migration
 should be done. Either the keys can be uploaded to destination to the
