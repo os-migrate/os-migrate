@@ -126,11 +126,11 @@ Update developer or user documentation as needed.</p></li>
 <p>Adding roles into os-migrate can be easily achieved by
 creating the role structure skeleton automatically.</p>
 <p>From the repository root directory execute:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ansible-playbook <span class="se">\</span>
-   -i <span class="s1">&#39;localhost,&#39;</span> <span class="se">\</span>
-   ./scripts/role-addition.yml <span class="se">\</span>
-   -e <span class="nv">ansible_connection</span><span class="o">=</span><span class="nb">local</span> <span class="se">\</span>
-   -e <span class="nv">role_name</span><span class="o">=</span>import_example_resource
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ansible-playbook<span class="w"> </span><span class="se">\</span>
+<span class="w">   </span>-i<span class="w"> </span><span class="s1">&#39;localhost,&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span>./scripts/role-addition.yml<span class="w"> </span><span class="se">\</span>
+<span class="w">   </span>-e<span class="w"> </span><span class="nv">ansible_connection</span><span class="o">=</span><span class="nb">local</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span>-e<span class="w"> </span><span class="nv">role_name</span><span class="o">=</span>import_example_resource
 </pre></div>
 </div>
 <p>This command will generate the role, the default variables file,
@@ -170,20 +170,20 @@ define the <code class="docutils literal notranslate"><span class="pre">os_migra
 filtering of resources by the name property.</p>
 <p>In the <code class="docutils literal notranslate"><span class="pre">meta/main.yml</span></code> file you will likely just need to add the
 following default content:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span><span class="w"></span>
-<span class="nt">galaxy_info</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">author</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os-migrate</span><span class="w"></span>
-<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os-migrate resource</span><span class="w"></span>
-<span class="w">  </span><span class="nt">company</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Red Hat</span><span class="w"></span>
-<span class="w">  </span><span class="nt">license</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Apache-2.0</span><span class="w"></span>
-<span class="w">  </span><span class="nt">min_ansible_version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.9</span><span class="w"></span>
-<span class="w">  </span><span class="nt">platforms</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Fedora</span><span class="w"></span>
-<span class="w">      </span><span class="nt">versions</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span><span class="w"></span>
-<span class="w">  </span><span class="nt">galaxy_tags</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;osmigrate&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="nt">dependencies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os_migrate.os_migrate.prelude_src</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="nt">galaxy_info</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">author</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os-migrate</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os-migrate resource</span>
+<span class="w">  </span><span class="nt">company</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Red Hat</span>
+<span class="w">  </span><span class="nt">license</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Apache-2.0</span>
+<span class="w">  </span><span class="nt">min_ansible_version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.9</span>
+<span class="w">  </span><span class="nt">platforms</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Fedora</span>
+<span class="w">      </span><span class="nt">versions</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+<span class="w">  </span><span class="nt">galaxy_tags</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;osmigrate&quot;</span><span class="p p-Indicator">]</span>
+<span class="nt">dependencies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os_migrate.os_migrate.prelude_src</span>
 </pre></div>
 </div>
 <p>In the <code class="docutils literal notranslate"><span class="pre">tasks/main.yml</span></code> file, add your Ansible tasks for exporting the
@@ -203,20 +203,20 @@ whether or not the import data file should be validated for this
 role. In most cases, it should be set to <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p>
 <p>In the <code class="docutils literal notranslate"><span class="pre">meta/main.yml</span></code> file you will likely just need to add the
 following default content:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span><span class="w"></span>
-<span class="nt">galaxy_info</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">author</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os-migrate</span><span class="w"></span>
-<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os-migrate resource</span><span class="w"></span>
-<span class="w">  </span><span class="nt">company</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Red Hat</span><span class="w"></span>
-<span class="w">  </span><span class="nt">license</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Apache-2.0</span><span class="w"></span>
-<span class="w">  </span><span class="nt">min_ansible_version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.9</span><span class="w"></span>
-<span class="w">  </span><span class="nt">platforms</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Fedora</span><span class="w"></span>
-<span class="w">      </span><span class="nt">versions</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span><span class="w"></span>
-<span class="w">  </span><span class="nt">galaxy_tags</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;osmigrate&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="nt">dependencies</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os_migrate.os_migrate.prelude_dst</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="nt">galaxy_info</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">author</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os-migrate</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os-migrate resource</span>
+<span class="w">  </span><span class="nt">company</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Red Hat</span>
+<span class="w">  </span><span class="nt">license</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Apache-2.0</span>
+<span class="w">  </span><span class="nt">min_ansible_version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.9</span>
+<span class="w">  </span><span class="nt">platforms</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Fedora</span>
+<span class="w">      </span><span class="nt">versions</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+<span class="w">  </span><span class="nt">galaxy_tags</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;osmigrate&quot;</span><span class="p p-Indicator">]</span>
+<span class="nt">dependencies</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os_migrate.os_migrate.prelude_dst</span>
 </pre></div>
 </div>
 <p>In the <code class="docutils literal notranslate"><span class="pre">tasks/main.yml</span></code> file, add your Ansible tasks for importing the

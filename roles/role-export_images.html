@@ -132,10 +132,10 @@ to the destination tenant.</p>
 <h3>Role Defaults<a class="headerlink" href="#r-o-l-e-d-e-f-a-u-l-t-s" title="Permalink to this heading"></a></h3>
 <dd><p>This section highlights all of the defaults and variables set within the “export_images” role.</p>
 </dd>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_export_images_blobs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="nt">os_migrate_image_blobs_dir</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_data_dir</span><span class="nv"> </span><span class="s">}}/image_blobs&#39;</span><span class="w"></span>
-<span class="nt">os_migrate_images_filter</span><span class="p">:</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.*</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_export_images_blobs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="nt">os_migrate_image_blobs_dir</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_data_dir</span><span class="nv"> </span><span class="s">}}/image_blobs&#39;</span>
+<span class="nt">os_migrate_images_filter</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.*</span>
 </pre></div>
 </div>
 </section>

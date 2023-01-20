@@ -130,13 +130,13 @@ the result in the output folder.</p>
 <h3>Role Defaults<a class="headerlink" href="#r-o-l-e-d-e-f-a-u-l-t-s" title="Permalink to this heading"></a></h3>
 <dd><p>This section highlights all of the defaults and variables set within the “export_workloads” role.</p>
 </dd>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_workloads_filter</span><span class="p">:</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.*</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_workloads_filter</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.*</span>
 
-<span class="c1"># `null` means we let the Server class decide on defaults.</span><span class="w"></span>
-<span class="c1"># In case of boot_disk_copy, the default differs based on whether</span><span class="w"></span>
-<span class="c1"># the server was created as boot-from-volume or not.</span><span class="w"></span>
-<span class="nt">os_migrate_workloads_boot_disk_copy</span><span class="p">:</span><span class="w"></span>
+<span class="c1"># `null` means we let the Server class decide on defaults.</span>
+<span class="c1"># In case of boot_disk_copy, the default differs based on whether</span>
+<span class="c1"># the server was created as boot-from-volume or not.</span>
+<span class="nt">os_migrate_workloads_boot_disk_copy</span><span class="p">:</span>
 </pre></div>
 </div>
 </section>

@@ -130,24 +130,24 @@ manager prior the packages install.</p>
 <h3>Role Defaults<a class="headerlink" href="#r-o-l-e-d-e-f-a-u-l-t-s" title="Permalink to this heading"></a></h3>
 <dd><p>This section highlights all of the defaults and variables set within the “conversion_host_content” role.</p>
 </dd>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_conversion_host_content_install</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="c1"># The following two variables must be</span><span class="w"></span>
-<span class="c1"># configured to set up properly the RHSM</span><span class="w"></span>
-<span class="c1"># os_migrate_conversion_rhsm_username: username</span><span class="w"></span>
-<span class="c1"># os_migrate_conversion_rhsm_password: password</span><span class="w"></span>
-<span class="nt">os_migrate_conversion_rhsm_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"></span>
-<span class="nt">os_migrate_conversion_rhsm_delay</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_conversion_host_content_install</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="c1"># The following two variables must be</span>
+<span class="c1"># configured to set up properly the RHSM</span>
+<span class="c1"># os_migrate_conversion_rhsm_username: username</span>
+<span class="c1"># os_migrate_conversion_rhsm_password: password</span>
+<span class="nt">os_migrate_conversion_rhsm_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="nt">os_migrate_conversion_rhsm_delay</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
 
-<span class="nt">os_migrate_conversion_host_pre_content_hook</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="nt">os_migrate_conversion_host_post_content_hook</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="nt">os_migrate_conversion_host_pre_content_hook</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">os_migrate_conversion_host_post_content_hook</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 
-<span class="nt">os_migrate_conversion_rhsm_manage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="nt">os_migrate_conversion_rhsm_manage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 
 
-<span class="nt">os_migrate_conversion_link_keypair_private_path</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_data_dir</span><span class="nv"> </span><span class="s">}}/conversion/link-ssh.key&#39;</span><span class="w"></span>
-<span class="nt">os_migrate_conversion_host_ssh_user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloud-user</span><span class="w"></span>
-<span class="nt">os_migrate_conversion_host_ssh_user_enable_password_access</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="nt">os_migrate_conversion_host_ssh_user_password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">weak_password_disabled_by_default</span><span class="w"></span>
+<span class="nt">os_migrate_conversion_link_keypair_private_path</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_data_dir</span><span class="nv"> </span><span class="s">}}/conversion/link-ssh.key&#39;</span>
+<span class="nt">os_migrate_conversion_host_ssh_user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloud-user</span>
+<span class="nt">os_migrate_conversion_host_ssh_user_enable_password_access</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">os_migrate_conversion_host_ssh_user_password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">weak_password_disabled_by_default</span>
 </pre></div>
 </div>
 </section>

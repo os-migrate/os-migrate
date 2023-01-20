@@ -92,8 +92,8 @@ NEW_VERSION=&quot;SOME.NEW.VERSION&quot;
 </div>
 <p>Edit the version in galaxy.yml and any hardcoded values in functional
 tests:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sed -i -e <span class="s2">&quot;s/^version: </span><span class="nv">$OLD_VERSION</span><span class="s2">/version: </span><span class="nv">$NEW_VERSION</span><span class="s2">/&quot;</span> ./os_migrate/galaxy.yml
-grep -lr <span class="s2">&quot;os_migrate_version: </span><span class="nv">$OLD_VERSION</span><span class="s2">&quot;</span> ./tests <span class="p">|</span> xargs sed -i -e <span class="s2">&quot;s/^os_migrate_version: </span><span class="nv">$OLD_VERSION</span><span class="s2">/os_migrate_version: </span><span class="nv">$NEW_VERSION</span><span class="s2">/&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sed<span class="w"> </span>-i<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;s/^version: </span><span class="nv">$OLD_VERSION</span><span class="s2">/version: </span><span class="nv">$NEW_VERSION</span><span class="s2">/&quot;</span><span class="w"> </span>./os_migrate/galaxy.yml
+grep<span class="w"> </span>-lr<span class="w"> </span><span class="s2">&quot;os_migrate_version: </span><span class="nv">$OLD_VERSION</span><span class="s2">&quot;</span><span class="w"> </span>./tests<span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>sed<span class="w"> </span>-i<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;s/^os_migrate_version: </span><span class="nv">$OLD_VERSION</span><span class="s2">/os_migrate_version: </span><span class="nv">$NEW_VERSION</span><span class="s2">/&quot;</span>
 </pre></div>
 </div>
 <p>A build is required to update const.py:</p>
