@@ -151,11 +151,13 @@ jobs:
           # installer will crash as pip is not able to determine if its
           # installed or not
           sudo apt install python3-httplib2 -y
-          # We keep pinning pip due to:
-          # https://bugs.launchpad.net/devstack/+bug/1906367
-          sudo python -m pip install --upgrade 'pip<20.3'
+          sudo apt remove postgresql-client-common
+          sudo apt install postgresql-client-common=238
+          sudo apt install postgresql-common
+          sudo python -m pip install --upgrade pip
           sudo python -m pip install --upgrade virtualenv
-          sudo python -m pip install --upgrade setuptools
+          # https://github.com/pypa/setuptools/issues/3772
+          sudo python -m pip install --upgrade 'setuptools<66'
       - name: Configure podman
         run: |
           mkdir -p ~/.config/containers
