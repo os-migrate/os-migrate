@@ -1,5 +1,5 @@
 libvirt:
-  box: fedora35
+  box: fedora36
   default_prefix: os_migrate_
   storage_pool_name: vagrant
   suspend_mode: managedsave
