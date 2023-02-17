@@ -28,18 +28,54 @@ except ImportError:
     DEVNULL = open(os.devnull, 'r+', encoding='utf8')
 
 
+def check_process(pid):
+    """Check whether pid exists in the current process table."""
+    if pid is None:
+        return False
+    try:
+        os.kill(int(pid), 0)
+    except (OSError, ValueError):
+        return False
+    else:
+        return True
+
+
+def check_and_cleanup_lockfiles():
+    """
+    Removes lockfiles found in specific directories.
+    If a lockfile is not being used by a process,
+    it is either deleted or not being used.
+    """
+    # Remove specific lockfiles
+    for lockfile in [ATTACH_LOCK_FILE_SOURCE, ATTACH_LOCK_FILE_DESTINATION, PORT_LOCK_FILE]:
+        try:
+            with open(f"{lockfile}.lock", "r", encoding='utf-8') as f:
+                pid = f.read().strip()
+            if check_process(pid):
+                # print(f"Lockfile {lockfile} is currently in use by process: {pid}")
+                pass
+            else:
+                os.remove(lockfile + '.lock')
+                return True
+        except FileNotFoundError:
+            return False
+
+
 def use_lock(lock_file):
     """ Boilerplate for functions that need to take a lock. """
     def _decorate_lock(function):
         def wait_for_lock(self):
+            if check_and_cleanup_lockfiles():
+                self.log.info("Cleaned up unused lockfiles before start")
             for second in range(DEFAULT_TIMEOUT):
                 try:
                     self.log.info('Waiting for lock %s...', lock_file)
                     lock = lock_file + '.lock'
+                    pid = str(os.getpid())
                     cmd = ['sudo', 'flock', '--timeout', '1',
                            '--conflict-exit-code', '16', lock_file, '-c',
                            '"( test ! -e ' + lock + ' || exit 17 ) ' +
-                           '&& touch ' + lock + '"']
+                           '&& echo ' + pid + ' > ' + lock + '"']
                     result = self.shell.cmd_val(cmd)
                     if result == 16:
                         self.log.info('Another conversion has the lock.')
@@ -61,6 +97,7 @@ def use_lock(lock_file):
                     self.log.debug('Released lock: %s', result)
                 except subprocess.CalledProcessError as err:
                     self.log.error('Error releasing lock: %s', str(err))
+
         return wait_for_lock
     return _decorate_lock
 
