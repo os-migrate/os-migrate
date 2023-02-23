@@ -19,7 +19,7 @@ tags:
 dependencies:
   community.crypto: '>=1.4.0'
   community.general: '<5.0.0'
-  openstack.cloud: '>=1.2.1'
+  openstack.cloud: '<2.0.0'
 repository: 'https://github.com/os-migrate/os-migrate'
 homepage: 'https://github.com/os-migrate/os-migrate'
 issues: 'https://github.com/os-migrate/os-migrate/issues'
