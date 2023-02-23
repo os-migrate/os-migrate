@@ -2,11 +2,6 @@
   when:
     - os_migrate_src_filter_current_project|default(true)|bool
   block:
-    - name: Install OpenStack SDK
-      ansible.builtin.pip:
-        name: openstacksdk
-        version: '>=1.0'
-
     - name: fetch information about currently authenticated user/project
       os_migrate.os_migrate.auth_info:
         cloud: src

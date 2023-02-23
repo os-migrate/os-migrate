@@ -2,7 +2,6 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-import shutil
 import json
 import logging
 import os
@@ -27,92 +26,6 @@ try:
     from subprocess import DEVNULL
 except ImportError:
     DEVNULL = open(os.devnull, 'r+', encoding='utf8')
-
-
-lockfile_extensions = ['.lck', '.lock']
-
-
-def check_process(pid):
-    """Check whether pid exists in the current process table."""
-    if pid is None:
-        return False
-    try:
-        os.kill(int(pid), 0)
-    except (OSError, ValueError):
-        return False
-    else:
-        return True
-
-
-def acquire_lock(lockfile_path):
-    """Acquire a lock on a given file. If the lockfile already exists, check
-    whether the PID that claimed the lock still exists. If the PID doesn't exist,
-    clean up the lock and claim it for the current process."""
-    lockfile_dir = os.path.dirname(lockfile_path)
-    if not os.path.exists(lockfile_dir):
-        os.makedirs(lockfile_dir)
-
-    if os.path.exists(lockfile_path):
-        with open(lockfile_path, "r", encoding='utf-8') as f:
-            pid = int(f.read().strip())
-        if check_process(pid):
-            # print(f"Lockfile {lockfile_path} is currently in use by process: {pid}")
-            return False
-        else:
-            # print(f"Process {pid} is no longer running. Cleaning up lock.")
-            os.remove(lockfile_path)
-
-    # Claim the lock
-    with open(lockfile_path, "w", encoding='utf-8') as f:
-        f.write(str(os.getpid()))
-    return True
-
-
-def release_lock(lockfile_path):
-    """Release the lock on a given file."""
-    if os.path.exists(lockfile_path):
-        os.remove(lockfile_path)
-
-
-def remove_lockfiles(lockfile_dirs=None, remove_before_backup=True):
-    """
-    Removes lockfiles found in directories specified in `lockfile_dirs`.
-    If `remove_before_backup` is True, the lockfile is deleted. Otherwise, it is moved to /tmp/.
-    """
-    if lockfile_dirs is not None:
-        lockfiles = [
-            os.path.join(root, file)
-            for lockfile_dir in lockfile_dirs
-            for root, dirs, files in os.walk(lockfile_dir)
-            for file in files
-            if any(file.endswith(extension) for extension in lockfile_extensions)
-        ]
-        for lockfile in lockfiles:
-            with open(lockfile, "r", encoding='utf-8') as f:
-                pid = int(f.read().strip())
-            if check_process(pid):
-                # print(f"Lockfile {lockfile} is currently in use by process: {pid}")
-                return None
-            else:
-                if remove_before_backup:
-                    # print(f"Removed lockfile {lockfile}")
-                    os.remove(lockfile)
-                else:
-                    # print(f"Moved lockfile {lockfile} to /tmp/{os.path.basename(lockfile)}")
-                    shutil.move(lockfile, os.path.join("/tmp/", os.path.basename(lockfile)))
-
-    # Remove specific lockfiles
-    for lockfile in [ATTACH_LOCK_FILE_SOURCE, ATTACH_LOCK_FILE_DESTINATION, PORT_LOCK_FILE]:
-        with open(lockfile, "r", encoding='utf-8') as f:
-            pid = int(f.read().strip())
-        if check_process(pid):
-            # print(f"Lockfile {lockfile} is currently in use by process: {pid}")
-            pass
-        else:
-            if remove_before_backup:
-                os.remove(lockfile)
-            else:
-                shutil.move(lockfile, os.path.join("/tmp/", os.path.basename(lockfile)))
 
 
 def use_lock(lock_file):
@@ -148,18 +61,6 @@ def use_lock(lock_file):
                     self.log.debug('Released lock: %s', result)
                 except subprocess.CalledProcessError as err:
                     self.log.error('Error releasing lock: %s', str(err))
-                    # Check if lockfile is still being used
-                    if acquire_lock(lock_file + '.lock'):
-                        try:
-                            if check_process(lock):
-                                self.log.debug('Lockfile is still being used by a process, cannot remove.')
-                            else:
-                                self.log.debug("Trying to remove lock instead")
-                                release_lock(lock_file + '.lock')
-                        finally:
-                            self.log.debug("Force remove locks at default locations")
-                            remove_lockfiles()
-
         return wait_for_lock
     return _decorate_lock
 

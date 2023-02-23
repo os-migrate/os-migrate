@@ -11,11 +11,6 @@
     - security_groups.yml
     - subnets.yml
 
-- name: Install OpenStack SDK
-  ansible.builtin.pip:
-    name: openstacksdk
-    version: '>=1.0'
-
 - name: remove osm_image
   openstack.cloud.image:
     auth: "{{ item.auth }}"
