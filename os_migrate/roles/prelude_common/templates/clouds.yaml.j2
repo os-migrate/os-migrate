@@ -7,6 +7,9 @@ clouds:
 {% if os_migrate_src_auth_type is defined %}
     auth_type: {{os_migrate_src_auth_type}}
 {%- endif %}
+{% if os_migrate_src_ca_cert is defined and os_migrate_src_ca_cert|length %}
+    cacert: {{os_migrate_src_ca_cert}}
+{% endif %}
 {% if os_migrate_src_region_name is defined and os_migrate_src_region_name|length %}
     region_name: {{os_migrate_src_region_name}}
 {% endif %}
@@ -18,6 +21,9 @@ clouds:
 {% if os_migrate_dst_auth_type is defined %}
     auth_type: {{os_migrate_dst_auth_type}}
 {%- endif %}
+{% if os_migrate_dst_ca_cert is defined and os_migrate_dst_ca_cert|length %}
+    cacert: {{os_migrate_dst_ca_cert}}
+{% endif %}
 {% if os_migrate_dst_region_name is defined and os_migrate_dst_region_name|length %}
     region_name: {{os_migrate_dst_region_name}}
 {% endif %}
