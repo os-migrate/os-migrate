@@ -9,6 +9,10 @@ New
 ~~~
 - Validate changelog using lint-commit-messages target. [Jiří Stránský]
 
+Fix
+~~~
+- Support cacert in clouds.yaml template. [Pierre Riteau]
+
 
 0.14.0 (2022-09-22)
 -------------------
