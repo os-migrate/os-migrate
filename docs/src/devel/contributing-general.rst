@@ -19,34 +19,34 @@ Format
 
 Accepted ``<type>`` values:
 
--  `New` - newly implemented user-facing features
+-  `new` - newly implemented user-facing features
 
--  `Chg` - changes in existing user-facing features
+-  `chg` - changes in existing user-facing features
 
--  `Fix` - user-facing bugfixes
+-  `fix` - user-facing bugfixes
 
--  `Oth` - other changes which users should know about
+-  `oth` - other changes which users should know about
 
--  `Dev` - any developer-facing changes, regardless of
+-  `dev` - any developer-facing changes, regardless of
    new/chg/fix status
 
 
 Keeping Changelog Clean
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-If the commit message subject starts with `Dev:`, it will be omitted
+If the commit message subject starts with `dev:`, it will be omitted
 when rendering the changelog.
 
 Using this convention is important to keep the changelog document
 concise and focused on user-facing changes. Any developer-facing
 changes (developer environment, CI, developer-only docs) or miniature
-"cosmetic" edits should be tagged as `Dev`.
+"cosmetic" edits should be tagged as `dev`.
 
 
 Summary (First Line)
 ^^^^^^^^^^^^^^^^^^^^
 
-The first line should not be longer than 70 characters, the second
+The first line should not be longer than 75 characters, the second
 line is always blank and other lines should be wrapped at 80
 characters.
 
