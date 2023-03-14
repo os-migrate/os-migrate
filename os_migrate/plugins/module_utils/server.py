@@ -175,8 +175,10 @@ class Server(resource.Resource):
             try:
                 if port_creation_mode == 'nova':
                     sdk_params['networks'].append(port.nova_sdk_params(conn))
-                else:
+                elif port_creation_mode == 'neutron':
                     sdk_params['networks'].append(port.create_or_update(conn))
+                else:
+                    raise exc.Unsupported("Port creation mode specified is unsupported.")
             except exc.InconsistentState as e:
                 params, info = self.params_and_info()
                 raise exc.InconsistentState(
