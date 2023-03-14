@@ -7,6 +7,7 @@ Changelog
 
 New
 ~~~
+- Process for cleaning stuck lockfiles in use_lock (#590) [Adrian Brown]
 - Validate changelog using lint-commit-messages target. [Jiří Stránský]
 
 Fix
