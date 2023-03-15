@@ -78,6 +78,7 @@ class ServerPort(resource.Resource):
                 'device_owner', 'compute:*', sdk_resource['device_owner'])
         return obj
 
+
 def create_or_update(self, conn, filters=None):
     refs = self._refs_from_ser(conn)
 
