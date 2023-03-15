@@ -78,21 +78,18 @@ class ServerPort(resource.Resource):
                 'device_owner', 'compute:*', sdk_resource['device_owner'])
         return obj
 
-
-def create_or_update(self, conn, filters=None):
-    refs = self._refs_from_ser(conn)
-
-    try:
-        sdk_port = conn.network.find_port(refs['port_id'], ignore_missing=False)
-        # update existing port object
-        sdk_params = self._sdk_params(conn, ignore_missing=True)
-        sdk_port = conn.network.update_port(sdk_port, **sdk_params)
-    except exc.OpenStackCloudResourceNotFound:
-        # create new port object
-        sdk_params = self._sdk_params(conn, ignore_missing=False)
-        sdk_port = conn.network.create_port(**sdk_params)
-
-    return sdk_port
+    def create_or_update(self, conn, filters=None):
+        refs = self._refs_from_ser(conn)
+        try:
+            sdk_port = conn.network.find_port(refs['port_id'], ignore_missing=False)
+            # update existing port object
+            sdk_params = self._sdk_params(conn, ignore_missing=True)
+            sdk_port = conn.network.update_port(sdk_port, **sdk_params)
+        except exc.OpenStackCloudResourceNotFound:
+            # create new port object
+            sdk_params = self._sdk_params(conn, ignore_missing=False)
+            sdk_port = conn.network.create_port(**sdk_params)
+        return sdk_port
 
     def nova_sdk_params(self, conn):
         refs = self._refs_from_ser(conn)
