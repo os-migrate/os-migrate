@@ -57,13 +57,15 @@ class ServerPort(resource.Resource):
         'id',
         'device_owner',
         'device_id',
-        'port_id'
     ]
     params_from_refs = [
         'fixed_ips_refs',
         'network_ref',
     ]
-    sdk_params_from_params = []
+    sdk_params_from_params = [
+        'id',
+        'binding_profile'
+    ]
     sdk_params_from_refs = [
         'fixed_ips',
         'network_id',
@@ -80,16 +82,14 @@ class ServerPort(resource.Resource):
 
     def create_or_update(self, conn, filters=None):
         refs = self._refs_from_ser(conn)
-        try:
-            sdk_port = conn.network.find_port(refs['port_id'], ignore_missing=False)
-            # update existing port object
-            sdk_params = self._sdk_params(conn, ignore_missing=True)
-            sdk_port = conn.network.update_port(sdk_port, **sdk_params)
-        except exc.OpenStackCloudResourceNotFound:
-            # create new port object
-            sdk_params = self._sdk_params(conn, ignore_missing=False)
-            sdk_port = conn.network.create_port(**sdk_params)
-        return sdk_port
+        sdk_params = self._to_sdk_params(refs)
+
+        # creation using neutron
+        ip_address = sdk_params['fixed_ips'][0]['ip_address']
+        network_id = sdk_params['network_id']
+        sdk_port = conn.network.create_port(network_id, ip_address)
+        output = {'binding_profile': sdk_port['binding_profile'], 'id': sdk_port['id']}
+        return output
 
     def nova_sdk_params(self, conn):
         refs = self._refs_from_ser(conn)
