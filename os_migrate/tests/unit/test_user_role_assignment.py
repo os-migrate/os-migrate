@@ -112,3 +112,10 @@ class RoleAssignment(unittest.TestCase):
         self.assertEqual(sdk_params['project_id'], 'uuid-test-project')
         self.assertEqual(sdk_params['role_id'], 'uuid-test-role')
         self.assertEqual(sdk_params['user_id'], 'uuid-test-user')
+
+    def test_assignment_not_found(self):
+        # curate mock output 
+        # test the response given presence 
+        # of user, project, role with 
+        # missing assignment.
+        pass
