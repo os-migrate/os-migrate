@@ -76,9 +76,13 @@ class UserProjectRoleAssignment(resource.Resource):
 
         refs = self._refs_from_ser(conn)
         sdk_params = self._to_sdk_params(refs)
-        exists = conn.identity.role_assignments(**sdk_params)
+        assignments = conn.identity.role_assignments(**sdk_params)
+        arr = []
 
-        if not exists:
+        for item in assignments:
+            arr.append(item)
+
+        if len(arr) == 0:
             conn.identity.assign_project_role_to_user(
                 sdk_params['project_id'], sdk_params['user_id'], sdk_params['role_id']
             )
