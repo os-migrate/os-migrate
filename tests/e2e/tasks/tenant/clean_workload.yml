@@ -114,3 +114,6 @@
 
 - name: Remove osm_fip
   import_tasks: clean_workload_existing_fip.yml
+
+- name: Remove left over neutron ports
+  import_tasks: clean_workload_existing_neutron_ports.yml

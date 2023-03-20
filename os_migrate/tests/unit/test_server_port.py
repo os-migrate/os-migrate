@@ -133,12 +133,6 @@ class TestServerPort(unittest.TestCase):
         self.assertEqual(params['network_ref']['name'], 'test-net')
         self.assertEqual(info['id'], 'uuid-test-server-port')
 
-    def test_create_or_update(self):
-        sp = ServerPort.from_sdk(None, sdk_server_port())
-        self.assertEqual(sp.create_or_update(None), {
-            1
-        })
-
     def test_nova_sdk_params(self):
         sp = ServerPort.from_sdk(None, sdk_server_port())
         self.assertEqual(
