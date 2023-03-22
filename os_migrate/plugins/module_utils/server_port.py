@@ -85,9 +85,7 @@ class ServerPort(resource.Resource):
         sdk_params = self._to_sdk_params(refs)
 
         # creation using neutron
-        ip_address = sdk_params['fixed_ips'][0]['ip_address']
-        network_id = sdk_params['network_id']
-        sdk_port = conn.network.create_port(network_id, ip_address)
+        sdk_port = conn.network.create_port(**sdk_params)
         output = {'binding_profile': sdk_port['binding_profile'], 'id': sdk_port['id']}
         return output
 
