@@ -62,8 +62,7 @@ class ServerPort(resource.Resource):
         'fixed_ips_refs',
         'network_ref',
     ]
-    sdk_params_from_params = [
-        'id',
+    params_from_sdk = [
         'binding_profile'
     ]
     sdk_params_from_refs = [
@@ -84,10 +83,9 @@ class ServerPort(resource.Resource):
         refs = self._refs_from_ser(conn)
         sdk_params = self._to_sdk_params(refs)
 
-        # creation using neutron
+        # creation using neutron, NOTE: add update method
         sdk_port = conn.network.create_port(**sdk_params)
-        output = {'binding_profile': sdk_port['binding_profile'], 'id': sdk_port['id']}
-        return output
+        return {'port_id': sdk_port['id']}
 
     def nova_sdk_params(self, conn):
         refs = self._refs_from_ser(conn)
