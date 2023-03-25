@@ -2,6 +2,39 @@
   openstack.cloud.auth:
     auth: "{{ os_migrate_dst_auth }}"
 
+- name: get subnet_id
+  ansible.builtin.shell: |
+    openstack subnet show -c id -f value {{ subnet_name }}
+  args:
+    executable: /bin/bash
+  environment:
+    OS_AUTH_TYPE: token
+    OS_AUTH_URL: "{{ os_migrate_dst_auth.auth_url }}"
+    OS_TOKEN: "{{ auth_token }}"
+    OS_PROJECT_ID: "{{ os_migrate_dst_auth.project_id|default('') }}"
+    OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
+    OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
+    OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
+  register: subnet_id_result
+  changed_when: "subnet_id_result.rc != 0 or subnet_id_result.stdout == ''"
+
+- name: release IP allocations from osm_ports Neutron ports
+  ansible.builtin.shell: |
+    openstack port unset --fixed-ip subnet={{ subnet_id_result.stdout }} {{ item }}
+  args:
+    executable: /bin/bash
+  register: _result
+  changed_when: "_result.rc == 0"
+  environment:
+    OS_AUTH_TYPE: token
+    OS_AUTH_URL: "{{ os_migrate_dst_auth.auth_url }}"
+    OS_TOKEN: "{{ auth_token }}"
+    OS_PROJECT_ID: "{{ os_migrate_dst_auth.project_id|default('') }}"
+    OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
+    OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
+    OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
+  loop: "{{ osm_port_ids.stdout_lines }}"
+
 - name: list osm_ports port IDs
   ansible.builtin.shell: |
     openstack port list -f value -c ID --tag osm_ports
