@@ -99,6 +99,7 @@ def run_module():
 
     sdk, conn = openstack_cloud_from_module(module)
     ser_assignment = user_project_role_assignment.UserProjectRoleAssignment.from_data(module.params['data'])
+
     result['changed'] = ser_assignment.create_or_update(conn, module.params['filters'])
 
     module.exit_json(**result)
