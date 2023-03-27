@@ -4,7 +4,7 @@
 
 - name: get subnet_id
   ansible.builtin.shell: |
-    openstack subnet show -c id -f value {{ subnet_name }}
+    openstack subnet show -c id -f value osm_subnet
   args:
     executable: /bin/bash
   environment:
