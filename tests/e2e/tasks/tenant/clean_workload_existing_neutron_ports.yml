@@ -33,4 +33,25 @@
     OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
     OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
     OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
+  when: item not in skipped_ports
+  vars:
+    port_details: "{{ lookup('openstack', 'port show ' + item + ' -f json') | from_json }}"
+    port_fixed_ips: "{{ port_details.fixed_ips | default([]) }}"
+    port_subnet_ids: "{{ port_fixed_ips | map(attribute='subnet_id') | list }}"
+    skipped_ports: "{{ skipped_ports | default([]) + (subnet_id in port_subnet_ids) }}"
+  ignore_errors: true
   loop: "{{ osm_port_ids.stdout_lines }}"
+
+- name: delete Neutron subnet
+  openstack.cloud.networking.network:
+    state: absent
+    name_or_id: "{{ subnet_id }}"
+  environment:
+    OS_AUTH_TYPE: token
+    OS_AUTH_URL: "{{ os_migrate_dst_auth.auth_url }}"
+    OS_TOKEN: "{{ auth_token }}"
+    OS_PROJECT_ID: "{{ os_migrate_dst_auth.project_id|default('') }}"
+    OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
+    OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
+    OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
+  when: subnet_id not in skipped_ports
