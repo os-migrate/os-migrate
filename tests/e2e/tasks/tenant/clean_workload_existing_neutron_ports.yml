@@ -2,9 +2,24 @@
   openstack.cloud.auth:
     auth: "{{ os_migrate_dst_auth }}"
 
-- name: list osm_ports port IDs
+- name: List server ID for osm_server
+  ansible.builtin.shell:
+    cmd: "openstack server show -f value -c ID osm_server"
+  args:
+    executable: /bin/bash
+  environment:
+    OS_AUTH_TYPE: token
+    OS_AUTH_URL: "{{ os_migrate_dst_auth.auth_url }}"
+    OS_TOKEN: "{{ auth_token }}"
+    OS_PROJECT_ID: "{{ os_migrate_dst_auth.project_id|default('') }}"
+    OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
+    OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
+    OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
+  register: osm_server_id
+
+- name: List ports for osm_server
   ansible.builtin.shell: |
-    openstack port list -f value -c ID --tag osm_ports
+    openstack port list -f value -c id {{ osm_server_id }}
   args:
     executable: /bin/bash
   environment:
@@ -16,15 +31,12 @@
     OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
     OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
   register: osm_port_ids
-  changed_when: "osm_port_ids.rc == 0"
 
-- name: delete osm_ports Neutron ports
+- name: Delete osm port ids
   ansible.builtin.shell: |
-    openstack port delete {{ item }}
+    openstack port port delete {{ osm_port_ids }}
   args:
     executable: /bin/bash
-  register: _result
-  changed_when: "_result.rc == 0"
   environment:
     OS_AUTH_TYPE: token
     OS_AUTH_URL: "{{ os_migrate_dst_auth.auth_url }}"
@@ -33,25 +45,5 @@
     OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
     OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
     OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
-  when: item not in skipped_ports
-  vars:
-    port_details: "{{ lookup('openstack', 'port show ' + item + ' -f json') | from_json }}"
-    port_fixed_ips: "{{ port_details.fixed_ips | default([]) }}"
-    port_subnet_ids: "{{ port_fixed_ips | map(attribute='subnet_id') | list }}"
-    skipped_ports: "{{ skipped_ports | default([]) + (subnet_id in port_subnet_ids) }}"
-  ignore_errors: true
+  changed_when: "osm_port_ids.rc == 0"
   loop: "{{ osm_port_ids.stdout_lines }}"
-
-- name: delete Neutron subnet
-  openstack.cloud.networking.network:
-    state: absent
-    name_or_id: "{{ subnet_id }}"
-  environment:
-    OS_AUTH_TYPE: token
-    OS_AUTH_URL: "{{ os_migrate_dst_auth.auth_url }}"
-    OS_TOKEN: "{{ auth_token }}"
-    OS_PROJECT_ID: "{{ os_migrate_dst_auth.project_id|default('') }}"
-    OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
-    OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
-    OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
-  when: subnet_id not in skipped_ports
