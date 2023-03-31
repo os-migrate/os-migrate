@@ -2,9 +2,9 @@
   openstack.cloud.auth:
     auth: "{{ os_migrate_dst_auth }}"
 
-- name: List server ID for osm_server
+- name: List server ID osm server
   ansible.builtin.shell: |
-    openstack server show -f value -c ID {{ osm_server }}
+    openstack server show -f value -c ID {{ server }}
   args:
     executable: /bin/bash
   environment:
@@ -17,8 +17,9 @@
     OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
   register: osm_server_id
   changed_when: "osm_server_id.rc == 0"
+  failed_when: false
 
-- name: List ports for osm_server
+- name: List ports for osm server
   ansible.builtin.shell: |
     openstack port list -f value -c id {{ osm_server_id }}
   args:
@@ -33,6 +34,7 @@
     OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
   register: osm_port_ids
   changed_when: "osm_port_ids.rc == 0"
+  failed_when: false
 
 - name: Delete osm port ids
   ansible.builtin.shell: |
@@ -48,3 +50,4 @@
     OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
     OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
   changed_when: "osm_port_ids.rc == 0"
+  failed_when: false

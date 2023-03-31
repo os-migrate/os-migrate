@@ -49,6 +49,8 @@
 
 - name: Remove left over neutron ports
   import_tasks: clean_workload_existing_neutron_ports.yml
+  vars:
+    server: osm_server
 
 - name: Remove osm_server
   openstack.cloud.server:
