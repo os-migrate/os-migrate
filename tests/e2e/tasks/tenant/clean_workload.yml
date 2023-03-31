@@ -47,6 +47,9 @@
   # The module will fail if server or volume don't exist.
   failed_when: false
 
+- name: Remove left over neutron ports
+  import_tasks: clean_workload_existing_neutron_ports.yml
+
 - name: Remove osm_server
   openstack.cloud.server:
     name: osm_server

@@ -4,6 +4,7 @@ __metaclass__ = type
 import openstack
 import unittest
 
+
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import exc, server_port
 

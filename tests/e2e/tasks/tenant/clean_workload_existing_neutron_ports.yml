@@ -1,0 +1,50 @@
+- name: get dst auth token
+  openstack.cloud.auth:
+    auth: "{{ os_migrate_dst_auth }}"
+
+- name: List server ID for osm_server
+  ansible.builtin.shell: |
+    openstack server show -f value -c ID {{ osm_server }}
+  args:
+    executable: /bin/bash
+  environment:
+    OS_AUTH_TYPE: token
+    OS_AUTH_URL: "{{ os_migrate_dst_auth.auth_url }}"
+    OS_TOKEN: "{{ auth_token }}"
+    OS_PROJECT_ID: "{{ os_migrate_dst_auth.project_id|default('') }}"
+    OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
+    OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
+    OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
+  register: osm_server_id
+  changed_when: "osm_server_id.rc == 0"
+
+- name: List ports for osm_server
+  ansible.builtin.shell: |
+    openstack port list -f value -c id {{ osm_server_id }}
+  args:
+    executable: /bin/bash
+  environment:
+    OS_AUTH_TYPE: token
+    OS_AUTH_URL: "{{ os_migrate_dst_auth.auth_url }}"
+    OS_TOKEN: "{{ auth_token }}"
+    OS_PROJECT_ID: "{{ os_migrate_dst_auth.project_id|default('') }}"
+    OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
+    OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
+    OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
+  register: osm_port_ids
+  changed_when: "osm_port_ids.rc == 0"
+
+- name: Delete osm port ids
+  ansible.builtin.shell: |
+    openstack port port delete {{ osm_port_ids }}
+  args:
+    executable: /bin/bash
+  environment:
+    OS_AUTH_TYPE: token
+    OS_AUTH_URL: "{{ os_migrate_dst_auth.auth_url }}"
+    OS_TOKEN: "{{ auth_token }}"
+    OS_PROJECT_ID: "{{ os_migrate_dst_auth.project_id|default('') }}"
+    OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
+    OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
+    OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
+  changed_when: "osm_port_ids.rc == 0"
