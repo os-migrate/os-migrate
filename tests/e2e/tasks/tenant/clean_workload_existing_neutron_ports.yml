@@ -16,6 +16,7 @@
     OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
     OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
   register: osm_server_id
+  changed_when: "osm_server_id.rc == 0"
 
 - name: List ports for osm_server
   ansible.builtin.shell: |
@@ -31,6 +32,7 @@
     OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
     OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
   register: osm_port_ids
+  changed_when: "osm_port_ids.rc == 0"
 
 - name: Delete osm port ids
   ansible.builtin.shell: |
@@ -45,3 +47,4 @@
     OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
     OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
     OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
+  changed_when: "osm_port_ids.rc == 0"
