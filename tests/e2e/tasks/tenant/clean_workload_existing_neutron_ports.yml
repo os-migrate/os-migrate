@@ -2,9 +2,9 @@
   openstack.cloud.auth:
     auth: "{{ os_migrate_dst_auth }}"
 
-- name: List server ID osm server
+- name: List subnet id for port clean up on osm_subnet
   ansible.builtin.shell: |
-    openstack server show -f value -c id {{ server }}
+    openstack subnet list -f value -c ID --name osm_subnet
   args:
     executable: /bin/bash
   environment:
@@ -15,13 +15,12 @@
     OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
     OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
     OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
-  register: osm_server_id
-  changed_when: "osm_server_id.rc == 0"
-  failed_when: false
+  register: subnet_id
+  changed_when: "subnet_id.rc == 0"
 
-- name: List ports for osm server
+- name: Check for ports with the existing subnet id
   ansible.builtin.shell: |
-    openstack port list -f value -c id {{ osm_server_id }}
+    openstack port list --fixed-ip subnet={{ subnet_id.stdout }} --column ID
   args:
     executable: /bin/bash
   environment:
@@ -32,13 +31,12 @@
     OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
     OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
     OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
-  register: osm_port_ids
-  changed_when: "osm_port_ids.rc == 0"
-  failed_when: false
+  register: port_ids
+  changed_when: "port_ids.rc == 0"
 
-- name: Delete osm port ids
+- name: Check for ports with no device owner to be deleted
   ansible.builtin.shell: |
-    openstack port port delete {{ osm_port_ids }}
+    openstack port show --format value --column device_owner {{ item }}
   args:
     executable: /bin/bash
   environment:
@@ -49,5 +47,22 @@
     OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
     OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
     OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
-  changed_when: "osm_port_ids.rc == 0"
-  failed_when: false
+  register: device_owners
+  changed_when: "device_owners.rc == 0"
+  loop: "{{ port_ids.stdout_lines }}"
+
+- name: Delete osm_subnet port id not managed by dhcp
+  ansible.builtin.shell: |
+    openstack port list
+  args:
+    executable: /bin/bash
+  environment:
+    OS_AUTH_TYPE: token
+    OS_AUTH_URL: "{{ os_migrate_dst_auth.auth_url }}"
+    OS_TOKEN: "{{ auth_token }}"
+    OS_PROJECT_ID: "{{ os_migrate_dst_auth.project_id|default('') }}"
+    OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
+    OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
+    OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
+  changed_when: "device_owners.rc == 0"
+  failed_when: device_owners.stdout == ""
