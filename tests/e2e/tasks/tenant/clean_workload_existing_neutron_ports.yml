@@ -4,7 +4,7 @@
 
 - name: List server ID osm server
   ansible.builtin.shell: |
-    openstack server show -f value -c ID {{ server }}
+    openstack server show -f value -c id {{ server }}
   args:
     executable: /bin/bash
   environment:
