@@ -85,11 +85,9 @@ class ServerPort(resource.Resource):
 
         # creation using neutron, NOTE: add update method
         sdk_port = conn.network.create_port(**sdk_params)
-        return {'networks': [
-            {
-                'port': sdk_port['id']
-            }
-        ]}
+        return {
+            'port': sdk_port['id']
+        }
 
     def nova_sdk_params(self, conn):
         refs = self._refs_from_ser(conn)
