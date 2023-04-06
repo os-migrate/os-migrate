@@ -36,7 +36,7 @@
 
 - name: Check for ports with no device owner to be deleted
   ansible.builtin.shell: |
-    openstack port show --format value --column device_owner {{ item }}
+    openstack port show --format value --column device_owner {{ item.strip('| ') }}
   args:
     executable: /bin/bash
   environment:
