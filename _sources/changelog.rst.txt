@@ -7,6 +7,8 @@ Changelog
 
 New
 ~~~
+- Port creation via neutron api. [cloudguruab]
+- Neutron port creation for workloads. [cloudguruab]
 - Patch to user project role assignment bug. [cloudguruab]
 - Process for cleaning stuck lockfiles in use_lock (#590) [Adrian Brown]
 - Validate changelog using lint-commit-messages target. [Jiří Stránský]
