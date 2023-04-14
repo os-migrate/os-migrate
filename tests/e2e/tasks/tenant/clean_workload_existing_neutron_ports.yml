@@ -1,0 +1,39 @@
+- name: get dst auth token
+  openstack.cloud.auth:
+    auth: "{{ os_migrate_dst_auth }}"
+
+- name: List subnet id for port clean up on osm_subnet
+  ansible.builtin.shell: |
+    openstack subnet list -f value -c ID --name osm_subnet
+  args:
+    executable: /bin/bash
+  environment:
+    OS_AUTH_TYPE: token
+    OS_AUTH_URL: "{{ os_migrate_dst_auth.auth_url }}"
+    OS_TOKEN: "{{ auth_token }}"
+    OS_PROJECT_ID: "{{ os_migrate_dst_auth.project_id|default('') }}"
+    OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
+    OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
+    OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
+  register: subnet_id
+  changed_when: "subnet_id.rc == 0"
+
+- name: Check for ports with the existing subnet id
+  ansible.builtin.shell: |
+    openstack port list --format value --fixed-ip subnet={{ subnet_id.stdout }} --column ID
+  args:
+    executable: /bin/bash
+  environment:
+    OS_AUTH_TYPE: token
+    OS_AUTH_URL: "{{ os_migrate_dst_auth.auth_url }}"
+    OS_TOKEN: "{{ auth_token }}"
+    OS_PROJECT_ID: "{{ os_migrate_dst_auth.project_id|default('') }}"
+    OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
+    OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
+    OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
+  register: port_ids
+  changed_when: "port_ids.rc == 0"
+
+- name: Loop through existing port ids to delete
+  include_tasks: clean_empty_device_owners.yml
+  loop: "{{ port_ids.stdout_lines }}"

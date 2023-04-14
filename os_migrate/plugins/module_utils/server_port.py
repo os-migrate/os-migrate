@@ -62,7 +62,9 @@ class ServerPort(resource.Resource):
         'fixed_ips_refs',
         'network_ref',
     ]
-    sdk_params_from_params = []
+    params_from_sdk = [
+        'binding_profile'
+    ]
     sdk_params_from_refs = [
         'fixed_ips',
         'network_id',
@@ -78,7 +80,14 @@ class ServerPort(resource.Resource):
         return obj
 
     def create_or_update(self, conn, filters=None):
-        raise exc.Unsupported("Direct ServerPort.create_or_update call is unsupported.")
+        refs = self._refs_from_ser(conn)
+        sdk_params = self._to_sdk_params(refs)
+
+        # creation using neutron, NOTE: add update method
+        sdk_port = conn.network.create_port(**sdk_params)
+        return {
+            'port': sdk_port['id']
+        }
 
     def nova_sdk_params(self, conn):
         refs = self._refs_from_ser(conn)

@@ -67,6 +67,7 @@ class Server(resource.Resource):
             'volume_type': None,
         },
         'floating_ip_mode': 'auto',
+        'port_creation_mode': 'nova'
     }
 
     @classmethod
@@ -88,10 +89,11 @@ class Server(resource.Resource):
 
     def create(self, conn, block_device_mapping):
         sdk_params = self.sdk_params(conn)
+        port_creation_mode = self.migration_params()['port_creation_mode']
 
         # Simple port creation via Nova. Subsequently we may add
         # support for advanced port creation via Neutron.
-        self.update_sdk_params_networks_simple(conn, sdk_params)
+        self.update_sdk_params_networks_simple(conn, sdk_params, port_creation_mode)
 
         self.update_sdk_params_block_device_mapping(sdk_params, block_device_mapping)
         sdk_srv = conn.compute.create_server(**sdk_params)
@@ -166,12 +168,17 @@ class Server(resource.Resource):
         elif 'image_id' in sdk_params:
             del sdk_params['image_id']
 
-    def update_sdk_params_networks_simple(self, conn, sdk_params):
+    def update_sdk_params_networks_simple(self, conn, sdk_params, port_creation_mode):
         sdk_params['networks'] = []
         ports = list(map(ServerPort.from_data, self.params()['ports']))
         for port in ports:
             try:
-                sdk_params['networks'].append(port.nova_sdk_params(conn))
+                if port_creation_mode == 'nova':
+                    sdk_params['networks'].append(port.nova_sdk_params(conn))
+                elif port_creation_mode == 'neutron':
+                    sdk_params['networks'].append(port.create_or_update(conn))
+                else:
+                    raise exc.Unsupported("Port creation mode specified is unsupported.")
             except exc.InconsistentState as e:
                 params, info = self.params_and_info()
                 raise exc.InconsistentState(
