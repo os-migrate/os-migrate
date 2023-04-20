@@ -7,6 +7,19 @@ Changelog
 
 New
 ~~~
+- Mac preservation enhancement for server_port instance (#603) [Adrian
+  Brown]
+
+  * new: mac preservation enhancement for server_port instance
+
+  * dev: fix to cachecontrols error
+
+
+0.15.0 (2023-04-20)
+-------------------
+
+New
+~~~
 - Port creation via neutron api. [cloudguruab]
 - Neutron port creation for workloads. [cloudguruab]
 - Patch to user project role assignment bug. [cloudguruab]
