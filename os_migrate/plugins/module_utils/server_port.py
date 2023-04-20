@@ -63,7 +63,8 @@ class ServerPort(resource.Resource):
         'network_ref',
     ]
     params_from_sdk = [
-        'binding_profile'
+        'binding_profile',
+        'mac_address'
     ]
     sdk_params_from_refs = [
         'fixed_ips',
