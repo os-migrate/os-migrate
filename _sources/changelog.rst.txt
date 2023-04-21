@@ -7,6 +7,7 @@ Changelog
 
 New
 ~~~
+- Stable 0.15.0. [cloudguruab]
 - Mac preservation enhancement for server_port instance (#603) [Adrian
   Brown]
 
