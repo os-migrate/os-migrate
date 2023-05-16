@@ -15,6 +15,11 @@ New
 
   * dev: fix to cachecontrols error
 
+Fix
+~~~
+- Update to CentOS-8 qcow image version for e2e devel env setup.
+  [cloudguruab]
+
 
 0.15.0 (2023-04-20)
 -------------------
