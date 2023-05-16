@@ -67,7 +67,10 @@ class Server(resource.Resource):
             'volume_type': None,
         },
         'floating_ip_mode': 'auto',
-        'port_creation_mode': 'nova'
+        'port_creation_mode': 'nova',
+        'boot_volume_id': None,
+        'data_copy': True,
+        "additional_volume_ids": None
     }
 
     @classmethod
@@ -75,9 +78,14 @@ class Server(resource.Resource):
         obj = super(Server, cls).from_sdk(conn, sdk_resource)
         params = obj.params()
         migration_params = obj.migration_params()
+        from_image = params.get('image_ref')
+
+        # booted from local boot disk, boot-disk not copied
+        if migration_params['data_copy'] is False and from_image is not None:
+            migration_params['boot_disk_copy'] = False
 
         # boot-from-volume servers must copy boot disk
-        if params.get('image_ref') is None:
+        if from_image is None:
             migration_params['boot_disk_copy'] = True
 
         # config_drive can be returned as empty string but it cannot
@@ -224,6 +232,7 @@ class Server(resource.Resource):
         ser_fips = map(lambda fip: ServerFloatingIP.from_sdk(conn, fip), sdk_fips)
         refs['floating_ips'] = list(map(lambda fip: fip.data, ser_fips))
 
+        # TODO-storage, do we need to handle anything here with the copying of volumes?
         sdk_volumes = server_volumes(conn, sdk_res)
         ser_volumes = map(lambda vol: ServerVolume.from_sdk(conn, vol), sdk_volumes)
         refs['volumes'] = list(map(lambda vol: vol.data, ser_volumes))

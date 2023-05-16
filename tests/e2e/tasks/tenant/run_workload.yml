@@ -4,6 +4,7 @@
 # might be actually a more precise way to test the real end-user
 # experience.
 
+# TODO-storage added a testcase here for the data_copy value.
 - name: Workloads tasks
   block:
     - name: export workloads
@@ -23,6 +24,13 @@
         regexp: "boot_disk_copy: false"
         replace: "boot_disk_copy: true"
       when: set_boot_disk_copy|default(false)|bool
+
+    - name: set data copy to false
+      ansible.builtin.replace:
+        path: "{{ os_migrate_data_dir }}/workloads.yml"
+        regexp: "data_copy: true"
+        replace: "data_copy: false"
+      when: set_data_copy|default(true)|bool
 
     - name: set port creation mode to neutron
       ansible.builtin.replace:

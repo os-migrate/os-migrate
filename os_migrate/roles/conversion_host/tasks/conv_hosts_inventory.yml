@@ -27,6 +27,7 @@
       os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
       os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
+# TODO-storage do we need to handle this at all, given if data_copy is false then we dont deploy a src CH ?
 # If conversion hosts are added succesfully to each group, show them all.
 - name: list src conversion hosts
   ansible.builtin.debug:

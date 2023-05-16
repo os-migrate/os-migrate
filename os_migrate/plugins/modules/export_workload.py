@@ -122,6 +122,7 @@ def run_module():
         # supports_check_mode=True,
     )
 
+    # TODO-storage : Do we need to do anything here?
     sdk, conn = openstack_cloud_from_module(module)
     sdk_server_nodetails = conn.compute.find_server(module.params['name'], ignore_missing=False)
     sdk_server = conn.compute.get_server(sdk_server_nodetails['id'])
