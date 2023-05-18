@@ -46,6 +46,7 @@ def check_and_cleanup_lockfiles():
     If a lockfile is not being used by a process,
     it is either deleted or not being used.
     """
+    # FIXME: bug in checking for locks that sometimes are missing .lock extension
     # Remove specific lockfiles
     for lockfile in [ATTACH_LOCK_FILE_SOURCE, ATTACH_LOCK_FILE_DESTINATION, PORT_LOCK_FILE]:
         try:
