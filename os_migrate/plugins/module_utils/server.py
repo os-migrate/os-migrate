@@ -60,17 +60,23 @@ class Server(resource.Resource):
 
     migration_param_defaults = {
         'boot_disk_copy': False,
+        'floating_ip_mode': 'auto',
         'boot_volume_params': {
             'availability_zone': None,
             'name': None,
             'description': None,
             'volume_type': None,
         },
-        'floating_ip_mode': 'auto',
         'port_creation_mode': 'nova',
-        'boot_volume_id': None,
         'data_copy': True,
-        "additional_volume_ids": None
+        'boot_volume': {
+            'uuid': None,
+        },
+        'additional_volumes': [
+            {
+                'uuid': None,
+            }
+        ],
     }
 
     @classmethod
@@ -78,14 +84,9 @@ class Server(resource.Resource):
         obj = super(Server, cls).from_sdk(conn, sdk_resource)
         params = obj.params()
         migration_params = obj.migration_params()
-        from_image = params.get('image_ref')
-
-        # booted from local boot disk, boot-disk not copied
-        if migration_params['data_copy'] is False and from_image is not None:
-            migration_params['boot_disk_copy'] = False
 
         # boot-from-volume servers must copy boot disk
-        if from_image is None:
+        if params.get('image_ref') is None:
             migration_params['boot_disk_copy'] = True
 
         # config_drive can be returned as empty string but it cannot
@@ -102,6 +103,30 @@ class Server(resource.Resource):
         # Simple port creation via Nova. Subsequently we may add
         # support for advanced port creation via Neutron.
         self.update_sdk_params_networks_simple(conn, sdk_params, port_creation_mode)
+
+        # Update SDK parameters with data_copy, boot_volume, and additional_volumes
+        data_copy = self.migration_params()['data_copy']
+        additional_volumes = self.migration_params()['additional_volumes']
+
+        sdk_params['data_copy'] = data_copy
+        sdk_params['block_device_mapping_v2'] = []
+
+        # Add boot volume parameters
+        boot_volume_uuid = self.migration_params()['boot_volume']['uuid']
+
+        if boot_volume_uuid:
+            sdk_params['block_device_mapping_v2'].append({
+                'uuid': boot_volume_uuid,
+            })
+
+        # Add additional volumes
+        for additional_volume in additional_volumes:
+            additional_volume_uuid = additional_volume['uuid']
+
+            if additional_volume_uuid:
+                sdk_params['block_device_mapping_v2'].append({
+                    'uuid': additional_volume_uuid,
+                })
 
         self.update_sdk_params_block_device_mapping(sdk_params, block_device_mapping)
         sdk_srv = conn.compute.create_server(**sdk_params)
@@ -136,6 +161,31 @@ class Server(resource.Resource):
             if value not in choices:
                 raise exc.UnexpectedChoice('floating_ip_mode', choices, value)
 
+        if 'data_copy' in params_dict:
+            value = params_dict['data_copy']
+            if not isinstance(value, bool):
+                raise exc.InvalidInputType('data_copy', 'boolean')
+
+        if 'boot_volume_params' in params_dict:
+            boot_volume_params = params_dict['boot_volume_params']
+            if not isinstance(boot_volume_params, dict):
+                raise exc.InvalidInputType('boot_volume_params', 'dictionary')
+            for key in ['availability_zone', 'name', 'description', 'volume_type']:
+                if key not in boot_volume_params:
+                    raise exc.MissingParameter(f"Missing key '{key}' in boot_volume_params")
+
+        if 'additional_volumes' in params_dict:
+            additional_volumes = params_dict['additional_volumes']
+            if not isinstance(additional_volumes, list):
+                raise exc.InvalidInputType('additional_volumes', 'list')
+            for volume in additional_volumes:
+                if not isinstance(volume, dict):
+                    raise exc.InvalidInputType('additional_volumes', 'dictionary')
+                # when we add more items to defaults we can validate here.
+                for key in ['uuid']:
+                    if key not in volume:
+                        raise exc.MissingParameter(f"Missing key '{key}' in additional volume")
+
         return super().update_migration_params(params_dict)
 
     def update_sdk_params_block_device_mapping(self, sdk_params, block_device_mapping):
@@ -157,6 +207,22 @@ class Server(resource.Resource):
                 (f"Instance '{params['name']}' ({info['id']}) has boot_disk_copy disabled but block device mapping "
                  f"has a boot volume: {block_device_mapping}")
             )
+
+        # Update block device mapping with boot volume
+        if migration_params['boot_volume']['uuid']:
+            boot_volume_mapping = {
+                'uuid': migration_params['boot_volume']['uuid'],
+            }
+            block_device_mapping.insert(0, boot_volume_mapping)
+
+        # Update block device mapping with additional volumes
+        additional_volumes = migration_params['additional_volumes']
+        if additional_volumes:
+            for volume in additional_volumes:
+                additional_volume_mapping = {
+                    'uuid': volume['uuid'],
+                }
+                block_device_mapping.append(additional_volume_mapping)
 
         image_id = sdk_params.get('image_id', None)
         if not has_boot_volume:

@@ -4,7 +4,6 @@
 # might be actually a more precise way to test the real end-user
 # experience.
 
-# TODO-storage added a testcase here for the data_copy value.
 - name: Workloads tasks
   block:
     - name: export workloads
