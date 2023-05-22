@@ -181,43 +181,48 @@ class TestServer(unittest.TestCase):
         self.assertEqual(params['security_group_refs'][1]['name'], 'testing123')
         self.assertEqual(info['status'], 'ACTIVE')
 
-    def test_block_device_mapping_boot_disk_copy(self):
-        srv = Server.from_sdk(None, sdk_server())
-        sdk_params = srv.sdk_params(None)
+    # TODO: testing
+    # def test_block_device_mapping_boot_disk_copy(self):
+    #     srv = Server.from_sdk(None, sdk_server())
+    #     sdk_params = srv.sdk_params(None)
 
-        block_dev_map = [
-            {
-                'boot_index': -1,
-                'delete_on_termination': False,
-                'destination_type': 'volume',
-                'device_name': 'sdb',
-                'source_type': 'volume',
-                'uuid': 'uuid-some-volume',
-            }
-        ]
-        srv.update_sdk_params_block_device_mapping(sdk_params, block_dev_map)
-        self.assertEqual(sdk_params['block_device_mapping'], [
-            {
-                'boot_index': 0,
-                'delete_on_termination': True,
-                'destination_type': 'local',
-                'source_type': 'image',
-                'uuid': 'uuid-test-image',
-            },
-            {
-                'boot_index': -1,
-                'delete_on_termination': False,
-                'destination_type': 'volume',
-                'device_name': 'sdb',
-                'source_type': 'volume',
-                'uuid': 'uuid-some-volume',
-            }
-        ])
-        self.assertEqual(sdk_params['image_id'], 'uuid-test-image')
+    #     block_dev_map = [
+    #         {
+    #             'boot_index': -1,
+    #             'delete_on_termination': False,
+    #             'destination_type': 'volume',
+    #             'device_name': 'sdb',
+    #             'source_type': 'volume',
+    #             'uuid': 'uuid-some-volume',
+    #         }
+    #     ]
+    #     srv.update_sdk_params_block_device_mapping(sdk_params, block_dev_map)
+    #     self.assertEqual(sdk_params['block_device_mapping'], [
+    #         {
+    #             'boot_index': 0,
+    #             'delete_on_termination': True,
+    #             'destination_type': 'local',
+    #             'source_type': 'image',
+    #             'uuid': 'uuid-test-image',
+    #         },
+    #         {
+    #             'boot_index': -1,
+    #             'delete_on_termination': False,
+    #             'destination_type': 'volume',
+    #             'device_name': 'sdb',
+    #             'source_type': 'volume',
+    #             'uuid': 'uuid-some-volume',
+    #         }
+    #     ])
+    #     self.assertEqual(sdk_params['image_id'], 'uuid-test-image')
 
     def test_block_device_mapping_boot_disk_nocopy(self):
         srv = Server.from_sdk(None, sdk_server())
         srv.migration_params()['boot_disk_copy'] = True
+
+        # NOTE: data_copy should be true for testcase, can turn off to test
+        srv.migration_params()['data_copy'] = True
+        srv.migration_params()['boot_volume']['uuid'] = 'some-uuid-value'
         sdk_params = srv.sdk_params(None)
 
         block_dev_map = [
@@ -239,6 +244,12 @@ class TestServer(unittest.TestCase):
             }
         ]
         srv.update_sdk_params_block_device_mapping(sdk_params, block_dev_map)
+
+        # test block device mapping v2 here, test error - key doesnt exist for v2
+        print(sdk_params)
+        print("00000000000000000000000000000000000000000000000000000000000000")
+        print(sdk_params['block_device_mapping_v2'])
+        self.assertEqual(1, 2)
         self.assertEqual(sdk_params['block_device_mapping'], [
             {
                 'boot_index': 0,

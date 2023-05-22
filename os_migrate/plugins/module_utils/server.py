@@ -208,21 +208,25 @@ class Server(resource.Resource):
                  f"has a boot volume: {block_device_mapping}")
             )
 
-        # Update block device mapping with boot volume
-        if migration_params['boot_volume']['uuid']:
-            boot_volume_mapping = {
-                'uuid': migration_params['boot_volume']['uuid'],
-            }
-            block_device_mapping.insert(0, boot_volume_mapping)
-
-        # Update block device mapping with additional volumes
-        additional_volumes = migration_params['additional_volumes']
-        if additional_volumes:
-            for volume in additional_volumes:
-                additional_volume_mapping = {
-                    'uuid': volume['uuid'],
+        # Update block device mapping with boot volume if data_copy is false
+        if not migration_params['data_copy']:
+            if migration_params['boot_volume']['uuid']:
+                boot_volume_mapping = {
+                    'boot_volume': {'uuid': migration_params['boot_volume']['uuid']}
                 }
-                block_device_mapping.append(additional_volume_mapping)
+                block_device_mapping.insert(0, boot_volume_mapping)
+
+        # TODO: working on the boot volume unittest first,
+        # data copy should be watched on update, we want to move to using
+        # 'block_device_mapping_v2' param as well so testing this
+        # Update block device mapping with additional volumes
+        # additional_volumes = migration_params['additional_volumes']
+        # if len(additional_volumes) > 1 and additional_volumes['uuid'] is not None:
+        #     for volume in additional_volumes:
+        #         additional_volume_mapping = {
+        #             'additional_volume_uuid': volume['uuid'],
+        #         }
+        #         block_device_mapping.append(additional_volume_mapping)
 
         image_id = sdk_params.get('image_id', None)
         if not has_boot_volume:
