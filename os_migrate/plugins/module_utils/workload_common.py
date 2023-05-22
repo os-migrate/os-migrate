@@ -28,44 +28,11 @@ except ImportError:
     DEVNULL = open(os.devnull, 'r+', encoding='utf8')
 
 
-def check_process(pid):
-    """Check whether pid exists in the current process table."""
-    if pid is None:
-        return False
-    try:
-        os.kill(int(pid), 0)
-    except (OSError, ValueError):
-        return False
-    else:
-        return True
-
-
-def check_and_cleanup_lockfiles():
-    """
-    Removes lockfiles found in specific directories.
-    If a lockfile is not being used by a process,
-    it is either deleted or not being used.
-    """
-    # FIXME: bug in checking for locks that sometimes are missing .lock extension
-    # Remove specific lockfiles
-    for lockfile in [ATTACH_LOCK_FILE_SOURCE, ATTACH_LOCK_FILE_DESTINATION, PORT_LOCK_FILE]:
-        try:
-            with open(f"{lockfile}.lock", "r", encoding='utf-8') as f:
-                pid = f.read().strip()
-            if check_process(pid):
-                # print(f"Lockfile {lockfile} is currently in use by process: {pid}")
-                pass
-            else:
-                os.remove(lockfile + '.lock')
-                return True
-        except FileNotFoundError:
-            return False
-
-
 def use_lock(lock_file):
     """ Boilerplate for functions that need to take a lock. """
     def _decorate_lock(function):
         def wait_for_lock(self):
+            time.sleep(1)
             if check_and_cleanup_lockfiles():
                 self.log.info("Cleaned up unused lockfiles before start")
             for second in range(DEFAULT_TIMEOUT):
@@ -148,6 +115,37 @@ class OpenStackHostBase():
 
         # Ports chosen for NBD export
         self.claimed_ports = []
+
+    def check_process(self, pid):
+        """Check whether pid exists in the current process table."""
+        if pid is None:
+            return False
+        try:
+            self.shell.cmd_val(['kill', '-0', str(pid)])
+        except subprocess.CalledProcessError:
+            return False
+        else:
+            return True
+
+    def check_and_cleanup_lockfiles(self):
+        """
+        Removes lockfiles found in specific directories.
+        If a lockfile is not being used by a process,
+        it is either deleted or not being used.
+        """
+        # Remove specific lockfiles
+        for lockfile in [ATTACH_LOCK_FILE_SOURCE, ATTACH_LOCK_FILE_DESTINATION, PORT_LOCK_FILE]:
+            try:
+                # FIXME cant use python modules here on migrator - has to be reworked
+                with open(f"{lockfile}.lock", "r", encoding='utf-8') as f:
+                    pid = f.read().strip() 
+                if self.check_process(pid):
+                    pass
+                else:
+                    self.shell.cmd_val(['sudo', 'rm', '-f', lockfile + '.lock'])
+                    return True
+            except FileNotFoundError:
+                return False
 
     def _converter(self):
         """ Refresh server object to pick up any changes. """
