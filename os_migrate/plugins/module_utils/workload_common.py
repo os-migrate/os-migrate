@@ -32,12 +32,12 @@ def use_lock(lock_file):
     """ Boilerplate for functions that need to take a lock. """
     def _decorate_lock(function):
         def wait_for_lock(self):
-            time.sleep(1)
-            if check_and_cleanup_lockfiles():
+            if self.check_and_cleanup_lockfiles():
                 self.log.info("Cleaned up unused lockfiles before start")
             for second in range(DEFAULT_TIMEOUT):
                 try:
                     self.log.info('Waiting for lock %s...', lock_file)
+                    time.sleep(1)
                     lock = lock_file + '.lock'
                     pid = str(os.getpid())
                     cmd = ['sudo', 'flock', '--timeout', '1',
@@ -53,7 +53,6 @@ def use_lock(lock_file):
                         break
                 except subprocess.CalledProcessError as err:
                     self.log.info('Error waiting for lock: %s', str(err))
-                    time.sleep(1)
             else:
                 raise RuntimeError('Unable to acquire lock ' + lock_file)
             try:
@@ -118,7 +117,7 @@ class OpenStackHostBase():
 
     def check_process(self, pid):
         """Check whether pid exists in the current process table."""
-        if pid is None:
+        if not pid:
             return False
         try:
             self.shell.cmd_val(['kill', '-0', str(pid)])
@@ -134,18 +133,19 @@ class OpenStackHostBase():
         it is either deleted or not being used.
         """
         # Remove specific lockfiles
-        for lockfile in [ATTACH_LOCK_FILE_SOURCE, ATTACH_LOCK_FILE_DESTINATION, PORT_LOCK_FILE]:
-            try:
-                # FIXME cant use python modules here on migrator - has to be reworked
-                with open(f"{lockfile}.lock", "r", encoding='utf-8') as f:
-                    pid = f.read().strip() 
+        try:
+            # Remove specific lockfiles
+            for lockfile in [ATTACH_LOCK_FILE_SOURCE, ATTACH_LOCK_FILE_DESTINATION, PORT_LOCK_FILE]:
+                # Use self.shell.cmd_out to run the following command on the conversion host
+                pid = self.shell.cmd_out(['cat', f'{lockfile}.lock'])
                 if self.check_process(pid):
-                    pass
-                else:
-                    self.shell.cmd_val(['sudo', 'rm', '-f', lockfile + '.lock'])
-                    return True
-            except FileNotFoundError:
-                return False
+                    continue
+
+                # The lockfile is not being used by a process, so we can remove it
+                self.shell.cmd_val(['sudo', 'rm', '-f', lockfile + '.lock'])
+                return True
+        except FileNotFoundError:
+            return False
 
     def _converter(self):
         """ Refresh server object to pick up any changes. """
