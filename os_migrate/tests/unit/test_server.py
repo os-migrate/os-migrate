@@ -181,7 +181,8 @@ class TestServer(unittest.TestCase):
         self.assertEqual(params['security_group_refs'][1]['name'], 'testing123')
         self.assertEqual(info['status'], 'ACTIVE')
 
-    # TODO: testing
+    # TODO: test this below, data copy false validation edge cases.
+    # test validation of data copy param as well
     # def test_block_device_mapping_boot_disk_copy(self):
     #     srv = Server.from_sdk(None, sdk_server())
     #     sdk_params = srv.sdk_params(None)
@@ -219,10 +220,7 @@ class TestServer(unittest.TestCase):
     def test_block_device_mapping_boot_disk_nocopy(self):
         srv = Server.from_sdk(None, sdk_server())
         srv.migration_params()['boot_disk_copy'] = True
-
-        # NOTE: data_copy should be true for testcase, can turn off to test
         srv.migration_params()['data_copy'] = True
-        srv.migration_params()['boot_volume']['uuid'] = 'some-uuid-value'
         sdk_params = srv.sdk_params(None)
 
         block_dev_map = [
@@ -244,12 +242,6 @@ class TestServer(unittest.TestCase):
             }
         ]
         srv.update_sdk_params_block_device_mapping(sdk_params, block_dev_map)
-
-        # test block device mapping v2 here, test error - key doesnt exist for v2
-        print(sdk_params)
-        print("00000000000000000000000000000000000000000000000000000000000000")
-        print(sdk_params['block_device_mapping_v2'])
-        self.assertEqual(1, 2)
         self.assertEqual(sdk_params['block_device_mapping'], [
             {
                 'boot_index': 0,
@@ -266,6 +258,66 @@ class TestServer(unittest.TestCase):
                 'device_name': 'sdb',
                 'source_type': 'volume',
                 'uuid': 'uuid-some-volume',
+            }
+        ])
+        self.assertTrue('image_id' not in sdk_params)
+
+    def test_block_device_mapping_boot_disk_nocopy_data_copy_false_no_additional_volumes(self):
+        srv = Server.from_sdk(None, sdk_server())
+        srv.migration_params()['data_copy'] = False
+        srv.migration_params()['boot_volume']['uuid'] = 'uuid-new-boot-volume'
+        srv.migration_params()['additional_volumes'] = None
+        sdk_params = srv.sdk_params(None)
+
+        block_dev_map_v2 = [
+            # v2 mapping construct below
+        ]
+        srv.update_sdk_params_block_device_mapping(sdk_params, block_dev_map_v2)
+        self.assertEqual(sdk_params['block_device_mapping_v2'], [
+            {
+                'boot_index': 0,
+                'uuid': 'uuid-new-boot-volume'
+            }
+        ])
+        self.assertTrue('image_id' not in sdk_params)
+
+    def test_block_device_mapping_boot_disk_nocopy_data_copy_false_additional_volumes(self):
+        srv = Server.from_sdk(None, sdk_server())
+        srv.migration_params()['data_copy'] = False
+        # Testing additional volume parameters
+        extra_params = [
+            {
+                'uuid': 'uuid-extra-volume'
+            },
+            {
+                'uuid': 'uuid-extra2-volume'
+            },
+            {
+                'uuid': None
+            }
+        ]
+        srv.migration_params()['additional_volumes'] = extra_params
+        sdk_params = srv.sdk_params(None)
+
+        block_dev_map_v2 = [
+            {
+                "boot_index": 0,
+                'uuid': 'uuid-new-boot-volume'
+            },
+        ]
+        srv.update_sdk_params_block_device_mapping(sdk_params, block_dev_map_v2)
+        self.assertEqual(sdk_params['block_device_mapping_v2'], [
+            {
+                'boot_index': 0,
+                'uuid': 'uuid-new-boot-volume'
+            },
+            {
+                'boot_index': 1,
+                'uuid': 'uuid-extra-volume',
+            },
+            {
+                'boot_index': 2,
+                'uuid': 'uuid-extra2-volume',
             }
         ])
         self.assertTrue('image_id' not in sdk_params)
