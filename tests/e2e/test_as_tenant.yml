@@ -199,7 +199,7 @@
         workload_image: osm_image
 
     - name: run the workloads
-      ansible.builtin.include_tasks: tasks/tenant/run_workload_data_copy.yml
+      ansible.builtin.include_tasks: tasks/tenant/run_workload_no_data_copy.yml
       args:
         apply:
           tags:
