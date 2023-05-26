@@ -43,7 +43,7 @@ def use_lock(lock_file):
                     cmd = ['sudo', 'flock', '--timeout', '1',
                            '--conflict-exit-code', '16', lock_file, '-c',
                            '"( test ! -e ' + lock + ' || exit 17 ) ' +
-                           '&& echo ' + pid + ' > ' + lock + '"']
+                           '&& echo ' + pid + ' | sudo ' + ' tee ' + lock + '"']
                     result = self.shell.cmd_val(cmd)
                     if result == 16:
                         self.log.info('Another conversion has the lock.')
@@ -120,7 +120,7 @@ class OpenStackHostBase():
         if not pid:
             return False
         try:
-            self.shell.cmd_val(['kill', '-0', str(pid)])
+            self.shell.cmd_val(['sudo', 'kill', '-0', str(pid)])
         except subprocess.CalledProcessError:
             return False
         else:
@@ -137,7 +137,7 @@ class OpenStackHostBase():
             # Remove specific lockfiles
             for lockfile in [ATTACH_LOCK_FILE_SOURCE, ATTACH_LOCK_FILE_DESTINATION, PORT_LOCK_FILE]:
                 # Use self.shell.cmd_out to run the following command on the conversion host
-                pid = self.shell.cmd_out(['cat', f'{lockfile}.lock'])
+                pid = self.shell.cmd_out(['sudo', 'cat', f'{lockfile}.lock'])
                 if self.check_process(pid):
                     continue
 
