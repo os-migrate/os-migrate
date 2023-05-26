@@ -260,7 +260,6 @@ class Server(resource.Resource):
         ser_fips = map(lambda fip: ServerFloatingIP.from_sdk(conn, fip), sdk_fips)
         refs['floating_ips'] = list(map(lambda fip: fip.data, ser_fips))
 
-        # TODO-storage, do we need to handle anything here with the copying of volumes?
         sdk_volumes = server_volumes(conn, sdk_res)
         ser_volumes = map(lambda vol: ServerVolume.from_sdk(conn, vol), sdk_volumes)
         refs['volumes'] = list(map(lambda vol: vol.data, ser_volumes))

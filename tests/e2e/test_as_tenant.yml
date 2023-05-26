@@ -220,6 +220,16 @@
             - test_image_workload_boot_nocopy_clean
             - test_data_copy_false
       tags: always
+
+    # pre-workload cleanup
+    - name: clean pre workloads
+      ansible.builtin.include_tasks: tasks/tenant/clean_pre_workload.yml
+      args:
+        apply:
+          tags:
+            - test_clean_after
+            - test_pre_workload
+      tags: always
   tags:
     - test_migration
 
