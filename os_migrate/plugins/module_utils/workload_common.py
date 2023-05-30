@@ -37,7 +37,6 @@ def use_lock(lock_file):
             for second in range(DEFAULT_TIMEOUT):
                 try:
                     self.log.info('Waiting for lock %s...', lock_file)
-                    time.sleep(1)
                     lock = lock_file + '.lock'
                     pid = str(os.getpid())
                     cmd = ['sudo', 'flock', '--timeout', '1',
@@ -51,7 +50,9 @@ def use_lock(lock_file):
                         self.log.info('Another conversion is holding the lock.')
                     elif result == 0:
                         break
+                    time.sleep(1)
                 except subprocess.CalledProcessError as err:
+                    time.sleep(1)
                     self.log.info('Error waiting for lock: %s', str(err))
             else:
                 raise RuntimeError('Unable to acquire lock ' + lock_file)
@@ -136,14 +137,20 @@ class OpenStackHostBase():
         try:
             # Remove specific lockfiles
             for lockfile in [ATTACH_LOCK_FILE_SOURCE, ATTACH_LOCK_FILE_DESTINATION, PORT_LOCK_FILE]:
-                # Use self.shell.cmd_out to run the following command on the conversion host
-                pid = self.shell.cmd_out(['sudo', 'cat', f'{lockfile}.lock'])
-                if self.check_process(pid):
-                    continue
+                pid = None
+                try:
+                    # Use self.shell.cmd_out to run the following command on the conversion host
+                    pid = self.shell.cmd_out(['sudo', 'cat', f'{lockfile}.lock'])
+                except Exception as err:
+                    self.log.debug("Lockfile doesn't exist %s", err)
 
-                # The lockfile is not being used by a process, so we can remove it
-                self.shell.cmd_val(['sudo', 'rm', '-f', lockfile + '.lock'])
-                return True
+                if pid:
+                    if self.check_process(pid):
+                        continue
+
+                    # The lockfile is not being used by a process, so we can remove it
+                    self.shell.cmd_val(['sudo', 'rm', '-f', lockfile + '.lock'])
+                    return True
         except FileNotFoundError:
             return False
 
