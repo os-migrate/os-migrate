@@ -300,7 +300,7 @@ The process involves the deployment of a “conversion host” on source
 and destination clouds. A conversion host is an OpenStack server which
 will be used to transfer binary volume data from the source to the
 destination cloud. The conversion hosts are expected to be created
-from CentOS 8 or RHEL 8 cloud images.
+from CentOS 9 or RHEL 8 cloud images.
 
 The following diagram helps explain the need for a conversion host VM:
 
@@ -361,7 +361,7 @@ conversion hosts.
 By default the migration will use an image named ``os_migrate_conv`` for
 conversion hosts. Make sure this image exists in Glance on both clouds.
 Currently it should be a
-`CentOS 8 Cloud Image <https://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.qcow2>`_
+`CentOS 9 Cloud Image <https://cloud.centos.org/centos/9-stream/x86_64/images/CentOS-Stream-GenericCloud-9-20220914.0.x86_64.qcow2>`_
 or
 `RHEL 8 KVM Guest Image <https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.3/x86_64/product-software>`_.
 
