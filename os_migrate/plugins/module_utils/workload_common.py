@@ -136,8 +136,13 @@ class OpenStackHostBase():
         try:
             # Remove specific lockfiles
             for lockfile in [ATTACH_LOCK_FILE_SOURCE, ATTACH_LOCK_FILE_DESTINATION, PORT_LOCK_FILE]:
-                # Use self.shell.cmd_out to run the following command on the conversion host
-                pid = self.shell.cmd_out(['sudo', 'cat', f'{lockfile}.lock'])
+                try:
+                    # Use self.shell.cmd_out to run the following command on the conversion host
+                    pid = self.shell.cmd_out(['sudo', 'cat', f'{lockfile}.lock'])
+                except Exception as err:
+                    pid = self.shell.cmd_out(['sudo', 'cat', f'{lockfile}'])
+                    self.log.debug("Lockfile .lock doesn't exist %s", err)
+
                 if self.check_process(pid):
                     continue
 
