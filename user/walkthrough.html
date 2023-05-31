@@ -373,7 +373,7 @@ user’s point of view:</p>
 and destination clouds. A conversion host is an OpenStack server which
 will be used to transfer binary volume data from the source to the
 destination cloud. The conversion hosts are expected to be created
-from CentOS 8 or RHEL 8 cloud images.</p>
+from CentOS 9 or RHEL 8 cloud images.</p>
 <p>The following diagram helps explain the need for a conversion host VM:</p>
 <figure class="align-default" id="id6">
 <a class="reference internal image-reference" href="../_images/workload-migration-data-flow.png"><img alt="Workload migration (data flow)" src="../_images/workload-migration-data-flow.png" style="width: 80%;" /></a>
@@ -421,7 +421,7 @@ conversion hosts.</p>
 <p>By default the migration will use an image named <code class="docutils literal notranslate"><span class="pre">os_migrate_conv</span></code> for
 conversion hosts. Make sure this image exists in Glance on both clouds.
 Currently it should be a
-<a class="reference external" href="https://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.2.2004-20200611.2.x86_64.qcow2">CentOS 8 Cloud Image</a>
+<a class="reference external" href="https://cloud.centos.org/centos/9-stream/x86_64/images/CentOS-Stream-GenericCloud-9-20220914.0.x86_64.qcow2">CentOS 9 Cloud Image</a>
 or
 <a class="reference external" href="https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.3/x86_64/product-software">RHEL 8 KVM Guest Image</a>.</p>
 <p>When using RHEL as conversion host, make sure to set the necessary <a class="reference external" href="https://os-migrate.github.io/os-migrate/user/variables-guide.html#conversion-host-rhel-variables">RHEL variables</a>.</p>
