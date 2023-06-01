@@ -39,39 +39,6 @@ class InconsistentState(Exception):
         super().__init__(message)
 
 
-class InconsistentStateImageRef(Exception):
-    """Inconsistent state in data."""
-
-    msg_format = "Inconsistent state: Instance '{}' '{}' has neither boot volume \
-        nor image reference. Block device mapping: '{}'."
-
-    def __init__(self, params_name, info_id, device_mapping):
-        message = self.msg_format.format(params_name, info_id, device_mapping)
-        super().__init__(message)
-
-
-class InconsistentStateBootDiskCopyDisabled(Exception):
-    """Inconsistent state in data."""
-
-    msg_format = "Inconsistent state: Instance '{}' '{}' has boot_disk_copy disabled \
-        but block device mapping has a boot volume: '{}'."
-
-    def __init__(self, params_name, info_id, device_mapping):
-        message = self.msg_format.format(params_name, info_id, device_mapping)
-        super().__init__(message)
-
-
-class InconsistentStateBootDiskCopyEnabled(Exception):
-    """Inconsistent state in data."""
-
-    msg_format = "Inconsistent state: Instance '{}' '{}' has boot_disk_copy enabled \
-        but block device mapping has no boot volume: '{}'."
-
-    def __init__(self, params_name, info_id, device_mapping):
-        message = self.msg_format.format(params_name, info_id, device_mapping)
-        super().__init__(message)
-
-
 class UnexpectedResourceType(Exception):
     """Unexpected resource type."""
 
