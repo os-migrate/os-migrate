@@ -20,7 +20,9 @@
         msg:
           - "{{ prelim.server_name }} log file: {{ prelim.log_file }}"
           - "{{ prelim.server_name }} progress file: {{ prelim.state_file }}"
-      when: prelim.changed and data.data_copy|default(true)
+      when:
+        - prelim is defined and prelim.changed
+        - data.data_copy|default(true)
 
     - name: perform required checks to ensure destination cloud is ready
       os_migrate.os_migrate.import_workload_dst_check:
@@ -31,7 +33,9 @@
         client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
         data: "{{ item }}"
         dst_filters: "{{ os_migrate_dst_filters }}"
-      when: prelim.changed
+      when:
+        - prelim is defined and prelim.changed
+        - data.data_copy|default(true)
 
     # Stop VM if not stopped and if config set to true
     - name: perform workload stop if os_migrate_workload_stop_before_migration is true
@@ -46,7 +50,7 @@
         client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
         client_key: "{{ os_migrate_src_client_key|default(omit) }}"
       when:
-        - prelim.changed
+        - prelim is defined and prelim.changed
         - os_migrate_workload_stop_before_migration
         - data.data_copy|default(true)
 
@@ -58,7 +62,9 @@
         client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
         client_key: "{{ os_migrate_src_client_key|default(omit) }}"
         name: "{{ item['_info']['id'] }}"
-      when: prelim.changed and data.data_copy|default(true)
+      when:
+        - prelim is defined and prelim.changed
+        - data.data_copy|default(true)
 
     - name: expose source volumes
       os_migrate.os_migrate.import_workload_export_volumes:
@@ -77,7 +83,9 @@
         ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
         timeout: "{{ os_migrate_timeout }}"
       register: exports
-      when: prelim.changed and data.data_copy|default(true)
+      when:
+        - prelim is defined and prelim.changed
+        - data.data_copy|default(true)
 
     - name: transfer volumes to destination
       os_migrate.os_migrate.import_workload_transfer_volumes:
@@ -99,7 +107,9 @@
         state_file: "{{ prelim.state_file }}"
         timeout: "{{ os_migrate_timeout }}"
       register: transfer
-      when: prelim.changed and data.data_copy|default(true)
+      when:
+        - prelim is defined and prelim.changed
+        - data.data_copy|default(true)
 
     - name: create destination instance
       os_migrate.os_migrate.import_workload_create_instance:
@@ -111,7 +121,9 @@
         data: "{{ item }}"
         block_device_mapping: "{{ transfer.block_device_mapping }}"
       register: os_migrate_destination_instance
-      when: prelim.changed
+      when:
+        - prelim is defined and prelim.changed
+        - data.data_copy|default(true)
 
     - name: clean up in the source cloud after migration
       os_migrate.os_migrate.import_workload_src_cleanup:
@@ -129,7 +141,9 @@
         log_file: "{{ prelim.log_file }}"
         state_file: "{{ prelim.state_file }}"
         timeout: "{{ os_migrate_timeout }}"
-      when: prelim.changed and data.data_copy|default(true)
+      when:
+        - prelim is defined and prelim.changed
+        - data.data_copy|default(true)
 
   rescue:
     - name: clean up in the source cloud after migration failure
@@ -149,7 +163,7 @@
         state_file: "{{ prelim.state_file }}"
         timeout: "{{ os_migrate_timeout }}"
       when:
-        - prelim.changed
+        - prelim is defined and prelim.changed
         - os_migrate_workload_cleanup_on_failure
         - exports is defined and 'volume_map' in exports
         - data.data_copy|default(true)
@@ -171,7 +185,7 @@
         state_file: "{{ prelim.state_file }}"
         timeout: "{{ os_migrate_timeout }}"
       when:
-        - prelim.changed
+        - prelim is defined and prelim.changed
         - os_migrate_workload_cleanup_on_failure
         - exports is defined and 'volume_map' in exports
         - transfer is defined and 'volume_map' in transfer

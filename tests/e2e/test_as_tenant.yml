@@ -161,64 +161,54 @@
             - test_image_workload_boot_copy_clean
       tags: always
 
-    # pre-workload cleanup
-    - name: clean pre workloads
-      ansible.builtin.include_tasks: tasks/tenant/clean_pre_workload.yml
-      args:
-        apply:
-          tags:
-            - test_clean_after
-            - test_pre_workload
-      tags: always
-
     # Workload migration scenario:
     #
     # * Attached volume
     #
-    # * From tenant-owned image
+    # * From public image
     #
-    # * boot_disk_copy: false
+    # * boot_disk_copy: true
     #
     # * data_copy: false
     #
-    # * floating_ip_mode: auto
+    # * floating_ip_mode: existing
     #
-    # * port_creation_mode: neutron
+    # * port_creation_mode: nova
     #
     - name: seed the workloads
       ansible.builtin.include_tasks: tasks/tenant/seed_workload.yml
       args:
         apply:
           tags:
-            - test_seed
             - test_workload
-            - test_image_workload_boot_nocopy
-            - test_data_copy_false
+            - test_image_workload_boot_copy
       tags: always
       vars:
-        workload_image: osm_image
+        workload_image: "{{ os_migrate_src_osm_server_image }}"
 
     - name: run the workloads
-      ansible.builtin.include_tasks: tasks/tenant/run_workload_no_data_copy.yml
+      ansible.builtin.include_tasks: tasks/tenant/run_workload.yml
       args:
         apply:
           tags:
             - test_workload
-            - test_image_workload_boot_nocopy
-            - test_data_copy_false
+            - test_image_workload_boot_copy
       tags: always
       vars:
-        port_creation_mode: neutron
+        set_boot_disk_copy: true
+        set_no_data_copy: false
+        set_floating_ip_mode: 'existing'
+        port_creation_mode: nova
 
     - name: clean the workloads
       ansible.builtin.include_tasks: tasks/tenant/clean_workload.yml
       args:
         apply:
           tags:
+            - test_clean_after
             - test_workload
-            - test_image_workload_boot_nocopy
-            - test_image_workload_boot_nocopy_clean
-            - test_data_copy_false
+            - test_image_workload_boot_copy
+            - test_image_workload_boot_copy_clean
       tags: always
 
     # pre-workload cleanup
