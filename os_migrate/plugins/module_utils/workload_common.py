@@ -28,44 +28,11 @@ except ImportError:
     DEVNULL = open(os.devnull, 'r+', encoding='utf8')
 
 
-def check_process(pid):
-    """Check whether pid exists in the current process table."""
-    if pid is None:
-        return False
-    try:
-        os.kill(int(pid), 0)
-    except (OSError, ValueError):
-        return False
-    else:
-        return True
-
-
-def check_and_cleanup_lockfiles():
-    """
-    Removes lockfiles found in specific directories.
-    If a lockfile is not being used by a process,
-    it is either deleted or not being used.
-    """
-    # Remove specific lockfiles
-    for lockfile in [ATTACH_LOCK_FILE_SOURCE, ATTACH_LOCK_FILE_DESTINATION, PORT_LOCK_FILE]:
-        try:
-            with open(f"{lockfile}.lock", "r", encoding='utf-8') as f:
-                pid = f.read().strip()
-            if check_process(pid):
-                # print(f"Lockfile {lockfile} is currently in use by process: {pid}")
-                pass
-            else:
-                os.remove(lockfile + '.lock')
-                return True
-        except FileNotFoundError:
-            return False
-
-
 def use_lock(lock_file):
     """ Boilerplate for functions that need to take a lock. """
     def _decorate_lock(function):
         def wait_for_lock(self):
-            if check_and_cleanup_lockfiles():
+            if self.check_and_cleanup_lockfiles():
                 self.log.info("Cleaned up unused lockfiles before start")
             for second in range(DEFAULT_TIMEOUT):
                 try:
@@ -75,7 +42,7 @@ def use_lock(lock_file):
                     cmd = ['sudo', 'flock', '--timeout', '1',
                            '--conflict-exit-code', '16', lock_file, '-c',
                            '"( test ! -e ' + lock + ' || exit 17 ) ' +
-                           '&& echo ' + pid + ' > ' + lock + '"']
+                           '&& echo ' + pid + ' | sudo ' + ' tee ' + lock + '"']
                     result = self.shell.cmd_val(cmd)
                     if result == 16:
                         self.log.info('Another conversion has the lock.')
@@ -83,9 +50,10 @@ def use_lock(lock_file):
                         self.log.info('Another conversion is holding the lock.')
                     elif result == 0:
                         break
-                except subprocess.CalledProcessError as err:
-                    self.log.info('Error waiting for lock: %s', str(err))
                     time.sleep(1)
+                except subprocess.CalledProcessError as err:
+                    time.sleep(1)
+                    self.log.info('Error waiting for lock: %s', str(err))
             else:
                 raise RuntimeError('Unable to acquire lock ' + lock_file)
             try:
@@ -147,6 +115,44 @@ class OpenStackHostBase():
 
         # Ports chosen for NBD export
         self.claimed_ports = []
+
+    def check_process(self, pid):
+        """Check whether pid exists in the current process table."""
+        if not pid:
+            return False
+        try:
+            self.shell.cmd_val(['sudo', 'kill', '-0', str(pid)])
+        except subprocess.CalledProcessError:
+            return False
+        else:
+            return True
+
+    def check_and_cleanup_lockfiles(self):
+        """
+        Removes lockfiles found in specific directories.
+        If a lockfile is not being used by a process,
+        it is either deleted or not being used.
+        """
+        # Remove specific lockfiles
+        try:
+            # Remove specific lockfiles
+            for lockfile in [ATTACH_LOCK_FILE_SOURCE, ATTACH_LOCK_FILE_DESTINATION, PORT_LOCK_FILE]:
+                pid = None
+                try:
+                    # Use self.shell.cmd_out to run the following command on the conversion host
+                    pid = self.shell.cmd_out(['sudo', 'cat', f'{lockfile}.lock'])
+                except Exception as err:
+                    self.log.debug("Lockfile doesn't exist %s", err)
+
+                if pid:
+                    if self.check_process(pid):
+                        continue
+
+                    # The lockfile is not being used by a process, so we can remove it
+                    self.shell.cmd_val(['sudo', 'rm', '-f', lockfile + '.lock'])
+                    return True
+        except FileNotFoundError:
+            return False
 
     def _converter(self):
         """ Refresh server object to pick up any changes. """

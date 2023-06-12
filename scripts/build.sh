@@ -5,6 +5,8 @@ if [ -z "${VIRTUAL_ENV:-}" ]; then
 fi
 set -euxo pipefail
 
+# Set cache dir
+cache_dir=$(python3 -m pip cache dir)
 
 # Uninstall any dependencies if defined
 if [ -n "${OS_MIGRATE_REQUIREMENTS_UNINSTALL_BEFORE_OVERRIDE:-}" ]; then
@@ -13,8 +15,9 @@ fi
 
 # Apply virtualenv version overrides if defined
 if [ -n "${OS_MIGRATE_REQUIREMENTS_OVERRIDE:-}" ]; then
-    python3 -m pip cache purge && rm -rf $(python3 -m pip cache dir)
+    python3 -m pip cache purge && rm -rf $cache_dir
     python3 -m pip install --upgrade pip
+    python3 -m pip cache purge && rm -rf $cache_dir
 
     # Workaround for ERROR: Could not install packages due to an
     #     OSError: [Errno 39] Directory not empty: '__pycache__'
@@ -24,6 +27,14 @@ if [ -n "${OS_MIGRATE_REQUIREMENTS_OVERRIDE:-}" ]; then
     fi
     if [[ "$OS_MIGRATE_REQUIREMENTS_OVERRIDE" =~ "openstackclient" ]]; then
         find "$PYTHON_SITE_PACKAGES_DIR/openstackclient" -depth -type d -name __pycache__ -exec rm -r '{}' \;
+    fi
+
+    if [ -z "$(ls -A $cache_dir)" ]; then
+        echo "Cache directory is empty."
+    else
+        echo "Cache directory is not empty. Removing contents..."
+        rm -rf $cache_dir/*
+        echo "Cache directory cleaned."
     fi
 
     python3 -m pip \
