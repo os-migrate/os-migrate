@@ -32,6 +32,7 @@
     name: "{{ item['id'] }}"
     migration_params:
       boot_disk_copy: "{{ os_migrate_workloads_boot_disk_copy }}"
+      data_copy: "{{ os_migrate_workloads_data_copy }}"
     cloud: src
     validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"

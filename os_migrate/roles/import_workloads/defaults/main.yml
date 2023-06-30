@@ -3,5 +3,6 @@ os_migrate_timeout: 1800
 os_migrate_workload_cleanup_on_failure: true
 os_migrate_workload_boot_volume_prefix: os-migrate-
 os_migrate_workload_stop_before_migration: false
+os_migrate_workloads_data_copy: true
 os_migrate_workloads_filter:
   - regex: .*

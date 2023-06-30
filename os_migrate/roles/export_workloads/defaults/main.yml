@@ -5,3 +5,8 @@ os_migrate_workloads_filter:
 # In case of boot_disk_copy, the default differs based on whether
 # the server was created as boot-from-volume or not.
 os_migrate_workloads_boot_disk_copy: null
+
+# true sets the default for the Server instance. If data_copy set
+# as false then it'll speed up the run for transfer from src to dst.
+# Boot from pre-existing volume, image or more.
+os_migrate_workloads_data_copy: true

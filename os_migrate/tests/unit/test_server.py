@@ -8,6 +8,7 @@ from unittest import mock
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import server
 from ansible_collections.os_migrate.os_migrate.tests.unit.test_keypair import sdk_keypair
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import exc
 
 
 def sdk_server():
@@ -195,7 +196,7 @@ class TestServer(unittest.TestCase):
                 'uuid': 'uuid-some-volume',
             }
         ]
-        srv.update_sdk_params_block_device_mapping(sdk_params, block_dev_map)
+        srv.update_sdk_params_block_device_mapping_copy(sdk_params, block_dev_map)
         self.assertEqual(sdk_params['block_device_mapping'], [
             {
                 'boot_index': 0,
@@ -238,7 +239,7 @@ class TestServer(unittest.TestCase):
                 'uuid': 'uuid-some-volume',
             }
         ]
-        srv.update_sdk_params_block_device_mapping(sdk_params, block_dev_map)
+        srv.update_sdk_params_block_device_mapping_copy(sdk_params, block_dev_map)
         self.assertEqual(sdk_params['block_device_mapping'], [
             {
                 'boot_index': 0,
@@ -258,6 +259,95 @@ class TestServer(unittest.TestCase):
             }
         ])
         self.assertTrue('image_id' not in sdk_params)
+
+    def test_block_device_mapping_boot_disk_nocopy_data_copy_false_no_additional_volumes_boot_image(self):
+        srv = Server.from_sdk(None, sdk_server())
+        srv.migration_params()['data_copy'] = False
+        sdk_params = srv.sdk_params(None)
+        sdk_params["image_id"] = None
+
+        srv.update_sdk_params_block_device_mapping_nocopy(sdk_params)
+        self.assertEqual(sdk_params['block_device_mapping'], [
+            {
+                'boot_index': 0,
+                'delete_on_termination': True,
+                'destination_type': 'local',
+                'source_type': 'image',
+                'uuid': 'uuid-test-image',
+            }
+        ])
+        self.assertEqual(sdk_params['image_id'], 'uuid-test-image')
+
+    def test_block_device_mapping_boot_disk_nocopy_data_copy_false_inconsistent_state(self):
+        srv = Server.from_sdk(None, sdk_server())
+        srv.migration_params()['data_copy'] = False
+        sdk_params = srv.sdk_params(None)
+        sdk_params["image_id"] = None
+
+        with self.assertRaises(exc.InconsistentState):
+            srv.update_sdk_params_block_device_mapping_nocopy(sdk_params)
+
+    def test_block_device_mapping_boot_disk_nocopy_data_copy_false_no_additional_volumes(self):
+        srv = Server.from_sdk(None, sdk_server())
+        srv.migration_params()['data_copy'] = False
+        srv.migration_params()['boot_volume']['uuid'] = 'uuid-new-boot-volume'
+        srv.migration_params()['additional_volumes'] = []
+        sdk_params = srv.sdk_params(None)
+
+        srv.update_sdk_params_block_device_mapping_nocopy(sdk_params)
+        self.assertEqual(sdk_params['block_device_mapping'], [
+            {
+                'boot_index': 0,
+                'uuid': 'uuid-new-boot-volume',
+                'delete_on_termination': False,
+                'destination_type': 'volume',
+                'source_type': 'volume',
+            }
+        ])
+
+    def test_block_device_mapping_boot_disk_nocopy_data_copy_false_additional_volumes(self):
+        srv = Server.from_sdk(None, sdk_server())
+        srv.migration_params()['data_copy'] = False
+        # Testing additional volume parameters
+        extra_params = [
+            {
+                'uuid': 'uuid-extra-volume'
+            },
+            {
+                'uuid': 'uuid-extra2-volume'
+            },
+            {
+                'uuid': None
+            }
+        ]
+        srv.migration_params()['additional_volumes'] = extra_params
+        srv.migration_params()['boot_volume']['uuid'] = 'uuid-new-boot-volume'
+        sdk_params = srv.sdk_params(None)
+
+        srv.update_sdk_params_block_device_mapping_nocopy(sdk_params)
+        self.assertEqual(sdk_params['block_device_mapping'], [
+            {
+                'boot_index': 0,
+                'uuid': 'uuid-new-boot-volume',
+                'delete_on_termination': False,
+                'destination_type': 'volume',
+                'source_type': 'volume',
+            },
+            {
+                'boot_index': -1,
+                'uuid': 'uuid-extra-volume',
+                'delete_on_termination': False,
+                'destination_type': 'volume',
+                'source_type': 'volume',
+            },
+            {
+                'boot_index': -1,
+                'uuid': 'uuid-extra2-volume',
+                'delete_on_termination': False,
+                'destination_type': 'volume',
+                'source_type': 'volume',
+            }
+        ])
 
     def test_keypair_dst_prerequisites_errors(self):
         # When checking the prerequisites for a server/workload migration are present in destination environment
