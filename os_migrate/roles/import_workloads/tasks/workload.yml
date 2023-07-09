@@ -119,11 +119,10 @@
         client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
         client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
         data: "{{ item }}"
-        block_device_mapping: "{{ transfer.block_device_mapping }}"
+        block_device_mapping: "{{ transfer.block_device_mapping|default([]) }}"
       register: os_migrate_destination_instance
       when:
-        - prelim is defined and prelim.changed
-        - item["_migration_params"]["data_copy"]|default(true)
+        - prelim is defined and prelim.changed or not item["_migration_params"]["data_copy"]|default(true)
 
     - name: clean up in the source cloud after migration
       os_migrate.os_migrate.import_workload_src_cleanup:

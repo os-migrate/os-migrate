@@ -303,7 +303,7 @@ class Server(resource.Resource):
             conn, params['flavor_ref'])
 
         refs['image_ref'] = params['image_ref']
-        if self.migration_params()['boot_disk_copy']:
+        if self.migration_params()['data_copy'] and self.migration_params()['boot_disk_copy']:
             refs['image_id'] = None
         else:
             refs['image_id'] = reference.image_id(conn, params['image_ref'])
