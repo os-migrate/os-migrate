@@ -264,7 +264,6 @@ class TestServer(unittest.TestCase):
         srv = Server.from_sdk(None, sdk_server())
         srv.migration_params()['data_copy'] = False
         sdk_params = srv.sdk_params(None)
-        sdk_params["image_id"] = None
 
         srv.update_sdk_params_block_device_mapping_nocopy(sdk_params)
         self.assertEqual(sdk_params['block_device_mapping'], [

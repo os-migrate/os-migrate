@@ -35,7 +35,7 @@
         dst_filters: "{{ os_migrate_dst_filters }}"
       when:
         - prelim is defined and prelim.changed
-        - item["_migration_params"]["data_copy"]|default(true) 
+        - item["_migration_params"]["data_copy"]|default(true)
 
     # Stop VM if not stopped and if config set to true
     - name: perform workload stop if os_migrate_workload_stop_before_migration is true
