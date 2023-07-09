@@ -40,7 +40,8 @@ role. The initial common steps are:
 
 -  Reachability of source & destination conversion hosts is verified.
 
-Then the role starts iterating over all workloads that passed the
+If you're defaulting to the default storage migration mode ``data_copy``
+then the role starts iterating over all workloads that passed the
 filter. The steps performed for each workload (Nova Server) are:
 
 -  The ``import_workload_prelim`` module creates log and state files
