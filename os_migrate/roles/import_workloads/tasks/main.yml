@@ -15,6 +15,13 @@
         | os_migrate.os_migrate.stringfilter(os_migrate_workloads_filter,
                                              attribute='params.name') ) }}"
 
+- name: filter workloads for data copy
+  ansible.builtin.set_fact:
+    os_migrate_workloads_data_copy: "{{ (
+      read_workloads.resources
+        | os_migrate.os_migrate.stringfilter([True, False],
+                                             attribute='_migration_params.data_copy') ) }}"
+
 - name: create directory for workload migration logs
   ansible.builtin.file:
     path: "{{ os_migrate_data_dir }}/workload_logs"
