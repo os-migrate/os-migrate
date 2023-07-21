@@ -16,6 +16,7 @@ fi
 # Apply virtualenv version overrides if defined
 if [ -n "${OS_MIGRATE_REQUIREMENTS_OVERRIDE:-}" ]; then
     python3 -m pip cache purge && rm -rf $cache_dir
+    python3 -m pip list
     python3 -m pip install --upgrade pip
     python3 -m pip cache purge && rm -rf $cache_dir
 

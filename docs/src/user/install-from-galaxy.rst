@@ -23,7 +23,7 @@ Prerequisites
      ``import_users_keypairs.yml``), use OpenStack SDK 0.57 or newer.
 
 -  Ansible collection `openstack.cloud`, version <2.0.0. This will get
-   handled automatically when installing from Ansible Galaxy.
+   handled automatically when installing from Galaxy.
 
 Using virtualenv for prerequisites
 ----------------------------------
