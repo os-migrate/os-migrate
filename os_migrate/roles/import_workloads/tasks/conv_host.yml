@@ -10,11 +10,14 @@
         client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
         client_key: "{{ os_migrate_src_client_key|default(omit) }}"
       register: os_src_conversion_host_info
+      when:
+        - item["_migration_params"]["data_copy"]|default(true)
 
     - name: fail if source conversion host is not active
       ansible.builtin.fail:
         msg: The source conversion host is not running!
-      when: os_src_conversion_host_info.openstack_conversion_host.status != "ACTIVE"
+      when:
+        - item["_migration_params"]["data_copy"]|default(true) or os_src_conversion_host_info.openstack_conversion_host.status != "ACTIVE"
 
     - name: get destination conversion host address
       os_migrate.os_migrate.os_conversion_host_info:
@@ -26,11 +29,14 @@
         client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
         client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
       register: os_dst_conversion_host_info
+      when:
+        - item["_migration_params"]["data_copy"]|default(true)
 
     - name: fail if destination conversion is not active
       ansible.builtin.fail:
         msg: The destination conversion host is not running!
-      when: os_dst_conversion_host_info.openstack_conversion_host.status != "ACTIVE"
+      when:
+        - item["_migration_params"]["data_copy"]|default(true) or os_dst_conversion_host_info.openstack_conversion_host.status != "ACTIVE"
 
     # Depending on the virtualization hypervisor,
     # the conversion host machines can take too
@@ -43,6 +49,8 @@
         search_regex: OpenSSH
         sleep: 5
         timeout: 600
+      when:
+        - item["_migration_params"]["data_copy"]|default(true)
 
     - name: Wait until the src conversion host is reachable
       ansible.builtin.wait_for:
@@ -51,3 +59,7 @@
         search_regex: OpenSSH
         sleep: 5
         timeout: 600
+      when:
+        - item["_migration_params"]["data_copy"]|default(true)
+  when:
+    - item["_migration_params"]["data_copy"]|default(true)
