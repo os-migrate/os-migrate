@@ -2,6 +2,18 @@ Changelog
 =========
 
 
+(unreleased)
+------------
+
+Fix
+~~~
+- Install guestfs-tools on CentOS 9 (#620) (#627) [Adrian Brown,
+  Nicholas Natale]
+
+  Change install content task on conversion hosts to install guestfs-tools for
+  CentOS 9 systems (guestfs-tools provides virt-sparsify)
+
+
 0.15.1 (2023-06-06)
 -------------------
 
