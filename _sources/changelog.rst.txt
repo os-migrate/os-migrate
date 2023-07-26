@@ -7,6 +7,9 @@ Changelog
 
 Fix
 ~~~
+- Set default username to centos (#625) [Nicholas]
+
+  change default username for CentOS 9 cloud image
 - Install guestfs-tools on CentOS 9 (#620) (#627) [Adrian Brown,
   Nicholas Natale]
 
