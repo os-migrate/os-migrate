@@ -17,7 +17,10 @@
       ansible.builtin.fail:
         msg: The source conversion host is not running!
       when:
-        - item["_migration_params"]["data_copy"]|default(true) or os_src_conversion_host_info.openstack_conversion_host.status != "ACTIVE"
+        - os_src_conversion_host_info is defined
+        - os_src_conversion_host_info.openstack_conversion_host is defined
+        - os_src_conversion_host_info.openstack_conversion_host.status != "ACTIVE"
+        - item["_migration_params"]["data_copy"]|default(true)
 
     - name: get destination conversion host address
       os_migrate.os_migrate.os_conversion_host_info:
@@ -36,7 +39,10 @@
       ansible.builtin.fail:
         msg: The destination conversion host is not running!
       when:
-        - item["_migration_params"]["data_copy"]|default(true) or os_dst_conversion_host_info.openstack_conversion_host.status != "ACTIVE"
+        - os_dst_conversion_host_info is defined
+        - os_dst_conversion_host_info.openstack_conversion_host is defined
+        - os_dst_conversion_host_info.openstack_conversion_host.status != "ACTIVE"
+        - item["_migration_params"]["data_copy"]|default(true)
 
     # Depending on the virtualization hypervisor,
     # the conversion host machines can take too
@@ -61,5 +67,3 @@
         timeout: 600
       when:
         - item["_migration_params"]["data_copy"]|default(true)
-  when:
-    - item["_migration_params"]["data_copy"]|default(true)
