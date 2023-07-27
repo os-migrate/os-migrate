@@ -15,7 +15,6 @@
       - nbdkit-basic-plugins
       - qemu-img
       - libguestfs-tools
-      - guestfs-tools
       - libvirt
     state: present
 
