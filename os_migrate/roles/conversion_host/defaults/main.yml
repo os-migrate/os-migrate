@@ -31,7 +31,7 @@ os_migrate_conversion_keypair_generate: true
 os_migrate_conversion_keypair_name: os_migrate_conv
 os_migrate_conversion_keypair_private_path: "{{ os_migrate_data_dir }}/conversion/ssh.key"
 os_migrate_conversion_link_keypair_private_path: "{{ os_migrate_data_dir }}/conversion/link-ssh.key"
-os_migrate_conversion_host_ssh_user: centos
+os_migrate_conversion_host_ssh_user: cloud-user
 
 os_migrate_conversion_host_deploy_timeout: 180
 os_migrate_src_conversion_host_boot_from_volume: false
