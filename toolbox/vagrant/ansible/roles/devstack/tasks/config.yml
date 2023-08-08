@@ -2,16 +2,14 @@
   ansible.builtin.git:
     repo: "https://opendev.org/openstack/devstack.git"
     dest: /home/stack/devstack
-    single_branch: true
-    version: "b31d70a57612d5ec6d7bde5ddfdffd0a78c657cb"
-    refspec: "stable/zed"
+    version: master
     update: no
   become: true
   become_user: stack
 
 - name: set release to zed
   ansible.builtin.shell: |
-    cd /home/stack/devstack && git fetch -a && git checkout stable/zed
+    cd /home/stack/devstack && git fetch -a && git checkout remotes/origin/stable/2023.1
   become: true
   become_user: stack
 
