@@ -22,3 +22,14 @@
     dest: /etc/sudoers.d/stack
     content: |
       stack ALL=(ALL) NOPASSWD:ALL
+
+- name: get OS information
+  ansible.builtin.setup:
+  register: os_facts
+
+- name: check distro is different than fedora
+  ansible.builtin.debug:
+    msg: "devstack SUPPORTED_DISTROS=bullseye|focal|jammy|rhel8|rhel9|openEuler-22.03"
+  failed_when: os_facts.ansible_facts['ansible_distribution'] == 'Fedora' 
+  register: unsupported_distro
+

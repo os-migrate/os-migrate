@@ -1,9 +1,17 @@
 - name: clone devstack
   ansible.builtin.git:
-    repo: https://opendev.org/openstack/devstack
-    version: master
+    repo: "https://opendev.org/openstack/devstack.git"
     dest: /home/stack/devstack
+    single_branch: true
+    version: "b31d70a57612d5ec6d7bde5ddfdffd0a78c657cb"
+    refspec: "stable/zed"
     update: no
+  become: true
+  become_user: stack
+
+- name: set release to zed
+  ansible.builtin.shell: |
+    cd /home/stack/devstack && git fetch -a && git checkout stable/zed
   become: true
   become_user: stack
 
