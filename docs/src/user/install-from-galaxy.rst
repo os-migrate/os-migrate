@@ -24,8 +24,8 @@ you can use virtualenv, e.g.::
 
    python3 -m venv $HOME/os_migrate_venv
    source $HOME/os_migrate_venv/bin/activate
-   python3 -m pip install --upgrade 'openstacksdk>=0.99'
-   python3 -m pip install --upgrade 'ansible>=2.9.1,<2.10'
+   python3 -m pip install --upgrade 'openstacksdk>=1.0.0'
+   python3 -m pip install --upgrade 'ansible-core'
 
 
 .. _installation-1:

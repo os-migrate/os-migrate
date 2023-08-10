@@ -1,6 +1,9 @@
 Installation from source (when customizing)
 ===========================================
 
+Install prerequisites as documented in `install from Galaxy
+<install-from-galaxy.html>`__. Then install OS Migrate from source:
+
 .. code:: bash
 
    git clone https://github.com/os-migrate/os-migrate
