@@ -11,6 +11,7 @@
 - name: get auth token
   openstack.cloud.auth:
     auth: "{{ os_migrate_src_auth }}"
+  register: auth_token
 
 - name: set tags on network
   ansible.builtin.command:
@@ -25,3 +26,4 @@
     OS_PROJECT_NAME: "{{ os_migrate_src_auth.project_name|default('') }}"
     OS_PROJECT_DOMAIN_ID: "{{ os_migrate_src_auth.project_domain_id|default('') }}"
     OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_src_auth.project_domain_name|default('') }}"
+  ignore_errors: true

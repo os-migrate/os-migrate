@@ -34,3 +34,4 @@
     OS_PROJECT_NAME: "{{ os_migrate_src_auth.project_name|default('') }}"
     OS_PROJECT_DOMAIN_ID: "{{ os_migrate_src_auth.project_domain_id|default('') }}"
     OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_src_auth.project_domain_name|default('') }}"
+  ignore_errors: true
