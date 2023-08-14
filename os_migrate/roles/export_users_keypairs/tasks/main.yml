@@ -10,7 +10,7 @@
 - name: create id-name pairs of users to export keypairs for
   ansible.builtin.set_fact:
     export_users_ids_names: "{{ (
-      src_users_info.openstack_users
+      src_users_info.users
         | json_query('[*].{name: name, id: id}')
         | sort(attribute='id') ) }}"
 

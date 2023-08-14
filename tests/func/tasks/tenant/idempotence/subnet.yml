@@ -47,11 +47,11 @@
 - name: ensure updated_at for osm_subnet did not change
   ansible.builtin.assert:
     that:
-      - subnet_import_idem_before['openstack_subnets'][0].updated_at != None
-      - "subnet_import_idem_before['openstack_subnets'][0]['updated_at'] \
-         == subnet_import_idem_after['openstack_subnets'][0]['updated_at']"
+      - subnet_import_idem_before['subnets'][0].updated_at != None
+      - "subnet_import_idem_before['subnets'][0]['updated_at'] \
+         == subnet_import_idem_after['subnets'][0]['updated_at']"
     fail_msg: |
       subnet_import_idem_before updated_at:
-      {{ subnet_import_idem_before['openstack_subnets'][0].updated_at }}
+      {{ subnet_import_idem_before['subnets'][0].updated_at }}
       subnet_import_idem_after updated_at:
-      {{ subnet_import_idem_after['openstack_subnets'][0].updated_at }}
+      {{ subnet_import_idem_after['subnets'][0].updated_at }}

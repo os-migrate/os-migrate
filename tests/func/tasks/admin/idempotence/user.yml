@@ -60,11 +60,11 @@
 - name: ensure email for osmdst_user did not change
   ansible.builtin.assert:
     that:
-      - user_import_idem_before['openstack_users'][0].email != None
-      - "user_import_idem_before['openstack_users'][0]['email'] \
-         == user_import_idem_after['openstack_users'][0]['email']"
+      - user_import_idem_before['users'][0].email != None
+      - "user_import_idem_before['users'][0]['email'] \
+         == user_import_idem_after['users'][0]['email']"
     fail_msg: |
       user_import_idem_before email:
-      {{ user_import_idem_before['openstack_users'][0].email }}
+      {{ user_import_idem_before['users'][0].email }}
       user_import_idem_after email:
-      {{ user_import_idem_after['openstack_users'][0].email }}
+      {{ user_import_idem_after['users'][0].email }}
