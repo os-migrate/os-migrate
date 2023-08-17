@@ -13,6 +13,6 @@ os_migrate_conversion_rhsm_manage: true
 
 
 os_migrate_conversion_link_keypair_private_path: "{{ os_migrate_data_dir }}/conversion/link-ssh.key"
-os_migrate_conversion_host_ssh_user: centos
+os_migrate_conversion_host_ssh_user: cloud-user
 os_migrate_conversion_host_ssh_user_enable_password_access: false
 os_migrate_conversion_host_ssh_user_password: weak_password_disabled_by_default
