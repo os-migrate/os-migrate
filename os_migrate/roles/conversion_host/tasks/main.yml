@@ -33,6 +33,17 @@
     client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
 
+- name: egress in default ip os_migrate conversion security group
+  openstack.cloud.security_group_rule:
+    security_group: "{{ os_migrate_conversion_secgroup_name }}"
+    remote_ip_prefix: 0.0.0.0/0
+    direction: "egress"
+    cloud: "{{ os_migrate_conversion_cloud }}"
+    validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
+
 - name: allow icmp in os_migrate conversion security group
   openstack.cloud.security_group_rule:
     security_group: "{{ os_migrate_conversion_secgroup_name }}"
