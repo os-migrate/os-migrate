@@ -3,8 +3,13 @@ __metaclass__ = type
 
 import openstack
 
+from ansible import context
+
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
     import const, reference, resource
+
+
+context._init_global_context({})
 
 
 class Keypair(resource.Resource):
