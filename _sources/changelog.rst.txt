@@ -5,6 +5,11 @@ Changelog
 (unreleased)
 ------------
 
+New
+~~~
+- Documentation for new storage migration modes. [cloudguruab]
+- Strg migration. [cloudguruab]
+
 Fix
 ~~~
 - Defaulting to release zed for devstack. [cloudguruab]

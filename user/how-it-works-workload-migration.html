@@ -121,7 +121,8 @@ role. The initial common steps are:</p>
 <li><p>Resources are filtered according to <code class="docutils literal notranslate"><span class="pre">os_migrate_workloads_filter</span></code>.</p></li>
 <li><p>Reachability of source &amp; destination conversion hosts is verified.</p></li>
 </ul>
-<p>Then the role starts iterating over all workloads that passed the
+<p>If you’re defaulting to the default storage migration mode <code class="docutils literal notranslate"><span class="pre">data_copy</span></code>
+then the role starts iterating over all workloads that passed the
 filter. The steps performed for each workload (Nova Server) are:</p>
 <ul class="simple">
 <li><p>The <code class="docutils literal notranslate"><span class="pre">import_workload_prelim</span></code> module creates log and state files

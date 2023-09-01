@@ -62,6 +62,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-floating-ip-management">Conversion host floating IP management</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-specific-floating-ip">Conversion host specific floating IP</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#attaching-conversion-hosts-onto-public-networks">Attaching conversion hosts onto public networks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#storage-migration-modes">Storage migration modes</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-boot-from-volume">Conversion host boot from volume</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conversion-host-rhel-variables">Conversion host RHEL variables</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#enabling-password-based-ssh-access-to-the-conversion-hosts">Enabling password-based SSH access to the conversion hosts</a></li>
@@ -346,6 +347,19 @@ names accordingly:</p>
 <span class="n">os_migrate_dst_conversion_net_name</span><span class="p">:</span> <span class="n">some_public_net_dst</span>
 </pre></div>
 </div>
+</section>
+<section id="storage-migration-modes">
+<h3>Storage migration modes<a class="headerlink" href="#storage-migration-modes" title="Permalink to this heading"></a></h3>
+<p>The modes for workload migrations can be changed in either
+cloud. The variable that control the behavior are:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_workloads_data_copy</span>
+</pre></div>
+</div>
+<p>The default is <cite>true</cite> (meaning the copying of data using
+os-migrate is skipped).</p>
+<p>This is useful if there are pre-created volumes in the
+destination cloud that we just want to attach when creating
+the VM in the destination.</p>
 </section>
 <section id="conversion-host-boot-from-volume">
 <h3>Conversion host boot from volume<a class="headerlink" href="#conversion-host-boot-from-volume" title="Permalink to this heading"></a></h3>

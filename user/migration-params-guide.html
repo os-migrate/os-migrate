@@ -118,6 +118,12 @@ already boot-from-volume in the source cloud, this is the
 default and the only possible path.)</p></li>
 </ul>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data_copy</span></code> controls storage migration modes for workloads:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">false</span></code>: The copying of data using os-migrate is skipped.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">true</span></code>: (Default) We result to using os-migrate for data copying.</p></li>
+</ul>
+</li>
 <li><p><code class="docutils literal notranslate"><span class="pre">boot_volume_params</span></code> controls new boot disk creation parameters in
 the destination, in case the source VM has no boot disk, but
 <code class="docutils literal notranslate"><span class="pre">boot_disk_copy</span></code> is <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p>
@@ -130,6 +136,19 @@ default for workload migration will be used (prefix + VM name).</p>
 parameters. Instead, edit the serialized volume in the <code class="docutils literal notranslate"><span class="pre">volumes</span></code>
 section of the workload’s <code class="docutils literal notranslate"><span class="pre">params</span></code>.</p>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">boot_volume</span></code> controls new boot disk creation parameters for
+workload migrations with storage mode (data_copy) set to false.</p>
+<p>There are a few pre-filled parameters, defaulted to <code class="docutils literal notranslate"><span class="pre">None</span></code>.  Then
+<code class="docutils literal notranslate"><span class="pre">None</span></code> value means those parameters will not be specified when
+creating the boot volume, or in case of the <code class="docutils literal notranslate"><span class="pre">name</span></code> parameter, the
+default for workload migration will be used (prefix + VM name).</p>
+<p>When the source VM <em>does</em> have a boot volume already, do not use
+<code class="docutils literal notranslate"><span class="pre">boot_volume_params</span></code> to edit the destination creation
+parameters. Instead, edit the serialized volume in the <code class="docutils literal notranslate"><span class="pre">volumes</span></code>
+section of the workload’s <code class="docutils literal notranslate"><span class="pre">params</span></code>.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">additional_volumes</span></code> any additonal volumes to be configured for
+workload migrations with storage mode (data_copy) set to false.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">floating_ip_mode</span></code> controls whether and how floating IPs should be
 created for workloads:</p>
 <ul class="simple">
