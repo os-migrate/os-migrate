@@ -4,7 +4,7 @@
     <img src="https://raw.githubusercontent.com/os-migrate/os-migrate/main/media/logo.svg?sanitize=true" alt="OS Migrate" width="200">
   </a>
   <br>
-  OS Migrate
+  OS-Migrate
   <br>
 </h1>
 
