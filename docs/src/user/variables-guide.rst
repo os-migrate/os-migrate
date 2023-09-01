@@ -266,6 +266,22 @@ names accordingly::
     os_migrate_src_conversion_net_name: some_public_net_src
     os_migrate_dst_conversion_net_name: some_public_net_dst
 
+Storage migration modes
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The modes for workload migrations can be changed in either
+cloud. The variable that control the behavior are::
+
+    os_migrate_workloads_data_copy
+
+The default is `true` (meaning the copying of data using
+os-migrate is skipped).
+
+This is useful if there are pre-created volumes in the
+destination cloud that we just want to attach when creating
+the VM in the destination.
+
+
 Conversion host boot from volume
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
