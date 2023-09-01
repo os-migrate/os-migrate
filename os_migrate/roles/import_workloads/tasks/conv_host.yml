@@ -1,0 +1,69 @@
+- name: conversion host operations
+  block:
+    - name: get source conversion host address
+      os_migrate.os_migrate.os_conversion_host_info:
+        cloud: src
+        server: "{{ hostvars['os_migrate_conv_src'].os_migrate_conversion_host_name }}"
+        filters: "{{ os_migrate_src_filters }}"
+        validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+      register: os_src_conversion_host_info
+      when:
+        - item["_migration_params"]["data_copy"]|default(true)
+
+    - name: fail if source conversion host is not active
+      ansible.builtin.fail:
+        msg: The source conversion host is not running!
+      when:
+        - os_src_conversion_host_info is defined
+        - os_src_conversion_host_info.openstack_conversion_host is defined
+        - os_src_conversion_host_info.openstack_conversion_host.status != "ACTIVE"
+        - item["_migration_params"]["data_copy"]|default(true)
+
+    - name: get destination conversion host address
+      os_migrate.os_migrate.os_conversion_host_info:
+        cloud: dst
+        server: "{{ hostvars['os_migrate_conv_dst'].os_migrate_conversion_host_name }}"
+        filters: "{{ os_migrate_dst_filters }}"
+        validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+      register: os_dst_conversion_host_info
+      when:
+        - item["_migration_params"]["data_copy"]|default(true)
+
+    - name: fail if destination conversion is not active
+      ansible.builtin.fail:
+        msg: The destination conversion host is not running!
+      when:
+        - os_dst_conversion_host_info is defined
+        - os_dst_conversion_host_info.openstack_conversion_host is defined
+        - os_dst_conversion_host_info.openstack_conversion_host.status != "ACTIVE"
+        - item["_migration_params"]["data_copy"]|default(true)
+
+    # Depending on the virtualization hypervisor,
+    # the conversion host machines can take too
+    # much time to start.
+
+    - name: Wait until the dst conversion host is reachable
+      ansible.builtin.wait_for:
+        port: 22
+        host: '{{ os_dst_conversion_host_info.openstack_conversion_host.address }}'
+        search_regex: OpenSSH
+        sleep: 5
+        timeout: 600
+      when:
+        - item["_migration_params"]["data_copy"]|default(true)
+
+    - name: Wait until the src conversion host is reachable
+      ansible.builtin.wait_for:
+        port: 22
+        host: '{{ os_src_conversion_host_info.openstack_conversion_host.address }}'
+        search_regex: OpenSSH
+        sleep: 5
+        timeout: 600
+      when:
+        - item["_migration_params"]["data_copy"]|default(true)
