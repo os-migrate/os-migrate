@@ -1,0 +1,33 @@
+- name: get auth token
+  openstack.cloud.auth:
+    auth: "{{ os_migrate_src_auth }}"
+  register: auth_token_src
+
+- name: check for src osm_volume
+  ansible.builtin.command:
+    cmd: openstack volume show osm_volume
+  register: _result
+  changed_when: "_result.rc == 0"
+  environment:
+    OS_AUTH_TYPE: token
+    OS_AUTH_URL: "{{ os_migrate_src_auth.auth_url }}"
+    OS_TOKEN: "{{ auth_token_src.auth_token }}"
+    OS_PROJECT_ID: "{{ os_migrate_src_auth.project_id|default('') }}"
+    OS_PROJECT_NAME: "{{ os_migrate_src_auth.project_name|default('') }}"
+    OS_PROJECT_DOMAIN_ID: "{{ os_migrate_src_auth.project_domain_id|default('') }}"
+    OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_src_auth.project_domain_name|default('') }}"
+  ignore_errors: true
+
+- name: Remove src osm_volume
+  ansible.builtin.command:
+    cmd: openstack volume delete osm_volume
+  environment:
+    OS_AUTH_TYPE: token
+    OS_AUTH_URL: "{{ os_migrate_src_auth.auth_url }}"
+    OS_TOKEN: "{{ auth_token_src.auth_token }}"
+    OS_PROJECT_ID: "{{ os_migrate_src_auth.project_id|default('') }}"
+    OS_PROJECT_NAME: "{{ os_migrate_src_auth.project_name|default('') }}"
+    OS_PROJECT_DOMAIN_ID: "{{ os_migrate_src_auth.project_domain_id|default('') }}"
+    OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_src_auth.project_domain_name|default('') }}"
+  when:
+    - _result.stdout != ''

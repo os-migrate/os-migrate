@@ -163,7 +163,7 @@ class OpenStackHostBase():
         if self.conversion_host_address:
             return self.conversion_host_address
         else:
-            return self._converter().accessIPv4
+            return self._converter().access_ipv4
 
     def _update_progress(self, dev_path, progress):
         self.log.info('Transfer progress for %s: %s%%', dev_path, str(progress))
@@ -238,7 +238,7 @@ class OpenStackHostBase():
         Convenience method for use only when the attachment is already certain.
         """
         for attachment in volume.attachments:
-            if attachment.server_id == vm.id:
+            if attachment['server_id'] == vm.id:
                 return attachment
         raise RuntimeError('Volume is not attached to the specified instance!')
 
