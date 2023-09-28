@@ -75,12 +75,10 @@
       client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
-- name: remove osm_server_port
-  openstack.cloud.port:
+- name: check networks
+  openstack.cloud.networks_info:
     auth: "{{ item.auth }}"
-    name: osm_server_port_0
-    network: osm_net
-    state: absent
+    name: "osm_net"
     validate_certs: "{{ item.validate_certs }}"
     ca_cert: "{{ item.ca_cert }}"
     client_cert: "{{ item.client_cert }}"
@@ -96,6 +94,11 @@
       ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
       client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+  register: networks_list
+
+- name: remove osm_ports
+  ansible.builtin.include_tasks: check_pre_workload_ports.yml
+  when: "'networks' in networks_list"
 
 - name: remove osm_subnet
   openstack.cloud.subnet:
@@ -160,11 +163,10 @@
       client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
-- name: remove osm_security_group_rule
-  openstack.cloud.security_group_rule:
+- name: check security group
+  openstack.cloud.security_group_info:
     auth: "{{ item.auth }}"
-    security_group: osm_security_group
-    state: absent
+    name: "osm_security_group"
     validate_certs: "{{ item.validate_certs }}"
     ca_cert: "{{ item.ca_cert }}"
     client_cert: "{{ item.client_cert }}"
@@ -180,3 +182,8 @@
       ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
       client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+  register: security_group_list
+
+- name: remove osm_security_group_rule
+  ansible.builtin.include_tasks: check_pre_workload_security_group.yml
+  when: "'security_groups' in security_group_list"

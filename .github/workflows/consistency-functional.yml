@@ -154,6 +154,7 @@ jobs:
           sudo apt remove postgresql-client-common
           sudo apt install postgresql-client-common=238
           sudo apt install postgresql-common
+          sudo python -m pip install wheel
           sudo python -m pip install --upgrade pip
           sudo python -m pip install --upgrade virtualenv
           sudo python -m pip install ovs
