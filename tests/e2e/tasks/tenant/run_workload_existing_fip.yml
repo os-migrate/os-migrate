@@ -11,7 +11,7 @@
   environment:
     OS_AUTH_TYPE: token
     OS_AUTH_URL: "{{ os_migrate_dst_auth.auth_url }}"
-    OS_TOKEN: "{{ auth_token }}"
+    OS_TOKEN: "{{ os_migrate_dst_auth.auth_token }}"
     OS_PROJECT_ID: "{{ os_migrate_dst_auth.project_id|default('') }}"
     OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
     OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
