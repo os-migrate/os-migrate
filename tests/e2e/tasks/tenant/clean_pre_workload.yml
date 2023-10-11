@@ -181,4 +181,3 @@
       ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
       client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-  ignore_errors: true
