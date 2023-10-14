@@ -98,7 +98,7 @@
 
 - name: remove osm_ports
   ansible.builtin.include_tasks: check_pre_workload_ports.yml
-  when: networks_list.networks | length == 0
+  when: networks_list.networks | length != 0
 
 - name: remove osm_subnet
   openstack.cloud.subnet:
@@ -186,4 +186,4 @@
 
 - name: remove osm_security_group_rule
   ansible.builtin.include_tasks: check_pre_workload_security_group.yml
-  when: security_group_list.security_group | length == 0
+  when: security_group_list.security_group | length != 0
