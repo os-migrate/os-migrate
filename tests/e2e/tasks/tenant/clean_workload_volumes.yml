@@ -20,7 +20,7 @@
 
 - name: Remove src osm_volume
   ansible.builtin.command:
-    cmd: openstack volume delete osm_volume 
+    cmd: openstack volume delete osm_volume
   environment:
     OS_AUTH_TYPE: token
     OS_AUTH_URL: "{{ os_migrate_src_auth.auth_url }}"
