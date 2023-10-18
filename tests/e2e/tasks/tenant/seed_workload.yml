@@ -5,7 +5,7 @@
 
 - name: Create osm_volume
   ansible.builtin.command:
-    cmd: openstack volume create --size 1 --display-name osm_volume
+    cmd: openstack volume create --size 1 osm_volume
   environment:
     OS_AUTH_TYPE: token
     OS_AUTH_URL: "{{ os_migrate_src_auth.auth_url }}"
@@ -14,6 +14,8 @@
     OS_PROJECT_NAME: "{{ os_migrate_src_auth.project_name|default('') }}"
     OS_PROJECT_DOMAIN_ID: "{{ os_migrate_src_auth.project_domain_id|default('') }}"
     OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_src_auth.project_domain_name|default('') }}"
+  register: _result
+  changed_when: "_result.rc == 0"
 
 - name: Create osm_server
   openstack.cloud.server:

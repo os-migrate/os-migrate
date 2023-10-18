@@ -66,6 +66,10 @@
         - prelim is defined and prelim.changed
         - item["_migration_params"]["data_copy"]|default(true)
 
+    - name: debug source volumes
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+
     - name: expose source volumes
       os_migrate.os_migrate.import_workload_export_volumes:
         cloud: src
