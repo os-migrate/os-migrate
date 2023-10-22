@@ -7,6 +7,7 @@ import logging
 import os
 import subprocess
 import time
+import copy
 
 # Default timeout for OpenStack operations
 DEFAULT_TIMEOUT = 1800
@@ -237,13 +238,15 @@ class OpenStackHostBase():
         Get the attachment object from the volume with the matching server ID.
         Convenience method for use only when the attachment is already certain.
         """
-        self.log.debug("hello_123_test: %s", volume)
-        for attachment in volume.attachments:
-            try:
-                if attachment.server_id == vm.id:
-                    return attachment
-            except Exception:
-                raise RuntimeError(str(volume))
+
+        # handle edge case where dict is null
+        volumes_list = copy.deepcopy(volume.attachments)
+        attachment = None
+        while attachment is None and volumes_list:
+            attachment = volumes_list.pop()
+            if attachment.get("server_id") == vm.id:
+                return attachment
+
         raise RuntimeError('Volume is not attached to the specified instance!')
 
     def _wait_for_volume_dev_path(self, conn, volume, vm, timeout):
