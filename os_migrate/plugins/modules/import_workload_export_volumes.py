@@ -349,6 +349,7 @@ class OpenStackSourceHost(OpenStackHostBase):
             if self.source_disks and volume.id not in self.source_disks:
                 self.log.info('Volume is not in specified disk list, ignoring.')
                 continue
+            self.log.info("server_id - %s", volume)
             dev_path = self._get_attachment(volume, sourcevm).device
             self.volume_map[dev_path] = dict(
                 source_dev=None, source_id=volume.id, dest_dev=None,

@@ -87,9 +87,13 @@
         ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
         timeout: "{{ os_migrate_timeout }}"
       register: exports
+      ignore_errors: true
       when:
         - prelim is defined and prelim.changed
         - item["_migration_params"]["data_copy"]|default(true)
+
+    - name: print file contents
+      ansible.builtin.command: 'cat {{ os_migrate_data_dir }}/workload_logs/osm_server.log'
 
     - name: transfer volumes to destination
       os_migrate.os_migrate.import_workload_transfer_volumes:

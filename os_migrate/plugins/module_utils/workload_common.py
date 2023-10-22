@@ -7,7 +7,6 @@ import logging
 import os
 import subprocess
 import time
-import copy
 
 # Default timeout for OpenStack operations
 DEFAULT_TIMEOUT = 1800
@@ -239,12 +238,8 @@ class OpenStackHostBase():
         Convenience method for use only when the attachment is already certain.
         """
 
-        # handle edge case where dict is null
-        volumes_list = copy.deepcopy(volume.attachments)
-        attachment = None
-        while attachment is None and volumes_list:
-            attachment = volumes_list.pop()
-            if attachment.get("server_id") == vm.id:
+        for attachment in volume.attachments:
+            if attachment.server_id == vm.id:
                 return attachment
 
         raise RuntimeError('Volume is not attached to the specified instance!')
