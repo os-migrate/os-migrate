@@ -18,23 +18,22 @@
   changed_when: "_result.rc == 0"
 
 - name: Create osm_server
-  openstack.cloud.server:
-    name: osm_server
-    state: present
-    flavor: "{{ os_migrate_src_osm_server_flavor|default(m1.small) }}"
-    key_name: osm_key
-    image: "{{ workload_image }}"
-    network: osm_net
-    security_groups: osm_security_group
-    volumes:
-      - osm_volume
-    # We get a floating IP
-    # for the workload VM
-    auto_ip: true
-    # Wait for the instance to be created
-    wait: true
-    auth: "{{ os_migrate_src_auth }}"
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+  ansible.builtin.command:
+    cmd: |
+      openstack server create osm_server
+      --flavor "{{ os_migrate_src_osm_server_flavor|default(m1.small) }}"
+      --key-name osm_key
+      --network osm_net
+      --security-group osm_security_group
+      --image "{{ workload_image }}"
+      --wait
+  environment:
+    OS_AUTH_TYPE: token
+    OS_AUTH_URL: "{{ os_migrate_src_auth.auth_url }}"
+    OS_TOKEN: "{{ auth_token_src.auth_token }}"
+    OS_PROJECT_ID: "{{ os_migrate_src_auth.project_id|default('') }}"
+    OS_PROJECT_NAME: "{{ os_migrate_src_auth.project_name|default('') }}"
+    OS_PROJECT_DOMAIN_ID: "{{ os_migrate_src_auth.project_domain_id|default('') }}"
+    OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_src_auth.project_domain_name|default('') }}"
+  register: _result_osm_server
+  changed_when: "_result_osm_server.rc == 0"
