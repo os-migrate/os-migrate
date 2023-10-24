@@ -29,3 +29,17 @@
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+
+- name: Show osm_server
+  ansible.builtin.command:
+    cmd: openstack server show osm_server
+  environment:
+    OS_AUTH_TYPE: token
+    OS_AUTH_URL: "{{ os_migrate_src_auth.auth_url }}"
+    OS_TOKEN: "{{ auth_token }}"
+    OS_PROJECT_ID: "{{ os_migrate_src_auth.project_id|default('') }}"
+    OS_PROJECT_NAME: "{{ os_migrate_src_auth.project_name|default('') }}"
+    OS_PROJECT_DOMAIN_ID: "{{ os_migrate_src_auth.project_domain_id|default('') }}"
+    OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_src_auth.project_domain_name|default('') }}"
+  register: _result
+  changed_when: "_result.rc == 0"

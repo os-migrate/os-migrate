@@ -66,6 +66,10 @@
         - prelim is defined and prelim.changed
         - item["_migration_params"]["data_copy"]|default(true)
 
+    - name: debug source volumes
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+
     - name: expose source volumes
       os_migrate.os_migrate.import_workload_export_volumes:
         cloud: src
@@ -86,6 +90,10 @@
       when:
         - prelim is defined and prelim.changed
         - item["_migration_params"]["data_copy"]|default(true)
+
+    - name: print file contents
+      ansible.builtin.command: 'tail -n 300 {{ os_migrate_data_dir }}/workload_logs/osm_server.log'
+      changed_when: false
 
     - name: transfer volumes to destination
       os_migrate.os_migrate.import_workload_transfer_volumes:
