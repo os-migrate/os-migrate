@@ -77,5 +77,5 @@
     OS_PROJECT_NAME: "{{ os_migrate_src_auth.project_name|default('') }}"
     OS_PROJECT_DOMAIN_ID: "{{ os_migrate_src_auth.project_domain_id|default('') }}"
     OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_src_auth.project_domain_name|default('') }}"
-  register: _result_osm_server_add
-  changed_when: "_result_osm_server_add.rc == 0"
+  register: _result_osm_volume_add
+  changed_when: "_result_osm_volume_add.rc == 0"
