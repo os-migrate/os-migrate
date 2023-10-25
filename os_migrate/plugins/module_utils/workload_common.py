@@ -210,7 +210,7 @@ class OpenStackHostBase():
             new_disks = disks_after - disks_before
             volume = conn.get_volume_by_id(volume_id)
             attachment = self._get_attachment(volume, host_func())
-            dev_path = attachment.device
+            dev_path = attachment['device']
             if len(new_disks) == 1:
                 if dev_path in new_disks:
                     self.log.debug('Successfully attached new disk %s, and %s '
@@ -221,7 +221,7 @@ class OpenStackHostBase():
                     self.log.debug('Successfully attached new disk %s, but %s '
                                    'conversion host path does not match the  '
                                    'result from OpenStack. Using internal '
-                                   'device path %s.', attachment.device,
+                                   'device path %s.', attachment['device'],
                                    name, dev_path)
             else:
                 raise RuntimeError('Got unexpected disk list after attaching '
@@ -248,7 +248,7 @@ class OpenStackHostBase():
             volume = conn.get_volume_by_id(volume_id)
             if volume.attachments:
                 attachment = self._get_attachment(volume, vm)
-                if attachment.device.startswith('/dev/'):
+                if attachment['device'].startswith('/dev/'):
                     return
             time.sleep(1)
         raise RuntimeError('Timed out waiting for volume device path!')
