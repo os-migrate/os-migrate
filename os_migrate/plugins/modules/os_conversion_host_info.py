@@ -133,6 +133,8 @@ def main():
         # vendors, so we check both.
         if hasattr(server, 'access_ipv4') and server.access_ipv4 != "":
             conversion_host['address'] = server.access_ipv4
+        elif hasattr(server, 'accessIPv4') and server.accessIPv4 != "":
+            conversion_host['address'] = server.accessIPv4
         elif hasattr(server, 'public_v4') and server.public_v4 != "":
             conversion_host['address'] = server.public_v4
         else:
