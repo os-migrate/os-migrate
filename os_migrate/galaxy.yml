@@ -8,7 +8,7 @@ authors:
   - Ryan Brady <rbrady@redhat.com>
   - Sagi Shnaidman <sshnaidm@redhat.com>
   - Matthew Arnold <marnold@redhat.com>
-  # Keep this at the bottom
+  # Keep at the bottom
   - os-migrate (https://github.com/os-migrate)
 description: OpenStack tenant migration tooling
 license:
@@ -19,7 +19,7 @@ tags:
 dependencies:
   community.crypto: '>=1.4.0'
   community.general: '<5.0.0'
-  openstack.cloud: '==2.0.0'
+  openstack.cloud: '>=2.1.0'
 repository: 'https://github.com/os-migrate/os-migrate'
 homepage: 'https://github.com/os-migrate/os-migrate'
 issues: 'https://github.com/os-migrate/os-migrate/issues'
