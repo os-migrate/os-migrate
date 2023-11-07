@@ -3,7 +3,7 @@ wheel
 
 # runtime
 ansible-core
-openstacksdk
+openstacksdk>1.2.0
 
 # test
 python-openstackclient
