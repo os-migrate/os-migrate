@@ -27,6 +27,7 @@
   hosts: migrator
   environment:
     OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
+    OS_VOLUME_API_VERSION: 3.10
   tasks:
     - name: clean workloads
       ansible.builtin.include_tasks: tasks/tenant/clean_workload.yml
