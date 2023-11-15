@@ -92,7 +92,7 @@ jobs:
       - name: Run all the tests non OpenStack dependant
         run: |
           export OS_MIGRATE_REQUIREMENTS_UNINSTALL_BEFORE_OVERRIDE='ansible ansible-base ansible-core'
-          export OS_MIGRATE_REQUIREMENTS_OVERRIDE='toolbox/build/venv-requirements.txt'
+          export OS_MIGRATE_REQUIREMENTS_OVERRIDE='toolbox/build/venv-requirements-ansible-${{ matrix.ansible-version }}.txt'
           ./toolbox/run make test-fast
       - name: Validate changelog
         run: |
@@ -391,5 +391,5 @@ jobs:
       - name: Run functional tests
         run: |
           export OS_MIGRATE_REQUIREMENTS_UNINSTALL_BEFORE_OVERRIDE='ansible ansible-base ansible-core'
-          export OS_MIGRATE_REQUIREMENTS_OVERRIDE='toolbox/build/venv-requirements.txt'
+          export OS_MIGRATE_REQUIREMENTS_OVERRIDE='toolbox/build/venv-requirements-ansible-${{ matrix.ansible-version }}.txt'
           ./toolbox/run make test-func

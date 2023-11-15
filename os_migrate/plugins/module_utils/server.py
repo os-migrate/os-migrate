@@ -60,23 +60,14 @@ class Server(resource.Resource):
 
     migration_param_defaults = {
         'boot_disk_copy': False,
-        'floating_ip_mode': 'auto',
         'boot_volume_params': {
             'availability_zone': None,
             'name': None,
             'description': None,
             'volume_type': None,
         },
-        'port_creation_mode': 'nova',
-        'data_copy': True,
-        'boot_volume': {
-            'uuid': None,
-        },
-        'additional_volumes': [
-            {
-                'uuid': None,
-            }
-        ],
+        'floating_ip_mode': 'auto',
+        'port_creation_mode': 'nova'
     }
 
     @classmethod
@@ -104,11 +95,7 @@ class Server(resource.Resource):
         # support for advanced port creation via Neutron.
         self.update_sdk_params_networks_simple(conn, sdk_params, port_creation_mode)
 
-        if not self.migration_params()['data_copy']:
-            self.update_sdk_params_block_device_mapping_nocopy(sdk_params)
-        else:
-            self.update_sdk_params_block_device_mapping_copy(sdk_params, block_device_mapping)
-
+        self.update_sdk_params_block_device_mapping(sdk_params, block_device_mapping)
         sdk_srv = conn.compute.create_server(**sdk_params)
         # Wait for the server before we attach Floating IPs, otherwise
         # we may hit "Instance network is not ready yet" error.
@@ -141,60 +128,9 @@ class Server(resource.Resource):
             if value not in choices:
                 raise exc.UnexpectedChoice('floating_ip_mode', choices, value)
 
-        # TODO: add some validation for block device mapping v2
-        if 'data_copy' in params_dict:
-            value = params_dict['data_copy']
-            if not isinstance(value, bool):
-                raise exc.InvalidInputType('data_copy', 'boolean')
-
         return super().update_migration_params(params_dict)
 
-    def update_sdk_params_block_device_mapping_nocopy(self, sdk_params):
-        params, info = self.params_and_info()
-        migration_params = self.migration_params()
-        sdk_params['block_device_mapping'] = []
-        block_device_mapping = sdk_params['block_device_mapping']
-        image_id = sdk_params.get('image_id', None)
-        additional_volumes = migration_params['additional_volumes']
-
-        # Update block device mapping with volumes if data_copy is false
-        if migration_params['boot_volume']['uuid']:
-            boot_vol_mapping = {
-                "boot_index": 0,
-                "uuid": migration_params['boot_volume']['uuid'],
-                'delete_on_termination': False,
-                'destination_type': 'volume',
-                'source_type': 'volume',
-            }
-            block_device_mapping.append(boot_vol_mapping)
-            sdk_params.pop("image_id", None)
-        elif image_id is not None:
-            block_device_mapping.insert(0, {
-                'boot_index': 0,
-                'delete_on_termination': True,
-                'destination_type': 'local',
-                'source_type': 'image',
-                'uuid': image_id,
-            })
-        else:
-            raise exc.InconsistentState(
-                (f"Instance '{params['name']}' ({info['id']}) has neither boot volume nor image reference. "
-                    f"Block device mapping: {block_device_mapping}")
-            )
-
-        if len(additional_volumes) > 0:
-            for volume in additional_volumes:
-                if volume['uuid']:
-                    additional_volume_mapping = {
-                        "boot_index": -1,
-                        'uuid': volume['uuid'],
-                        'delete_on_termination': False,
-                        'destination_type': 'volume',
-                        'source_type': 'volume',
-                    }
-                    block_device_mapping.append(additional_volume_mapping)
-
-    def update_sdk_params_block_device_mapping_copy(self, sdk_params, block_device_mapping):
+    def update_sdk_params_block_device_mapping(self, sdk_params, block_device_mapping):
         params, info = self.params_and_info()
         migration_params = self.migration_params()
         sdk_params['block_device_mapping'] = deepcopy(block_device_mapping)
@@ -303,7 +239,7 @@ class Server(resource.Resource):
             conn, params['flavor_ref'])
 
         refs['image_ref'] = params['image_ref']
-        if self.migration_params()['data_copy'] and self.migration_params()['boot_disk_copy']:
+        if self.migration_params()['boot_disk_copy']:
             refs['image_id'] = None
         else:
             refs['image_id'] = reference.image_id(conn, params['image_ref'])
