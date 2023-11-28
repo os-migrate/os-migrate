@@ -156,8 +156,9 @@ jobs:
           sudo apt install postgresql-common
           sudo python -m pip install --upgrade pip
           sudo python -m pip install --upgrade virtualenv
-          # https://github.com/pypa/setuptools/issues/3772
-          sudo python -m pip install --upgrade 'setuptools<66'
+          sudo python -m pip install ovs
+          sudo python -m pip install --upgrade setuptools
+
       - name: Configure podman
         run: |
           mkdir -p ~/.config/containers
