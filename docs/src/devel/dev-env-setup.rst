@@ -256,12 +256,12 @@ Create images
 .. code-block::
 
     # Download images
-    wget https://cloud.centos.org/centos/8-stream/x86_64/images/CentOS-Stream-GenericCloud-8-20220913.0.x86_64.qcow2
+    wget https://cloud.centos.org/centos/9-stream/x86_64/images/CentOS-Stream-GenericCloud-9-20230116.0.x86_64.qcow2
     wget http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img
 
     # Create images in glance from these downloads
     openstack image create --public --disk-format qcow2 --file \
-        CentOS-Stream-GenericCloud-8-20220913.0.x86_64.qcow2 CentOS-Stream-GenericCloud-8-20220913.0.x86_64.qcow2
+        CentOS-Stream-GenericCloud-9-20230116.0.x86_64.qcow2 CentOS-Stream-GenericCloud-9-20230116.0.x86_64.qcow2
     openstack image create --public --disk-format raw --file cirros-0.4.0-x86_64-disk.img cirros-0.4.0-x86_64-disk.img
 
 Create flavors
@@ -328,7 +328,7 @@ Auth URLs and network names will change based on your environment.
 
     os_migrate_data_dir: /root/os_migrate/local/migrate-data
 
-    os_migrate_conversion_host_ssh_user: centos
+    os_migrate_conversion_host_ssh_user: cloud-user
     os_migrate_src_conversion_external_network_name: nova
     os_migrate_dst_conversion_external_network_name: nova
     os_migrate_conversion_flavor_name: m1.large
