@@ -2,8 +2,8 @@ Changelog
 =========
 
 
-(unreleased)
-------------
+0.16.0 (2023-09-13)
+-------------------
 
 New
 ~~~
@@ -22,6 +22,15 @@ Fix
 
   Change install content task on conversion hosts to install guestfs-tools for
   CentOS 9 systems (guestfs-tools provides virt-sparsify)
+
+Other
+~~~~~
+- Merge branch 'main' of https://github.com/cloudguruab/os-migrate.
+  [cloudguruab]
+- Merge branch 'main' of https://github.com/cloudguruab/os-migrate.
+  [cloudguruab]
+- Merge branch 'main' of https://github.com/cloudguruab/os-migrate.
+  [cloudguruab]
 
 
 0.15.1 (2023-06-06)
