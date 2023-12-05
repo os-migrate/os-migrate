@@ -1,3 +1,8 @@
+- name: debug floating ip info
+  ansible.builtin.debug:
+    msg: "{{ os_migrate_converion_floating_ip_address }}"
+  changed_when: false
+
 - name: create the conversion host floating IP with a predefined IP
   openstack.cloud.floating_ip:
     server: "{{ os_migrate_conversion_host_name }}"
