@@ -25,7 +25,6 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: [3.7]
-        ansible-version: ['latest']
     steps:
       - uses: actions/checkout@v2
         with:
@@ -92,7 +91,7 @@ jobs:
       - name: Run all the tests non OpenStack dependant
         run: |
           export OS_MIGRATE_REQUIREMENTS_UNINSTALL_BEFORE_OVERRIDE='ansible ansible-base ansible-core'
-          export OS_MIGRATE_REQUIREMENTS_OVERRIDE='toolbox/build/venv-requirements-ansible-${{ matrix.ansible-version }}.txt'
+          export OS_MIGRATE_REQUIREMENTS_OVERRIDE='toolbox/build/venv-requirements.txt'
           ./toolbox/run make test-fast
       - name: Validate changelog
         run: |
@@ -108,7 +107,6 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: [3.7]
-        ansible-version: ['latest']
     services:
       rabbitmq:
         image: rabbitmq:latest
@@ -392,5 +390,5 @@ jobs:
       - name: Run functional tests
         run: |
           export OS_MIGRATE_REQUIREMENTS_UNINSTALL_BEFORE_OVERRIDE='ansible ansible-base ansible-core'
-          export OS_MIGRATE_REQUIREMENTS_OVERRIDE='toolbox/build/venv-requirements-ansible-${{ matrix.ansible-version }}.txt'
+          export OS_MIGRATE_REQUIREMENTS_OVERRIDE='toolbox/build/venv-requirements.txt'
           ./toolbox/run make test-func
