@@ -1,7 +1,7 @@
 - name: get dst auth token
   openstack.cloud.auth:
     auth: "{{ os_migrate_dst_auth }}"
-  register: os_migrate_dst_token
+  register: dst_auth
 
 - name: create osm_fip in destination
   ansible.builtin.shell: |
@@ -12,7 +12,7 @@
   environment:
     OS_AUTH_TYPE: token
     OS_AUTH_URL: "{{ os_migrate_dst_auth.auth_url }}"
-    OS_TOKEN: "{{ os_migrate_dst_token.auth_token }}"
+    OS_TOKEN: "{{ dst_auth.auth_token }}"
     OS_PROJECT_ID: "{{ os_migrate_dst_auth.project_id|default('') }}"
     OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
     OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
@@ -25,29 +25,9 @@
     path: "{{ os_migrate_data_dir }}/workloads.yml"
     regexp: "floating_ip_mode: .*"
     replace: "floating_ip_mode: existing"
-  environment:
-    OS_AUTH_TYPE: token
-    OS_AUTH_URL: "{{ os_migrate_dst_auth.auth_url }}"
-    OS_TOKEN: "{{ os_migrate_dst_token.auth_token }}"
-    OS_PROJECT_ID: "{{ os_migrate_dst_auth.project_id|default('') }}"
-    OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
-    OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
-    OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
-  register: fip_mode
-  changed_when: "fip_mode.rc == 0"
 
 - name: set floating_ip_address
   ansible.builtin.replace:
     path: "{{ os_migrate_data_dir }}/workloads.yml"
     regexp: "floating_ip_address: .*"
     replace: "floating_ip_address: {{ existing_fip.stdout }}"
-  environment:
-    OS_AUTH_TYPE: token
-    OS_AUTH_URL: "{{ os_migrate_dst_auth.auth_url }}"
-    OS_TOKEN: "{{ os_migrate_dst_token.auth_token }}"
-    OS_PROJECT_ID: "{{ os_migrate_dst_auth.project_id|default('') }}"
-    OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
-    OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
-    OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_dst_auth.project_domain_name|default('') }}"
-  register: set_fip
-  changed_when: "set_fip.rc == 0"
