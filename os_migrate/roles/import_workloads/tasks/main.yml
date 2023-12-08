@@ -1,7 +1,3 @@
-- name: check data copy mode
-  ansible.builtin.debug:
-    msg: "{{ filtered_workloads }}"
-
 - name: include the conversion hosts inventory
   ansible.builtin.include_role:
     name: os_migrate.os_migrate.conversion_host
