@@ -40,6 +40,7 @@ def load_resources_file(file_path):
 
     if file_struct is not None:
         file_os_migrate_version = file_struct.get('os_migrate_version', None)
+        raise exc.EmptyYAMLFileError(file_path)
     else:
         raise exc.EmptyYAMLFileError(file_path)
 
