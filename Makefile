@@ -176,7 +176,6 @@ toolbox-build:
 		podman tag localhost/os_migrate_toolbox:latest localhost/os_migrate_toolbox:$$(date "+%Y_%m_%d"); \
 	else \
 		echo "Reusing the toolbox container image"; \
-		python -m pip install --upgrade pip; \
 		podman pull docker.pkg.github.com/os-migrate/os-migrate/os_migrate_toolbox:main; \
 		podman image tag docker.pkg.github.com/os-migrate/os-migrate/os_migrate_toolbox:main localhost/os_migrate_toolbox:latest; \
 		podman image tag localhost/os_migrate_toolbox:latest localhost/os_migrate_toolbox:$$(date "+%Y_%m_%d"); \
