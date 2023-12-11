@@ -29,6 +29,18 @@ class DataVersionMismatch(Exception):
         super().__init__(message)
 
 
+class EmptyYAMLFileError(Exception):
+    """Empty yaml file loaded for resource file"""
+
+    msg_format = (
+        "Detected empty resource file at {}"
+    )
+
+    def __init__(self, file_path):
+        message = self.msg_format.format(file_path)
+        super().__init__(message)
+
+
 class InconsistentState(Exception):
     """Inconsistent state in data."""
 
