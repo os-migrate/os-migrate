@@ -35,7 +35,6 @@
         dst_filters: "{{ os_migrate_dst_filters }}"
       when:
         - prelim is defined and prelim.changed
-        - item["_migration_params"]["data_copy"]|default(true)
 
     # Stop VM if not stopped and if config set to true
     - name: perform workload stop if os_migrate_workload_stop_before_migration is true
@@ -122,7 +121,7 @@
         block_device_mapping: "{{ transfer.block_device_mapping|default([]) }}"
       register: os_migrate_destination_instance
       when:
-        - prelim is defined and prelim.changed or not item["_migration_params"]["data_copy"]|default(true)
+        - prelim is defined and prelim.changed
 
     - name: clean up in the source cloud after migration
       os_migrate.os_migrate.import_workload_src_cleanup:
@@ -188,7 +187,7 @@
         - os_migrate_workload_cleanup_on_failure
         - exports is defined and 'volume_map' in exports
         - transfer is defined and 'volume_map' in transfer
-        - data.data_copy|default(true)
+        - item["_migration_params"]["data_copy"]|default(true)
 
     - name: fail if there was a problem in the migration
       ansible.builtin.fail:
