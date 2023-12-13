@@ -459,3 +459,38 @@ Workload import/export variables
 - ``os_migrate_workload_stop_before_migration`` - Set to true if you wish
   for os_migrate to stop your workloads/vms prior to migration. Note that
   only workloads/vms in `SHUTOFF` state will be migrated.
+
+Workload migration variables
+----------------------------
+Workloads to be migrated with OS Migrate can have varying storage configurations in
+the source cloud, and the desired way to migrate their storage also varies, per cloud
+operators preference.
+
+The following table summarizes the matrix of options (whats in the source, how
+it should be migrated, how should OS Migrate workloads YAML file be configured,
+is the conversion host required for this mode of migration, is this migration
+mode implemented).
+
+.. list-table:: Table Title
+   :widths: 25 25 25 25
+   :header-rows: 1
+
+   * - Source workload
+     - Desired migration properties
+     - Migration parameter settings
+     - Conversion hosts required?
+   * - Booted from image (local boot disk), optionally additional volumes attached
+     - Boot disk not copied, VM booted from image (local boot disk), any additional volumes copied and attached
+     - _migration_params:
+        data_copy: true
+        boot_disk_copy: false
+        boot_volume: null
+        additional_volumes: null
+        params: {
+        image_ref: {
+        domain_name: '%auth%'
+        name: some_image
+        project_name: '%auth%'
+        }}
+        (this is the default)
+     - Yes
