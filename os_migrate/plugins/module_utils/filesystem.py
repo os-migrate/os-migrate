@@ -38,7 +38,11 @@ def load_resources_file(file_path):
     with open(file_path, 'r', encoding='utf8') as f:
         file_struct = yaml.safe_load(f)
 
+    if file_struct is None:
+        raise exc.EmptyYAMLFileError(file_path)
+
     file_os_migrate_version = file_struct.get('os_migrate_version', None)
+
     if file_os_migrate_version != const.OS_MIGRATE_VERSION:
         raise exc.DataVersionMismatch(file_path, file_os_migrate_version)
 
