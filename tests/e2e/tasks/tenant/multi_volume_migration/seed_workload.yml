@@ -1,7 +1,7 @@
 - name: Create osm_volume_one
   openstack.cloud.volume:
     display_name: osm_volume_one
-    size: 10
+    size: 5
     auth: "{{ os_migrate_src_auth }}"
     validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
@@ -11,17 +11,7 @@
 - name: Create osm_volume_two
   openstack.cloud.volume:
     display_name: osm_volume_two
-    size: 50
-    auth: "{{ os_migrate_src_auth }}"
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-
-- name: Create osm_volume_three
-  openstack.cloud.volume:
-    display_name: osm_volume_three
-    size: 100
+    size: 5
     auth: "{{ os_migrate_src_auth }}"
     validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
@@ -40,7 +30,6 @@
     volumes:
       - osm_volume_one
       - osm_volume_two
-      - osm_volume_three
     # We get a floating IP
     # for the workload VM
     auto_ip: true
