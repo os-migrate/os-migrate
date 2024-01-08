@@ -20,7 +20,7 @@
 - name: get original description
   ansible.builtin.set_fact:
     original_desc: |-
-      {{ dst_images_info_before['image']['min_disk'] }}
+      {{ dst_images_info_before['images'][0]['min_disk'] }}
 
 - name: import images
   ansible.builtin.include_role:
@@ -41,7 +41,7 @@
 - name: get changed description
   ansible.builtin.set_fact:
     changed_desc: |-
-      {{ dst_images_info_after['image']['min_disk'] }}
+      {{ dst_images_info_after['images'][0]['min_disk'] }}
 
 - name: ensure min_disk for osm_image changed
   ansible.builtin.assert:

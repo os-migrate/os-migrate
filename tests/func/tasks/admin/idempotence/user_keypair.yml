@@ -58,7 +58,7 @@
   os_migrate.os_migrate.os_keypairs_info:
     auth: "{{ os_migrate_dst_auth }}"
     filters:
-      user_id: "{{ osmdst_user_info['openstack_users'][0]['id'] }}"
+      user_id: "{{ osmdst_user_info['users'][0]['id'] }}"
   register: user_keypair_import_idem_before
 
 - name: import users keypairs
@@ -69,7 +69,7 @@
   os_migrate.os_migrate.os_keypairs_info:
     auth: "{{ os_migrate_dst_auth }}"
     filters:
-      user_id: "{{ osmdst_user_info['openstack_users'][0]['id'] }}"
+      user_id: "{{ osmdst_user_info['users'][0]['id'] }}"
   register: user_keypair_import_idem_after
 
 - name: ensure fingerprint for osmdst_user_keypair did not change

@@ -24,13 +24,6 @@
         replace: "boot_disk_copy: true"
       when: set_boot_disk_copy|default(false)|bool
 
-    - name: set data copy
-      ansible.builtin.replace:
-        path: "{{ os_migrate_data_dir }}/workloads.yml"
-        regexp: "data_copy: true"
-        replace: "data_copy: false"
-      when: set_no_data_copy|default(false)|bool
-
     - name: set port creation mode to neutron
       ansible.builtin.replace:
         path: "{{ os_migrate_data_dir }}/workloads.yml"

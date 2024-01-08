@@ -20,6 +20,7 @@
 - name: get auth token
   openstack.cloud.auth:
     auth: "{{ os_migrate_src_auth }}"
+  register: auth_token
 
 - name: set tags on router
   ansible.builtin.command:
@@ -29,7 +30,7 @@
   environment:
     OS_AUTH_TYPE: token
     OS_AUTH_URL: "{{ os_migrate_src_auth.auth_url }}"
-    OS_TOKEN: "{{ auth_token }}"
+    OS_TOKEN: "{{ auth_token.auth_token }}"
     OS_PROJECT_ID: "{{ os_migrate_src_auth.project_id|default('') }}"
     OS_PROJECT_NAME: "{{ os_migrate_src_auth.project_name|default('') }}"
     OS_PROJECT_DOMAIN_ID: "{{ os_migrate_src_auth.project_domain_id|default('') }}"

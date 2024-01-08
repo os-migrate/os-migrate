@@ -55,11 +55,11 @@
 - name: ensure is_enabled for osmdst_project did not change
   ansible.builtin.assert:
     that:
-      - project_import_idem_before['openstack_projects'][0].is_enabled != None
-      - "project_import_idem_before['openstack_projects'][0]['is_enabled'] \
-         == project_import_idem_after['openstack_projects'][0]['is_enabled']"
+      - project_import_idem_before['projects'][0].is_enabled != None
+      - "project_import_idem_before['projects'][0]['is_enabled'] \
+         == project_import_idem_after['projects'][0]['is_enabled']"
     fail_msg: |
       project_import_idem_before is_enabled:
-      {{ project_import_idem_before['openstack_projects'][0].is_enabled }}
+      {{ project_import_idem_before['projects'][0].is_enabled }}
       project_import_idem_after is_enabled:
-      {{ project_import_idem_after['openstack_projects'][0].is_enabled }}
+      {{ project_import_idem_after['projects'][0].is_enabled }}

@@ -11,7 +11,7 @@
 - name: create id-name pairs of networks to export
   ansible.builtin.set_fact:
     export_networks_ids_names: "{{ (
-      src_networks_info.openstack_networks
+      src_networks_info.networks
         | json_query('[*].{name: name, id: id}')
         | sort(attribute='id') ) }}"
 

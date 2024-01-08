@@ -31,12 +31,6 @@ Workload migration parameters
       already boot-from-volume in the source cloud, this is the
       default and the only possible path.)
 
--  ``data_copy`` controls storage migration modes for workloads:
-
-   - ``false``: The copying of data using os-migrate is skipped.
-
-   - ``true``: (Default) We result to using os-migrate for data copying.
-
 -  ``boot_volume_params`` controls new boot disk creation parameters in
    the destination, in case the source VM has no boot disk, but
    ``boot_disk_copy`` is ``true``.
@@ -50,22 +44,6 @@ Workload migration parameters
    ``boot_volume_params`` to edit the destination creation
    parameters. Instead, edit the serialized volume in the ``volumes``
    section of the workload's ``params``.
-
--  ``boot_volume`` controls new boot disk creation parameters for 
-   workload migrations with storage mode (data_copy) set to false.
-
-   There are a few pre-filled parameters, defaulted to ``None``.  Then
-   ``None`` value means those parameters will not be specified when
-   creating the boot volume, or in case of the ``name`` parameter, the
-   default for workload migration will be used (prefix + VM name).
-
-   When the source VM *does* have a boot volume already, do not use
-   ``boot_volume_params`` to edit the destination creation
-   parameters. Instead, edit the serialized volume in the ``volumes``
-   section of the workload's ``params``.
-
--  ``additional_volumes`` any additonal volumes to be configured for 
-   workload migrations with storage mode (data_copy) set to false.
 
 -  ``floating_ip_mode`` controls whether and how floating IPs should be
    created for workloads:

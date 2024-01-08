@@ -13,6 +13,10 @@
       when:
         - item["_migration_params"]["data_copy"]|default(true)
 
+    - name: fetch src conv host data
+      ansible.builtin.debug:
+        msg: "{{ hostvars }}"
+
     - name: fail if source conversion host is not active
       ansible.builtin.fail:
         msg: The source conversion host is not running!
@@ -34,6 +38,10 @@
       register: os_dst_conversion_host_info
       when:
         - item["_migration_params"]["data_copy"]|default(true)
+
+    - name: fetch dst conv host data
+      ansible.builtin.debug:
+        msg: "{{ hostvars }}"
 
     - name: fail if destination conversion is not active
       ansible.builtin.fail:

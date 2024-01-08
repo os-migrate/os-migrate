@@ -25,7 +25,6 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: [3.7]
-        ansible-version: [2.9, 'latest']
     steps:
       - uses: actions/checkout@v2
         with:
@@ -108,7 +107,6 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: [3.7]
-        ansible-version: [2.9, 'latest']
     services:
       rabbitmq:
         image: rabbitmq:latest
@@ -154,6 +152,7 @@ jobs:
           sudo apt remove postgresql-client-common
           sudo apt install postgresql-client-common=238
           sudo apt install postgresql-common
+          sudo python -m pip install wheel
           sudo python -m pip install --upgrade pip
           sudo python -m pip install --upgrade virtualenv
           sudo python -m pip install ovs

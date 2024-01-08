@@ -15,7 +15,7 @@
 - name: get original description
   ansible.builtin.set_fact:
     original_desc: |-
-      {{ dst_users_info_before['openstack_users'] | json_query(
+      {{ dst_users_info_before['users'] | json_query(
         "[?name=='osmdst_user'].description") }}
 
 - name: import users
@@ -32,7 +32,7 @@
 - name: get changed description
   ansible.builtin.set_fact:
     changed_desc: |-
-      {{ dst_users_info_after['openstack_users'] | json_query(
+      {{ dst_users_info_after['users'] | json_query(
         "[?name=='osmdst_user'].description") }}
 
 - name: ensure description for osmdst_user changed
