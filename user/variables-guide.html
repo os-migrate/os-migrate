@@ -72,6 +72,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#openstack-rest-api-tls-variables">OpenStack REST API TLS variables</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#workload-import-export-variables">Workload import/export variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#workload-migration-variables">Workload migration variables</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="migration-params-guide.html">Migration Parameters Guide</a></li>
@@ -525,6 +526,163 @@ variables.</p></li>
 for os_migrate to stop your workloads/vms prior to migration. Note that
 only workloads/vms in <cite>SHUTOFF</cite> state will be migrated.</p></li>
 </ul>
+</section>
+<section id="workload-migration-variables">
+<h2>Workload migration variables<a class="headerlink" href="#workload-migration-variables" title="Permalink to this heading"></a></h2>
+<p>Workloads to be migrated with OS Migrate can have varying storage configurations in
+the source cloud, and the desired way to migrate their storage also varies, per cloud
+operators preference.</p>
+<p>The following table summarizes the matrix of options (whats in the source, how
+it should be migrated, how should OS Migrate workloads YAML file be configured,
+is the conversion host required for this mode of migration, is this migration
+mode implemented).</p>
+<table class="colwidths-given docutils align-default" id="id1">
+<caption><span class="caption-text">Workload Migration options</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Source workload</p></th>
+<th class="head"><p>Desired migration properties</p></th>
+<th class="head"><p>Migration parameter settings</p></th>
+<th class="head"><p>Conversion hosts required?</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Booted from image (local boot disk), optionally additional volumes attached</p></td>
+<td><p>Boot disk not copied, VM booted from image (local boot disk), any additional volumes copied and attached</p></td>
+<td><dl class="simple">
+<dt>_migration_params:</dt><dd><p>data_copy: true
+boot_disk_copy: false
+boot_volume: null
+additional_volumes: null
+params: {
+image_ref: {
+domain_name: ‘%auth%’
+name: some_image
+project_name: ‘%auth%’
+}}
+(this is the default)</p>
+</dd>
+</dl>
+</td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><p>Booted from image (local boot disk), optionally additional volumes attached</p></td>
+<td><p>Boot disk copied as volume, VM booted from volume, any additional volumes copied and attached</p></td>
+<td><dl>
+<dt>_migration_params:</dt><dd><p>data_copy: true
+boot_disk_copy: true
+boot_volume: null
+additional_volumes: null
+params:
+image_ref:
+domain_name: ‘%auth%’
+name: some_image
+project_name: ‘%auth%’</p>
+<p>(image_ref doesn’t matter, can be null)</p>
+</dd>
+</dl>
+</td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-even"><td><p>Booted from volume, optionally additional volumes attached</p></td>
+<td><p>Boot disk copied as volume, VM booted from volume, any additional volumes copied and attached</p></td>
+<td><dl class="simple">
+<dt>_migration_params:</dt><dd><p>data_copy: true
+boot_disk_copy: true
+boot_volume: null
+additional_volumes: null
+params:
+image_ref: null</p>
+</dd>
+</dl>
+</td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><p>Booted from image (local boot disk), optionally additional volumes attached</p></td>
+<td><p>Nothing copied, VM booted from image (local boot disk), no additional volumes</p></td>
+<td><dl>
+<dt>_migration_params:</dt><dd><p>data_copy: false
+boot_disk_copy: false
+boot_volume: null
+additional_volumes: null
+params:
+image_ref:
+domain_name: ‘%auth%’
+name: some_image
+project_name: ‘%auth%’</p>
+<p>(boot_disk_copy doesn’t matter)</p>
+</dd>
+</dl>
+</td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>Booted from image (local boot disk), optionally additional volumes attached</p></td>
+<td><p>Nothing copied, VM booted from image (local boot disk), additional pre-existing volumes attached</p></td>
+<td><dl>
+<dt>_migration_params:</dt><dd><p>data_copy: false
+boot_disk_copy: false
+boot_volume: null
+additional_volumes:
+uuid: some_uuid2
+uuid: some_uuid3
+params:
+image_ref:
+domain_name: ‘%auth%’
+name: some_image
+project_name: ‘%auth%’</p>
+<p>(boot_disk_copy doesn’t matter)</p>
+</dd>
+</dl>
+</td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p>Booted from image or volume, optionally additional volumes attached</p></td>
+<td><p>Nothing copied, VM booted from pre-existing volume, no additional volumes</p></td>
+<td><dl>
+<dt>_migration_params:</dt><dd><p>data_copy: false
+boot_disk_copy: false
+boot_volume:
+uuid: some_uuid
+additional_volumes: null
+params:
+image_ref:
+domain_name: ‘%auth%’
+name: some_image
+project_name: ‘%auth%’</p>
+<p>(image_ref doesn’t matter, can be null, boot_disk_copy doesn’t matter)</p>
+</dd>
+</dl>
+</td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>Booted from image or volume, optionally additional volumes attached</p></td>
+<td><p>Nothing copied, VM booted from pre-existing volume, additional pre-existing volumes attached</p></td>
+<td><dl>
+<dt>_migration_params:</dt><dd><p>data_copy: false
+boot_disk_copy: false
+boot_volume:
+uuid: some_uuid
+additional_volumes:
+uuid: some_uuid2
+uuid: some_uuid3
+params:
+image_ref:
+domain_name: ‘%auth%’
+name: some_image
+project_name: ‘%auth%’</p>
+<p>(image_ref doesn’t matter, can be null, boot_disk_copy doesn’t matter)</p>
+</dd>
+</dl>
+</td>
+<td><p>No</p></td>
+</tr>
+</tbody>
+</table>
 </section>
 </section>
 
