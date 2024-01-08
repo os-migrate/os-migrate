@@ -97,7 +97,7 @@ options:
   dst_conversion_host_address:
     description:
       - Optional IP address of the destination conversion host. Without this, the
-        plugin will use the 'accessIPv4' property of the conversion host instance.
+        plugin will use the 'access_ipv4' property of the conversion host instance.
     required: false
     type: str
   transfer_uuid:
@@ -289,21 +289,14 @@ except ImportError:
         import openstack_full_argument_spec, openstack_cloud_from_module
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import server
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils.server_volume \
-    import ServerVolume
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils.workload_common \
-    import OpenStackHostBase, RemoteShell, use_lock, ATTACH_LOCK_FILE_DESTINATION, DEFAULT_TIMEOUT, DEVNULL
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils.volume_common \
+    import OpenstackVolumeTransfer, DEFAULT_TIMEOUT
 
-import errno
-import fcntl
-import os
 import re
-import subprocess
-import time
 
 
-class OpenStackDestinationHost(OpenStackHostBase):
+class OpenStackDestinationVolume(OpenstackVolumeTransfer):
     def __init__(self, openstack_connection, destination_conversion_host_id,
                  ssh_key_path, ssh_user, transfer_uuid, source_conversion_host_address,
                  volume_map, ser_server, destination_conversion_host_address=None,
@@ -347,220 +340,6 @@ class OpenStackDestinationHost(OpenStackHostBase):
         finally:
             self._stop_forwarding_process()
             self._release_ports()
-
-    def _create_forwarding_process(self):
-        """
-        Find free ports on the destination conversion host and set up SSH
-        forwarding to the NBD ports listening on the source conversion host.
-        """
-        # It is expected that key authorization has already been set up from
-        # the destination conversion host to the source conversion host!
-        source_shell = RemoteShell(self.source_conversion_host_address,
-                                   ssh_user=self.shell.ssh_user)
-        forward_ports = ['-N', '-T']
-        for path, mapping in self.volume_map.items():
-            port = self._find_free_port()
-            forward = f"{port}:localhost:{mapping['port']}"
-            forward_ports.extend(['-L', forward])
-            url = 'nbd://localhost:' + str(port) + '/' + self.transfer_uuid
-            self.volume_map[path]['url'] = url
-        command = source_shell.ssh_preamble()
-        command.extend(forward_ports)
-        self.log.debug('SSH forwarding command: %s', ' '.join(command))
-        self.forwarding_process = self.shell.cmd_sub(command)
-        self.forwarding_process_command = ' '.join(command)
-
-        # Check qemu-img info on all the disks to make sure everything is ready
-        self.log.info('Waiting for valid qemu-img info on all exports...')
-        pending_disks = set(self.volume_map.keys())
-        for second in range(self.timeout):
-            try:
-                for disk in pending_disks.copy():
-                    mapping = self.volume_map[disk]
-                    url = mapping['url']
-                    cmd = ['qemu-img', 'info', url]
-                    image_info = self.shell.cmd_out(cmd)
-                    self.log.info('qemu-img info for %s: %s', disk, image_info)
-                    pending_disks.remove(disk)
-            except subprocess.CalledProcessError as error:
-                self.log.info('Got exception: %s', error)
-                self.log.info('Trying again.')
-                time.sleep(1)
-            else:
-                self.log.info('All volume exports ready.')
-                break
-        else:
-            raise RuntimeError('Timed out starting nbdkit exports!')
-
-    def _stop_forwarding_process(self):
-        self.log.info('Stopping export forwarding on source conversion host...')
-        self.log.debug('(PID was %s)', self.forwarding_process.pid)
-        if self.forwarding_process:
-            self.forwarding_process.terminate()
-
-        if self.forwarding_process_command:
-            self.log.info('Stopping forwarding from source conversion host...')
-            try:
-                pattern = 'pgrep -f "' + self.forwarding_process_command + '"'
-                pids = self.shell.cmd_out([pattern]).split('\n')
-                for pid in pids:  # There should really only be one of these
-                    try:
-                        out = self.shell.cmd_out(['sudo', 'kill', pid])
-                        self.log.debug('Stopped forwarding PID (%s). %s',
-                                       pid, out)
-                    except subprocess.CalledProcessError as err:
-                        self.log.debug('Unable to stop PID %s! %s',
-                                       pid, str(err))
-            except subprocess.CalledProcessError as err:
-                self.log.debug('Unable to get forwarding PID! %s', str(err))
-
-    def _create_destination_volumes(self):
-        """
-        Volume mapping step 5: create new volumes on the destination OpenStack,
-        and fill in dest_id with the new volumes.
-        """
-        self.log.info('Creating volumes on destination cloud')
-        volumes = list(map(ServerVolume.from_data, self.ser_server.params()['volumes']))
-        src_id_volumes = {vol.info()['id']: vol for vol in volumes}
-        for path, mapping in self.volume_map.items():
-            source_id = mapping['source_id']
-            sdk_params = {
-                'name': mapping['name'],
-                'bootable': mapping['bootable'],
-                'size': mapping['size'],
-                'wait': True,
-                'timeout': self.timeout,
-            }
-            if source_id in src_id_volumes:
-                sdk_params.update(src_id_volumes[source_id].sdk_params(self.conn))
-            elif path == '/dev/vda':
-                # This code path is exercised when the source VM has
-                # no boot volume but is being migrated with
-                # `boot_disk_copy: true` and a boot volume is being
-                # created in the destination.
-                # `None` value in boot_volume_params means we do not
-                # want to override that parameter.
-                boot_volume_params_defined = \
-                    dict(filter(lambda item: item[1] is not None,
-                                self.ser_server.migration_params()['boot_volume_params'].items()))
-                sdk_params.update(boot_volume_params_defined)
-            new_volume = self.conn.create_volume(**sdk_params)
-            self.volume_map[path]['dest_id'] = new_volume.id
-
-    @use_lock(ATTACH_LOCK_FILE_DESTINATION)
-    def _attach_destination_volumes(self):
-        """
-        Volume mapping step 6: attach the new destination volumes to the
-        destination conversion host. Fill in the destination device name.
-        """
-        def update_dest(volume_mapping, dev_path):
-            volume_mapping['dest_dev'] = dev_path
-            return volume_mapping
-
-        def volume_id(volume_mapping):
-            return volume_mapping['dest_id']
-
-        self._attach_volumes(self.conn, 'destination', (self._converter,
-                                                        self.shell.cmd_out,
-                                                        update_dest,
-                                                        volume_id))
-
-    def _convert_destination_volumes(self):
-        """
-        Finally run the commands to copy the exported source volumes to the
-        local destination volumes. Attempt to sparsify the volumes to minimize
-        the amount of data sent over the network.
-        """
-        self.log.info('Converting volumes...')
-        for path, mapping in self.volume_map.items():
-            self.log.info('Converting source VM\'s %s: %s', path, str(mapping))
-            devname = os.path.basename(mapping['dest_dev'])
-            overlay = '/tmp/' + devname + '-' + self.transfer_uuid + '.qcow2'
-
-            def _log_convert(source_disk, source_format, mapping):
-                """ Write qemu-img convert progress to the wrapper log. """
-                self.log.info('Copying volume data...')
-                cmd = ['sudo', 'qemu-img', 'convert', '-p', '-f', source_format,
-                       '-O', 'host_device', source_disk, mapping['dest_dev']]
-                # Non-blocking output processing stolen from pre_copy.py
-                img_sub = self.shell.cmd_sub(cmd,
-                                             stdout=subprocess.PIPE,
-                                             stderr=subprocess.STDOUT,
-                                             stdin=DEVNULL,
-                                             universal_newlines=True, bufsize=1)
-                flags = fcntl.fcntl(img_sub.stdout, fcntl.F_GETFL)
-                flags |= os.O_NONBLOCK
-                fcntl.fcntl(img_sub.stdout, fcntl.F_SETFL, flags)
-                buf = b''
-                while img_sub.poll() is None:
-                    try:
-                        buf += os.read(img_sub.stdout.fileno(), 1)
-                    except (IOError, OSError) as err:
-                        if err.errno != errno.EAGAIN:
-                            raise
-                        time.sleep(1)
-                        continue
-                    if buf:
-                        try:
-                            matches = self.qemu_progress_re.search(buf.decode())
-                            if matches is not None:
-                                progress = float(matches.group(1))
-                                self._update_progress(path, progress)
-                                buf = b''
-                        except ValueError:
-                            self.log.debug('No match yet. %s', str(buf))
-                    else:
-                        time.sleep(1)
-                self.log.info('Conversion return code: %d', img_sub.returncode)
-                if img_sub.returncode != 0:
-                    try:
-                        out = img_sub.stdout.read()
-                    except (IOError, OSError) as err:
-                        self.log.debug('Error reading stderr? %s', str(err))
-                    raise RuntimeError('Failed to convert volume! ' + out)
-                # Just in case qemu-img returned before readline got to 100%
-                self._update_progress(path, 100.0)
-
-            try:
-                self.log.info('Attempting initial sparsify...')
-                environment = os.environ.copy()
-                environment['LIBGUESTFS_BACKEND'] = 'direct'
-
-                cmd = ['sudo', 'qemu-img', 'create', '-f', 'qcow2', '-b',
-                       mapping['url'], '-F', 'raw', overlay]
-                out = self.shell.cmd_out(cmd)
-                self.log.info('Overlay output: %s', out)
-
-                cmd = ['sudo', '--preserve-env=LIBGUESTFS_BACKEND',
-                       'virt-sparsify', '--in-place', overlay]
-                with open(self.log_file, 'a', encoding='utf8') as log_fd:
-                    img_sub = self.shell.cmd_sub(cmd,
-                                                 stdout=log_fd,
-                                                 stderr=subprocess.STDOUT,
-                                                 stdin=DEVNULL,
-                                                 env=environment)
-                    returncode = img_sub.wait()
-                    self.log.info('Sparsify return code: %d', returncode)
-                    if returncode != 0:
-                        raise RuntimeError('Failed to convert volume!')
-
-                _log_convert(overlay, 'qcow2', mapping)
-            except (OSError, RuntimeError, subprocess.CalledProcessError):
-                self.log.info('Sparsify failed, converting whole device...')
-                self.shell.cmd_val(['sudo', 'rm', '-f', overlay])
-                _log_convert(mapping['url'], 'raw', mapping)
-
-    @use_lock(ATTACH_LOCK_FILE_DESTINATION)
-    def _detach_destination_volumes(self):
-        """ Disconnect new volumes from destination conversion host. """
-        self.log.info('Detaching volumes from destination wrapper.')
-        for path, mapping in self.volume_map.items():
-            volume_id = mapping['dest_id']
-            volume = self.conn.get_volume_by_id(volume_id)
-            self.conn.detach_volume(server=self._converter(),
-                                    timeout=self.timeout,
-                                    volume=volume,
-                                    wait=True)
 
 
 def run_module():
@@ -606,7 +385,7 @@ def run_module():
     log_file = module.params.get('log_file', None)
     timeout = module.params['timeout']
 
-    destination_host = OpenStackDestinationHost(
+    destination_host = OpenStackDestinationVolume(
         conn,
         destination_conversion_host_id,
         ssh_key_path,

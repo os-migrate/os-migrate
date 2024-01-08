@@ -173,7 +173,7 @@ this:
 
 .. code:: yaml
 
-   os_migrate_version: 0.4.0
+   os_migrate_version: 0.17.0
    resources:
      - _info:
          availability_zones:
@@ -247,6 +247,69 @@ Demo
 
 |Watch the video1|
 
+Detached volume migration
+-------------------------
+
+It is possible to migrate detached volumes in the same way as we do 
+with other openstack resource types. The migration process includes 
+exporting these volumes from the source cloud onto the migrator machine,
+attaching the volume to the conversion host in source cloud, creating 
+the volume in the destination cloud and transferring the content 
+of the volumes.
+It is possible to choose the volumes to migrate using the reource filter
+
+.. code:: yaml
+
+   os_migrate_detached_volumes_filter:
+   - detached_volume1
+   - detached_volume2
+   - regex: ^myprefix_.**
+
+The above example says: Export only volumes named ``detached_volume1`` **or**
+``detached_volume2`` **or** starting with ``myprefix_``.
+
+To export the volumes it is needed to execute the playbook:
+
+.. code:: bash
+
+   $OSM_CMD $OSM_DIR/playbooks/export_detached_volumes.yml
+
+This will create detached_volumes.yml file in the data directory, similar to
+this:
+
+.. code:: yaml
+   os_migrate_version: 1.0.1
+   resources:
+   - _info:
+       attachments: []
+       id: 0e9ff1ab-fb8d-4c12-81c4-29d519d09cb9
+       is_bootable: false
+       size: 5
+     _migration_params: {}
+     params:
+       availability_zone: nova
+       description: null
+       name: test-detached-volume
+       volume_type: tripleo
+     type: openstack.network.ServerVolume
+
+You may edit the file as needed and then run the “import_detached_volumes”
+playbook to import the volumes from this file into the destination
+cloud:
+
+.. code:: bash
+
+   $OSM_CMD $OSM_DIR/playbooks/import_detached_volumes.yml
+
+Diagram
+~~~~~~~
+
+.. figure:: ../images/plantuml/render/detached-volume-migration-data-flow.png
+   :alt: Detached volume migration (data flow)
+   :width: 50%
+
+   Detached volume Migration (data flow)
+
 Workload migration
 ------------------
 
@@ -257,7 +320,7 @@ desired:
 
 .. code:: yaml
 
-   os_migrate_version: 0.4.0
+   os_migrate_version: 0.17.0
    resources:
    - _info:
        addresses:
@@ -400,7 +463,7 @@ The resulting workloads.yml file will look similar to:
 
 .. code:: yaml
 
-   os_migrate_version: 0.5.0
+   os_migrate_version: 0.17.0
    resources:
    - _info:
        created_at: '2020-11-12T17:55:40Z'

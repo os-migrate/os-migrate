@@ -17,6 +17,14 @@
         os_migrate_workloads_filter:
           - regex: '^osm_(?!uch)'
 
+    - name: export detached volumes
+      ansible.builtin.include_role:
+        name: os_migrate.os_migrate.export_detached_volumes
+      vars:
+        os_migrate_volumes_filter:
+          - regex: '^osm_detached_volume'
+      when: test_detached_volumes|default(false)|bool
+
     - name: set boot disk copy
       ansible.builtin.replace:
         path: "{{ os_migrate_data_dir }}/workloads.yml"
@@ -52,10 +60,13 @@
     - name: verify data contents
       ansible.builtin.assert:
         that:
-          - (resources |
-            json_query("[?params.name ==
-            'osm_server'].params.name")
-            == ['osm_server'])
+          - ( item | json_query('params.name') == 'osm_server' )
+      loop: "{{ resources }}"
+
+    - name: import detached volumes
+      ansible.builtin.include_role:
+        name: os_migrate.os_migrate.import_detached_volumes
+      when: test_detached_volumes|default(false)|bool
 
     - name: import workloads
       ansible.builtin.include_role:

@@ -2,7 +2,7 @@ name: consistency-functional
 on:
   push:
     paths-ignore:
-      - 'docs/**'
+      - "docs/**"
     branches:
       - main
   pull_request:
@@ -11,7 +11,7 @@ on:
   # there is a CI failure related to a
   # problem deploying DevStack.
   schedule:
-    - cron: '0 */8 * * *'
+    - cron: "0 */8 * * *"
 
 jobs:
   # TODO: Add a previous job that:
@@ -20,42 +20,35 @@ jobs:
   # * Import the container image on each job
   build:
     if: github.repository_owner == 'os-migrate'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.7]
-        ansible-version: [2.9, 'latest']
+        ansible-version: ["latest"]
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v1
-        with:
-          python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
           sudo locale-gen en_US.UTF-8
           sudo dpkg-reconfigure locales
-          sudo python -m pip install --upgrade pip
-          sudo pip install tox
           sudo apt install software-properties-common build-essential findutils -y
-      - name: Print podman version
-        run: |
-          podman -v
-      - name: Configure podman
-        run: |
-          mkdir -p ~/.config/containers
-          echo 'cgroup_manager = "cgroupfs"' >> ~/.config/containers/libpod.conf
-          echo '[storage]' >> ~/.config/containers/storage.conf
-          echo 'driver = "overlay"' >> ~/.config/containers/storage.conf
-          echo '[storage.options]' >> ~/.config/containers/storage.conf
-          echo 'mount_program = "/usr/bin/fuse-overlayfs"' >> ~/.config/containers/storage.conf
+      # - name: Print podman version
+      #   run: |
+      #     podman -v
+      # - name: Configure podman
+      #   run: |
+      #     mkdir -p ~/.config/containers
+      #     echo 'cgroup_manager = "cgroupfs"' >> ~/.config/containers/libpod.conf
+      #     echo '[storage]' >> ~/.config/containers/storage.conf
+      #     echo 'driver = "overlay"' >> ~/.config/containers/storage.conf
+      #     echo '[storage.options]' >> ~/.config/containers/storage.conf
+      #     echo 'mount_program = "/usr/bin/fuse-overlayfs"' >> ~/.config/containers/storage.conf
       - name: Log into GitHub Container Registry
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | \
-            podman login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+            podman login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Get the changed files list
         id: file_changes
         if: github.event_name != 'schedule'
@@ -100,18 +93,16 @@ jobs:
           git log --oneline | head -n50
           make lint-commit-messages
 
-
   functional:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.7]
-        ansible-version: [2.9, 'latest']
+        ansible-version: ["latest"]
     services:
       rabbitmq:
-        image: rabbitmq:latest
+        image: rabbitmq:3
         ports:
           - 5672:5672
         options: >-
@@ -120,7 +111,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
       mysql:
-        image: mysql:5.7
+        image: mysql:8
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_ALLOW_EMPTY_PASSWORD: true
@@ -132,11 +123,7 @@ jobs:
           --health-timeout=5s
           --health-retries=3
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v1
-        with:
-          python-version: ${{ matrix.python-version }}
+      - uses: actions/checkout@v4
       - name: Install dependencies
         run: |
           sudo locale-gen en_US.UTF-8
@@ -144,21 +131,7 @@ jobs:
           sudo apt update
           sudo apt remove --purge mysql-server mysql-client mysql-common -y
           sudo apt autoremove -y
-          # MySQL requirements
           sudo apt install -y mysql-client mysql-common
-          # Httplib2 requirements
-          # We need to install this library un purpose, if not the devstack
-          # installer will crash as pip is not able to determine if its
-          # installed or not
-          sudo apt install python3-httplib2 -y
-          sudo apt remove postgresql-client-common
-          sudo apt install postgresql-client-common=238
-          sudo apt install postgresql-common
-          sudo python -m pip install --upgrade pip
-          sudo python -m pip install --upgrade virtualenv
-          sudo python -m pip install ovs
-          sudo python -m pip install --upgrade setuptools
-
       - name: Configure podman
         run: |
           mkdir -p ~/.config/containers
@@ -277,7 +250,7 @@ jobs:
           sudo chown root:root /bin
       - name: Clone devstack
         run: |
-          git clone --single-branch --branch master https://opendev.org/openstack/devstack
+          git clone --single-branch --branch 'unmaintained/2023.1' https://opendev.org/openstack/devstack
       - name: Configure devstack
         run: |
           DIR=$(pwd)
@@ -343,15 +316,7 @@ jobs:
           sudo mv $DIR/devstack /opt/stack/devstack
           sudo chown -R stack: /opt/stack/devstack
       - name: Start devstack
-        run: |
-          # Hacks to make Devstack install fine. See also:
-          # https://github.com/openstack/devstack/blob/83821a11ac1d6738b63cb10878b8aaa02e153374/tools/fixup_stuff.sh#L88-L96
-          sudo rm -rf /usr/lib/python3/dist-packages/httplib2-*.egg-info
-          sudo rm -rf /usr/lib/python3/dist-packages/pyasn1_modules-*.egg-info
-          sudo rm -rf /usr/lib/python3/dist-packages/PyYAML-*.egg-info
-          sudo rm -rf /usr/lib/python3/dist-packages/simplejson-*.egg-info
-
-          sudo -iu stack bash -c 'cd /opt/stack/devstack; ./stack.sh'
+        run: sudo -iu stack bash -c 'cd /opt/stack/devstack; ./stack.sh'
       - name: Get debug data
         if: failure()
         run: |

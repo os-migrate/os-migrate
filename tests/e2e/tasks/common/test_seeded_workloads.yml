@@ -1,0 +1,17 @@
+- name: Workload post_workload tasks
+  block:
+    - name: list osm_server host attributes
+      openstack.cloud.server_info:
+        server: osm_server
+        filters:
+          vm_state: active
+        auth: "{{ os_migrate_src_auth }}"
+        validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+      register: result
+
+    - name: verify volumes attribute for a specific server
+      ansible.builtin.assert:
+        that: "{{ result.servers[0].volumes is defined }}"

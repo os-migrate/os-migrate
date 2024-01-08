@@ -4,11 +4,11 @@ set -euxo pipefail
 
 DIR=$(dirname $(realpath $0))
 OS_MIGRATE_DIR=$(realpath "$DIR/../..")
-ANSIBLE_PYTHON=python3.8
+ANSIBLE_PYTHON=python3
 
 ### PACKAGES ###
 
-dnf -y update
+dnf -y upgrade --refresh
 dnf -y install \
     cargo \
     findutils \
@@ -27,7 +27,16 @@ dnf -y install \
 # The below packages are for vagrant-libvirt and take a lot of deps,
 # build with `NO_VAGRANT=1 make toolbox-build` if Vagrant isn't required.
 if [ "${NO_VAGRANT:-0}" != "1" ]; then
-    dnf -y install ansible libvirt-client rsync openssh-clients vagrant-libvirt
+    dnf install -y dnf-plugins-core
+    dnf config-manager --add-repo https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
+    # Instruction to install vagrant-libvirt taken by https://vagrant-libvirt.github.io/vagrant-libvirt/
+    dnf remove vagrant-libvirt
+    sed -i \
+        '/^\(exclude=.*\)/ {/vagrant-libvirt/! s//\1 vagrant-libvirt/;:a;n;ba;q}; $aexclude=vagrant-libvirt' \
+        /etc/dnf/dnf.conf
+    vagrant_libvirt_deps=($(dnf repoquery --disableexcludes main --depends vagrant-libvirt 2>/dev/null | cut -d' ' -f1))
+    dependencies=$(dnf repoquery --qf "%{name}" ${vagrant_libvirt_deps[@]/#/--whatprovides })
+    dnf install -y ansible openssh-clients vagrant libvirt-devel @virtualization ${dependencies}
 fi
 
 ### VIRTUALENV ###

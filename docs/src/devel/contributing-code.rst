@@ -106,11 +106,11 @@ following default content:
      description: os-migrate resource
      company: Red Hat
      license: Apache-2.0
-     min_ansible_version: 2.9
+     min_ansible_version: "2.9"
      platforms:
        - name: Fedora
          versions:
-           - 30
+           - "34"
      galaxy_tags: ["osmigrate"]
    dependencies:
      - role: os_migrate.os_migrate.prelude_src
@@ -143,11 +143,11 @@ following default content:
      description: os-migrate resource
      company: Red Hat
      license: Apache-2.0
-     min_ansible_version: 2.9
+     min_ansible_version: "2.9"
      platforms:
        - name: Fedora
          versions:
-           - 30
+           - "34"
      galaxy_tags: ["osmigrate"]
    dependencies:
      - role: os_migrate.os_migrate.prelude_dst
@@ -157,6 +157,60 @@ data. A common pattern is validating the data file created by the
 associated export role, reading the data file and then calling the
 module you created for import.
 
+Writing Tests
+-------------
+
+For newly implemented resources, ensure comprehensive test coverage by following this checklist:
+
+Functional Tests
+~~~~~~~~~~~~~~~~
+
+-  Ensure both import and export functionalities are tested, not just idempotency.
+-  Include tests for admin-only resources, ensuring they are renamed before import.
+-  Test resources as a tenant whenever possible to ensure broader coverage.
+-  For resources with special properties like ``links`` or ``extra_specs``, write detailed tests inspecting these properties closely.
+
+Unit Tests
+~~~~~~~~~~
+
+-  Write unit tests for each new module created, focusing on the logic within the module.
+-  Ensure that edge cases and error handling paths are covered in unit tests.
+
+Integration Tests
+~~~~~~~~~~~~~~~~~
+
+-  Add integration tests that cover the entire process of exporting and then importing the resource, verifying the integrity and consistency of the data.
+-  Verify that the resource behaves as expected in the context of the os-migrate ecosystem.
+
+Documentation and Examples
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+-  In the ``DOCUMENTATION`` constant of each module, include examples of how to use the module in a playbook.
+-  Ensure that the ``README.md`` file for the new role is comprehensive, covering the role's purpose, usage, and any dependencies.
+
+Test Execution in CI
+~~~~~~~~~~~~~~~~~~~~
+
+-  Confirm that all tests are executed in the Continuous Integration (CI) environment before merging.
+-  If a feature is merged without proper tests due to specific circumstances, create a technical debt tracking card to follow up.
+
+Review and Inspection
+~~~~~~~~~~~~~~~~~~~~~
+
+-  Conduct thorough reviews, especially when introducing new resources, to catch potential issues early.
+-  Implement policies or checklists in development documentation to ensure test soundness and coverage.
+
+Location of Tests
+~~~~~~~~~~~~~~~~~
+
+-  Place functional and integration tests in the ``tests/e2e`` or ``tests/func`` directory respectively, following the existing structure for similar resources.
+-  Unit tests should reside alongside the modules they are testing, in the ``os_migrate/tests/`` directory.
+
+Special Considerations
+~~~~~~~~~~~~~~~~~~~~~~
+
+-  For resources that are only accessible by admin users, ensure tests reflect this by running them with appropriate permissions.
+-  Address any known issues from previous retrospectives, such as fixing the handling of Nova keypairs or ensuring resources are tested in tenant context.
 
 Necessary Documentation
 ~~~~~~~~~~~~~~~~~~~~~~~

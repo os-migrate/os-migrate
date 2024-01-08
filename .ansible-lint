@@ -3,5 +3,8 @@ parseable: true
 skip_list:
   - 'line-length'  # Lines should be no longer than 120 chars
   - 'command-instead-of-module'  # Sed used in place of template, replace or lineinfile module
-  - 'package-latest'  # Package installs should not use latest
   - 'command-instead-of-shell' # Use shell only when shell functionality is required
+  - 'package-latest'  # Package installs should not use latest
+
+# This is a workaround, we need to port ansible files to 2.17.x
+profile: 'min'

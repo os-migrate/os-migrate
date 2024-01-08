@@ -26,6 +26,7 @@
 - name: Migration tests
   hosts: migrator
   environment:
+    OS_BLOCK_STORAGE_DEFAULT_MICROVERSION: 3.59
     OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   tasks:
     - name: clean workloads
@@ -122,7 +123,7 @@
     #
     # * data_copy: true
     #
-    # * floating_ip_mode: existing
+    # * floating_ip_mode: auto
     #
     # * port_creation_mode: nova
     #
@@ -147,7 +148,6 @@
       tags: always
       vars:
         set_boot_disk_copy: true
-        set_floating_ip_mode: 'existing'
         port_creation_mode: nova
 
     - name: clean the workloads
@@ -199,6 +199,63 @@
         set_no_data_copy: true
         set_floating_ip_mode: 'existing'
         port_creation_mode: nova
+
+    - name: clean the workloads
+      ansible.builtin.include_tasks: tasks/tenant/clean_workload.yml
+      args:
+        apply:
+          tags:
+            - test_clean_after
+            - test_workload
+            - test_image_workload_boot_copy
+            - test_image_workload_boot_copy_clean
+      tags: always
+
+    # Workload migration scenario:
+    #
+    # * Attached two volume's
+    #
+    # * From tenant-owned image
+    #
+    # * boot_disk_copy: false
+    #
+    # * data_copy: true
+    #
+    # * floating_ip_mode: auto
+    #
+    # * port_creation_mode: nova
+    #
+    - name: seed the workloads
+      ansible.builtin.include_tasks: tasks/tenant/multi_volume_migration/seed_workload.yml
+      args:
+        apply:
+          tags:
+            - test_workload_multi_volume_migration
+            - test_image_workload_boot_copy
+      tags: always
+      vars:
+        workload_image: "{{ os_migrate_src_osm_server_image }}"
+        test_detached_volumes: true
+
+    - name: assert workloads seeded properly
+      ansible.builtin.include_tasks: tasks/common/test_seeded_workloads.yml
+      args:
+        apply:
+          tags:
+            - test_workloads_seeded_properly
+      tags: always
+
+    - name: run the workloads
+      ansible.builtin.include_tasks: tasks/tenant/run_workload.yml
+      args:
+        apply:
+          tags:
+            - test_workload
+            - test_image_workload_boot_copy
+      tags: always
+      vars:
+        port_creation_mode: nova
+        test_detached_volumes: true
 
     - name: clean the workloads
       ansible.builtin.include_tasks: tasks/tenant/clean_workload.yml

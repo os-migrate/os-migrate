@@ -18,6 +18,7 @@
     search_regex: OpenSSH
     sleep: 5
     timeout: 600
+  retries: 10
 
 - name: wait for dst conversion host reachability
   ansible.builtin.wait_for:
@@ -26,3 +27,4 @@
     search_regex: OpenSSH
     sleep: 5
     timeout: 600
+  retries: 10
