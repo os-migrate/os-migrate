@@ -236,6 +236,14 @@
       vars:
         workload_image: "{{ os_migrate_src_osm_server_image }}"
 
+    - name: assert workloads seeded properly
+      ansible.builtin.include_tasks: tasks/common/test_seeded_workloads.yml
+      args:
+        apply:
+          tags:
+            - test_workloads_seeded_properly
+      tags: always
+
     - name: run the workloads
       ansible.builtin.include_tasks: tasks/tenant/run_workload.yml
       args:
