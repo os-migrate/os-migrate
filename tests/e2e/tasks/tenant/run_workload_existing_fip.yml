@@ -25,10 +25,6 @@
     regexp: "floating_ip_mode: .*"
     replace: "floating_ip_mode: existing"
 
-- name: print workloads file for debug
-  ansible.builtin.fail:
-    msg: "{{ os_migrate_data_dir }}/workloads.yml"
-
 - name: set floating_ip_address
   ansible.builtin.replace:
     path: "{{ os_migrate_data_dir }}/workloads.yml"
