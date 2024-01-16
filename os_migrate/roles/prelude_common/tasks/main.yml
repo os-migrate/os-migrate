@@ -16,11 +16,21 @@
 
 - name: get the current openstacksdk version
   community.general.pip_package_info:
+    clients: ['pip', 'pip3.6']
   register: _installed_openstacksdk
 
 - name: set openstacksdk version
   ansible.builtin.set_fact:
-    _installed_openstacksdk_versions: "{{ _installed_openstacksdk['packages']['pip']['openstacksdk'] | map(attribute='version') | list | first }}"
+    _installed_openstacksdk_versions: >-
+      {{
+        _installed_openstacksdk['packages']
+        | default({})  # Handle the case when 'pip3' is used but 'pip' is not present
+        | combine(_installed_openstacksdk['packages']['pip']['openstack'] | default({}))
+        | combine(_installed_openstacksdk['packages']['pip3']['openstack'] | default({}))
+        | map(attribute='version')
+        | list
+        | first
+      }}
 
 - name: print the current installed version of openstacksdk
   ansible.builtin.debug:
