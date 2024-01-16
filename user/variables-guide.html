@@ -536,8 +536,8 @@ operators preference.</p>
 it should be migrated, how should OS Migrate workloads YAML file be configured,
 is the conversion host required for this mode of migration, is this migration
 mode implemented).</p>
-<table class="colwidths-given docutils align-default" id="id1">
-<caption><span class="caption-text">Workload Migration options</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
+<table class="colwidths-given docutils align-default" id="id21">
+<caption><span class="caption-text">Workload Migration options</span><a class="headerlink" href="#id21" title="Permalink to this table"></a></caption>
 <colgroup>
 <col style="width: 25%" />
 <col style="width: 25%" />
@@ -552,29 +552,46 @@ mode implemented).</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Booted from image (local boot disk), optionally additional volumes attached</p></td>
-<td><p>Boot disk not copied, VM booted from image (local boot disk), any additional volumes copied and attached</p></td>
-<td><dl class="simple">
-<dt>_migration_params:</dt><dd><p>data_copy: true
-boot_disk_copy: false
-boot_volume: null
-additional_volumes: null
-params: {
-image_ref: {
-domain_name: ‘%auth%’
-name: some_image
-project_name: ‘%auth%’
-}}
-(this is the default)</p>
-</dd>
-</dl>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">Booted from image (local boot disk), optionally</div>
+<div class="line">additional volumes attached</div>
+</div>
+</td>
+<td><div class="line-block">
+<div class="line">Boot disk not copied, VM booted from image (local boot disk),</div>
+<div class="line">any additional volumes copied and attached</div>
+</div>
+</td>
+<td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">`_migration_params:</span>
+<span class="pre">data_copy:</span> <span class="pre">true</span>
+<span class="pre">boot_disk_copy:</span> <span class="pre">false</span>
+<span class="pre">boot_volume:</span> <span class="pre">null</span>
+<span class="pre">additional_volumes:</span> <span class="pre">null</span>
+<span class="pre">params:</span> <span class="pre">{</span>
+<span class="pre">image_ref:</span> <span class="pre">{</span>
+<span class="pre">domain_name:</span> <span class="pre">'%auth%'</span>
+<span class="pre">name:</span> <span class="pre">some_image</span>
+<span class="pre">project_name:</span> <span class="pre">'%auth%'</span>
+<span class="pre">}}</span>
+<span class="pre">(this</span> <span class="pre">is</span> <span class="pre">the</span> <span class="pre">default)`</span></code></div>
+</div>
 </td>
 <td><p>Yes</p></td>
 </tr>
-<tr class="row-odd"><td><p>Booted from image (local boot disk), optionally additional volumes attached</p></td>
-<td><p>Boot disk copied as volume, VM booted from volume, any additional volumes copied and attached</p></td>
-<td><dl>
-<dt>_migration_params:</dt><dd><p>data_copy: true
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">Booted from image (local boot disk),</div>
+<div class="line">optionally additional volumes attached</div>
+</div>
+</td>
+<td><div class="line-block">
+<div class="line">Boot disk copied as volume, VM booted from volume,</div>
+<div class="line">any additional volumes copied and attached</div>
+</div>
+</td>
+<td><div class="line-block">
+<div class="line"><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>_migration_params:
+data_copy: true
 boot_disk_copy: true
 boot_volume: null
 additional_volumes: null
@@ -582,31 +599,45 @@ params:
 image_ref:
 domain_name: ‘%auth%’
 name: some_image
-project_name: ‘%auth%’</p>
-<p>(image_ref doesn’t matter, can be null)</p>
-</dd>
-</dl>
+project_name: ‘%auth%’</div>
+</div>
+<blockquote>
+<div><p>(image_ref doesn’t matter, can be null)```</p>
+</div></blockquote>
 </td>
 <td><p>Yes</p></td>
 </tr>
 <tr class="row-even"><td><p>Booted from volume, optionally additional volumes attached</p></td>
-<td><p>Boot disk copied as volume, VM booted from volume, any additional volumes copied and attached</p></td>
-<td><dl class="simple">
-<dt>_migration_params:</dt><dd><p>data_copy: true
-boot_disk_copy: true
-boot_volume: null
-additional_volumes: null
-params:
-image_ref: null</p>
-</dd>
-</dl>
+<td><div class="line-block">
+<div class="line">Boot disk copied as volume, VM booted from volume,</div>
+<div class="line">any additional volumes copied and attached</div>
+</div>
+</td>
+<td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">`_migration_params:</span>
+<span class="pre">data_copy:</span> <span class="pre">true</span>
+<span class="pre">boot_disk_copy:</span> <span class="pre">true</span>
+<span class="pre">boot_volume:</span> <span class="pre">null</span>
+<span class="pre">additional_volumes:</span> <span class="pre">null</span>
+<span class="pre">params:</span>
+<span class="pre">image_ref:</span> <span class="pre">null`</span></code></div>
+</div>
 </td>
 <td><p>Yes</p></td>
 </tr>
-<tr class="row-odd"><td><p>Booted from image (local boot disk), optionally additional volumes attached</p></td>
-<td><p>Nothing copied, VM booted from image (local boot disk), no additional volumes</p></td>
-<td><dl>
-<dt>_migration_params:</dt><dd><p>data_copy: false
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">Booted from image (local boot disk),</div>
+<div class="line">optionally additional volumes attached</div>
+</div>
+</td>
+<td><div class="line-block">
+<div class="line">Nothing copied, VM booted from image (local boot disk),</div>
+<div class="line">no additional volumes</div>
+</div>
+</td>
+<td><div class="line-block">
+<div class="line"><a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a>_migration_params:
+data_copy: false
 boot_disk_copy: false
 boot_volume: null
 additional_volumes: null
@@ -614,17 +645,27 @@ params:
 image_ref:
 domain_name: ‘%auth%’
 name: some_image
-project_name: ‘%auth%’</p>
-<p>(boot_disk_copy doesn’t matter)</p>
-</dd>
-</dl>
+project_name: ‘%auth%’</div>
+</div>
+<blockquote>
+<div><p>(boot_disk_copy doesn’t matter)```</p>
+</div></blockquote>
 </td>
 <td><p>No</p></td>
 </tr>
-<tr class="row-even"><td><p>Booted from image (local boot disk), optionally additional volumes attached</p></td>
-<td><p>Nothing copied, VM booted from image (local boot disk), additional pre-existing volumes attached</p></td>
-<td><dl>
-<dt>_migration_params:</dt><dd><p>data_copy: false
+<tr class="row-even"><td><div class="line-block">
+<div class="line">Booted from image (local boot disk),</div>
+<div class="line">optionally additional volumes attached</div>
+</div>
+</td>
+<td><div class="line-block">
+<div class="line">Nothing copied, VM booted from image (local boot disk),</div>
+<div class="line">additional pre-existing volumes attached</div>
+</div>
+</td>
+<td><div class="line-block">
+<div class="line"><a href="#id9"><span class="problematic" id="id10">``</span></a><a href="#id11"><span class="problematic" id="id12">`</span></a>_migration_params:
+data_copy: false
 boot_disk_copy: false
 boot_volume: null
 additional_volumes:
@@ -634,17 +675,27 @@ params:
 image_ref:
 domain_name: ‘%auth%’
 name: some_image
-project_name: ‘%auth%’</p>
-<p>(boot_disk_copy doesn’t matter)</p>
-</dd>
-</dl>
+project_name: ‘%auth%’</div>
+</div>
+<blockquote>
+<div><p>(boot_disk_copy doesn’t matter)```</p>
+</div></blockquote>
 </td>
 <td><p>No</p></td>
 </tr>
-<tr class="row-odd"><td><p>Booted from image or volume, optionally additional volumes attached</p></td>
-<td><p>Nothing copied, VM booted from pre-existing volume, no additional volumes</p></td>
-<td><dl>
-<dt>_migration_params:</dt><dd><p>data_copy: false
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">Booted from image or volume, optionally additional</div>
+<div class="line">volumes attached</div>
+</div>
+</td>
+<td><div class="line-block">
+<div class="line">Nothing copied, VM booted from pre-existing volume,</div>
+<div class="line">no additional volumes</div>
+</div>
+</td>
+<td><div class="line-block">
+<div class="line"><a href="#id13"><span class="problematic" id="id14">``</span></a><a href="#id15"><span class="problematic" id="id16">`</span></a>_migration_params:
+data_copy: false
 boot_disk_copy: false
 boot_volume:
 uuid: some_uuid
@@ -653,17 +704,27 @@ params:
 image_ref:
 domain_name: ‘%auth%’
 name: some_image
-project_name: ‘%auth%’</p>
-<p>(image_ref doesn’t matter, can be null, boot_disk_copy doesn’t matter)</p>
-</dd>
-</dl>
+project_name: ‘%auth%’</div>
+</div>
+<blockquote>
+<div><p>(image_ref doesn’t matter, can be null, boot_disk_copy doesn’t matter)```</p>
+</div></blockquote>
 </td>
 <td><p>No</p></td>
 </tr>
-<tr class="row-even"><td><p>Booted from image or volume, optionally additional volumes attached</p></td>
-<td><p>Nothing copied, VM booted from pre-existing volume, additional pre-existing volumes attached</p></td>
-<td><dl>
-<dt>_migration_params:</dt><dd><p>data_copy: false
+<tr class="row-even"><td><div class="line-block">
+<div class="line">Booted from image or volume, optionally additional</div>
+<div class="line">volumes attached</div>
+</div>
+</td>
+<td><div class="line-block">
+<div class="line">Nothing copied, VM booted from pre-existing volume,</div>
+<div class="line">additional pre-existing volumes attached</div>
+</div>
+</td>
+<td><div class="line-block">
+<div class="line"><a href="#id17"><span class="problematic" id="id18">``</span></a><a href="#id19"><span class="problematic" id="id20">`</span></a>_migration_params:
+data_copy: false
 boot_disk_copy: false
 boot_volume:
 uuid: some_uuid
@@ -674,10 +735,11 @@ params:
 image_ref:
 domain_name: ‘%auth%’
 name: some_image
-project_name: ‘%auth%’</p>
-<p>(image_ref doesn’t matter, can be null, boot_disk_copy doesn’t matter)</p>
-</dd>
-</dl>
+project_name: ‘%auth%’</div>
+</div>
+<blockquote>
+<div><p>(image_ref doesn’t matter, can be null, boot_disk_copy doesn’t matter)```</p>
+</div></blockquote>
 </td>
 <td><p>No</p></td>
 </tr>
