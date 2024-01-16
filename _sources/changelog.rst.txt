@@ -7,6 +7,8 @@ Changelog
 
 Fix
 ~~~
+- Added mising network param for external network or nova pool name.
+  [cloudguruab]
 - Patch to storage migrations feature and docs. [cloudguruab]
 
 
