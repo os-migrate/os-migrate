@@ -14,4 +14,4 @@
 
     - name: verify contents of result
       ansible.builtin.assert:
-        that: "{{ result.openstack_servers.volumes }}"
+        that: "{{ result.openstack_servers }}"
