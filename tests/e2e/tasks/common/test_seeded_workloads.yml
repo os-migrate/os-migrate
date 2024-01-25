@@ -12,6 +12,6 @@
         client_key: "{{ os_migrate_src_client_key|default(omit) }}"
       register: result
 
-    - name: verify contents of result
+    - name: verify volumes attribute for a specific server
       ansible.builtin.assert:
-        that: "{{ result.openstack_servers }}"
+        that: "{{ result.openstack_servers[0].volumes is defined }}"
