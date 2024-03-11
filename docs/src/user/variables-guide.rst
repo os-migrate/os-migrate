@@ -479,11 +479,9 @@ mode implemented).
      - Desired migration properties
      - Migration parameter settings
      - Conversion hosts required?
-   * - | Booted from image (local boot disk), optionally
-       | additional volumes attached
-     - | Boot disk not copied, VM booted from image (local boot disk),
-       | any additional volumes copied and attached
-     - | ```_migration_params:
+   * - Booted from image (local boot disk), optionally additional volumes attached
+     - Boot disk not copied, VM booted from image (local boot disk), any additional volumes copied and attached
+     - _migration_params:
         data_copy: true
         boot_disk_copy: false
         boot_volume: null
@@ -494,13 +492,11 @@ mode implemented).
         name: some_image
         project_name: '%auth%'
         }}
-        (this is the default)```
+        (this is the default)
      - Yes
-   * - | Booted from image (local boot disk),
-       | optionally additional volumes attached
-     - | Boot disk copied as volume, VM booted from volume,
-       | any additional volumes copied and attached
-     - | ```_migration_params:
+   * - Booted from image (local boot disk), optionally additional volumes attached
+     - Boot disk copied as volume, VM booted from volume, any additional volumes copied and attached
+     - _migration_params:
         data_copy: true
         boot_disk_copy: true
         boot_volume: null
@@ -511,24 +507,21 @@ mode implemented).
         name: some_image
         project_name: '%auth%'
 
-        (image_ref doesn’t matter, can be null)```
+        (image_ref doesn’t matter, can be null)
      - Yes
    * - Booted from volume, optionally additional volumes attached
-     - | Boot disk copied as volume, VM booted from volume,
-       | any additional volumes copied and attached
-     - | ```_migration_params:
+     - Boot disk copied as volume, VM booted from volume, any additional volumes copied and attached
+     - _migration_params:
         data_copy: true
         boot_disk_copy: true
         boot_volume: null
         additional_volumes: null
         params:
-        image_ref: null```
+        image_ref: null
      - Yes
-   * - | Booted from image (local boot disk),
-       | optionally additional volumes attached
-     - | Nothing copied, VM booted from image (local boot disk),
-       | no additional volumes
-     - | ```_migration_params:
+   * - Booted from image (local boot disk), optionally additional volumes attached
+     - Nothing copied, VM booted from image (local boot disk), no additional volumes
+     - _migration_params:
         data_copy: false
         boot_disk_copy: false
         boot_volume: null
@@ -539,13 +532,11 @@ mode implemented).
         name: some_image
         project_name: '%auth%'
 
-        (boot_disk_copy doesn't matter)```
+        (boot_disk_copy doesn't matter)
      - No
-   * - | Booted from image (local boot disk),
-       | optionally additional volumes attached
-     - | Nothing copied, VM booted from image (local boot disk),
-       | additional pre-existing volumes attached
-     - | ```_migration_params:
+   * - Booted from image (local boot disk), optionally additional volumes attached
+     - Nothing copied, VM booted from image (local boot disk), additional pre-existing volumes attached
+     - _migration_params:
         data_copy: false
         boot_disk_copy: false
         boot_volume: null
@@ -558,13 +549,11 @@ mode implemented).
         name: some_image
         project_name: '%auth%'
 
-        (boot_disk_copy doesn't matter)```
+        (boot_disk_copy doesn't matter)
      - No
-   * - | Booted from image or volume, optionally additional
-       | volumes attached
-     - | Nothing copied, VM booted from pre-existing volume,
-       | no additional volumes
-     - | ```_migration_params:
+   * - Booted from image or volume, optionally additional volumes attached
+     - Nothing copied, VM booted from pre-existing volume, no additional volumes
+     - _migration_params:
         data_copy: false
         boot_disk_copy: false
         boot_volume:
@@ -576,13 +565,11 @@ mode implemented).
         name: some_image
         project_name: '%auth%'
 
-        (image_ref doesn’t matter, can be null, boot_disk_copy doesn't matter)```
+        (image_ref doesn’t matter, can be null, boot_disk_copy doesn't matter)
      - No
-   * - | Booted from image or volume, optionally additional
-       | volumes attached
-     - | Nothing copied, VM booted from pre-existing volume,
-       | additional pre-existing volumes attached
-     - | ```_migration_params:
+   * - Booted from image or volume, optionally additional volumes attached
+     - Nothing copied, VM booted from pre-existing volume, additional pre-existing volumes attached
+     - _migration_params:
         data_copy: false
         boot_disk_copy: false
         boot_volume:
@@ -596,5 +583,5 @@ mode implemented).
         name: some_image
         project_name: '%auth%'
 
-        (image_ref doesn’t matter, can be null, boot_disk_copy doesn't matter)```
+        (image_ref doesn’t matter, can be null, boot_disk_copy doesn't matter)
      - No
