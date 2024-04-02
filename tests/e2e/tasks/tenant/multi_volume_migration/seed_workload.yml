@@ -1,0 +1,42 @@
+- name: Create osm_volume_one
+  openstack.cloud.volume:
+    display_name: osm_volume_one
+    size: 5
+    auth: "{{ os_migrate_src_auth }}"
+    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+
+- name: Create osm_volume_two
+  openstack.cloud.volume:
+    display_name: osm_volume_two
+    size: 5
+    auth: "{{ os_migrate_src_auth }}"
+    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+
+- name: Create osm_server
+  openstack.cloud.server:
+    name: osm_server
+    state: present
+    flavor: "{{ os_migrate_src_osm_server_flavor|default(m1.small) }}"
+    key_name: osm_key
+    image: "{{ workload_image }}"
+    network: osm_net
+    security_groups: osm_security_group
+    volumes:
+      - osm_volume_one
+      - osm_volume_two
+    # We get a floating IP
+    # for the workload VM
+    auto_ip: true
+    # Wait for the instance to be created
+    wait: true
+    auth: "{{ os_migrate_src_auth }}"
+    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key|default(omit) }}"

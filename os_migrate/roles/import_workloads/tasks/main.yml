@@ -1,12 +1,12 @@
-- name: include the conversion hosts inventory
-  ansible.builtin.include_role:
-    name: os_migrate.os_migrate.conversion_host
-    tasks_from: conv_hosts_inventory.yml
-
 - name: read workloads resource file
   os_migrate.os_migrate.read_resources:
     path: "{{ os_migrate_data_dir }}/workloads.yml"
   register: read_workloads
+
+- name: include the conversion hosts inventory
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.conversion_host
+    tasks_from: conv_hosts_inventory.yml
 
 - name: filter workloads to import
   ansible.builtin.set_fact:
@@ -72,6 +72,10 @@
     search_regex: OpenSSH
     sleep: 5
     timeout: 600
+
+- name: check data copy state and run conversion host operations
+  ansible.builtin.include_tasks: conv_host.yml
+  loop: "{{ filtered_workloads }}"
 
 - name: import workloads
   ansible.builtin.include_tasks: workload.yml

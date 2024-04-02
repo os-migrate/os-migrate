@@ -443,3 +443,142 @@ Workload import/export variables
 - ``os_migrate_workload_stop_before_migration`` - Set to true if you wish
   for os_migrate to stop your workloads/vms prior to migration. Note that
   only workloads/vms in `SHUTOFF` state will be migrated.
+
+Workload migration variables
+----------------------------
+Workloads to be migrated with OS Migrate can have varying storage configurations in
+the source cloud, and the desired way to migrate their storage also varies, per cloud
+operators preference.
+
+The following table summarizes the matrix of options (whats in the source, how
+it should be migrated, how should OS Migrate workloads YAML file be configured,
+is the conversion host required for this mode of migration, is this migration
+mode implemented).
+
+.. list-table:: Workload Migration options
+   :widths: 25 25 25 25
+   :header-rows: 1
+
+   * - Source workload
+     - Desired migration properties
+     - Migration parameter settings
+     - Conversion hosts required?
+   * - | Booted from image (local boot disk), optionally
+       | additional volumes attached
+     - | Boot disk not copied, VM booted from image (local boot disk),
+       | any additional volumes copied and attached
+     - | ```_migration_params:
+        data_copy: true
+        boot_disk_copy: false
+        boot_volume: null
+        additional_volumes: null
+        params: {
+        image_ref: {
+        domain_name: '%auth%'
+        name: some_image
+        project_name: '%auth%'
+        }}
+        (this is the default)```
+     - Yes
+   * - | Booted from image (local boot disk),
+       | optionally additional volumes attached
+     - | Boot disk copied as volume, VM booted from volume,
+       | any additional volumes copied and attached
+     - | ```_migration_params:
+        data_copy: true
+        boot_disk_copy: true
+        boot_volume: null
+        additional_volumes: null
+        params:
+        image_ref:
+        domain_name: '%auth%'
+        name: some_image
+        project_name: '%auth%'
+
+        (image_ref doesn’t matter, can be null)```
+     - Yes
+   * - Booted from volume, optionally additional volumes attached
+     - | Boot disk copied as volume, VM booted from volume,
+       | any additional volumes copied and attached
+     - | ```_migration_params:
+        data_copy: true
+        boot_disk_copy: true
+        boot_volume: null
+        additional_volumes: null
+        params:
+        image_ref: null```
+     - Yes
+   * - | Booted from image (local boot disk),
+       | optionally additional volumes attached
+     - | Nothing copied, VM booted from image (local boot disk),
+       | no additional volumes
+     - | ```_migration_params:
+        data_copy: false
+        boot_disk_copy: false
+        boot_volume: null
+        additional_volumes: null
+        params:
+        image_ref:
+        domain_name: '%auth%'
+        name: some_image
+        project_name: '%auth%'
+
+        (boot_disk_copy doesn't matter)```
+     - No
+   * - | Booted from image (local boot disk),
+       | optionally additional volumes attached
+     - | Nothing copied, VM booted from image (local boot disk),
+       | additional pre-existing volumes attached
+     - | ```_migration_params:
+        data_copy: false
+        boot_disk_copy: false
+        boot_volume: null
+        additional_volumes:
+        uuid: some_uuid2
+        uuid: some_uuid3
+        params:
+        image_ref:
+        domain_name: '%auth%'
+        name: some_image
+        project_name: '%auth%'
+
+        (boot_disk_copy doesn't matter)```
+     - No
+   * - | Booted from image or volume, optionally additional
+       | volumes attached
+     - | Nothing copied, VM booted from pre-existing volume,
+       | no additional volumes
+     - | ```_migration_params:
+        data_copy: false
+        boot_disk_copy: false
+        boot_volume:
+        uuid: some_uuid
+        additional_volumes: null
+        params:
+        image_ref:
+        domain_name: '%auth%'
+        name: some_image
+        project_name: '%auth%'
+
+        (image_ref doesn’t matter, can be null, boot_disk_copy doesn't matter)```
+     - No
+   * - | Booted from image or volume, optionally additional
+       | volumes attached
+     - | Nothing copied, VM booted from pre-existing volume,
+       | additional pre-existing volumes attached
+     - | ```_migration_params:
+        data_copy: false
+        boot_disk_copy: false
+        boot_volume:
+        uuid: some_uuid
+        additional_volumes:
+        uuid: some_uuid2
+        uuid: some_uuid3
+        params:
+        image_ref:
+        domain_name: '%auth%'
+        name: some_image
+        project_name: '%auth%'
+
+        (image_ref doesn’t matter, can be null, boot_disk_copy doesn't matter)```
+     - No

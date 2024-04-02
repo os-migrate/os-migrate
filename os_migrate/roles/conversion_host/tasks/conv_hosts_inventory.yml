@@ -26,22 +26,30 @@
       os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
       os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
       os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+  when:
+    - item["_migration_params"]["data_copy"]|default(true)
 
 # If conversion hosts are added succesfully to each group, show them all.
 - name: list src conversion hosts
   ansible.builtin.debug:
     msg: "Source conversion host: {{ item }}"
   with_items: "{{ groups['conversion_hosts_src'] }}"
-  when: "'conversion_hosts_src' in groups"
+  when:
+    - "'conversion_hosts_src' in groups"
+    - item["_migration_params"]["data_copy"]|default(true)
 
 - name: list dst conversion hosts
   ansible.builtin.debug:
     msg: "Destination conversion host: {{ item }}"
   with_items: "{{ groups['conversion_hosts_dst'] }}"
-  when: "'conversion_hosts_dst' in groups"
+  when:
+    - "'conversion_hosts_dst' in groups"
+    - item["_migration_params"]["data_copy"]|default(true)
 
 - name: list all conversion hosts
   ansible.builtin.debug:
     msg: "All conversion host: {{ item }}"
   with_items: "{{ groups['conversion_hosts'] }}"
-  when: "'conversion_hosts' in groups"
+  when:
+    - "'conversion_hosts' in groups"
+    - item["_migration_params"]["data_copy"]|default(true)

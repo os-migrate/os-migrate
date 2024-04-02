@@ -21,16 +21,17 @@
         - "{{ prelim.server_name }} progress file: {{ prelim.state_file }}"
     when: prelim.changed
 
-  - name: perform required checks to ensure destination cloud is ready
-    os_migrate.os_migrate.import_workload_dst_check:
-      cloud: dst
-      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-      data: "{{ item }}"
-      dst_filters: "{{ os_migrate_dst_filters }}"
-    when: prelim.changed
+    - name: perform required checks to ensure destination cloud is ready
+      os_migrate.os_migrate.import_workload_dst_check:
+        cloud: dst
+        validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+        data: "{{ item }}"
+        dst_filters: "{{ os_migrate_dst_filters }}"
+      when:
+        - prelim is defined and prelim.changed
 
   # Stop VM if not stopped and if config set to true
   - name: perform workload stop if os_migrate_workload_stop_before_migration is true
@@ -99,17 +100,18 @@
     register: transfer
     when: prelim.changed
 
-  - name: create destination instance
-    os_migrate.os_migrate.import_workload_create_instance:
-      cloud: dst
-      validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-      data: "{{ item }}"
-      block_device_mapping: "{{ transfer.block_device_mapping }}"
-    register: os_migrate_destination_instance
-    when: prelim.changed
+    - name: create destination instance
+      os_migrate.os_migrate.import_workload_create_instance:
+        cloud: dst
+        validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
+        ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
+        client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
+        client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+        data: "{{ item }}"
+        block_device_mapping: "{{ transfer.block_device_mapping|default([]) }}"
+      register: os_migrate_destination_instance
+      when:
+        - prelim is defined and prelim.changed
 
   - name: clean up in the source cloud after migration
     os_migrate.os_migrate.import_workload_src_cleanup:
