@@ -1,3 +1,0 @@
-ansible>=2.9.1,<2.10
-openstacksdk>=0.55.0,<0.56
-python-openstackclient>=5.5,<5.6

@@ -1,3 +1,0 @@
-ansible-core
-openstacksdk<0.99
-python-openstackclient
