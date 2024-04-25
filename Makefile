@@ -166,20 +166,21 @@ docs-diagrams:
 
 
 # TOOLBOX
+TAG ?= latest
 
 toolbox-build:
 	if [ "$${REUSE_TOOLBOX:-0}" -eq "0" ]; then \
 		echo "Building the toolbox container image"; \
 		cp os_migrate/galaxy.yml toolbox/build/; \
 		cd toolbox && \
-		podman build --no-cache --format docker --build-arg NO_VAGRANT=$(NO_VAGRANT) -t localhost/os_migrate_toolbox:latest . && \
-		podman tag localhost/os_migrate_toolbox:latest localhost/os_migrate_toolbox:$$(date "+%Y_%m_%d"); \
+		podman build --no-cache --format docker --build-arg NO_VAGRANT=$(NO_VAGRANT) -t localhost/os_migrate_toolbox:$(TAG) . && \
+		podman tag localhost/os_migrate_toolbox:$(TAG) localhost/os_migrate_toolbox:$$(date "+%Y_%m_%d"); \
 	else \
 		echo "Reusing the toolbox container image"; \
-		python -m pip install --upgrade pip \
+		python -m pip install --upgrade pip; \
 		podman pull docker.pkg.github.com/os-migrate/os-migrate/os_migrate_toolbox:main; \
-		podman image tag docker.pkg.github.com/os-migrate/os-migrate/os_migrate_toolbox:main localhost/os_migrate_toolbox:latest; \
-		podman image tag localhost/os_migrate_toolbox:latest localhost/os_migrate_toolbox:$$(date "+%Y_%m_%d"); \
+		podman image tag docker.pkg.github.com/os-migrate/os-migrate/os_migrate_toolbox:main localhost/os_migrate_toolbox:$(TAG); \
+		podman image tag localhost/os_migrate_toolbox:$(TAG) localhost/os_migrate_toolbox:$$(date "+%Y_%m_%d"); \
 		podman image list -a; \
 	fi; \
 
