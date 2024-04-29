@@ -101,15 +101,6 @@ source</a>.</p>
 packages, this means running on RHEL 8 or newer.)</p></li>
 <li><p>Additional package requirements from Ansible modules:
 <code class="docutils literal notranslate"><span class="pre">iputils</span> <span class="pre">python3-openstackclient</span> <span class="pre">python3-openstacksdk</span></code></p></li>
-<li><p>OpenStack SDK version should be &gt;=0.36 and &lt;0.99.</p>
-<ul>
-<li><p>If you plan to bulk export/import keypairs as admin on behalf of
-other users (playbooks <code class="docutils literal notranslate"><span class="pre">export_users_keypairs.yml</span></code> and
-<code class="docutils literal notranslate"><span class="pre">import_users_keypairs.yml</span></code>), use OpenStack SDK 0.57 or newer.</p></li>
-</ul>
-</li>
-<li><p>Ansible collection <cite>openstack.cloud</cite>, version &lt;2.0.0. This will get
-handled automatically when installing from Galaxy.</p></li>
 </ul>
 </section>
 <section id="using-virtualenv-for-prerequisites">
@@ -118,7 +109,7 @@ handled automatically when installing from Galaxy.</p></li>
 you can use virtualenv, e.g.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>python3 -m venv $HOME/os_migrate_venv
 source $HOME/os_migrate_venv/bin/activate
-python3 -m pip install --upgrade &#39;openstacksdk&gt;=0.36,&lt;0.99&#39;
+python3 -m pip install --upgrade &#39;openstacksdk&#39;
 python3 -m pip install --upgrade &#39;ansible-core&#39;
 </pre></div>
 </div>
