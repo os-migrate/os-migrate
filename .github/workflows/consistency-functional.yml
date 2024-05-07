@@ -157,7 +157,9 @@ jobs:
           sudo python -m pip install --upgrade pip
           sudo python -m pip install --upgrade virtualenv
           sudo python -m pip install ovs
-          sudo python -m pip install --upgrade setuptools
+          sudo python -m pip install --upgrade setuptools --force
+          sudo apt install openvswitch-switch
+          sudo apt install openvswitch-common
 
       - name: Configure podman
         run: |

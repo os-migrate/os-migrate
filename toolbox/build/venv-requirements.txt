@@ -3,7 +3,7 @@ wheel
 
 # runtime
 ansible-core
-openstacksdk
+openstacksdk==0.101.0 # testing incremental bumps
 
 # test
 python-openstackclient
