@@ -350,7 +350,7 @@ jobs:
           sudo rm -rf /usr/lib/python3/dist-packages/pyasn1_modules-*.egg-info
           sudo rm -rf /usr/lib/python3/dist-packages/PyYAML-*.egg-info
           sudo rm -rf /usr/lib/python3/dist-packages/simplejson-*.egg-info
-
+          # this fails in d/sdk-upgrade
           sudo -iu stack bash -c 'cd /opt/stack/devstack; ./stack.sh'
       - name: Get debug data
         if: failure()
