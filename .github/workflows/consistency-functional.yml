@@ -156,8 +156,16 @@ jobs:
           sudo apt install postgresql-common
           sudo python -m pip install --upgrade pip
           sudo python -m pip install --upgrade virtualenv
-          sudo python -m pip install ovs
-          sudo python -m pip install --upgrade setuptools
+          sudo python -m pip install --upgrade build
+          # Installing wheel separately because it may be needed to build some
+          # of the packages during dependency backtracking and pip >= 22.0 will
+          # abort backtracking on build failures:
+          #     https://github.com/pypa/pip/issues/10655
+          # Found using github link found in;
+          # https://mail.openvswitch.org/pipermail/ovs-git/2022-February/026062.html
+          sudo pip install --disable-pip-version-check --user wheel
+          sudo pip install --disable-pip-version-check --user \
+              ovs sphinx setuptools pyelftools pyOpenSSL ncclient logutils
 
       - name: Configure podman
         run: |
@@ -345,11 +353,13 @@ jobs:
       - name: Start devstack
         run: |
           # Hacks to make Devstack install fine. See also:
-          # https://github.com/openstack/devstack/blob/83821a11ac1d6738b63cb10878b8aaa02e153374/tools/fixup_stuff.sh#L88-L96
-          sudo rm -rf /usr/lib/python3/dist-packages/httplib2-*.egg-info
+          # https://github.com/openstack/devstack/blob/master/tools/fixup_stuff.sh#L107-L121
           sudo rm -rf /usr/lib/python3/dist-packages/pyasn1_modules-*.egg-info
           sudo rm -rf /usr/lib/python3/dist-packages/PyYAML-*.egg-info
           sudo rm -rf /usr/lib/python3/dist-packages/simplejson-*.egg-info
+
+          # https://github.com/openstack/devstack/blob/master/tools/fixup_stuff.sh#L83-L91
+          sudo apt install --reinstall python3-setuptools
 
           sudo -iu stack bash -c 'cd /opt/stack/devstack; ./stack.sh'
       - name: Get debug data
