@@ -1,4 +1,4 @@
-- name: remove osm_security_group
+- name: remove osm_security_group and security group rules
   openstack.cloud.security_group:
     auth: "{{ item }}"
     name: osm_security_group

@@ -11,17 +11,6 @@
     msg: No resource files found.
   when: resource_files_result.files | count < 1
 
-- name: print contents of each resource file
-  ansible.builtin.slurp:
-    src: "{{ item.path }}"
-  loop: "{{ resource_files_result.files }}"
-  register: file_contents
-
-- name: display file contents
-  ansible.builtin.debug:
-    msg: "{{ item.item.path }} contents:\n\n{{ item.content | b64decode }}"
-  loop: "{{ file_contents.results }}"
-
 - name: validate resource files
   os_migrate.os_migrate.validate_resource_files:
     paths: "{{ resource_files_result.files | map(attribute='path') | list }}"
