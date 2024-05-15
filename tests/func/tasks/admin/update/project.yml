@@ -15,7 +15,7 @@
 - name: get original description
   ansible.builtin.set_fact:
     original_desc: |-
-      {{ dst_projects_info_before['openstack_projects'] | json_query(
+      {{ dst_projects_info_before['projects'] | json_query(
         "[?name=='osmdst_project'].description") }}
 
 - name: import projects
@@ -32,7 +32,7 @@
 - name: get changed description
   ansible.builtin.set_fact:
     changed_desc: |-
-      {{ dst_projects_info_after['openstack_projects'] | json_query(
+      {{ dst_projects_info_after['projects'] | json_query(
         "[?name=='osmdst_project'].description") }}
 
 - name: ensure description for osmdst_project changed

@@ -51,11 +51,11 @@
 - name: ensure extra_specs for osmdst_flavor did not change
   ansible.builtin.assert:
     that:
-      - flavor_import_idem_before['openstack_flavors'][0].ram != None
-      - "flavor_import_idem_before['openstack_flavors'][0]['extra_specs'] \
-         == flavor_import_idem_after['openstack_flavors'][0]['extra_specs']"
+      - flavor_import_idem_before['flavors'][0].ram != None
+      - "flavor_import_idem_before['flavors'][0]['extra_specs'] \
+         == flavor_import_idem_after['flavors'][0]['extra_specs']"
     fail_msg: |
       flavor_import_idem_before extra_specs:
-      {{ flavor_import_idem_before['openstack_flavors'][0].extra_specs }}
+      {{ flavor_import_idem_before['flavors'][0].extra_specs }}
       flavor_import_idem_after extra_specs:
-      {{ flavor_import_idem_after['openstack_flavors'][0].extra_specs }}
+      {{ flavor_import_idem_after['flavors'][0].extra_specs }}

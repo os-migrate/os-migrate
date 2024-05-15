@@ -47,11 +47,11 @@
 - name: ensure updated_at for osm_net did not change
   ansible.builtin.assert:
     that:
-      - network_import_idem_before['openstack_networks'][0].updated_at != None
-      - "network_import_idem_before['openstack_networks'][0]['updated_at'] \
-         == network_import_idem_after['openstack_networks'][0]['updated_at']"
+      - network_import_idem_before['networks'][0].updated_at != None
+      - "network_import_idem_before['networks'][0]['updated_at'] \
+         == network_import_idem_after['networks'][0]['updated_at']"
     fail_msg: |
       network_import_idem_before updated_at:
-      {{ network_import_idem_before['openstack_networks'][0].updated_at }}
+      {{ network_import_idem_before['networks'][0].updated_at }}
       network_import_idem_after updated_at:
-      {{ network_import_idem_after['openstack_networks'][0].updated_at }}
+      {{ network_import_idem_after['networks'][0].updated_at }}

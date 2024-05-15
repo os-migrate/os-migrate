@@ -12,7 +12,7 @@
 - name: create id-name pairs of images to export
   ansible.builtin.set_fact:
     export_images_ids_names: "{{ (
-      src_images_info.image | default(src_images_info.openstack_image)
+      src_images_info.image | default(src_images_info.images)
         | json_query('[*].{name: name, id: id, owner: owner}')
         | sort(attribute='id') ) }}"
 
