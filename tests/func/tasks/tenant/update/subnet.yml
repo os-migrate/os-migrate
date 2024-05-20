@@ -20,7 +20,7 @@
 - name: get original description
   ansible.builtin.set_fact:
     original_desc: |-
-      {{ dst_subnets_info_before['openstack_subnets'] | json_query(
+      {{ dst_subnets_info_before['subnets'] | json_query(
         "[?name=='osm_subnet'].description") }}
 
 - name: import subnets
@@ -42,7 +42,7 @@
 - name: get changed description
   ansible.builtin.set_fact:
     changed_desc: |-
-      {{ dst_subnets_info_after['openstack_subnets'] | json_query(
+      {{ dst_subnets_info_after['subnets'] | json_query(
         "[?name=='osm_subnet'].description") }}
 
 - name: ensure description for osm_subnet changed

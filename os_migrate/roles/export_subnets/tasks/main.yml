@@ -11,7 +11,7 @@
 - name: create id-name pairs of subnets to export
   ansible.builtin.set_fact:
     export_subnets_ids_names: "{{ (
-      src_subnets_info.openstack_subnets
+      src_subnets_info.subnets
         | json_query('[*].{name: name, id: id}')
         | sort(attribute='id') ) }}"
 

@@ -15,20 +15,12 @@
         - test_subnet
   tags: always
 
-- name: Include security group tasks
+- name: Include security group tasks and security group rules
   ansible.builtin.include_tasks: security_group.yml
   args:
     apply:
       tags:
         - test_security_group
-  tags: always
-
-- name: Include security group rule tasks
-  ansible.builtin.include_tasks: security_group_rule.yml
-  args:
-    apply:
-      tags:
-        - test_security_group_rule
   tags: always
 
 - name: Include router tasks

@@ -45,11 +45,11 @@
 - name: ensure updated_at for osm_image did not change
   ansible.builtin.assert:
     that:
-      - image_import_idem_before['image'].updated_at != None
-      - "image_import_idem_before['image']['updated_at'] \
-         == image_import_idem_after['image']['updated_at']"
+      - image_import_idem_before['images'][0].updated_at != None
+      - "image_import_idem_before['images'][0]['updated_at'] \
+         == image_import_idem_after['images'][0]['updated_at']"
     fail_msg: |
       image_import_idem_before updated_at:
-      {{ image_import_idem_before['image'].updated_at }}
+      {{ image_import_idem_before['images'][0].updated_at }}
       image_import_idem_after updated_at:
-      {{ image_import_idem_after['image'].updated_at }}
+      {{ image_import_idem_after['images'][0].updated_at }}

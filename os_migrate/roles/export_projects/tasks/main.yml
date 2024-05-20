@@ -10,7 +10,7 @@
 - name: create id-name pairs of projects to export
   ansible.builtin.set_fact:
     export_projects_ids_names: "{{ (
-      src_projects_info.openstack_projects
+      src_projects_info.projects
         | json_query('[*].{name: name, id: id}')
         | sort(attribute='id') ) }}"
 
