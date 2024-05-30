@@ -8,7 +8,7 @@
   <br>
 </h1>
 
-<h4 align="center">OpenStack tenant migration tooling - an Ansible collection</h4>
+<h4 align="center">OpenStack tenant migration toolkit - an Ansible collection.</h4>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-v3.7+-blue.svg">
