@@ -8,6 +8,10 @@
     client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
 
+- name: debug suffix net_name vs network_name
+  ansible.builtin.debug:
+    msg: "{{ os_migrate_conversion_net_name }}"
+
 - name: create os_migrate conversion subnet
   openstack.cloud.subnet:
     name: "{{ os_migrate_conversion_subnet_name }}"
@@ -21,6 +25,23 @@
     ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
+
+- name: Gather information about previously created networks
+  openstack.cloud.networks_info:
+    cloud: "{{ os_migrate_conversion_cloud }}"
+    validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
+  register: result
+
+- name: Show openstack networks
+  ansible.builtin.debug:
+    msg: "{{ result.networks }}"
+
+- name: Debug "No Network found for public" error
+  ansible.builtin.debug:
+    msg: "{{ os_migrate_conversion_external_network_name  }}"
 
 - name: create os_migrate conversion router
   openstack.cloud.router:
