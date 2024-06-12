@@ -10,6 +10,8 @@ ANSIBLE_METADATA = {
     'supported_by': 'community'
 }
 
+Test ..
+
 DOCUMENTATION = '''
 ---
 module: auth_info
