@@ -10,7 +10,7 @@ ANSIBLE_METADATA = {
     'supported_by': 'community'
 }
 
-Test ..
+
 
 DOCUMENTATION = '''
 ---
