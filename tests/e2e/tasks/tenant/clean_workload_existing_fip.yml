@@ -6,7 +6,7 @@
 
 - name: list osm_fip floating IP IDs
   ansible.builtin.shell: |
-    openstack floating ip list -f value -c ID --tag osm_fip {{ os_migrate_insecure_opt | default('') }}
+    openstack floating ip list -f value -c ID --tag osm_fip --insecure
   args:
     executable: /bin/bash
   environment:
@@ -22,7 +22,7 @@
 
 - name: delete osm_fips floating IPs
   ansible.builtin.shell: |
-    openstack floating ip delete {{ item }} {{ os_migrate_insecure_opt | default('') }}
+    openstack floating ip delete {{ item }} --insecure
   args:
     executable: /bin/bash
   register: _result
