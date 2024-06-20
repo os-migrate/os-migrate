@@ -2,6 +2,7 @@
   openstack.cloud.auth:
     auth: "{{ os_migrate_dst_auth }}"
     validate_certs: false
+  register: auth_token
 
 - name: list osm_fip floating IP IDs
   ansible.builtin.shell: |
