@@ -14,7 +14,7 @@ DOCUMENTATION = '''
 ---
 module: auth_info
 
-short_description: Fetch informations about authenticated user/project
+short_description: Fetch information about authenticated user/project
 
 extends_documentation_fragment: openstack
 
