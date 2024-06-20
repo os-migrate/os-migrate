@@ -1,7 +1,7 @@
 - name: get dst auth token
   openstack.cloud.auth:
     auth: "{{ os_migrate_dst_auth }}"
-    validate_certs: false
+    validate_certs: "{{ validate_certs | default(false) }}"  
   register: auth_token
 
 - name: list osm_fip floating IP IDs
