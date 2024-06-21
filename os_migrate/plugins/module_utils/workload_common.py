@@ -238,7 +238,7 @@ class OpenStackHostBase():
         Convenience method for use only when the attachment is already certain.
         """
         for attachment in volume.attachments:
-            if attachment.server_id == vm.id:
+            if attachment['server_id'] == vm.id:
                 return attachment
         raise RuntimeError('Volume is not attached to the specified instance!')
 
