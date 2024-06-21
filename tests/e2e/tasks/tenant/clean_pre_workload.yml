@@ -76,6 +76,7 @@
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
 - name: remove osm_server_port
+  ignore_errors: true
   openstack.cloud.port:
     auth: "{{ item.auth }}"
     name: osm_server_port_0
