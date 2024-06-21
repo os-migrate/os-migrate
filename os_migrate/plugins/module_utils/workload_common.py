@@ -87,7 +87,7 @@ class OpenStackHostBase():
         self.transfer_uuid = transfer_uuid
 
         # Optional parameters:
-        # conversion_host_address: Optional address used to override 'accessIPv4'
+        # conversion_host_address: Optional address used to override 'access_ipv4'
         # state_file: File to hold current disk transfer state
         # log_file: Debug log path for workload migration
         self.conversion_host_address = conversion_host_address
@@ -163,7 +163,7 @@ class OpenStackHostBase():
         if self.conversion_host_address:
             return self.conversion_host_address
         else:
-            return self._converter().accessIPv4
+            return self._converter().access_ipv4
 
     def _update_progress(self, dev_path, progress):
         self.log.info('Transfer progress for %s: %s%%', dev_path, str(progress))

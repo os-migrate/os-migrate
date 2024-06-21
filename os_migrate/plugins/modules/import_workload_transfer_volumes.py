@@ -97,7 +97,7 @@ options:
   dst_conversion_host_address:
     description:
       - Optional IP address of the destination conversion host. Without this, the
-        plugin will use the 'accessIPv4' property of the conversion host instance.
+        plugin will use the 'access_ipv4' property of the conversion host instance.
     required: false
     type: str
   transfer_uuid:
