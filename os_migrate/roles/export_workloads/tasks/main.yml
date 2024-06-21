@@ -10,7 +10,7 @@
 
 - name: show servers debug data
   ansible.builtin.debug:
-    msg: "{{ src_workloads_info.openstack_servers }}"
+    msg: "{{ src_workloads_info.servers }}"
 
 - name: create id-name pairs of workloads to export
   ansible.builtin.set_fact:

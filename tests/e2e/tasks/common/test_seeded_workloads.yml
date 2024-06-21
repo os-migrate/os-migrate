@@ -14,4 +14,4 @@
 
     - name: verify volumes attribute for a specific server
       ansible.builtin.assert:
-        that: "{{ result.openstack_servers[0].volumes is defined }}"
+        that: "{{ result.servers[0].volumes is defined }}"
