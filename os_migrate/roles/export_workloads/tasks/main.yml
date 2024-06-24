@@ -8,10 +8,6 @@
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
   register: src_workloads_info
 
-- name: show servers debug data
-  ansible.builtin.debug:
-    msg: "{{ src_workloads_info.servers }}"
-
 - name: create id-name pairs of workloads to export
   ansible.builtin.set_fact:
     export_workloads_ids_names: "{{ (
