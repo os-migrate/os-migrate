@@ -8,7 +8,7 @@ instructions.
 
 ::
 
-   yum install https://releases.hashicorp.com/vagrant/2.2.6/vagrant_2.2.6_x86_64.rpm -y
+   yum install https://releases.hashicorp.com/vagrant/2.4.1/vagrant-2.4.1-1.x86_64.rpm -y
    vagrant --version
 
 ::
@@ -37,7 +37,7 @@ Go to the toolbox/vagrant folder
 
 ::
 
-   vagrant box add --name fedora29 https://download.fedoraproject.org/pub/fedora/linux/releases/29/Cloud/x86_64/images/Fedora-Cloud-Base-Vagrant-29-1.2.x86_64.vagrant-libvirt.box
+   vagrant box add --name fedora37 https://archives.fedoraproject.org/pub/archive/fedora/linux/releases/37/Cloud/x86_64/images/Fedora-Cloud-Base-Vagrant-37-1.7.x86_64.vagrant-libvirt.box
 
 Start the environment using the libvirt provider
 
