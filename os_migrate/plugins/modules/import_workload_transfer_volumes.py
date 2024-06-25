@@ -444,6 +444,7 @@ class OpenStackDestinationHost(OpenStackHostBase):
                     dict(filter(lambda item: item[1] is not None,
                                 self.ser_server.migration_params()['boot_volume_params'].items()))
                 sdk_params.update(boot_volume_params_defined)
+            sdk_params.pop('volume_type', None)
             new_volume = self.conn.create_volume(**sdk_params)
             self.volume_map[path]['dest_id'] = new_volume.id
 
