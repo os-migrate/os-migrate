@@ -97,7 +97,7 @@ options:
   dst_conversion_host_address:
     description:
       - Optional IP address of the destination conversion host. Without this, the
-        plugin will use the 'accessIPv4' property of the conversion host instance.
+        plugin will use the 'access_ipv4' property of the conversion host instance.
     required: false
     type: str
   transfer_uuid:
@@ -444,6 +444,7 @@ class OpenStackDestinationHost(OpenStackHostBase):
                     dict(filter(lambda item: item[1] is not None,
                                 self.ser_server.migration_params()['boot_volume_params'].items()))
                 sdk_params.update(boot_volume_params_defined)
+            sdk_params.pop('volume_type', None)
             new_volume = self.conn.create_volume(**sdk_params)
             self.volume_map[path]['dest_id'] = new_volume.id
 

@@ -76,6 +76,7 @@
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
 - name: remove osm_server_port
+  ignore_errors: true
   openstack.cloud.port:
     auth: "{{ item.auth }}"
     name: osm_server_port_0
@@ -161,6 +162,7 @@
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
 - name: remove osm_security_group_rule
+  ignore_errors: true
   openstack.cloud.security_group_rule:
     auth: "{{ item.auth }}"
     security_group: osm_security_group
