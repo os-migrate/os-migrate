@@ -80,7 +80,7 @@ options:
   src_conversion_host_address:
     description:
       - Optional IP address of the source conversion host. Without this, the
-        plugin will use the 'accessIPv4' property of the conversion host instance.
+        plugin will use the 'access_ipv4' property of the conversion host instance.
     required: false
     type: str
   ssh_key_path:
@@ -343,7 +343,7 @@ class OpenStackSourceHostCleanup(OpenStackHostBase):
     def _volume_still_attached(self, volume, vm):
         """ Check if a volume is still attached to a VM. """
         for attachment in volume.attachments:
-            if attachment.server_id == vm.id:
+            if attachment['server_id'] == vm.id:
                 return True
         return False
 

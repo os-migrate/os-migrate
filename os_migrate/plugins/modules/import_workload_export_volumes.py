@@ -84,7 +84,7 @@ options:
   src_conversion_host_address:
     description:
       - Optional IP address of the source conversion host. Without this, the
-        plugin will use the 'accessIPv4' property of the conversion host instance.
+        plugin will use the 'access_ipv4' property of the conversion host instance.
     required: false
     type: str
   ssh_key_path:
@@ -345,16 +345,16 @@ class OpenStackSourceHost(OpenStackHostBase):
         sourcevm = self._source_vm()
         for server_volume in sourcevm.volumes:
             volume = self.conn.get_volume_by_id(server_volume['id'])
-            self.log.info('Inspecting volume: %s', volume.id)
-            if self.source_disks and volume.id not in self.source_disks:
+            self.log.info('Inspecting volume: %s', volume['id'])
+            if self.source_disks and volume['id'] not in self.source_disks:
                 self.log.info('Volume is not in specified disk list, ignoring.')
                 continue
-            dev_path = self._get_attachment(volume, sourcevm).device
+            dev_path = self._get_attachment(volume, sourcevm)['device']
             self.volume_map[dev_path] = dict(
-                source_dev=None, source_id=volume.id, dest_dev=None,
-                dest_id=None, snap_id=None, image_id=None, name=volume.name,
-                size=volume.size, port=None, url=None, progress=None,
-                bootable=volume.bootable)
+                source_dev=None, source_id=volume['id'], dest_dev=None,
+                dest_id=None, snap_id=None, image_id=None, name=volume['name'],
+                size=volume['size'], port=None, url=None, progress=None,
+                bootable=volume['bootable'])
             self._update_progress(dev_path, 0.0)
 
     def _validate_volumes_match_data(self):
@@ -420,10 +420,10 @@ class OpenStackSourceHost(OpenStackHostBase):
                 image=image.id, bootable=True, wait=True, name=image.name,
                 timeout=self.timeout, size=image.min_disk)
             self.volume_map['/dev/vda'] = dict(
-                source_dev=None, source_id=volume.id, dest_dev=None,
-                dest_id=None, snap_id=None, image_id=image.id, name=volume.name,
-                size=volume.size, port=None, url=None, progress=None,
-                bootable=volume.bootable)
+                source_dev=None, source_id=volume['id'], dest_dev=None,
+                dest_id=None, snap_id=None, image_id=image.id, name=volume['name'],
+                size=volume['size'], port=None, url=None, progress=None,
+                bootable=volume['bootable'])
             self._update_progress('/dev/vda', 0.0)
         elif sourcevm.image and not self.ser_server.migration_params()['boot_disk_copy']:
             self.log.info('Image-based instance, boot_disk_copy disabled: skipping boot volume')
@@ -434,7 +434,7 @@ class OpenStackSourceHost(OpenStackHostBase):
             if path != '/dev/vda':  # Detach non-root volumes
                 volume_id = mapping['source_id']
                 volume = self.conn.get_volume_by_id(volume_id)
-                self.log.info('Detaching %s from %s', volume.id, sourcevm.id)
+                self.log.info('Detaching %s from %s', volume['id'], sourcevm.id)
                 self.conn.detach_volume(server=sourcevm, volume=volume,
                                         wait=True, timeout=self.timeout)
 

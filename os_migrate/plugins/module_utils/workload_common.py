@@ -87,7 +87,7 @@ class OpenStackHostBase():
         self.transfer_uuid = transfer_uuid
 
         # Optional parameters:
-        # conversion_host_address: Optional address used to override 'accessIPv4'
+        # conversion_host_address: Optional address used to override 'access_ipv4'
         # state_file: File to hold current disk transfer state
         # log_file: Debug log path for workload migration
         self.conversion_host_address = conversion_host_address
@@ -163,7 +163,7 @@ class OpenStackHostBase():
         if self.conversion_host_address:
             return self.conversion_host_address
         else:
-            return self._converter().accessIPv4
+            return self._converter().access_ipv4
 
     def _update_progress(self, dev_path, progress):
         self.log.info('Transfer progress for %s: %s%%', dev_path, str(progress))
@@ -210,7 +210,7 @@ class OpenStackHostBase():
             new_disks = disks_after - disks_before
             volume = conn.get_volume_by_id(volume_id)
             attachment = self._get_attachment(volume, host_func())
-            dev_path = attachment.device
+            dev_path = attachment['device']
             if len(new_disks) == 1:
                 if dev_path in new_disks:
                     self.log.debug('Successfully attached new disk %s, and %s '
@@ -221,7 +221,7 @@ class OpenStackHostBase():
                     self.log.debug('Successfully attached new disk %s, but %s '
                                    'conversion host path does not match the  '
                                    'result from OpenStack. Using internal '
-                                   'device path %s.', attachment.device,
+                                   'device path %s.', attachment['device'],
                                    name, dev_path)
             else:
                 raise RuntimeError('Got unexpected disk list after attaching '
@@ -238,7 +238,7 @@ class OpenStackHostBase():
         Convenience method for use only when the attachment is already certain.
         """
         for attachment in volume.attachments:
-            if attachment.server_id == vm.id:
+            if attachment['server_id'] == vm.id:
                 return attachment
         raise RuntimeError('Volume is not attached to the specified instance!')
 
@@ -248,7 +248,7 @@ class OpenStackHostBase():
             volume = conn.get_volume_by_id(volume_id)
             if volume.attachments:
                 attachment = self._get_attachment(volume, vm)
-                if attachment.device.startswith('/dev/'):
+                if attachment['device'].startswith('/dev/'):
                     return
             time.sleep(1)
         raise RuntimeError('Timed out waiting for volume device path!')
