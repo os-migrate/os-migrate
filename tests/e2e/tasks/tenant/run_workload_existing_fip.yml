@@ -7,7 +7,7 @@
 - name: create osm_fip in destination
   ansible.builtin.shell: |
     openstack floating ip create  -f value -c floating_ip_address \
-        --tag osm_fip {{ os_migrate_dst_conversion_external_network_name }} --insecure
+        --tag osm_fip {{ os_migrate_dst_conversion_external_network_name }} {{ os_migrate_insecure_opt | default('') }}
   args:
     executable: /bin/bash
   environment:

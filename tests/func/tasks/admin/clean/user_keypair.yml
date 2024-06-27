@@ -6,11 +6,11 @@
 
 - name: delete osm_user_keypair
   ansible.builtin.shell: |
-    if openstack keypair show --user osm_user osm_user_keypair --insecure; then
+    if openstack keypair show --user osm_user osm_user_keypair {{ os_migrate_insecure_opt | default('') }}; then
         # https://storyboard.openstack.org/#!/story/2009000
         # openstack keypair delete --user osm_user osm_user_keypair
-        OSM_USER_ID=$(openstack user show -f value -c id osm_user --insecure)
-        nova keypair-delete --user $OSM_USER_ID osm_user_keypair --insecure
+        OSM_USER_ID=$(openstack user show -f value -c id osm_user {{ os_migrate_insecure_opt | default('') }})
+        nova keypair-delete --user $OSM_USER_ID osm_user_keypair {{ os_migrate_insecure_opt | default('') }}
     fi
   args:
     executable: /bin/bash
@@ -32,11 +32,11 @@
 
 - name: delete osmdst_user_keypair
   ansible.builtin.shell: |
-    if openstack keypair show --user osmdst_user osmdst_user_keypair --insecure; then
+    if openstack keypair show --user osmdst_user osmdst_user_keypair {{ os_migrate_insecure_opt | default('') }}; then
         # https://storyboard.openstack.org/#!/story/2009000
         # openstack keypair delete --user osmdst_user osmdst_user_keypair
-        OSMDST_USER_ID=$(openstack user show -f value -c id osmdst_user --insecure)
-        nova keypair-delete --user $OSMDST_USER_ID osmdst_user_keypair --insecure
+        OSMDST_USER_ID=$(openstack user show -f value -c id osmdst_user {{ os_migrate_insecure_opt | default('') }})
+        nova keypair-delete --user $OSMDST_USER_ID osmdst_user_keypair {{ os_migrate_insecure_opt | default('') }}
     fi
   args:
     executable: /bin/bash
