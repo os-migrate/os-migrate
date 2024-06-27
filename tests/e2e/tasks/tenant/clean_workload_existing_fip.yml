@@ -1,16 +1,18 @@
 - name: get dst auth token
   openstack.cloud.auth:
     auth: "{{ os_migrate_dst_auth }}"
+    validate_certs: "{{ validate_certs | default(false) }}"
+  register: auth_token
 
 - name: list osm_fip floating IP IDs
   ansible.builtin.shell: |
-    openstack floating ip list -f value -c ID --tag osm_fip
+    openstack floating ip list -f value -c ID --tag osm_fip {{ os_migrate_insecure_opt | default('') }}
   args:
     executable: /bin/bash
   environment:
     OS_AUTH_TYPE: token
     OS_AUTH_URL: "{{ os_migrate_dst_auth.auth_url }}"
-    OS_TOKEN: "{{ auth_token }}"
+    OS_TOKEN: "{{ auth_token.auth_token }}"
     OS_PROJECT_ID: "{{ os_migrate_dst_auth.project_id|default('') }}"
     OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
     OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"
@@ -20,7 +22,7 @@
 
 - name: delete osm_fips floating IPs
   ansible.builtin.shell: |
-    openstack floating ip delete {{ item }}
+    openstack floating ip delete {{ item }} {{ os_migrate_insecure_opt | default('') }}
   args:
     executable: /bin/bash
   register: _result
@@ -28,7 +30,7 @@
   environment:
     OS_AUTH_TYPE: token
     OS_AUTH_URL: "{{ os_migrate_dst_auth.auth_url }}"
-    OS_TOKEN: "{{ auth_token }}"
+    OS_TOKEN: "{{ auth_token.auth_token }}"
     OS_PROJECT_ID: "{{ os_migrate_dst_auth.project_id|default('') }}"
     OS_PROJECT_NAME: "{{ os_migrate_dst_auth.project_name|default('') }}"
     OS_PROJECT_DOMAIN_ID: "{{ os_migrate_dst_auth.project_domain_id|default('') }}"

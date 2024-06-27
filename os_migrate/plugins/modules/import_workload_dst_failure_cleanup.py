@@ -183,7 +183,7 @@ class OpenStackDstFailureCleanup(OpenStackHostBase):
     def _volume_still_attached(self, volume, vm):
         """ Check if a volume is still attached to a VM. """
         for attachment in volume.attachments:
-            if attachment.server_id == vm.id:
+            if attachment['server_id'] == vm.id:
                 return True
         return False
 
