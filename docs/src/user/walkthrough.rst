@@ -173,7 +173,7 @@ this:
 
 .. code:: yaml
 
-   os_migrate_version: 0.4.0
+   os_migrate_version: 0.17.0
    resources:
      - _info:
          availability_zones:
@@ -257,7 +257,7 @@ desired:
 
 .. code:: yaml
 
-   os_migrate_version: 0.4.0
+   os_migrate_version: 0.17.0
    resources:
    - _info:
        addresses:
@@ -400,7 +400,7 @@ The resulting workloads.yml file will look similar to:
 
 .. code:: yaml
 
-   os_migrate_version: 0.5.0
+   os_migrate_version: 0.17.0
    resources:
    - _info:
        created_at: '2020-11-12T17:55:40Z'
