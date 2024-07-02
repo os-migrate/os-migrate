@@ -22,6 +22,6 @@ General usage notes
    custom playbooks using the OS Migrate collection pieces (roles and
    modules) as building blocks.
 
--  OS Migrate has supported migrations for OSP versions 10 to 13,
-   13 to 16, and simple upgrades from 15 to 16 or 16 to 17. We have
-   tested migrations between 10 to 13, 13 to 16 using RHEL 8.
+-  OS Migrate has supported migrations for OSP versions 13 to 16,
+   16 to 18, and simple upgrades from 15 to 16 or 16 to 17. We have
+   tested migrations between 13 to 16, 16 to 18 using RHEL 8.

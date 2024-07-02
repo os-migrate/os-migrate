@@ -472,7 +472,7 @@ is the conversion host required for this mode of migration, is this migration
 mode implemented).
 
 .. list-table:: Workload Migration options
-   :widths: 25 25 25 25
+   :widths: 20 20 10 20
    :header-rows: 1
 
    * - Source workload
@@ -511,7 +511,7 @@ mode implemented).
         name: some_image
         project_name: '%auth%'
 
-        (image_ref doesn’t matter, can be null)```
+        (image_ref does not matter, can be null)```
      - Yes
    * - Booted from volume, optionally additional volumes attached
      - | Boot disk copied as volume, VM booted from volume,
@@ -539,7 +539,7 @@ mode implemented).
         name: some_image
         project_name: '%auth%'
 
-        (boot_disk_copy doesn't matter)```
+        (boot_disk_copy does not matter)```
      - No
    * - | Booted from image (local boot disk),
        | optionally additional volumes attached
@@ -558,7 +558,7 @@ mode implemented).
         name: some_image
         project_name: '%auth%'
 
-        (boot_disk_copy doesn't matter)```
+        (boot_disk_copy does not matter)```
      - No
    * - | Booted from image or volume, optionally additional
        | volumes attached
@@ -576,7 +576,7 @@ mode implemented).
         name: some_image
         project_name: '%auth%'
 
-        (image_ref doesn’t matter, can be null, boot_disk_copy doesn't matter)```
+        (image_ref does not matter, can be null, boot_disk_copy does not matter)```
      - No
    * - | Booted from image or volume, optionally additional
        | volumes attached
@@ -596,5 +596,5 @@ mode implemented).
         name: some_image
         project_name: '%auth%'
 
-        (image_ref doesn’t matter, can be null, boot_disk_copy doesn't matter)```
+        (image_ref does not matter, can be null, boot_disk_copy does not matter)```
      - No

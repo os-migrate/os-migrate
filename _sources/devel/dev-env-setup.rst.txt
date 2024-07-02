@@ -256,12 +256,12 @@ Create images
 .. code-block::
 
     # Download images
-    wget https://cloud.centos.org/centos/9-stream/x86_64/images/CentOS-Stream-GenericCloud-9-20230116.0.x86_64.qcow2
+    wget https://cloud.centos.org/centos/9-stream/x86_64/images/CentOS-Stream-GenericCloud-9-20230704.1.x86_64.qcow2
     wget http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img
 
     # Create images in glance from these downloads
     openstack image create --public --disk-format qcow2 --file \
-        CentOS-Stream-GenericCloud-9-20230116.0.x86_64.qcow2 CentOS-Stream-GenericCloud-9-20230116.0.x86_64.qcow2
+        CentOS-Stream-GenericCloud-9-20230704.1.x86_64.qcow2 CentOS-Stream-GenericCloud-9-20230704.1.x86_64.qcow2
     openstack image create --public --disk-format raw --file cirros-0.4.0-x86_64-disk.img cirros-0.4.0-x86_64-disk.img
 
 Create flavors

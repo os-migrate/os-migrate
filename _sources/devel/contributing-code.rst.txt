@@ -106,11 +106,11 @@ following default content:
      description: os-migrate resource
      company: Red Hat
      license: Apache-2.0
-     min_ansible_version: 2.9
+     min_ansible_version: "2.9"
      platforms:
        - name: Fedora
          versions:
-           - 30
+           - "34"
      galaxy_tags: ["osmigrate"]
    dependencies:
      - role: os_migrate.os_migrate.prelude_src
@@ -143,11 +143,11 @@ following default content:
      description: os-migrate resource
      company: Red Hat
      license: Apache-2.0
-     min_ansible_version: 2.9
+     min_ansible_version: "2.9"
      platforms:
        - name: Fedora
          versions:
-           - 30
+           - "34"
      galaxy_tags: ["osmigrate"]
    dependencies:
      - role: os_migrate.os_migrate.prelude_dst
