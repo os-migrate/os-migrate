@@ -54,7 +54,7 @@ for
 
 ## Reporting issues
 
-Please report any issues into the
+Please report any issues into
 [GitHub issue tracker](https://github.com/os-migrate/os-migrate/issues).
 
 ## Getting help
