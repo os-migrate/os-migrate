@@ -127,7 +127,7 @@
         os_migrate_conversion_host_pre_content_hook: "{{ os_migrate_dst_conversion_host_pre_content_hook|default(false) }}"
         os_migrate_conversion_host_post_content_hook: "{{ os_migrate_dst_conversion_host_post_content_hook|default(false) }}"
 
-- hosts: os_migrate_conv_src
+- hosts: migrator
   environment:
     OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
@@ -154,7 +154,7 @@
         timeout: 600
       when: os_migrate_reboot_conversion_hosts|default(true)|bool
 
-- hosts: os_migrate_conv_dst
+- hosts: migrator
   environment:
     OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
