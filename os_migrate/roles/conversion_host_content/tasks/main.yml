@@ -9,7 +9,7 @@
       when: os_migrate_conversion_host_reboot | default(true)
 
     - name: Wait for conversion host to be up
-      wait_for:
+      ansible.builtin.wait_for:
         host: "{{ os_migrate_conversion_host_name }}"
         port: 22
         delay: 60
