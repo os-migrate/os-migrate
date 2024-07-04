@@ -1,21 +1,5 @@
 - name: Conversion host content tasks
   block:
-    - name: Reboot conversion host if required
-      openstack.cloud.server_action:
-        cloud: "{{ os_migrate_conversion_cloud }}"
-        action: reboot
-        server: "{{ os_migrate_conversion_host_name }}"
-        wait: true
-      when: os_migrate_conversion_host_reboot | default(true)
-
-    - name: Wait for conversion host to be up
-      ansible.builtin.wait_for:
-        host: "{{ os_migrate_conversion_host_name }}"
-        port: 22
-        delay: 60
-        timeout: 900
-      when: os_migrate_conversion_host_reboot | default(true)
-
     - name: Display host os
       ansible.builtin.debug:
         msg: >-
