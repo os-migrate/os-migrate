@@ -62,7 +62,6 @@
         --network {{ os_migrate_conversion_net_name }} \
         --security-group {{ os_migrate_conversion_secgroup_name }} \
         --wait \
-        --availability-zone {{ os_migrate_conversion_availability_zone|default("nova") }} \
         --os-cloud {{ os_migrate_conversion_cloud }} \
         {{ os_migrate_conversion_host_name }} --insecure
   # openstack.cloud.server:
