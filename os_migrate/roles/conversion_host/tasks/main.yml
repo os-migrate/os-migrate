@@ -55,35 +55,26 @@
     client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
 
 - name: create os_migrate conversion host
-  ansible.builtin.shell: |
-    openstack server create --flavor {{ os_migrate_conversion_flavor_name }} \
-        --image {{ os_migrate_conversion_image_name }} \
-        --key-name {{ os_migrate_conversion_keypair_name }} \
-        --network {{ os_migrate_conversion_net_name }} \
-        --security-group {{ os_migrate_conversion_secgroup_name }} \
-        --wait \
-        --os-cloud {{ os_migrate_conversion_cloud }} \
-        {{ os_migrate_conversion_host_name }} --insecure
-  # openstack.cloud.server:
-  #   name: "{{ os_migrate_conversion_host_name }}"
-  #   flavor: "{{ os_migrate_conversion_flavor_name }}"
-  #   image: "{{ os_migrate_conversion_image_name }}"
-  #   key_name: "{{ os_migrate_conversion_keypair_name }}"
-  #   boot_from_volume: "{{ os_migrate_conversion_host_boot_from_volume|default(omit) }}"
-  #   volume_size: "{{ os_migrate_conversion_host_volume_size|default(omit) }}"
-  #   terminate_volume: true
-  #   network: "{{ os_migrate_conversion_net_name }}"
-  #   security_groups:
-  #     - "{{ os_migrate_conversion_secgroup_name }}"
-  #   auto_ip: false
-  #   wait: true
-  #   timeout: "{{ os_migrate_conversion_host_deploy_timeout }}"
-  #   cloud: "{{ os_migrate_conversion_cloud }}"
-  #   availability_zone: "{{ os_migrate_conversion_availability_zone|default(omit) }}"
-  #   validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
-  #   ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
-  #   client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
-  #   client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
+  openstack.cloud.server:
+    name: "{{ os_migrate_conversion_host_name }}"
+    flavor: "{{ os_migrate_conversion_flavor_name }}"
+    image: "{{ os_migrate_conversion_image_name }}"
+    key_name: "{{ os_migrate_conversion_keypair_name }}"
+    boot_from_volume: "{{ os_migrate_conversion_host_boot_from_volume|default(omit) }}"
+    volume_size: "{{ os_migrate_conversion_host_volume_size|default(omit) }}"
+    terminate_volume: true
+    network: "{{ os_migrate_conversion_net_name }}"
+    security_groups:
+      - "{{ os_migrate_conversion_secgroup_name }}"
+    auto_ip: false
+    wait: true
+    timeout: "{{ os_migrate_conversion_host_deploy_timeout }}"
+    cloud: "{{ os_migrate_conversion_cloud }}"
+    availability_zone: "{{ os_migrate_conversion_availability_zone|default(omit) }}"
+    validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
 
 - name: create a floating IP for the conversion host
   ansible.builtin.include_tasks: create_fip.yml
