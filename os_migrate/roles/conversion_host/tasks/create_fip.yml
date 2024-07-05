@@ -20,6 +20,8 @@
   ansible.builtin.shell: |
     openstack floating ip create {{ os_migrate_conversion_external_network_name }} \
       --os-cloud {{ os_migrate_conversion_cloud }} --insecure| grep ' id ' | awk '{print $4}'
+  args:
+    executable: /bin/bash
   when: os_migrate_conversion_floating_ip_address is defined and not os_migrate_conversion_floating_ip_address
 
   # openstack.cloud.floating_ip:
@@ -40,4 +42,6 @@
   ansible.builtin.shell: |
     openstack server add floating ip {{ os_migrate_conversion_host_name }} {{ floating_ip.stdout }} \
       --os-cloud {{ os_migrate_conversion_cloud }} --insecure
+  args:
+    executable: /bin/bash
   when: os_migrate_conversion_floating_ip_address is defined and not os_migrate_conversion_floating_ip_address
