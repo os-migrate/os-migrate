@@ -18,7 +18,8 @@
 - name: create the conversion host floating IP with auto IP enabled
   register: floating_ip
   ansible.builtin.shell: |
-    openstack floating ip create public --os-cloud {{ os_migrate_conversion_cloud }} {{ os_migrate_conversion_external_network_name }} --insecure| grep ' id ' | awk '{print $4}'
+    openstack floating ip create {{ os_migrate_conversion_external_network_name }} \
+      --os-cloud {{ os_migrate_conversion_cloud }} --insecure| grep ' id ' | awk '{print $4}'
   when: os_migrate_conversion_floating_ip_address is defined and not os_migrate_conversion_floating_ip_address
 
   # openstack.cloud.floating_ip:
@@ -37,5 +38,6 @@
   # when: os_migrate_conversion_floating_ip_address is defined and not os_migrate_conversion_floating_ip_address
 - name: set floating_ip_address
   ansible.builtin.shell: |
-    openstack server add floating ip {{ os_migrate_conversion_host_name }} {{ floating_ip.stdout }} --os-cloud {{ os_migrate_conversion_cloud }} --insecure
+    openstack server add floating ip {{ os_migrate_conversion_host_name }} {{ floating_ip.stdout }} \
+      --os-cloud {{ os_migrate_conversion_cloud }} --insecure
   when: os_migrate_conversion_floating_ip_address is defined and not os_migrate_conversion_floating_ip_address
