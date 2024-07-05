@@ -55,7 +55,7 @@
     client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
 
 - name: create os_migrate conversion host
-  shell: |
+  ansible.builtin.shell: |
     openstack server create --flavor {{ os_migrate_conversion_flavor_name }} \
         --image {{ os_migrate_conversion_image_name }} \
         --key-name {{ os_migrate_conversion_keypair_name }} \
