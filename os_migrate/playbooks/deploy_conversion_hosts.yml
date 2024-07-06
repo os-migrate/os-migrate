@@ -71,6 +71,10 @@
         tasks_from: link_prepare.yml
       when: os_migrate_link_conversion_hosts|default(true)|bool
 
+    - name: pause to let sshd start on the conversion hosts
+      ansible.builtin.pause:
+        minutes: 2
+
 - hosts: os_migrate_conv_src
   environment:
     OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
