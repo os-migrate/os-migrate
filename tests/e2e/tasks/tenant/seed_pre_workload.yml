@@ -81,7 +81,6 @@
     auth: "{{ item.auth }}"
     name: osm_router
     state: present
-    enable_snat: false
     network: "{{ os_migrate_src_osm_router_external_network|default(omit) }}"
     interfaces:
       - net: osm_net

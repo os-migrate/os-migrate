@@ -26,7 +26,6 @@
   openstack.cloud.router:
     name: "{{ os_migrate_conversion_router_name }}"
     network: "{{ os_migrate_conversion_external_network_name }}"
-    enable_snat: false
     interfaces:
       - net: "{{ os_migrate_conversion_net_name }}"
         subnet: "{{ os_migrate_conversion_subnet_name }}"
