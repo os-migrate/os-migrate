@@ -26,7 +26,7 @@
 - name: Migration tests
   hosts: migrator
   environment:
-    OS_VOLUME_API_VERSION: 3.10
+    OS_BLOCK_STORAGE_DEFAULT_MICROVERSION: 3.10
     OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   tasks:
     - name: clean workloads
@@ -127,41 +127,40 @@
     #
     # * port_creation_mode: nova
     #
-    # @matbu commented out the following tasks in order to execute the next scenario
-    # - name: seed the workloads
-    #   ansible.builtin.include_tasks: tasks/tenant/seed_workload.yml
-    #   args:
-    #     apply:
-    #       tags:
-    #         - test_workload
-    #         - test_image_workload_boot_copy
-    #   tags: always
-    #   vars:
-    #     workload_image: "{{ os_migrate_src_osm_server_image }}"
+    - name: seed the workloads
+      ansible.builtin.include_tasks: tasks/tenant/seed_workload.yml
+      args:
+        apply:
+          tags:
+            - test_workload
+            - test_image_workload_boot_copy
+      tags: always
+      vars:
+        workload_image: "{{ os_migrate_src_osm_server_image }}"
 
-    # - name: run the workloads
-    #   ansible.builtin.include_tasks: tasks/tenant/run_workload.yml
-    #   args:
-    #     apply:
-    #       tags:
-    #         - test_workload
-    #         - test_image_workload_boot_copy
-    #   tags: always
-    #   vars:
-    #     set_boot_disk_copy: true
-    #     set_floating_ip_mode: 'existing'
-    #     port_creation_mode: nova
+    - name: run the workloads
+      ansible.builtin.include_tasks: tasks/tenant/run_workload.yml
+      args:
+        apply:
+          tags:
+            - test_workload
+            - test_image_workload_boot_copy
+      tags: always
+      vars:
+        set_boot_disk_copy: true
+        set_floating_ip_mode: 'existing'
+        port_creation_mode: nova
 
-    # - name: clean the workloads
-    #   ansible.builtin.include_tasks: tasks/tenant/clean_workload.yml
-    #   args:
-    #     apply:
-    #       tags:
-    #         - test_clean_after
-    #         - test_workload
-    #         - test_image_workload_boot_copy
-    #         - test_image_workload_boot_copy_clean
-    #   tags: always
+    - name: clean the workloads
+      ansible.builtin.include_tasks: tasks/tenant/clean_workload.yml
+      args:
+        apply:
+          tags:
+            - test_clean_after
+            - test_workload
+            - test_image_workload_boot_copy
+            - test_image_workload_boot_copy_clean
+      tags: always
 
     # Workload migration scenario:
     #
