@@ -147,7 +147,7 @@
         os_migrate_conversion_ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
         os_migrate_conversion_client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
         os_migrate_conversion_client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-      when: os_migrate_reboot_conversion_hosts|default(true)|bool
+      when: os_migrate_reboot_conversion_hosts|default(false)|bool
 
     - name: wait for src conversion host reachability
       ansible.builtin.wait_for:
@@ -156,7 +156,7 @@
         search_regex: OpenSSH
         sleep: 5
         timeout: 600
-      when: os_migrate_reboot_conversion_hosts|default(true)|bool
+      when: os_migrate_reboot_conversion_hosts|default(false)|bool
 
 - hosts: migrator
   environment:
@@ -174,7 +174,7 @@
         os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
         os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
         os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-      when: os_migrate_reboot_conversion_hosts|default(true)|bool
+      when: os_migrate_reboot_conversion_hosts|default(false)|bool
 
     - name: wait for dst conversion host reachability
       ansible.builtin.wait_for:
@@ -183,7 +183,7 @@
         search_regex: OpenSSH
         sleep: 5
         timeout: 600
-      when: os_migrate_reboot_conversion_hosts|default(true)|bool
+      when: os_migrate_reboot_conversion_hosts|default(false)|bool
 
 - hosts: conversion_hosts
   environment:

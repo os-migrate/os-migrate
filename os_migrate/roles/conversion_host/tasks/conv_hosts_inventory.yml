@@ -18,7 +18,6 @@
       os_migrate_conversion_ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
       os_migrate_conversion_client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
       os_migrate_conversion_client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-      os_migrate_conversion_floating_ip_address: "192.168.24.117"
     - inventory_name: os_migrate_conv_dst
       inventory_group: conversion_hosts_dst
       os_migrate_conversion_host_name: "{{ os_migrate_dst_conversion_host_name }}"
@@ -27,7 +26,6 @@
       os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
       os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
       os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-      os_migrate_conversion_floating_ip_address: "192.168.18.209"
   when:
     - item["_migration_params"]["data_copy"]|default(true)
 
