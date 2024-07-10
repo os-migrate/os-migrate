@@ -264,7 +264,8 @@ class OpenStackSourceHost(OpenStackHostBase):
     def __init__(self, openstack_connection, source_conversion_host_id,
                  ssh_key_path, ssh_user, source_instance_id, ser_server,
                  state_file=None, log_file=None, source_conversion_host_address=None,
-                 boot_volume_prefix=None, timeout=DEFAULT_TIMEOUT):
+                 boot_volume_prefix=None, timeout=DEFAULT_TIMEOUT,
+                 block_storage_api_version=None):
         # UUID marker for child processes on conversion hosts.
         transfer_uuid = str(uuid.uuid4())
 
@@ -279,7 +280,8 @@ class OpenStackSourceHost(OpenStackHostBase):
             log_file=log_file,
             timeout=timeout,
         )
-
+        if block_storage_api_version:
+            self.conn.config.config['block_storage_api_version'] = block_storage_api_version
         # Required unique parameters:
         # source_instance_id: ID of VM to migrate from the source
         self.source_instance_id = source_instance_id

@@ -33,4 +33,5 @@
     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    block_storage_api_version: "{{ os_migrate_src_block_storage_api_version|default(omit) }}"
   loop: "{{ export_workloads_ids_names }}"
