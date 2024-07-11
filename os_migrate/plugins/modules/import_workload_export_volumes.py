@@ -567,7 +567,6 @@ def run_module():
     log_file = module.params.get('log_file', None)
     boot_volume_prefix = module.params.get('boot_volume_prefix', None)
     timeout = module.params['timeout']
-    block_storage_api_version = module.params['block_storage_api_version']
 
     source_host = OpenStackSourceHost(
         conn,
