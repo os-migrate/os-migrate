@@ -81,6 +81,7 @@
         ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
         ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
         timeout: "{{ os_migrate_timeout }}"
+        block_storage_api_version: "{{ os_migrate_src_block_storage_api_version|default(omit) }}"
       register: exports
       when:
         - prelim is defined and prelim.changed
