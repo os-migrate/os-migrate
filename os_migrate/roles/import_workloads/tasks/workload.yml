@@ -97,7 +97,7 @@
         timeout: "{{ os_migrate_timeout }}"
         block_storage_api_version: "{{ os_migrate_src_block_storage_api_version|default(omit) }}"
         register: exports
-        when:
+      when:
         - prelim is defined and prelim.changed
         - item["_migration_params"]["data_copy"]|default(true)
 
