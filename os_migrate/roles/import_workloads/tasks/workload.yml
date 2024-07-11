@@ -67,7 +67,7 @@
 
     - name: Open cloud.yaml and set cloud variables as ansible vars
       include_vars:
-        file: "{{ lookup('env', 'OS_CLIENT_CONFIG_FILE') }}"
+        file: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
         name: cloud_vars
       when:
         - prelim is defined and prelim.changed
