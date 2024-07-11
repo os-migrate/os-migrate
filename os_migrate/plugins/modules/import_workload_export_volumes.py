@@ -539,6 +539,7 @@ def run_module():
         state_file=dict(type='str', default=None),
         log_file=dict(type='str', default=None),
         timeout=dict(type='int', default=DEFAULT_TIMEOUT),
+        block_storage_api_version=dict(type='str', default=None),
     )
 
     result = dict(
@@ -566,6 +567,7 @@ def run_module():
     log_file = module.params.get('log_file', None)
     boot_volume_prefix = module.params.get('boot_volume_prefix', None)
     timeout = module.params['timeout']
+    block_storage_api_version = module.params['block_storage_api_version']
 
     source_host = OpenStackSourceHost(
         conn,
@@ -579,6 +581,7 @@ def run_module():
         log_file=log_file,
         boot_volume_prefix=boot_volume_prefix,
         timeout=timeout,
+        block_storage_api_version=block_storage_api_version,
     )
     source_host.prepare_exports()
     result['transfer_uuid'] = source_host.transfer_uuid
