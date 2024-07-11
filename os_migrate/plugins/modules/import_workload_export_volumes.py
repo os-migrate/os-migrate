@@ -550,6 +550,7 @@ def run_module():
     # Set the block storage API version if provided
     if module.params['block_storage_api_version'] and isinstance(module.params['cloud'], dict):
         module.params['cloud'].update({'block_storage_api_version': module.params['block_storage_api_version']})
+        module.params['cloud'].update({'block_storage_default_microversion': None})
     sdk, conn = openstack_cloud_from_module(module)
     ser_server = server.Server.from_data(module.params['data'])
     params, info = ser_server.params_and_info()
