@@ -5,6 +5,14 @@ Changelog
 (unreleased)
 ------------
 
+New
+~~~
+- Stable release for 1.0. [cloudguruab]
+
+
+0.18.0 (2024-07-09)
+-------------------
+
 Changes
 ~~~~~~~
 - Doc updates on dev env setup. [cloudguruab]
