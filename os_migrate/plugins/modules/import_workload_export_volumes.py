@@ -103,6 +103,11 @@ options:
     required: false
     default: 1800
     type: int
+  block_storage_api_version:
+    description:
+      - Block storage API version.
+    required: false
+    type: str
 '''
 
 EXAMPLES = '''

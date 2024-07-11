@@ -50,6 +50,7 @@
   ansible.builtin.yum:
     name: '*'
     state: latest
+  when: do_yum_update|default(false)|bool
 
 - name: install content
   ansible.builtin.yum:
