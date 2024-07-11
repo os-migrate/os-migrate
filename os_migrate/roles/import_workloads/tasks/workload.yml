@@ -65,9 +65,16 @@
         - prelim is defined and prelim.changed
         - item["_migration_params"]["data_copy"]|default(true)
 
+    - name: Open cloud.yaml and set cloud variables as ansible vars
+      include_vars:
+        file: "{{ lookup('env', 'OS_CLIENT_CONFIG_FILE') }}"
+        name: cloud_vars
+      when:
+        - prelim is defined and prelim.changed
+
     - name: expose source volumes
       os_migrate.os_migrate.import_workload_export_volumes:
-        cloud: src
+        cloud: "{{ cloud_vars.cloud['src'] }}"
         validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
         boot_volume_prefix: "{{ os_migrate_workload_boot_volume_prefix }}"
         ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
@@ -82,10 +89,32 @@
         ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
         timeout: "{{ os_migrate_timeout }}"
         block_storage_api_version: "{{ os_migrate_src_block_storage_api_version|default(omit) }}"
-      register: exports
-      when:
+        register: exports
+        when:
         - prelim is defined and prelim.changed
         - item["_migration_params"]["data_copy"]|default(true)
+
+    # - name: expose source volumes
+    #   os_migrate.os_migrate.import_workload_export_volumes:
+    #     cloud: src
+    #     validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+    #     boot_volume_prefix: "{{ os_migrate_workload_boot_volume_prefix }}"
+    #     ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+    #     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+    #     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    #     conversion_host:
+    #       "{{ os_src_conversion_host_info.openstack_conversion_host }}"
+    #     data: "{{ item }}"
+    #     log_file: "{{ prelim.log_file }}"
+    #     state_file: "{{ prelim.state_file }}"
+    #     ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
+    #     ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
+    #     timeout: "{{ os_migrate_timeout }}"
+    #     block_storage_api_version: "{{ os_migrate_src_block_storage_api_version|default(omit) }}"
+    #   register: exports
+    #   when:
+    #     - prelim is defined and prelim.changed
+    #     - item["_migration_params"]["data_copy"]|default(true)
 
     - name: transfer volumes to destination
       os_migrate.os_migrate.import_workload_transfer_volumes:

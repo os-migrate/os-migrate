@@ -548,12 +548,8 @@ def run_module():
     )
 
     # Set the block storage API version if provided
-    if module.params['block_storage_api_version']:
-        # debug TBR before merge
-        print(module.params['block_storage_api_version'])
-        print(module.params['cloud'])
+    if module.params['block_storage_api_version'] and isinstance(module.params['cloud'], dict):
         module.params['cloud'].update({'block_storage_api_version': module.params['block_storage_api_version']})
-    print(module.params['block_storage_api_version'])
     sdk, conn = openstack_cloud_from_module(module)
     ser_server = server.Server.from_data(module.params['data'])
     params, info = ser_server.params_and_info()
