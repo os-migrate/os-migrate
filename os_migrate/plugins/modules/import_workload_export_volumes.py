@@ -269,7 +269,8 @@ class OpenStackSourceHost(OpenStackHostBase):
     def __init__(self, openstack_connection, source_conversion_host_id,
                  ssh_key_path, ssh_user, source_instance_id, ser_server,
                  state_file=None, log_file=None, source_conversion_host_address=None,
-                 boot_volume_prefix=None, timeout=DEFAULT_TIMEOUT):
+                 boot_volume_prefix=None, timeout=DEFAULT_TIMEOUT,
+                 block_storage_api_version=None):
         # UUID marker for child processes on conversion hosts.
         transfer_uuid = str(uuid.uuid4())
 
@@ -297,6 +298,8 @@ class OpenStackSourceHost(OpenStackHostBase):
         else:
             self.boot_volume_prefix = "os-migrate-"
 
+        if block_storage_api_version is not None:
+            self.block_storage_api_version = block_storage_api_version
         # Build up a list of VolumeMappings keyed by the original device path
         # provided by the OpenStack API. Details:
         #   source_dev:  Device path (like /dev/vdb) on source conversion host
@@ -422,7 +425,8 @@ class OpenStackSourceHost(OpenStackHostBase):
                     'Could not create new image of image-based instance!')
             volume = self.conn.create_volume(
                 image=image.id, bootable=True, wait=True, name=image.name,
-                timeout=self.timeout, size=image.min_disk)
+                timeout=self.timeout, size=image.min_disk,
+                _max_microversion=self.block_storage_api_version)
             self.volume_map['/dev/vda'] = dict(
                 source_dev=None, source_id=volume['id'], dest_dev=None,
                 dest_id=None, snap_id=None, image_id=image.id, name=volume['name'],
@@ -550,6 +554,7 @@ def run_module():
     # Set the block storage API version if provided
     if module.params['block_storage_api_version'] and isinstance(module.params['cloud'], dict):
         module.params['cloud'].update({'block_storage_api_version': module.params['block_storage_api_version']})
+    block_storage_api_version = module.params.get('block_storage_api_version', None)
     sdk, conn = openstack_cloud_from_module(module)
     ser_server = server.Server.from_data(module.params['data'])
     params, info = ser_server.params_and_info()
@@ -580,6 +585,7 @@ def run_module():
         log_file=log_file,
         boot_volume_prefix=boot_volume_prefix,
         timeout=timeout,
+        block_storage_api_version=block_storage_api_version,
     )
     source_host.prepare_exports()
     result['transfer_uuid'] = source_host.transfer_uuid
