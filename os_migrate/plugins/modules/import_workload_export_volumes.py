@@ -298,8 +298,9 @@ class OpenStackSourceHost(OpenStackHostBase):
         else:
             self.boot_volume_prefix = "os-migrate-"
 
-        if block_storage_api_version is not None:
-            self.block_storage_api_version = block_storage_api_version
+        self.block_storage_api_version = block_storage_api_version
+        if self.block_storage_api_version:
+            self.conn.config.config['block_storage_api_version'] = block_storage_api_version
         # Build up a list of VolumeMappings keyed by the original device path
         # provided by the OpenStack API. Details:
         #   source_dev:  Device path (like /dev/vdb) on source conversion host

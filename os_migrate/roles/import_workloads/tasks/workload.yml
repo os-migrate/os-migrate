@@ -81,7 +81,7 @@
 
     - name: Set bloack storage default micro version
       set_fact:
-        cloud_vars_src : "{{ cloud_vars_src | combine({'block_storage_default_microversion' : '' }) }}"
+        cloud_vars_src : "{{ cloud_vars_src | combine({'block_storage_default_microversion' : os_migrate_src_block_storage_api_version }) }}"
       when:
         - prelim is defined and prelim.changed
         - os_migrate_src_block_storage_api_version is defined
