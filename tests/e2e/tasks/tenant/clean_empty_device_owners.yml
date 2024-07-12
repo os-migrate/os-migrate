@@ -2,7 +2,7 @@
   block:
     - name: Check for ports with no device owner to be deleted
       ansible.builtin.shell: |
-        openstack port show --format value --column device_owner {{ item.strip('| ') }} {{ os_migrate_insecure_opt | default('') }}
+        openstack port show --format value --column device_owner {{ item.strip('| ') }} --insecure
       args:
         executable: /bin/bash
       environment:
@@ -18,7 +18,7 @@
 
     - name: Delete osm_subnet port id not managed by dhcp
       ansible.builtin.shell: |
-        openstack port delete {{ item.strip('| ') }} {{ os_migrate_insecure_opt | default('') }}
+        openstack port delete {{ item.strip('| ') }} --insecure
       args:
         executable: /bin/bash
       environment:
