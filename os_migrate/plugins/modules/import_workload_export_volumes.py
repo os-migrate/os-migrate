@@ -425,9 +425,10 @@ class OpenStackSourceHost(OpenStackHostBase):
                 raise RuntimeError(
                     'Could not create new image of image-based instance!')
             volume = self.conn.create_volume(
-                image=image.id, bootable=True, wait=True, name=image.name,
-                timeout=self.timeout, size=image.min_disk,
-                _max_microversion=self.block_storage_api_version)
+                image=image.id, wait=True, name=image.name,
+                timeout=self.timeout, size=image.min_disk)
+            self.conn.set_volume_bootable(volume.id)
+            volume = self.conn.get_volume_by_id(volume.id)  # refresh
             self.volume_map['/dev/vda'] = dict(
                 source_dev=None, source_id=volume['id'], dest_dev=None,
                 dest_id=None, snap_id=None, image_id=image.id, name=volume['name'],
