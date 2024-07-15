@@ -471,8 +471,11 @@ it should be migrated, how should OS Migrate workloads YAML file be configured,
 is the conversion host required for this mode of migration, is this migration
 mode implemented).
 
-![Screenshot 2024-07-15 at 2 59 17 PM](https://github.com/user-attachments/assets/1862b21b-4f67-47c0-ba73-f62df0d4568a)
+.. image:: https://github.com/user-attachments/assets/1862b21b-4f67-47c0-ba73-f62df0d4568a
+   :alt: Screenshot 2024-07-15 at 2 59 17 PM
 
-![Screenshot 2024-07-15 at 3 02 28 PM](https://github.com/user-attachments/assets/939c98fb-f425-4f53-aca4-fd03f111fd33)
+.. image:: https://github.com/user-attachments/assets/939c98fb-f425-4f53-aca4-fd03f111fd33
+   :alt: Screenshot 2024-07-15 at 3 02 28 PM
 
-![Screenshot 2024-07-15 at 3 03 16 PM](https://github.com/user-attachments/assets/faf09224-fb11-417e-865a-72c9936bc8bf)
+.. image:: https://github.com/user-attachments/assets/faf09224-fb11-417e-865a-72c9936bc8bf
+   :alt: Screenshot 2024-07-15 at 3 03 16 PM
