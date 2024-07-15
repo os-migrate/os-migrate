@@ -279,6 +279,7 @@ class OpenStackSourceHost(OpenStackHostBase):
             log_file=log_file,
             timeout=timeout,
         )
+
         # Required unique parameters:
         # source_instance_id: ID of VM to migrate from the source
         self.source_instance_id = source_instance_id
