@@ -74,17 +74,17 @@
 
     - name: Set block_storage_api_version for source cloud is defined
       set_fact:
-        cloud_vars_src : "{{ cloud_vars.clouds['src'] | combine({'block_storage_api_version' : os_migrate_src_block_storage_api_version }) }}"
+        cloud_vars_src : "{{ cloud_vars.clouds['src'] | combine({'block_storage_api_version' : '2' }) }}"
       when:
         - prelim is defined and prelim.changed
         - os_migrate_src_block_storage_api_version is defined
 
-    - name: Set bloack storage default micro version
-      set_fact:
-        cloud_vars_src : "{{ cloud_vars_src | combine({'block_storage_default_microversion' : os_migrate_src_block_storage_api_version }) }}"
-      when:
-        - prelim is defined and prelim.changed
-        - os_migrate_src_block_storage_api_version is defined
+    # - name: Set bloack storage default micro version
+    #   set_fact:
+    #     cloud_vars_src : "{{ cloud_vars_src | combine({'block_storage_default_microversion' : os_migrate_src_block_storage_api_version }) }}"
+    #   when:
+    #     - prelim is defined and prelim.changed
+    #     - os_migrate_src_block_storage_api_version is defined
 
     - name: expose source volumes
       os_migrate.os_migrate.import_workload_export_volumes:
