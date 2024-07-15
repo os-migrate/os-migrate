@@ -148,7 +148,7 @@
       tags: always
       vars:
         set_boot_disk_copy: true
-        set_floating_ip_mode: 'existing'
+        #set_floating_ip_mode: 'existing'
         port_creation_mode: nova
 
     - name: clean the workloads
