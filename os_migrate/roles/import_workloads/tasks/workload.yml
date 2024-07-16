@@ -66,14 +66,14 @@
         - item["_migration_params"]["data_copy"]|default(true)
 
     - name: Open cloud.yaml and set cloud variables as ansible vars
-      include_vars:
+      ansible.builtin.include_vars:
         file: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
         name: cloud_vars
       when:
         - prelim is defined and prelim.changed
 
     - name: Set block_storage_api_version for source cloud is defined
-      set_fact:
+      ansible.builtin.set_fact:
         cloud_vars_src: "{{ cloud_vars.clouds['src'] | combine({'block_storage_api_version' : '2'}) }}"
       when:
         - prelim is defined and prelim.changed
