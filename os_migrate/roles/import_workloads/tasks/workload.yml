@@ -74,7 +74,7 @@
 
     - name: Set block_storage_api_version for source cloud is defined
       set_fact:
-        cloud_vars_src : "{{ cloud_vars.clouds['src'] | combine({'block_storage_api_version' : '2' }) }}"
+        cloud_vars_src: "{{ cloud_vars.clouds['src'] | combine({'block_storage_api_version' : '2'}) }}"
       when:
         - prelim is defined and prelim.changed
         - os_migrate_src_block_storage_api_version is defined
