@@ -1,7 +1,7 @@
 - name: start devstack
   ansible.builtin.shell: |
     cd /home/stack/devstack
-    LOGFILE=/home/stack/devstack.log ./stack.sh FORCE=yes 2>&1
+    LOGFILE=/home/stack/devstack.log ./stack.sh 2>&1
   args:
     executable: /bin/bash
   changed_when: true
