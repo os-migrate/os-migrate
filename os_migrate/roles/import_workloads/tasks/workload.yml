@@ -65,14 +65,25 @@
         - prelim is defined and prelim.changed
         - item["_migration_params"]["data_copy"]|default(true)
 
+    - name: Open cloud.yaml and set cloud variables as ansible vars
+      ansible.builtin.include_vars:
+        file: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
+        name: cloud_vars
+      when:
+        - prelim is defined and prelim.changed
+
+    - name: Set block_storage_api_version for source cloud is defined
+      ansible.builtin.set_fact:
+        cloud_vars_src: "{{ cloud_vars.clouds['src'] | combine({'block_storage_api_version' : '2'}) }}"
+      when:
+        - prelim is defined and prelim.changed
+        - os_migrate_src_block_storage_api_version is defined
+        - item["_migration_params"]["data_copy"]|default(true)
+
     - name: expose source volumes
       os_migrate.os_migrate.import_workload_export_volumes:
-        cloud: src
-        validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+        cloud: "{{ cloud_vars_src }}"
         boot_volume_prefix: "{{ os_migrate_workload_boot_volume_prefix }}"
-        ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-        client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-        client_key: "{{ os_migrate_src_client_key|default(omit) }}"
         conversion_host:
           "{{ os_src_conversion_host_info.openstack_conversion_host }}"
         data: "{{ item }}"
