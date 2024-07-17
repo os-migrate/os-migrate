@@ -398,8 +398,8 @@ jobs:
               --src devstack-admin \
               --dst devstack-admin \
               > tests/auth_admin.yml && \
-          cat /root/os_migrate/tests/auth_tenant.yml
-          cat /root/os_migrate/os_migrate/localhost_inventory.yml
+          sudo cat /root/os_migrate/tests/auth_tenant.yml
+          sudo cat /root/os_migrate/os_migrate/localhost_inventory.yml
           rm tests/clouds.yaml
       - name: Run functional tests
         run: |
