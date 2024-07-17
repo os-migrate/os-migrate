@@ -37,7 +37,7 @@ Go to the toolbox/vagrant folder
 
 ::
 
-   vagrant box add --name fedora37 https://archives.fedoraproject.org/pub/archive/fedora/linux/releases/37/Cloud/x86_64/images/Fedora-Cloud-Base-Vagrant-37-1.7.x86_64.vagrant-libvirt.box
+    vagrant box add --name fedora37 https://app.vagrantup.com/fedora/boxes/37-cloud-base/versions/37.20221105.0/providers/libvirt/unknown/vagrant.box
 
 Start the environment using the libvirt provider
 
