@@ -2,16 +2,28 @@ Changelog
 =========
 
 
+(unreleased)
+------------
+
+Fix
+~~~
+- Updates to documentation (#685) [Adrian Brown]
+
+  * dev: updated user vars matrix for workload migration modes
+
+  * dev: updates from markdown to rst text
+
+  * dev: update to dev env docs
+
+  * new: devel docs on contributing tests
+
+
 1.0.0 (2024-07-11)
 ------------------
 
 New
 ~~~
 - Stable release for 1.0. [cloudguruab]
-
-
-0.18.0 (2024-07-09)
--------------------
 
 Changes
 ~~~~~~~
