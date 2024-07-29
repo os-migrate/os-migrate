@@ -69,7 +69,7 @@ test-func-tenant: reinstall
 	fi; \
 	cd tests/func; \
 	ansible-playbook \
-		-v \
+		-vvv \
 		-i $(ROOT_DIR)/os_migrate/localhost_inventory.yml \
 		-e os_migrate_tests_tmp_dir=$(ROOT_DIR)/tests/func/tmp \
 		-e os_migrate_data_dir=$(ROOT_DIR)/tests/func/tmp/data \
@@ -84,7 +84,7 @@ test-func-admin: reinstall
 	fi; \
 	cd tests/func; \
 	ansible-playbook \
-		-v \
+		-vvv \
 		-i $(ROOT_DIR)/os_migrate/localhost_inventory.yml \
 		-e os_migrate_tests_tmp_dir=$(ROOT_DIR)/tests/func/tmp \
 		-e os_migrate_data_dir=$(ROOT_DIR)/tests/func/tmp/data \
