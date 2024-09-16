@@ -133,26 +133,31 @@ class OpenStackHostBase():
         If a lockfile is not being used by a process,
         it is either deleted or not being used.
         """
-        # Remove specific lockfiles
-        try:
-            # Remove specific lockfiles
-            for lockfile in [ATTACH_LOCK_FILE_SOURCE, ATTACH_LOCK_FILE_DESTINATION, PORT_LOCK_FILE]:
-                pid = None
+        cleaned_up = False
+        for lockfile in [ATTACH_LOCK_FILE_SOURCE, ATTACH_LOCK_FILE_DESTINATION, PORT_LOCK_FILE]:
+            pid = None
+            lockfile_path = f'{lockfile}.lock'
+            try:
+                pid = self.shell.cmd_out(['sudo', 'cat', lockfile_path])
+            except subprocess.CalledProcessError as err:
+                if err.returncode == 1:
+                    # Exit code 1 typically means file does not exist
+                    self.log.debug("Lockfile doesn't exist: %s", lockfile_path)
+                else:
+                    self.log.error("Error reading lockfile %s: %s", lockfile_path, err)
+                continue  # Proceed to the next lockfile
+            if pid:
+                if self.check_process(pid):
+                    self.log.debug("Lockfile %s is held by active process %s", lockfile_path, pid)
+                    continue
+                # The lockfile is not being used by a process, so we can remove it
                 try:
-                    # Use self.shell.cmd_out to run the following command on the conversion host
-                    pid = self.shell.cmd_out(['sudo', 'cat', f'{lockfile}.lock'])
-                except Exception as err:
-                    self.log.debug("Lockfile doesn't exist %s", err)
-
-                if pid:
-                    if self.check_process(pid):
-                        continue
-
-                    # The lockfile is not being used by a process, so we can remove it
-                    self.shell.cmd_val(['sudo', 'rm', '-f', lockfile + '.lock'])
-                    return True
-        except FileNotFoundError:
-            return False
+                    self.shell.cmd_val(['sudo', 'rm', '-f', lockfile_path])
+                    self.log.info("Removed stale lockfile: %s", lockfile_path)
+                    cleaned_up = True
+                except subprocess.CalledProcessError as err:
+                    self.log.error("Error removing lockfile %s: %s", lockfile_path, err)
+        return cleaned_up
 
     def _converter(self):
         """ Refresh server object to pick up any changes. """
