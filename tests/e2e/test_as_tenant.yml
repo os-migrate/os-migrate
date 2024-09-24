@@ -68,7 +68,6 @@
 
     # Workload migration scenario:
     #
-    # * Attached volume
     #
     # * From tenant-owned image
     #
@@ -162,7 +161,7 @@
       tags: always
 
     # Workload migration scenario:
-    #
+    # TODO: testing to ensure conversion hosts aren't used.
     # * Attached volume
     #
     # * From public image
