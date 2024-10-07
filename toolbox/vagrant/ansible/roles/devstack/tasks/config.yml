@@ -1,21 +1,12 @@
-- name: clone devstack
+- name: Clone devstack repository
   ansible.builtin.git:
     repo: "https://opendev.org/openstack/devstack.git"
     dest: /home/stack/devstack
-    version: master
+    version: stable/2023.1
     update: no
-  become: true
-  become_user: stack
 
-- name: set release to zed
-  ansible.builtin.shell: |
-    cd /home/stack/devstack && git fetch -a && git checkout remotes/origin/stable/2023.1
-  become: true
-  become_user: stack
-
-- name: write devstack config
+- name: Render devstack config
   ansible.builtin.template:
     src: local.conf.j2
     dest: /home/stack/devstack/local.conf
-  become: true
-  become_user: stack
+    mode: "0644"
