@@ -4,11 +4,11 @@ set -euxo pipefail
 
 DIR=$(dirname $(realpath $0))
 OS_MIGRATE_DIR=$(realpath "$DIR/../..")
-ANSIBLE_PYTHON=python3.8
+ANSIBLE_PYTHON=python3
 
 ### PACKAGES ###
 
-dnf -y update
+dnf -y upgrade --refresh
 dnf -y install \
     cargo \
     findutils \
@@ -27,7 +27,7 @@ dnf -y install \
 # The below packages are for vagrant-libvirt and take a lot of deps,
 # build with `NO_VAGRANT=1 make toolbox-build` if Vagrant isn't required.
 if [ "${NO_VAGRANT:-0}" != "1" ]; then
-    dnf -y install ansible libvirt-client rsync openssh-clients vagrant-libvirt
+    dnf -y ansible libvirt-client rsync openssh-clients vagrant-libvirt
 fi
 
 ### VIRTUALENV ###

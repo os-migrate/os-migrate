@@ -1,32 +1,29 @@
 require 'yaml'
 
-VAGRANTFILE_API_VERSION = "2"
 CONFIG_FILE_NAME = ENV["VAGRANT_CONFIG"] || File.dirname(__FILE__) + '/vagrant-config.yml'
 CFG = YAML.load(File.read(CONFIG_FILE_NAME))
 
-Vagrant.require_version ">= 1.6.2"
+Vagrant.require_version ">= 2.0"
 
 # === Vagrant config ===
 
-Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+Vagrant.configure("2") do |config|
 
-  # Fedora
-  config.ssh.username = 'root'
-
-  # CentOS
-  # config.ssh.insert_key = true
-  # config.ssh.password = 'vagrant'
+  config.ssh.insert_key = true
 
   config.vm.synced_folder ".", "/vagrant", disabled: true
-  config.vm.synced_folder './vagrant-sync', '/vagrant-sync', type: 'rsync'
 
   config.vm.provider :libvirt do |libvirt, override|
     libvirt.driver = 'kvm'
     libvirt.connect_via_ssh = false
     libvirt.username = 'root'
+    libvirt.emulator_path = CFG["libvirt"]["emulator_path"]
+    libvirt.machine_type = CFG["libvirt"]["machine_type"]
     libvirt.default_prefix = CFG["libvirt"]["default_prefix"]
     libvirt.storage_pool_name = CFG["libvirt"]["storage_pool_name"]
     libvirt.qemu_use_session = CFG["libvirt"]["qemu_use_session"]
+    libvirt.video_type = CFG["libvirt"]["video_type"]
+    libvirt.graphics_type = CFG["libvirt"]["graphics_type"]
     libvirt.uri = CFG["libvirt"]["uri"]
     libvirt.system_uri = CFG["libvirt"]["system_uri"]
     libvirt.storage_pool_path = CFG["libvirt"]["storage_pool_path"]
@@ -47,9 +44,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       libvirt.cpus = 4
     end
 
-    vm_config.vm.provision "shell", inline: "/vagrant-sync/preconfigure.sh"
     vm_config.vm.provision "ansible" do |ansible|
       ansible.playbook = "ansible/configure.yml"
+      ansible.compatibility_mode = "2.0"
     end
 
     vm_config.trigger.after :up do |trigger|
