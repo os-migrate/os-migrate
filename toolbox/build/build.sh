@@ -27,7 +27,16 @@ dnf -y install \
 # The below packages are for vagrant-libvirt and take a lot of deps,
 # build with `NO_VAGRANT=1 make toolbox-build` if Vagrant isn't required.
 if [ "${NO_VAGRANT:-0}" != "1" ]; then
-    dnf -y install ansible libvirt-client rsync openssh-clients vagrant-libvirt
+    sudo dnf install -y dnf-plugins-core
+    sudo dnf config-manager --add-repo https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
+    # Instruction to install vagrant-libvirt taken by https://vagrant-libvirt.github.io/vagrant-libvirt/
+    sudo dnf remove vagrant-libvirt
+    sudo sed -i \
+        '/^\(exclude=.*\)/ {/vagrant-libvirt/! s//\1 vagrant-libvirt/;:a;n;ba;q}; $aexclude=vagrant-libvirt' \
+        /etc/dnf/dnf.conf
+    vagrant_libvirt_deps=($(sudo dnf repoquery --disableexcludes main --depends vagrant-libvirt 2>/dev/null | cut -d' ' -f1))
+    dependencies=$(sudo dnf repoquery --qf "%{name}" ${vagrant_libvirt_deps[@]/#/--whatprovides })
+    sudo dnf install -y ansible openssh-clients vagrant libvirt-devel @virtualization ${dependencies}
 fi
 
 ### VIRTUALENV ###
