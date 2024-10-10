@@ -360,10 +360,10 @@ class OpenStackHostBase():
 
 
 class RemoteShell():
-    def __init__(self, address, ssh_user, key_path=None):
+    def __init__(self, address, ssh_user, ssh_key_path=None):
         self.address = address
         self.ssh_user = ssh_user
-        self.key_path = key_path
+        self.ssh_key_path = ssh_key_path
 
     def _default_options(self):
         options = [
@@ -371,8 +371,8 @@ class RemoteShell():
             '-o', 'StrictHostKeyChecking=no',
             '-o', 'ConnectTimeout=10',
         ]
-        if self.key_path:
-            options.extend(['-i', self.key_path])
+        if self.ssh_key_path:
+            options.extend(['-i', self.ssh_key_path])
         return options
 
     def ssh_preamble(self):

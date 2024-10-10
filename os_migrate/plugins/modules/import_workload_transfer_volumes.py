@@ -356,7 +356,8 @@ class OpenStackDestinationHost(OpenStackHostBase):
         # It is expected that key authorization has already been set up from
         # the destination conversion host to the source conversion host!
         source_shell = RemoteShell(self.source_conversion_host_address,
-                                   ssh_user=self.shell.ssh_user)
+                                   ssh_user=self.shell.ssh_user,
+                                   ssh_key_path=self.shell.ssh_key_path)
         forward_ports = ['-N', '-T']
         for path, mapping in self.volume_map.items():
             port = self._find_free_port()
