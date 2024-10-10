@@ -1,6 +1,19 @@
-- name: install prereqs
-  ansible.builtin.include: prereqs.yml
-- name: config
-  ansible.builtin.include: config.yml
-- name: start
-  ansible.builtin.include: start.yml
+- name: Install prereqs
+  ansible.builtin.include_tasks:
+    file: prereqs.yml
+    apply:
+      become: true
+
+- name: Configuration tasks
+  ansible.builtin.include_tasks:
+    file: config.yml
+    apply:
+      become: true
+      become_user: stack
+
+- name: Run devstack
+  ansible.builtin.include_tasks:
+    file: run.yml
+    apply:
+      become: true
+      become_user: stack
