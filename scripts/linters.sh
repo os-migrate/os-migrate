@@ -19,13 +19,12 @@ set -euxo pipefail
 # Flake
 # TODO: Have the Ansible and YAML lint fixed first
 flake8 \
-    --exclude releasenotes,.tox,toolbox/vagrant/.vagrant \
+    --exclude releasenotes,.tox \
     --ignore E125,E251,E402,H405,W503,W504,E501
 
 # Bash hate
 find ./ \
      -not -wholename ".tox/*" \
-     -and -not -wholename "./toolbox/vagrant/.vagrant/*" \
      -and -not -wholename "./local/*" \
      -and -not -wholename "*.test/*" \
      -and -name "*.sh" -print0 \
@@ -34,7 +33,6 @@ find ./ \
 # Yaml lint
 find ./ \
      -not -wholename ".tox/*" \
-     -and -not -wholename "./toolbox/vagrant/.vagrant/*" \
      -and -not -wholename "./local/*" \
      -and -not -wholename "./tests/func/tmp/*" \
      -and -name "*.yml" -print0 \

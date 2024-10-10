@@ -1,6 +1,0 @@
-- name: Run devstack
-  ansible.builtin.command:
-  args:
-    chdir: /home/stack/devstack
-    cmd: /home/stack/devstack/stack.sh
-  changed_when: true
