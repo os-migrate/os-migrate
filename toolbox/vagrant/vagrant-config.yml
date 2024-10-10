@@ -1,14 +1,10 @@
 libvirt:
-  box: centos-stream9
+  box: fedora36
   default_prefix: os_migrate_
   storage_pool_name: vagrant
-  machine_type: q35
   suspend_mode: managedsave
   qemu_use_session: true
   uri: qemu:///session
   system_uri: qemu:///system
   storage_pool_path: ~/.local/share/libvirt/images
-  emulator_path: /usr/bin/qemu-kvm
   management_network_device: virbr0
-  video_type: virtio
-  graphics_type: vnc
