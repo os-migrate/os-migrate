@@ -7,9 +7,9 @@ on:
 jobs:
   push_to_reg:
     if: github.repository_owner == 'os-migrate'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install dependencies
         run: |
           sudo locale-gen en_US.UTF-8

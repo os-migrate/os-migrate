@@ -20,26 +20,19 @@ jobs:
   # * Import the container image on each job
   build:
     if: github.repository_owner == 'os-migrate'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.7]
         ansible-version: ['latest']
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v1
-        with:
-          python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
           sudo locale-gen en_US.UTF-8
           sudo dpkg-reconfigure locales
-          sudo python -m pip install --upgrade pip
-          sudo pip install tox
           sudo apt install software-properties-common build-essential findutils -y
       - name: Print podman version
         run: |
@@ -103,15 +96,14 @@ jobs:
 
   functional:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.7]
         ansible-version: ['latest']
     services:
       rabbitmq:
-        image: rabbitmq:latest
+        image: rabbitmq:3
         ports:
           - 5672:5672
         options: >-
@@ -120,7 +112,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
       mysql:
-        image: mysql:5.7
+        image: mysql:8
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_ALLOW_EMPTY_PASSWORD: true
@@ -132,11 +124,7 @@ jobs:
           --health-timeout=5s
           --health-retries=3
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v1
-        with:
-          python-version: ${{ matrix.python-version }}
+      - uses: actions/checkout@v4
       - name: Install dependencies
         run: |
           sudo locale-gen en_US.UTF-8
@@ -144,30 +132,7 @@ jobs:
           sudo apt update
           sudo apt remove --purge mysql-server mysql-client mysql-common -y
           sudo apt autoremove -y
-          # MySQL requirements
           sudo apt install -y mysql-client mysql-common
-          # Httplib2 requirements
-          # We need to install this library un purpose, if not the devstack
-          # installer will crash as pip is not able to determine if its
-          # installed or not
-          sudo apt install python3-httplib2 -y
-          sudo apt remove postgresql-client-common
-          sudo apt install postgresql-client-common=238
-          sudo apt install postgresql-common
-          sudo python -m pip install --upgrade pip
-          sudo python -m pip install --upgrade virtualenv
-          # https://github.com/pypa/setuptools/issues/3772
-          # sudo python -m pip install --upgrade 'setuptools<66'
-          sudo python -m pip install --upgrade build
-
-          # Installing wheel separately because it may be needed to build some
-          # of the packages during dependency backtracking and pip >= 22.0 will
-          # abort backtracking on build failures:
-          #     https://github.com/pypa/pip/issues/10655
-          sudo pip install --disable-pip-version-check --user wheel
-          sudo pip install --disable-pip-version-check --user \
-              ovs sphinx setuptools pyelftools pyOpenSSL ncclient logutils
-
       - name: Configure podman
         run: |
           mkdir -p ~/.config/containers
@@ -286,7 +251,7 @@ jobs:
           sudo chown root:root /bin
       - name: Clone devstack
         run: |
-          git clone --single-branch --branch master https://opendev.org/openstack/devstack
+          git clone --single-branch --branch 'stable/2023.1' https://opendev.org/openstack/devstack
       - name: Configure devstack
         run: |
           DIR=$(pwd)
@@ -352,17 +317,7 @@ jobs:
           sudo mv $DIR/devstack /opt/stack/devstack
           sudo chown -R stack: /opt/stack/devstack
       - name: Start devstack
-        run: |
-          # Hacks to make Devstack install fine. See also:
-          # https://github.com/openstack/devstack/blob/83821a11ac1d6738b63cb10878b8aaa02e153374/tools/fixup_stuff.sh#L88-L96
-          # sudo rm -rf /usr/lib/python3/dist-packages/httplib2-*.egg-info
-          sudo rm -rf /usr/lib/python3/dist-packages/pyasn1_modules-*.egg-info
-          sudo rm -rf /usr/lib/python3/dist-packages/PyYAML-*.egg-info
-          sudo rm -rf /usr/lib/python3/dist-packages/simplejson-*.egg-info
-
-          sudo apt install --reinstall python3-setuptools
-
-          sudo -iu stack bash -c 'cd /opt/stack/devstack; ./stack.sh'
+        run: sudo -iu stack bash -c 'cd /opt/stack/devstack; ./stack.sh'
       - name: Get debug data
         if: failure()
         run: |
