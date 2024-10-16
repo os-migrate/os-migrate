@@ -1,4 +1,4 @@
-FROM quay.io/fedora/fedora:36-x86_64
+FROM quay.io/fedora/fedora:40-x86_64
 RUN dnf install -y glibc-langpack-en
 ARG NO_VAGRANT=0
 ENV LANG en_US.UTF-8

@@ -7,10 +7,10 @@ on:
 jobs:
   build:
     if: github.repository_owner == 'os-migrate'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
-      - name: Use checkout v2 with all git log available
-        uses: actions/checkout@v2
+      - name: Use checkout v4 with all git log available
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Install dependencies
@@ -35,7 +35,7 @@ jobs:
       - name: Render the documentation
         run: |
           ./toolbox/run make docs
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v4
         with:
           name: DocumentationHTML
           path: docs/src/_build/html/

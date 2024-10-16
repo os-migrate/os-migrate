@@ -23,6 +23,8 @@ PORT_MAP_FILE = '/var/run/v2v-migration-ports'
 PORT_LOCK_FILE = '/var/lock/v2v-migration-lock'  # Lock for the port map
 
 try:
+    # will be fixed in another PR
+    # pylint: disable-next=unused-import
     from subprocess import DEVNULL
 except ImportError:
     DEVNULL = open(os.devnull, 'r+', encoding='utf8')
