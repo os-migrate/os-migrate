@@ -7,7 +7,7 @@
 - name: Migration tests
   hosts: migrator
   environment:
-    OS_BLOCK_STORAGE_DEFAULT_MICROVERSION: 3.10
+    OS_BLOCK_STORAGE_DEFAULT_MICROVERSION: 3.59
     OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   tasks:
     - name: clean the environment
