@@ -52,10 +52,8 @@
     - name: verify data contents
       ansible.builtin.assert:
         that:
-          - (resources |
-            json_query("[?params.name ==
-            'osm_server'].params.name")
-            == ['osm_server'])
+          - ( item | json_query('params.name') == 'osm_server' )
+      loop: "{{ resources }}"
 
     - name: import workloads
       ansible.builtin.include_role:

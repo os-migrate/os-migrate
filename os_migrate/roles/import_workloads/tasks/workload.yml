@@ -197,7 +197,7 @@
         - prelim is defined and prelim.changed
         - os_migrate_workload_cleanup_on_failure
         - exports is defined and 'volume_map' in exports
-        - transfer is defined and 'volume_map' in transfer
+        #- transfer is defined and 'volume_map' in transfer
         - item["_migration_params"]["data_copy"]|default(true)
 
     - name: fail if there was a problem in the migration
