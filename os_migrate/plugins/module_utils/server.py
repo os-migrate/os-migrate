@@ -106,7 +106,7 @@ class Server(resource.Resource):
 
         if not self.migration_params()['data_copy']:
             self.update_sdk_params_block_device_mapping_nocopy(sdk_params)
-        else:
+        else: # TODO: FIXME: KeyError here with recent changes. 
             self.update_sdk_params_block_device_mapping_copy(sdk_params, block_device_mapping)
 
         sdk_srv = conn.compute.create_server(**sdk_params)
