@@ -104,9 +104,10 @@ class Server(resource.Resource):
         # support for advanced port creation via Neutron.
         self.update_sdk_params_networks_simple(conn, sdk_params, port_creation_mode)
 
+        # KeyError here with recent changes.
         if not self.migration_params()['data_copy']:
             self.update_sdk_params_block_device_mapping_nocopy(sdk_params)
-        else: # TODO: FIXME: KeyError here with recent changes. 
+        else:
             self.update_sdk_params_block_device_mapping_copy(sdk_params, block_device_mapping)
 
         sdk_srv = conn.compute.create_server(**sdk_params)

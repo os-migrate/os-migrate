@@ -112,20 +112,20 @@
     #         - test_image_workload_boot_nocopy_clean
     #   tags: always
 
-    Workload migration scenario:
-    
-    * Attached volume
-    
-    * From public image
-    
-    * boot_disk_copy: true
-    
-    * data_copy: true
-    
-    * floating_ip_mode: auto
-    
-    * port_creation_mode: nova
-    
+    # Workload migration scenario:
+    #
+    # * Attached volume
+    #
+    # * From public image
+    #
+    # * boot_disk_copy: true
+    #
+    # * data_copy: true
+    #
+    # * floating_ip_mode: auto
+    #
+    # * port_creation_mode: nova
+    #
     - name: seed the workloads
       ansible.builtin.include_tasks: tasks/tenant/seed_workload.yml
       args:
