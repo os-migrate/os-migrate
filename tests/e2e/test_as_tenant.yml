@@ -68,6 +68,7 @@
 
     # Workload migration scenario:
     #
+    # * Attached volume
     #
     # * From tenant-owned image
     #
@@ -79,38 +80,38 @@
     #
     # * port_creation_mode: neutron
     #
-    # - name: seed the workloads
-    #   ansible.builtin.include_tasks: tasks/tenant/seed_workload.yml
-    #   args:
-    #     apply:
-    #       tags:
-    #         - test_seed
-    #         - test_workload
-    #         - test_image_workload_boot_nocopy
-    #   tags: always
-    #   vars:
-    #     workload_image: osm_image
+    - name: seed the workloads
+      ansible.builtin.include_tasks: tasks/tenant/seed_workload.yml
+      args:
+        apply:
+          tags:
+            - test_seed
+            - test_workload
+            - test_image_workload_boot_nocopy
+      tags: always
+      vars:
+        workload_image: osm_image
 
-    # - name: run the workloads
-    #   ansible.builtin.include_tasks: tasks/tenant/run_workload.yml
-    #   args:
-    #     apply:
-    #       tags:
-    #         - test_workload
-    #         - test_image_workload_boot_nocopy
-    #   tags: always
-    #   vars:
-    #     port_creation_mode: neutron
+    - name: run the workloads
+      ansible.builtin.include_tasks: tasks/tenant/run_workload.yml
+      args:
+        apply:
+          tags:
+            - test_workload
+            - test_image_workload_boot_nocopy
+      tags: always
+      vars:
+        port_creation_mode: neutron
 
-    # - name: clean the workloads
-    #   ansible.builtin.include_tasks: tasks/tenant/clean_workload.yml
-    #   args:
-    #     apply:
-    #       tags:
-    #         - test_workload
-    #         - test_image_workload_boot_nocopy
-    #         - test_image_workload_boot_nocopy_clean
-    #   tags: always
+    - name: clean the workloads
+      ansible.builtin.include_tasks: tasks/tenant/clean_workload.yml
+      args:
+        apply:
+          tags:
+            - test_workload
+            - test_image_workload_boot_nocopy
+            - test_image_workload_boot_nocopy_clean
+      tags: always
 
     # Workload migration scenario:
     #
@@ -126,42 +127,42 @@
     #
     # * port_creation_mode: nova
     #
-    # - name: seed the workloads
-    #   ansible.builtin.include_tasks: tasks/tenant/seed_workload.yml
-    #   args:
-    #     apply:
-    #       tags:
-    #         - test_workload
-    #         - test_image_workload_boot_copy
-    #   tags: always
-    #   vars:
-    #     workload_image: "{{ os_migrate_src_osm_server_image }}"
+    - name: seed the workloads
+      ansible.builtin.include_tasks: tasks/tenant/seed_workload.yml
+      args:
+        apply:
+          tags:
+            - test_workload
+            - test_image_workload_boot_copy
+      tags: always
+      vars:
+        workload_image: "{{ os_migrate_src_osm_server_image }}"
 
-    # - name: run the workloads
-    #   ansible.builtin.include_tasks: tasks/tenant/run_workload.yml
-    #   args:
-    #     apply:
-    #       tags:
-    #         - test_workload
-    #         - test_image_workload_boot_copy
-    #   tags: always
-    #   vars:
-    #     set_boot_disk_copy: true
-    #     port_creation_mode: nova
+    - name: run the workloads
+      ansible.builtin.include_tasks: tasks/tenant/run_workload.yml
+      args:
+        apply:
+          tags:
+            - test_workload
+            - test_image_workload_boot_copy
+      tags: always
+      vars:
+        set_boot_disk_copy: true
+        port_creation_mode: nova
 
-    # - name: clean the workloads
-    #   ansible.builtin.include_tasks: tasks/tenant/clean_workload.yml
-    #   args:
-    #     apply:
-    #       tags:
-    #         - test_clean_after
-    #         - test_workload
-    #         - test_image_workload_boot_copy
-    #         - test_image_workload_boot_copy_clean
-    #   tags: always
+    - name: clean the workloads
+      ansible.builtin.include_tasks: tasks/tenant/clean_workload.yml
+      args:
+        apply:
+          tags:
+            - test_clean_after
+            - test_workload
+            - test_image_workload_boot_copy
+            - test_image_workload_boot_copy_clean
+      tags: always
 
     # Workload migration scenario:
-    # TODO: testing to ensure conversion hosts aren't used.
+    #
     # * Attached volume
     #
     # * From public image
