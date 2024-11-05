@@ -1,3 +1,7 @@
+- name: print data copy mode before running conversion host operations
+  ansible.builtin.debug:
+    msg: "Data copy mode: {{ item['_migration_params'] }}"
+
 - name: add conversion hosts to inventory
   ansible.builtin.include_tasks: conv_host_inventory.yml
   vars:
@@ -27,7 +31,7 @@
       os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
       os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
   when:
-    - item["_migration_params"]["data_copy"]|default(true)
+    - item["_migration_params"]["data_copy"]|default(true) # FIXME: this has a conditional - it shouldn't be running
 
 # If conversion hosts are added succesfully to each group, show them all.
 - name: list src conversion hosts
