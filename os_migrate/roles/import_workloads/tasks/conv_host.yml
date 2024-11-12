@@ -19,7 +19,6 @@
       when:
         - os_src_conversion_host_info is defined
         - os_src_conversion_host_info.openstack_conversion_host is defined
-        - os_src_conversion_host_info.openstack_conversion_host.status != "ACTIVE"
         - item["_migration_params"]["data_copy"]|default(true)
 
     - name: fail if src conversion host used when data_copy is false
