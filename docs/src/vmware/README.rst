@@ -97,7 +97,7 @@ Currently we are supporting the following matrice:
      - Yes
      -
    * - Ubuntu Server
-     -
+     - 24
      - Yes
      -
    * - Windows
@@ -105,9 +105,9 @@ Currently we are supporting the following matrice:
      - Yes
      -
    * - Windows Server
-     - X
-     -
+     - 2k22
      - Yes
+     -
    * - SuSe
      - X
      -
@@ -149,11 +149,49 @@ And the live demo here:
 
 .. _Alt Migration from VMware to OpenStack: https://www.youtube.com/watch?v=XnEQ8WVGW64
 
+Running migration
+-----------------
 
-Variables files and Ansible command presented in the demo
----------------------------------------------------------
+Conversion host
+----------------
+You can use os_migrate.os_migration collection to deploy a conversion, but you can
+easily create your conversion host manually.
 
-**myvars.yaml:**
+A conversion host is basically an OpenStack instance.
+
+> **Note:** Important: If you want to take benefit of the current supported OS, it's highly recommended to use a *CentOS-10* release or *RHEL-9.5* and superior. If you want to use other Linux distribution, make sure the virtio-win package is equal or higher than 1.40 version.
+
+```
+curl -O -k https://cloud.centos.org/centos/10-stream/x86_64/images/CentOS-Stream-GenericCloud-10-20250217.0.x86_64.qcow2
+
+# Create OpenStack image:
+openstack image create --disk-format qcow2 --file CentOS-Stream-GenericCloud-10-20250217.0.x86_64.qcow2 CentOS-Stream-GenericCloud-10-20250217.0.x86_64.qcow2
+
+# Create flavor, security group and network if needed
+openstack server create --flavor x.medium --image 14b1a895-5003-4396-888e-1fa55cd4adf8  \
+  --key-name default --network private   vmware-conv-host
+openstack server add floating ip vmware-conv-host 192.168.18.205
+```
+
+#### Inventory, Variables files and Ansible command:
+
+**inventory.yml**
+
+```
+migrator:
+  hosts:
+    localhost:
+      ansible_connection: local
+      ansible_python_interpreter: "{{ ansible_playbook_python }}"
+conversion_host:
+  hosts:
+    192.168.18.205:
+      ansible_ssh_user: cloud-user
+      ansible_ssh_private_key_file: key
+```
+
+
+**myvars.yml:**
 
 ```
 # osm working directory:
@@ -180,7 +218,7 @@ vms_list:
   - rhel-9.4-1
 ```
 
-**secrets.yaml:**
+**secrets.yml:**
 
 ```
 # VMware parameters:
@@ -208,7 +246,7 @@ dst_cloud:
 **Ansible command:**
 
 ```
-ansible-playbook -i inventory.yml os_migrate.vmware_migration_kit.migration -e @secrets.yaml -e @myvars.yaml
+ansible-playbook -i inventory.yml os_migrate.vmware_migration_kit.migration -e @secrets.yml -e @myvars.yml
 ```
 
 Usage
