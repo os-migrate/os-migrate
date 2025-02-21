@@ -1,0 +1,45 @@
+clouds:
+{% for migrate_params in os_migrate_params %}
+{% if loop.index == 1 %}
+  src:
+{% else %}
+  src-{{ loop.index }}:
+{% endif %}
+{% if migrate_params.os_migrate_src_auth is defined and os_migrate_src_auth|length %}
+    auth: 
+      {{migrate_params.os_migrate_src_auth|to_nice_yaml(indent=2)|indent(6)}}
+{%- endif %}
+{% if os_migrate_src_auth_type is defined %}
+    auth_type: {{os_migrate_src_auth_type}}
+{%- endif %}
+{% if os_migrate_src_ca_cert is defined and os_migrate_src_ca_cert|length %}
+    cacert: {{os_migrate_src_ca_cert}}
+{% endif %}
+{% if migrate_params.os_migrate_src_region_name is defined and os_migrate_src_region_name|length %}
+    region_name: {{migrate_params.os_migrate_src_region_name}}
+{% endif %}
+{% if os_migrate_src_block_storage_api_version is defined and os_migrate_src_block_storage_api_version|length %}
+    block_storage_api_version: {{os_migrate_src_block_storage_api_version}}
+{% endif %}
+{% if loop.index == 1 %}
+  dst:
+{% else %}
+  dst-{{ loop.index }}:
+{% endif %}
+{% if migrate_params.os_migrate_dst_auth is defined and os_migrate_dst_auth|length %}
+    auth:
+      {{migrate_params.os_migrate_dst_auth|to_nice_yaml(indent=2)|indent(6)}}
+{%- endif %}
+{% if os_migrate_dst_auth_type is defined %}
+    auth_type: {{os_migrate_dst_auth_type}}
+{%- endif %}
+{% if os_migrate_dst_ca_cert is defined and os_migrate_dst_ca_cert|length %}
+    cacert: {{os_migrate_dst_ca_cert}}
+{% endif %}
+{% if migrate_params.os_migrate_dst_region_name is defined and os_migrate_dst_region_name|length %}
+    region_name: {{migrate_params.os_migrate_dst_region_name}}
+{% endif %}
+{% if os_migrate_dst_block_storage_api_version is defined and os_migrate_dst_block_storage_api_version|length %}
+    block_storage_api_version: {{os_migrate_dst_block_storage_api_version}}
+{% endif %}
+{% endfor %}

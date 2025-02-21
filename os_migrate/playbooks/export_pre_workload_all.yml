@@ -1,6 +1,8 @@
 - hosts: migrator
   environment:
     OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
+  vars:
+    os_migrate_current_cloud: "{{ item }}"
   roles:
     - os_migrate.os_migrate.export_networks
     - os_migrate.os_migrate.export_subnets
@@ -9,3 +11,5 @@
     - os_migrate.os_migrate.export_routers
     - os_migrate.os_migrate.export_router_interfaces
     - os_migrate.os_migrate.export_images
+  loop: "{{ os_migrate_src_clouds }}"
+  when: os_migrate_all_mode | default(false) == true

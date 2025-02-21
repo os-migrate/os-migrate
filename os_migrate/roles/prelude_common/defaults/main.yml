@@ -15,3 +15,4 @@
 # under the License.
 
 os_migrate_common_minimum_openstacksdk_version: "0.99.0"
+os_migrate_all_mode: false
