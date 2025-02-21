@@ -21,6 +21,8 @@ a very number of virtual machines as entry point, or can migrate sensitive virtu
 a near zero down time with the change block tracking VMWare option (CBT) and so perform the virtual
 machine migration in two steps. The migration can also be done without conversion host.
 
+.. _workflow:
+
 Workflow
 --------
 
@@ -37,6 +39,7 @@ you have big disk or a huge amount of VMs to migrate: the performance are really
 
 All of these are configurable with Ansible boolean variables.
 
+.. _features-and-support:
 
 Features and supported OS
 -------------------------
@@ -113,6 +116,8 @@ Currently we are supporting the following matrice:
      -
      - Yes
 
+.. _examples-and-demo:
+
 Nbdkit migration example
 ------------------------
 
@@ -149,11 +154,16 @@ And the live demo here:
 
 .. _Alt Migration from VMware to OpenStack: https://www.youtube.com/watch?v=XnEQ8WVGW64
 
+.. _running-migration:
+
 Running migration
 -----------------
 
+.. _conversion-host:
+
 Conversion host
 ----------------
+
 You can use os_migrate.os_migration collection to deploy a conversion, but you can
 easily create your conversion host manually.
 
@@ -161,93 +171,98 @@ A conversion host is basically an OpenStack instance.
 
 > **Note:** Important: If you want to take benefit of the current supported OS, it's highly recommended to use a *CentOS-10* release or *RHEL-9.5* and superior. If you want to use other Linux distribution, make sure the virtio-win package is equal or higher than 1.40 version.
 
-```
-curl -O -k https://cloud.centos.org/centos/10-stream/x86_64/images/CentOS-Stream-GenericCloud-10-20250217.0.x86_64.qcow2
+.. code-block:: bash
 
-# Create OpenStack image:
-openstack image create --disk-format qcow2 --file CentOS-Stream-GenericCloud-10-20250217.0.x86_64.qcow2 CentOS-Stream-GenericCloud-10-20250217.0.x86_64.qcow2
+    curl -O -k https://cloud.centos.org/centos/10-stream/x86_64/images/CentOS-Stream-GenericCloud-10-20250217.0.x86_64.qcow2
 
-# Create flavor, security group and network if needed
-openstack server create --flavor x.medium --image 14b1a895-5003-4396-888e-1fa55cd4adf8  \
-  --key-name default --network private   vmware-conv-host
-openstack server add floating ip vmware-conv-host 192.168.18.205
-```
+    # Create OpenStack image:
+    openstack image create --disk-format qcow2 --file CentOS-Stream-GenericCloud-10-20250217.0.x86_64.qcow2 CentOS-Stream-GenericCloud-10-20250217.0.x86_64.qcow2
 
-#### Inventory, Variables files and Ansible command:
+    # Create flavor, security group and network if needed
+    openstack server create --flavor x.medium --image 14b1a895-5003-4396-888e-1fa55cd4adf8  \
+      --key-name default --network private   vmware-conv-host
+    openstack server add floating ip vmware-conv-host 192.168.18.205
+
+.. _inventory-variables:
+
+Inventory, Variables files and Ansible command:
+-----------------------------------------------
 
 **inventory.yml**
 
-```
-migrator:
-  hosts:
-    localhost:
-      ansible_connection: local
-      ansible_python_interpreter: "{{ ansible_playbook_python }}"
-conversion_host:
-  hosts:
-    192.168.18.205:
-      ansible_ssh_user: cloud-user
-      ansible_ssh_private_key_file: key
-```
+.. code-block:: yaml
+
+    migrator:
+      hosts:
+        localhost:
+          ansible_connection: local
+          ansible_python_interpreter: "{{ ansible_playbook_python }}"
+    conversion_host:
+      hosts:
+        192.168.18.205:
+          ansible_ssh_user: cloud-user
+          ansible_ssh_private_key_file: key
 
 
 **myvars.yml:**
 
-```
-# osm working directory:
-os_migrate_vmw_data_dir: /opt/os-migrate
-copy_openstack_credentials_to_conv_host: false
+.. code-block:: yaml
 
-# Re-use an already deployed conversion host:
-already_deploy_conversion_host: true
+    # osm working directory:
+    os_migrate_vmw_data_dir: /opt/os-migrate
+    copy_openstack_credentials_to_conv_host: false
 
-# If no mapped network then set the openstack network:
-openstack_private_network: private
+    # Re-use an already deployed conversion host:
+    already_deploy_conversion_host: true
 
-# Security groups for the instance:
-security_groups: ab7e2b1a-b9d3-4d31-9d2a-bab63f823243
-use_existing_flavor: true
-# key pair name, could be left blank
-ssh_key_name: default
-# network settings for openstack:
-os_migrate_create_network_port: true
-copy_metadata_to_conv_host: true
-used_mapped_networks: false
+    # If no mapped network then set the openstack network:
+    openstack_private_network: private
 
-vms_list:
-  - rhel-9.4-1
-```
+    # Security groups for the instance:
+    security_groups: ab7e2b1a-b9d3-4d31-9d2a-bab63f823243
+    use_existing_flavor: true
+    # key pair name, could be left blank
+    ssh_key_name: default
+    # network settings for openstack:
+    os_migrate_create_network_port: true
+    copy_metadata_to_conv_host: true
+    used_mapped_networks: false
+
+    vms_list:
+      - rhel-9.4-1
 
 **secrets.yml:**
 
-```
-# VMware parameters:
-esxi_hostname: 10.0.0.7
-vcenter_hostname: 10.0.0.7
-vcenter_username: root
-vcenter_password: root
-vcenter_datacenter: Datacenter
+.. code-block:: yaml
 
-os_cloud_environ: psi-rhos-upgrades-ci
-dst_cloud:
-  auth:
-    auth_url: https://keystone-public-openstack.apps.ocp-4-16.standalone
-    username: admin
-    project_id: xyz
-    project_name: admin
-    user_domain_name: Default
-    password: openstack
-  region_name: regionOne
-  interface: public
-  insecure: true
-  identity_api_version: 3
-```
+    # VMware parameters:
+    esxi_hostname: 10.0.0.7
+    vcenter_hostname: 10.0.0.7
+    vcenter_username: root
+    vcenter_password: root
+    vcenter_datacenter: Datacenter
+
+    os_cloud_environ: psi-rhos-upgrades-ci
+    dst_cloud:
+      auth:
+        auth_url: https://keystone-public-openstack.apps.ocp-4-16.standalone
+        username: admin
+        project_id: xyz
+        project_name: admin
+        user_domain_name: Default
+        password: openstack
+      region_name: regionOne
+      interface: public
+      insecure: true
+      identity_api_version: 3
 
 **Ansible command:**
 
-```
-ansible-playbook -i inventory.yml os_migrate.vmware_migration_kit.migration -e @secrets.yml -e @myvars.yml
-```
+.. code-block:: bash
+
+    ansible-playbook -i inventory.yml os_migrate.vmware_migration_kit.migration -e @secrets.yml -e @myvars.yml
+
+.. _usage:
 
 Usage
 -----
@@ -257,100 +272,105 @@ You can find a "how to" here, to start from sratch with a container:
 
 Clone repository or install from ansible galaxy
 
-```
-git clone https://github.com/os-migrate/vmware-migration-kit
-ansible-galaxy collection install os_migrate.vmware_migration_kit
-```
+.. code-block:: bash
+
+    git clone https://github.com/os-migrate/vmware-migration-kit
+    ansible-galaxy collection install os_migrate.vmware_migration_kit
+
+.. _ndbkit-default:
 
 Nbdkit (default)
 ----------------
 
 Edit vars.yaml file and add our own setting:
 
-```
-esxi_hostname: ********
-vcenter_hostname: *******
-vcenter_username: root
-vcenter_password: *****
-vcenter_datacenter: Datacenter
-```
+.. code-block:: yaml
+
+    esxi_hostname: ********
+    vcenter_hostname: *******
+    vcenter_username: root
+    vcenter_password: *****
+    vcenter_datacenter: Datacenter
 
 If you already have a conversion host, or if you want to re-used a previously deployed one:
 
-```
-vddk_libdir: /usr/lib/vmware-vix-disklib
-already_deploy_conversion_host: true
-```
+.. code-block:: yaml
+
+    vddk_libdir: /usr/lib/vmware-vix-disklib
+    already_deploy_conversion_host: true
 
 Then specify the Openstack credentials:
 
-```
-# OpenStack destination cloud auth parameters:
-os_cloud_environ: psi-rhos-upgrades-ci
-dst_cloud:
-  auth:
-    auth_url: https://openstack.dst.cloud:13000/v3
-    username: tenant
-    project_id: xyz
-    project_name: migration
-    user_domain_name: osm.com
-    password: password
-  region_name: regionOne
-  interface: public
-  identity_api_version: 3
+.. code-block:: yaml
 
-# OpenStack migration parameters:
-# Use mapped networks or not:
-used_mapped_networks: false
-network_map:
-  VM Network: provider_network_1
+    # OpenStack destination cloud auth parameters:
+    os_cloud_environ: psi-rhos-upgrades-ci
+    dst_cloud:
+      auth:
+        auth_url: https://openstack.dst.cloud:13000/v3
+        username: tenant
+        project_id: xyz
+        project_name: migration
+        user_domain_name: osm.com
+        password: password
+      region_name: regionOne
+      interface: public
+      identity_api_version: 3
 
-# If no mapped network then set the openstack network:
-openstack_private_network: provider_network_1
+    # OpenStack migration parameters:
+    # Use mapped networks or not:
+    used_mapped_networks: false
+    network_map:
+      VM Network: provider_network_1
 
-# Security groups for the instance:
-security_groups: 4f077e64-bdf6-4d2a-9f2c-c5588f4948ce
-use_existing_flavor: true
+    # If no mapped network then set the openstack network:
+    openstack_private_network: provider_network_1
 
-os_migrate_create_network_port: false
+    # Security groups for the instance:
+    security_groups: 4f077e64-bdf6-4d2a-9f2c-c5588f4948ce
+    use_existing_flavor: true
 
-# OS-migrate parameters:
-# osm working directory:
-os_migrate_vmw_data_dir: /opt/os-migrate
+    os_migrate_create_network_port: false
 
-# Set this to true if the Openstack "dst_cloud" is a clouds.yaml file
-# other, if the dest_cloud is a dict of authentication parameters, set
-# this to false:
-copy_openstack_credentials_to_conv_host: false
+    # OS-migrate parameters:
+    # osm working directory:
+    os_migrate_vmw_data_dir: /opt/os-migrate
 
-# Teardown
-# Set to true if you want osm to delete everything on the destination cloud.
-os_migrate_tear_down: true
+    # Set this to true if the Openstack "dst_cloud" is a clouds.yaml file
+    # other, if the dest_cloud is a dict of authentication parameters, set
+    # this to false:
+    copy_openstack_credentials_to_conv_host: false
 
-# VMs list
-vms_lisr:
-  - rhel-1
-  - rhel-2
-```
+    # Teardown
+    # Set to true if you want osm to delete everything on the destination cloud.
+    os_migrate_tear_down: true
+
+    # VMs list
+    vms_lisr:
+      - rhel-1
+      - rhel-2
+
+.. _virt-v2v:
 
 Virt-v2v
 --------
 
-Provide the following additional informations:
+Provide the following additional information:
 
-```
-# virt-v2v parameters
-vddk_thumbprint: XX:XX:XX
-vddk_libdir: /usr/lib/vmware-vix-disklib
-```
+.. code-block:: yaml
+
+    # virt-v2v parameters
+    vddk_thumbprint: XX:XX:XX
+    vddk_libdir: /usr/lib/vmware-vix-disklib
 
 In order to generate the thumbprint of your VMWare source cloud you need to use:
 
-```
-# thumbprint
-openssl s_client -connect ESXI_SERVER_NAME:443 </dev/null |
-   openssl x509 -in /dev/stdin -fingerprint -sha1 -noout
-```
+.. code-block:: bash
+    # thumbprint
+    openssl s_client -connect ESXI_SERVER_NAME:443 </dev/null |
+       openssl x509 -in /dev/stdin -fingerprint -sha1 -noout
+
+.. _ansible-configuration:
 
 Ansible configuration
 ---------------------
@@ -358,25 +378,27 @@ Ansible configuration
 Create an inventory file, and replace the conv_host_ip by the ip address of your
 conversion host:
 
-```
-migrator:
-  hosts:
-    localhost:
-      ansible_connection: local
-      ansible_python_interpreter: "{{ ansible_playbook_python }}"
-conversion_host:
-  hosts:
-    conv_host_ip:
-      ansible_ssh_user: cloud-user
-      ansible_ssh_private_key_file: /home/stack/.ssh/conv-host
+.. code-block:: yaml
 
-```
+    migrator:
+      hosts:
+        localhost:
+          ansible_connection: local
+          ansible_python_interpreter: "{{ ansible_playbook_python }}"
+    conversion_host:
+      hosts:
+        conv_host_ip:
+          ansible_ssh_user: cloud-user
+          ansible_ssh_private_key_file: /home/stack/.ssh/conv-host
+
 
 Then run the migration with:
 
-```
-ansible-playbook -i localhost_inventory.yml os_migrate.vmware_migration_kit.migration -e @vars.yaml
-```
+.. code-block:: bash
+
+    ansible-playbook -i localhost_inventory.yml os_migrate.vmware_migration_kit.migration -e @vars.yaml
+
+.. _migration-outside-ansible:
 
 Running Migration outside of Ansible
 ------------------------------------
@@ -387,37 +409,37 @@ The binaries are located in the plugins directory.
 From your conversion host (or an Openstack instance inside the destination cloud) you need to export
 Openstack variables:
 
-```
+.. code-block:: bash
+
  export OS_AUTH_URL=https://keystone-public-openstack.apps.ocp-4-16.standalone
  export OS_PROJECT_NAME=admin
  export OS_PASSWORD=admin
  export OS_USERNAME=admin
  export OS_DOMAIN_NAME=Default
  export OS_PROJECT_ID=xyz
- ```
 
 Then create the argument json file, for example:
 
-```
-cat <<EOF > args.json
-{
-  "user": "root",
-  "password": "root",
-  "server": "10.0.0.7",
-  "vmname": "rhel-9.4-1"
-}
-EOF
-```
+.. code-block:: bash
+
+    cat <<EOF > args.json
+    {
+      "user": "root",
+      "password": "root",
+      "server": "10.0.0.7",
+      "vmname": "rhel-9.4-1"
+    }
+    EOF
 
 Then execute the `migrate` binary:
 
-```
-pushd vmware-migration-kit/vmware_migration_kit
-./plugins/modules/migrate/migrate
-```
+.. code-block:: bash
+
+    pushd vmware-migration-kit/vmware_migration_kit
+    ./plugins/modules/migrate/migrate
 
 You can see the logs into:
 
-```
-tail -f /tmp/osm-nbdkit.log
-```
+.. code-block:: bash
+
+    tail -f /tmp/osm-nbdkit.log
