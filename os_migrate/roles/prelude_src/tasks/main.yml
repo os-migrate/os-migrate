@@ -1,10 +1,28 @@
+- name: list all available clouds (Push Button Mode)
+  when:
+    - os_migrate_src_filter_current_project|default(true)|bool
+    - os_migrate_all_mode | default(false) == true
+  block:
+    - name: Read auth file
+      ansible.builtin.slurp:
+        src: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
+      register: _clouds_yaml_raw
+
+    - name: Parse clouds.yaml contents
+      ansible.builtin.set_fact:
+        _clouds_yaml: "{{ _clouds_yaml_raw['content'] | b64decode | from_yaml }}"
+
+    - name: Extract all `src-*` clouds
+      ansible.builtin.set_fact:
+        os_migrate_src_clouds: "{{ _clouds_yaml['clouds'] | dict2items | selectattr('key', 'match', '^src.*$') | map(attribute='key') | list }}"
+
 - name: set os_migrate_src_project unless it was set explicitly
   when:
     - os_migrate_src_filter_current_project|default(true)|bool
   block:
     - name: fetch information about currently authenticated user/project
       os_migrate.os_migrate.auth_info:
-        cloud: src
+        cloud: "{{ os_migrate_current_cloud | default('src') }}"
         validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
         ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
         client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
