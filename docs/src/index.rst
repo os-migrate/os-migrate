@@ -51,6 +51,7 @@ Contents
    :maxdepth: 2
 
    user/README.rst
+   vmware/README.rst
    roles
    modules
    changelog
