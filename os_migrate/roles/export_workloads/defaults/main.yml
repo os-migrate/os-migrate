@@ -1,5 +1,5 @@
 os_migrate_workloads_filter:
-  - regex: .*
+  - regex: test-fip*
 
 # `null` means we let the Server class decide on defaults.
 # In case of boot_disk_copy, the default differs based on whether
