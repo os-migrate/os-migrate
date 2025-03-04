@@ -2,7 +2,7 @@ name: consistency-functional
 on:
   push:
     paths-ignore:
-      - 'docs/**'
+      - "docs/**"
     branches:
       - main
   pull_request:
@@ -11,7 +11,7 @@ on:
   # there is a CI failure related to a
   # problem deploying DevStack.
   schedule:
-    - cron: '0 */8 * * *'
+    - cron: "0 */8 * * *"
 
 jobs:
   # TODO: Add a previous job that:
@@ -24,7 +24,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        ansible-version: ['latest']
+        ansible-version: ["latest"]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -93,14 +93,13 @@ jobs:
           git log --oneline | head -n50
           make lint-commit-messages
 
-
   functional:
     needs: build
     runs-on: ubuntu-20.04
     strategy:
       max-parallel: 4
       matrix:
-        ansible-version: ['latest']
+        ansible-version: ["latest"]
     services:
       rabbitmq:
         image: rabbitmq:3
@@ -251,7 +250,7 @@ jobs:
           sudo chown root:root /bin
       - name: Clone devstack
         run: |
-          git clone --single-branch --branch 'stable/2023.1' https://opendev.org/openstack/devstack
+          git clone --single-branch --branch 'unmaintained/2023.1' https://opendev.org/openstack/devstack
       - name: Configure devstack
         run: |
           DIR=$(pwd)
