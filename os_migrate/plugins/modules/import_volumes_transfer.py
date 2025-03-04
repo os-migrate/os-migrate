@@ -12,9 +12,9 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = '''
 ---
-module: import_workload_src_cleanup
+module: import_workload_transfer_volumes
 
-short_description: Clean up temporary volumes after a workload migration
+short_description: Create destination volumes and transfer source data.
 
 extends_documentation_fragment: openstack
 
@@ -23,7 +23,7 @@ version_added: "2.9.0"
 author: "OpenStack tenant migration tools (@os-migrate)"
 
 description:
-  - Remove any temporary snapshots or volumes associated with this workload migration.
+  - "Connect to the destination cloud to create new volumes, and copy data from the source cloud."
 
 options:
   auth:
@@ -59,7 +59,7 @@ options:
     type: bool
   conversion_host:
     description:
-      - Dictionary with information about the source conversion host (address, status, name, id)
+      - Dictionary with information about the destination conversion host (address, status, name, id)
     required: true
     type: dict
   data:
@@ -72,26 +72,33 @@ options:
       - Path to store a log file for this conversion process.
     required: false
     type: str
-  state_file:
-    description:
-      - Path to store a transfer progress file for this conversion process.
-    required: false
-    type: str
   src_conversion_host_address:
     description:
-      - Optional IP address of the source conversion host. Without this, the
-        plugin will use the 'access_ipv4' property of the conversion host instance.
-    required: false
+      - Require IP address of the source conversion host.
+      - This is used by the destination conversion host to initiate data transfer.
+    required: true
     type: str
   ssh_key_path:
     description:
-      - Path to an SSH private key authorized on the source cloud.
+      - Path to an SSH private key authorized on the destination cloud.
     required: true
     type: str
   ssh_user:
     description:
       - The SSH user to connect to the conversion hosts.
+      - Provided by the import_workloads_export_volumes module.
     required: true
+    type: str
+  state_file:
+    description:
+      - Path to store a transfer progress file for this conversion process.
+    required: false
+    type: str
+  dst_conversion_host_address:
+    description:
+      - Optional IP address of the destination conversion host. Without this, the
+        plugin will use the 'access_ipv4' property of the conversion host instance.
+    required: false
     type: str
   transfer_uuid:
     description:
@@ -221,33 +228,14 @@ workload.yml:
       conversion_host:
         "{{ os_dst_conversion_host_info.openstack_conversion_host }}"
       ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
+      ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
       transfer_uuid: "{{ exports.transfer_uuid }}"
       src_conversion_host_address:
         "{{ os_src_conversion_host_info.openstack_conversion_host.address }}"
       volume_map: "{{ exports.volume_map }}"
       state_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.state"
       log_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.log"
-    register: transfer
-    when: prelim.changed
-
-  - name: clean up after migration
-    os_migrate.os_migrate.import_workload_src_cleanup:
-      auth: "{{ os_migrate_src_auth }}"
-      auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
-      region_name: "{{ os_migrate_src_region_name|default(omit) }}"
-      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-      data: "{{ item }}"
-      conversion_host:
-        "{{ os_src_conversion_host_info.openstack_conversion_host }}"
-      ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
-      ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
-      transfer_uuid: "{{ exports.transfer_uuid }}"
-      volume_map: "{{ exports.volume_map }}"
-      state_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.state"
-      log_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.log"
+    register: volume_map
     when: prelim.changed
 
   rescue:
@@ -256,6 +244,38 @@ workload.yml:
 '''
 
 RETURN = '''
+block_device_mapping:
+  description:
+    - A block_device_mapping_v2 structure for use in OpenStack's create_server().
+    - Used to attach destination volumes to the new instance in the right order.
+  returned: Only after successfully transferring volumes from the source cloud.
+  type: dict
+  sample: [{'boot_index': -1, 'delete_on_termination': false, 'destination_type': 'volume',
+          'device_name': 'vdb', 'source_type': 'volume', 'uuid': '65d9f006-a4e2-46ba-a082-700549d8635a'}]
+volume_map:
+  description:
+    - Updated mapping of source volume devices to NBD export URLs.
+    - Takes the input volume_map and fills out the destination-specific fields.
+  returned: Only after successfully transferring volumes from the source cloud.
+  type: dict
+  sample:
+    "volume_map": {
+        "/dev/vda": {
+            "bootable": true,
+            "dest_dev": "/dev/vdc",
+            "dest_id": "3b7a57d7-8210-47f9-b592-a6627ae52d13",
+            "image_id": null,
+            "name": "migration-vm-boot",
+            "port": 49196,
+            "progress": 100.0,
+            "size": 10,
+            "snap_id": "564398da-3e39-462d-93aa-aa5b7ea8ea61",
+            "source_dev": "/dev/vdat",
+            "source_id": "059635b7-451f-4a64-978a-7c2e9e4c15ff",
+            "url": "nbd://localhost:49180/9b8a64b3-c976-4103-b34e-995e4ab9f57b"
+        }
+    }
+
 '''
 
 from ansible.module_utils.basic import AnsibleModule
@@ -269,54 +289,70 @@ except ImportError:
         import openstack_full_argument_spec, openstack_cloud_from_module
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import server
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils.server_volume \
+    import ServerVolume
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils.volume_common \
-    import use_lock, ATTACH_LOCK_FILE_SOURCE, DEFAULT_TIMEOUT, OpenStackVolumeBase
+    import OpenStackVolumeBase, RemoteShell, use_lock, ATTACH_LOCK_FILE_DESTINATION, DEFAULT_TIMEOUT, DEVNULL
 
+import os
+import re
 import subprocess
 import time
 
 
-class OpenStackSourceHostCleanup(OpenStackVolumeBase):
-    """ Removes temporary migration volumes and snapshots from source cloud. """
-
-    def __init__(self, openstack_connection, source_conversion_host_id,
-                 ssh_key_path, ssh_user, source_instance_id, transfer_uuid,
-                 volume_map, source_conversion_host_address=None, state_file=None,
-                 log_file=None, timeout=DEFAULT_TIMEOUT):
+class OpenStackDestinationVolume(OpenStackVolumeBase):
+    def __init__(self, openstack_connection, destination_conversion_host_id,
+                 ssh_key_path, ssh_user, transfer_uuid, source_conversion_host_address,
+                 volume_map, destination_conversion_host_address=None,
+                 state_file=None, log_file=None, timeout=DEFAULT_TIMEOUT):
 
         super().__init__(
             openstack_connection,
-            source_conversion_host_id,
+            destination_conversion_host_id,
             ssh_key_path,
             ssh_user,
             transfer_uuid,
-            conversion_host_address=source_conversion_host_address,
+            conversion_host_address=destination_conversion_host_address,
             state_file=state_file,
             log_file=log_file,
             timeout=timeout,
         )
 
         # Required unique parameters:
-        # source_instance_id: ID of VM that was migrated from the source
+        # source_conversion_host_address: Source conversion host IP address for
+        #                                 direct connection from destination.
         # volume_map: Volume map returned by export_volumes module
-        self.source_instance_id = source_instance_id
+        self.source_conversion_host_address = source_conversion_host_address
         self.volume_map = volume_map
 
-        # This will make _release_ports clean up ports from the export module
-        for path, mapping in volume_map.items():
-            port = mapping['port']
-            self.claimed_ports.append(port)
+        # Match for qemu_img progress percentage
+        self.qemu_progress_re = re.compile(r'\((\d+\.\d+)/100%\)')
+
+        # SSH tunnel process
+        self.forwarding_process = None
+        self.forwarding_process_command = None
+
+    def transfer_exports(self):
+      try:
+          self._create_forwarding_process()
+          self._create_destination_volumes()
+          self._attach_destination_volumes()
+          self._convert_destination_volumes()
+          self._detach_destination_volumes()
+      finally:
+          self._stop_forwarding_process()
+          self._release_ports()
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        data=dict(type='dict', required=True),
         conversion_host=dict(type='dict', required=True),
         ssh_key_path=dict(type='str', required=True),
         ssh_user=dict(type='str', required=True),
         transfer_uuid=dict(type='str', required=True),
+        src_conversion_host_address=dict(type='str', required=True),
         volume_map=dict(type='dict', required=True),
-        src_conversion_host_address=dict(type='str', default=None),
+        dst_conversion_host_address=dict(type='str', default=None),
         state_file=dict(type='str', default=None),
         log_file=dict(type='str', default=None),
         timeout=dict(type='int', default=DEFAULT_TIMEOUT),
@@ -331,38 +367,68 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    src = server.Server.from_data(module.params['data'])
-    params, info = src.params_and_info()
+    # volume = conn.block_storage.get_volume(module.params['data']['_info']['id'])
+    # volume = ServerVolume.from_data(module.params['data'])
+    #ser_server = server.Server.from_data(module.params['data'])
 
     # Required parameters
-    source_conversion_host_id = module.params['conversion_host']['id']
+    destination_conversion_host_id = module.params['conversion_host']['id']
     ssh_key_path = module.params['ssh_key_path']
     ssh_user = module.params['ssh_user']
-    source_instance_id = info['id']
     transfer_uuid = module.params['transfer_uuid']
+    source_conversion_host_address = \
+        module.params['src_conversion_host_address']
     volume_map = module.params['volume_map']
 
     # Optional parameters
-    source_conversion_host_address = \
-        module.params.get('src_conversion_host_address', None)
+    destination_conversion_host_address = \
+        module.params.get('dst_conversion_host_address', None)
     state_file = module.params.get('state_file', None)
     log_file = module.params.get('log_file', None)
     timeout = module.params['timeout']
 
-    host_cleanup = OpenStackSourceHostCleanup(
+    destination_host = OpenStackDestinationVolume(
         conn,
-        source_conversion_host_id,
+        destination_conversion_host_id,
         ssh_key_path,
         ssh_user,
-        source_instance_id,
         transfer_uuid,
+        source_conversion_host_address,
         volume_map,
-        source_conversion_host_address=source_conversion_host_address,
+        destination_conversion_host_address=destination_conversion_host_address,
         state_file=state_file,
         log_file=log_file,
         timeout=timeout,
     )
-    host_cleanup.close_exports()
+    destination_host.transfer_exports()
+
+    block_device_mapping = []
+    for path in sorted(destination_host.volume_map.keys()):
+        name = path.split('/')[-1]
+        uuid = destination_host.volume_map[path]['dest_id']
+
+        if path == '/dev/vda':
+            entry = {
+                'boot_index': 0,
+                'delete_on_termination': True,
+                'destination_type': 'volume',
+                'device_name': name,
+                'source_type': 'volume',
+                'uuid': uuid,
+            }
+        else:
+            entry = {
+                'boot_index': -1,
+                'delete_on_termination': False,
+                'destination_type': 'volume',
+                'device_name': name,
+                'source_type': 'volume',
+                'uuid': uuid,
+            }
+        block_device_mapping.append(entry)
+
+    result['volume_map'] = destination_host.volume_map
+    result['block_device_mapping'] = block_device_mapping
 
     module.exit_json(**result)
 

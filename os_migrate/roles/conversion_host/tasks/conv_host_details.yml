@@ -22,6 +22,10 @@
         - os_src_conversion_host_info.openstack_conversion_host.status != "ACTIVE"
         - item["_migration_params"]["data_copy"]|default(true)
 
+    - name: set source convertion host address
+      ansible.builtin.set_fact:
+        os_src_conversion_host_info: "{{ os_src_conversion_host_info }}"
+
     - name: get destination conversion host address
       os_migrate.os_migrate.os_conversion_host_info:
         cloud: dst
@@ -43,6 +47,10 @@
         - os_dst_conversion_host_info.openstack_conversion_host is defined
         - os_dst_conversion_host_info.openstack_conversion_host.status != "ACTIVE"
         - item["_migration_params"]["data_copy"]|default(true)
+
+    - name: set destination convertion host address
+      ansible.builtin.set_fact:
+        os_dst_conversion_host_info: "{{ os_dst_conversion_host_info }}"
 
     # Depending on the virtualization hypervisor,
     # the conversion host machines can take too

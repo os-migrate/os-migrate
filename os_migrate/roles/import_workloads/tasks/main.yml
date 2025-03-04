@@ -22,8 +22,9 @@
     mode: '0750'
 
 - name: check data copy state and run conversion host operations
-  ansible.builtin.include_tasks: conv_host.yml
-  loop: "{{ filtered_workloads }}"
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.conversion_host
+    tasks_from: conv_host_details.yml
 
 - name: import workloads
   ansible.builtin.include_tasks: workload.yml

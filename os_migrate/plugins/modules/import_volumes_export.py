@@ -253,18 +253,22 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils.volume_common \
     import use_lock, ATTACH_LOCK_FILE_SOURCE, DEFAULT_TIMEOUT, OpenStackVolumeBase
 
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils.server_volume \
+    import ServerVolume
+
 import subprocess
 import time
 import uuid
+import os
+import logging
 
 
 class OpenStackSourceVolume(OpenStackVolumeBase):
     """ Export volumes from an OpenStack instance over NBD. """
 
     def __init__(self, openstack_connection, source_conversion_host_id,
-                 ssh_key_path, ssh_user, source_instance_id, ser_server,
-                 state_file=None, log_file=None, source_conversion_host_address=None,
-                 boot_volume_prefix=None, timeout=DEFAULT_TIMEOUT):
+                 ssh_key_path, ssh_user, volume_list=None, state_file=None, log_file=None, source_conversion_host_address=None,
+                 transfer_uuid=None, timeout=DEFAULT_TIMEOUT):
         # UUID marker for child processes on conversion hosts.
         transfer_uuid = str(uuid.uuid4())
 
@@ -273,26 +277,12 @@ class OpenStackSourceVolume(OpenStackVolumeBase):
             source_conversion_host_id,
             ssh_key_path,
             ssh_user,
-            transfer_uuid,
+            transfer_uuid=transfer_uuid ,
             conversion_host_address=source_conversion_host_address,
             state_file=state_file,
             log_file=log_file,
             timeout=timeout,
         )
-
-        # Required unique parameters:
-        # source_instance_id: ID of VM to migrate from the source
-        self.source_instance_id = source_instance_id
-
-        # Optional parameters:
-        # source_disks: (TODO) List of disks to migrate, otherwise all of them
-        self.source_disks = None
-
-        if boot_volume_prefix is not None:
-            self.boot_volume_prefix = boot_volume_prefix
-        else:
-            self.boot_volume_prefix = "os-migrate-"
-
         # Build up a list of VolumeMappings keyed by the original device path
         # provided by the OpenStack API. Details:
         #   source_dev:  Device path (like /dev/vdb) on source conversion host
@@ -308,52 +298,43 @@ class OpenStackSourceVolume(OpenStackVolumeBase):
         #   progress:    Transfer progress percentage
         #   bootable:    Boolean flag for boot disks
         self.volume_map = {}
-
-        self.ser_server = ser_server
+        self.volume_list = volume_list
 
     def prepare_exports(self):
-        """
-        Attach the source VM's volumes to the source conversion host, and start
-        waiting for NBD connections.
-        """
-        self._test_source_vm_shutdown()
-        self._get_root_and_data_volumes()
-        self._validate_volumes_match_data()
-        self._detach_data_volumes_from_source()
-        self._attach_volumes_to_converter()
-        self._export_volumes_from_converter()
+      """
+      Attach the source volume to the source conversion host, and start
+      waiting for NBD connections.
+      """
+      self._get_root_and_data_volumes()
+      self.log.info('Data in the volume: %s', self.volume_list)
+      self._attach_volumes_to_converter()
+      self._export_volumes_from_converter()
 
     def _get_root_and_data_volumes(self):
-        """
-        Volume mapping step one: get the IDs and sizes of all volumes on the
-        source VM. Key off the original device path to eventually preserve this
-        order on the destination.
-        """
-        sourcevm = self._source_vm()
-        for server_volume in sourcevm.volumes:
-            volume = self.conn.get_volume_by_id(server_volume['id'])
-            self.log.info('Inspecting volume: %s', volume['id'])
-            if self.source_disks and volume['id'] not in self.source_disks:
-                self.log.info('Volume is not in specified disk list, ignoring.')
-                continue
-            dev_path = self._get_attachment(volume, sourcevm)['device']
-            self.volume_map[dev_path] = dict(
-                source_dev=None, source_id=volume['id'], dest_dev=None,
-                dest_id=None, snap_id=None, image_id=None, name=volume['name'],
-                size=volume['size'], port=None, url=None, progress=None,
-                bootable=volume['bootable'])
-            self._update_progress(dev_path, 0.0)
+      """
+      Volume mapping step one: get the IDs and sizes of all volumes on the
+      source VM. Key off the original device path to eventually preserve this
+      order on the destination.
+      """
+      for s_volume in self.volume_list:
+          volume = self.conn.get_volume_by_id(s_volume['_info']['id'])
+          self.log.info('Inspecting volume: %s', volume['id'])
+          dev_path = volume['id']
+          self.volume_map[dev_path] = dict(
+              source_dev=None, source_id=volume['id'], dest_dev=None,
+              dest_id=None, snap_id=None, image_id=None, name=volume['name'],
+              size=volume['size'], port=None, url=None, progress=None,
+              bootable=volume['bootable'])
+          self._update_progress(dev_path, 0.0)
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        data=dict(type='dict', required=True),
-        boot_volume_prefix=dict(type='str', default=None),
+        data=dict(type='list', required=True),
         conversion_host=dict(type='dict', required=True),
         ssh_key_path=dict(type='str', required=True),
         ssh_user=dict(type='str', required=True),
         src_conversion_host_address=dict(type='str', default=None),
-        state_file=dict(type='str', default=None),
-        log_file=dict(type='str', default=None),
+        log_dir=dict(type='str', default=None),
         timeout=dict(type='int', default=DEFAULT_TIMEOUT),
     )
 
@@ -366,40 +347,40 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    ser_server = server.Server.from_data(module.params['data'])
-    params, info = ser_server.params_and_info()
+    volume_list = module.params['data']
 
     # Required parameters
     source_conversion_host_id = module.params['conversion_host']['id']
     ssh_key_path = module.params['ssh_key_path']
     ssh_user = module.params['ssh_user']
-    source_instance_id = info['id']
 
     # Optional parameters
     source_conversion_host_address = \
         module.params.get('src_conversion_host_address', None)
-    state_file = module.params.get('state_file', None)
-    log_file = module.params.get('log_file', None)
-    boot_volume_prefix = module.params.get('boot_volume_prefix', None)
+    log_dir = module.params['log_dir']
     timeout = module.params['timeout']
 
-    source_host = OpenStackSourceVolume(
+    # TODO implement the names of the files in the volume_common.py
+    log_file = os.path.join(log_dir, "detached_volumes") + '.log'
+    state_file = os.path.join(log_dir, "detached_volumes") + '.state'
+
+    source_volume = OpenStackSourceVolume(
         conn,
         source_conversion_host_id,
         ssh_key_path,
         ssh_user,
-        source_instance_id,
-        ser_server,
+        volume_list=volume_list,
         source_conversion_host_address=source_conversion_host_address,
         state_file=state_file,
         log_file=log_file,
-        boot_volume_prefix=boot_volume_prefix,
         timeout=timeout,
     )
-    source_host.prepare_exports()
-    result['transfer_uuid'] = source_host.transfer_uuid
-    result['volume_map'] = source_host.volume_map
-
+    source_volume.prepare_exports()
+    result['log_file'] = source_volume.log_file
+    result['state_file'] = source_volume.state_file
+    result['transfer_uuid'] = source_volume.transfer_uuid
+    result['volume_map'] = source_volume.volume_map
+    result['data'] = module.params['data']
     module.exit_json(**result)
 
 
