@@ -53,11 +53,3 @@
     src: clouds.yaml.j2
     dest: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
     mode: '0600'
-  when: os_migrate_all_mode | default(false) == false
-
-- name: Write to auth file (Push Button Mode)
-  ansible.builtin.template:
-    src: clouds-alt.yaml.j2
-    dest: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
-    mode: '0600'
-  when: os_migrate_all_mode | default(false) == true

@@ -1,0 +1,17 @@
+- hosts: migrator
+  environment:
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
+  roles:
+    - os_migrate.os_migrate.import_security_groups
+    - os_migrate.os_migrate.import_security_group_rules
+    - os_migrate.os_migrate.import_images
+    - os_migrate.os_migrate.import_projects
+    - os_migrate.os_migrate.import_flavors
+    - os_migrate.os_migrate.import_users
+    - os_migrate.os_migrate.import_user_project_role_assignments
+    - os_migrate.os_migrate.import_networks
+    - os_migrate.os_migrate.import_subnets
+    - os_migrate.os_migrate.import_routers
+    - os_migrate.os_migrate.import_router_interfaces
+    - os_migrate.os_migrate.import_users_keypairs
+    - os_migrate.os_migrate.import_keypairs
