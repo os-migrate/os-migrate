@@ -7,5 +7,6 @@ skip_list:
   - 'package-latest'  # Package installs should not use latest
 exclude_paths:
   - ".ansible/"
+
 # This is a workaround, we need to port ansible files to 2.17.x
 profile: 'min'
