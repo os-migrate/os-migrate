@@ -7,7 +7,7 @@ on:
 jobs:
   build:
     if: github.repository_owner == 'os-migrate'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Use checkout v4 with all git log available
         uses: actions/checkout@v4
