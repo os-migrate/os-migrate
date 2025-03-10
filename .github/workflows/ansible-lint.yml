@@ -26,5 +26,5 @@ jobs:
 
       - name: Run ansible-lint
         run: |
-          cd vmware_migration_kit
+          cd os_migrate
           ansible-lint
