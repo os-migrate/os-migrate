@@ -3,11 +3,11 @@ name: container-image-build
 on:
   push:
     paths-ignore:
-      - 'doc/**'
+      - "doc/**"
 jobs:
   push_to_reg:
     if: github.repository_owner == 'os-migrate'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies

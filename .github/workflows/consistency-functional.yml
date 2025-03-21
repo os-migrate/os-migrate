@@ -20,7 +20,7 @@ jobs:
   # * Import the container image on each job
   build:
     if: github.repository_owner == 'os-migrate'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     strategy:
       max-parallel: 4
       matrix:
@@ -95,7 +95,7 @@ jobs:
 
   functional:
     needs: build
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       max-parallel: 4
       matrix:
@@ -129,9 +129,10 @@ jobs:
           sudo locale-gen en_US.UTF-8
           sudo dpkg-reconfigure locales
           sudo apt update
-          sudo apt remove --purge mysql-server mysql-client mysql-common -y
+          sudo apt remove --purge postgresql-common mysql-server mysql-client mysql-common -y
           sudo apt autoremove -y
           sudo apt install -y mysql-client mysql-common
+          sudo apt -y install postgresql-common=238 postgresql-server-dev-all
       - name: Configure podman
         run: |
           mkdir -p ~/.config/containers
@@ -250,7 +251,7 @@ jobs:
           sudo chown root:root /bin
       - name: Clone devstack
         run: |
-          git clone --single-branch --branch 'unmaintained/2023.1' https://opendev.org/openstack/devstack
+          git clone --single-branch --branch 'stable/2024.2' https://opendev.org/openstack/devstack
       - name: Configure devstack
         run: |
           DIR=$(pwd)
