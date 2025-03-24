@@ -150,13 +150,11 @@ except ImportError:
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import server
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils.workload_common \
-    import use_lock, ATTACH_LOCK_FILE_DESTINATION, DEFAULT_TIMEOUT, OpenStackHostBase
-
-import time
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils.volume_common \
+    import DEFAULT_TIMEOUT, OpenStackVolumeBase
 
 
-class OpenStackDstFailureCleanup(OpenStackHostBase):
+class OpenStackDstFailureCleanup(OpenStackVolumeBase):
     """ Removes volumes after a failed migration from the destination cloud. """
 
     def __init__(self, openstack_connection, destination_conversion_host_id,
@@ -174,66 +172,6 @@ class OpenStackDstFailureCleanup(OpenStackHostBase):
             timeout=timeout,
         )
         self.volume_map = volume_map
-
-    def delete_migrated_volumes(self):
-        """ Detach destination volumes from converter and delete them. """
-        self._detach_volumes_from_converter()
-        self._delete_volumes()
-
-    def _volume_still_attached(self, volume, vm):
-        """ Check if a volume is still attached to a VM. """
-        for attachment in volume.attachments:
-            if attachment['server_id'] == vm.id:
-                return True
-        return False
-
-    def _get_volume_maybe(self, id_maybe):
-        """ Get volume by id, or None if id_maybe is None or if volume doesn't exist. """
-        if not id_maybe:
-            return None
-        return self.conn.get_volume_by_id(id_maybe)
-
-    @use_lock(ATTACH_LOCK_FILE_DESTINATION)
-    def _detach_volumes_from_converter(self):
-        """ Detach volumes from conversion host. """
-        self.log.info('Detaching volumes from the destination conversion host.')
-        converter = self._converter()
-        for path, mapping in self.volume_map.items():
-            volume = self._get_volume_maybe(mapping['dest_id'])
-            if not volume:
-                continue
-            if not self._volume_still_attached(volume, converter):
-                self.log.info('Volume %s is not attached to conversion host, skipping detach.',
-                              volume['id'])
-                continue
-
-            self.log.info('Detaching volume %s.', volume['id'])
-            self.conn.detach_volume(server=converter, volume=volume,
-                                    timeout=self.timeout, wait=True)
-            for second in range(self.timeout):
-                converter = self._converter()
-                volume = self.conn.get_volume_by_id(mapping['dest_id'])
-                if not self._volume_still_attached(volume, converter):
-                    break
-                time.sleep(1)
-            else:
-                raise RuntimeError('Timed out waiting to detach volumes from '
-                                   'destination conversion host!')
-
-    def _delete_volumes(self):
-        """ Delete destination volumes. """
-        self.log.info('Deleting migrated volumes from destination.')
-        for path, mapping in self.volume_map.items():
-            volume = self._get_volume_maybe(mapping['dest_id'])
-            if not volume:
-                continue
-            if volume.attachments:
-                self.log.warning('Volume %s is still has attachments, skipping delete.',
-                                 volume['id'])
-                continue
-
-            self.log.info('Deleting volume %s.', volume['id'])
-            self.conn.delete_volume(volume['id'], timeout=self.timeout, wait=True)
 
 
 def run_module():

@@ -248,17 +248,15 @@ except ImportError:
         import openstack_full_argument_spec, openstack_cloud_from_module
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
-    import exc, server
+    import server
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils.workload_common \
-    import use_lock, ATTACH_LOCK_FILE_SOURCE, DEFAULT_TIMEOUT, OpenStackHostBase
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils.volume_common \
+    import DEFAULT_TIMEOUT, OpenstackVolumeExport
 
-import subprocess
-import time
 import uuid
 
 
-class OpenStackSourceHost(OpenStackHostBase):
+class OpenStackSourceVolume(OpenstackVolumeExport):
     """ Export volumes from an OpenStack instance over NBD. """
 
     def __init__(self, openstack_connection, source_conversion_host_id,
@@ -323,19 +321,6 @@ class OpenStackSourceHost(OpenStackHostBase):
         self._attach_volumes_to_converter()
         self._export_volumes_from_converter()
 
-    def _source_vm(self):
-        """
-        Changes to the VM returned by get_server_by_id are not necessarily
-        reflected in existing objects, so just get a new one every time.
-        """
-        return self.conn.get_server_by_id(self.source_instance_id)
-
-    def _test_source_vm_shutdown(self):
-        """ Make sure the source VM is shutdown, and fail if it isn't. """
-        server = self.conn.compute.get_server(self._source_vm().id)
-        if server.status != 'SHUTOFF':
-            raise RuntimeError('Source VM is not shut down!')
-
     def _get_root_and_data_volumes(self):
         """
         Volume mapping step one: get the IDs and sizes of all volumes on the
@@ -356,169 +341,6 @@ class OpenStackSourceHost(OpenStackHostBase):
                 size=volume['size'], port=None, url=None, progress=None,
                 bootable=volume['bootable'])
             self._update_progress(dev_path, 0.0)
-
-    def _validate_volumes_match_data(self):
-        """
-        Check that the volumes as exported into the workload metadata YAML
-        still match what is actually attached on the source VM, raise
-        an error if not.
-        """
-        scanned_volume_ids = set(map(lambda vol: vol['source_id'],
-                                     self.volume_map.values()))
-        data_volume_ids = set(map(lambda vol: vol.get('_info', {}).get('id'),
-                                  self.ser_server.params()['volumes']))
-        if data_volume_ids != scanned_volume_ids:
-            message = (
-                f"The scanned set of volumes on instance '{self.source_instance_id}' is not the same "
-                f"as in the exported data. Scanned: {scanned_volume_ids}. In data: {data_volume_ids}."
-            )
-            raise exc.InconsistentState(message)
-
-    def _detach_data_volumes_from_source(self):
-        """
-        Detach data volumes from source VM, and pretend to "detach" the boot
-        volume by creating a new volume from a snapshot of the VM. If the VM is
-        booted directly from an image, take a VM snapshot and create the new
-        volume from that snapshot.
-        Volume map step two: replace boot disk ID with this new volume's ID,
-        and record snapshot/image ID for later deletion.
-        """
-        sourcevm = self._source_vm()
-        if '/dev/vda' in self.volume_map:
-            mapping = self.volume_map['/dev/vda']
-            volume_id = mapping['source_id']
-
-            # Create a snapshot of the root volume
-            self.log.info('Boot-from-volume instance, creating boot volume snapshot')
-            root_snapshot = self.conn.create_volume_snapshot(
-                force=True, wait=True, volume_id=volume_id,
-                name=f'{self.boot_volume_prefix}{volume_id}',
-                timeout=self.timeout)
-
-            # Create a new volume from the snapshot
-            self.log.info('Creating new volume from boot volume snapshot')
-            root_volume_copy = self.conn.create_volume(
-                wait=True, name=f'{self.boot_volume_prefix}{volume_id}',
-                snapshot_id=root_snapshot.id, size=root_snapshot.size,
-                timeout=self.timeout)
-
-            # Update the volume map with the new volume ID
-            self.volume_map['/dev/vda']['source_id'] = root_volume_copy.id
-            self.volume_map['/dev/vda']['snap_id'] = root_snapshot.id
-        elif sourcevm.image and self.ser_server.migration_params()['boot_disk_copy']:
-            self.log.info('Image-based instance, boot_disk_copy enabled: creating snapshot')
-            image = self.conn.compute.create_server_image(
-                name=f'{self.boot_volume_prefix}{sourcevm.name}',
-                server=sourcevm.id,
-                wait=True,
-                timeout=self.timeout)
-            image = self.conn.get_image_by_id(image.id)  # refresh
-            if image.status != 'active':
-                raise RuntimeError(
-                    'Could not create new image of image-based instance!')
-            volume = self.conn.create_volume(
-                image=image.id, bootable=True, wait=True, name=image.name,
-                timeout=self.timeout, size=image.min_disk)
-            self.volume_map['/dev/vda'] = dict(
-                source_dev=None, source_id=volume['id'], dest_dev=None,
-                dest_id=None, snap_id=None, image_id=image.id, name=volume['name'],
-                size=volume['size'], port=None, url=None, progress=None,
-                bootable=volume['bootable'])
-            self._update_progress('/dev/vda', 0.0)
-        elif sourcevm.image and not self.ser_server.migration_params()['boot_disk_copy']:
-            self.log.info('Image-based instance, boot_disk_copy disabled: skipping boot volume')
-        else:
-            raise RuntimeError('No known boot device found for this instance!')
-
-        for path, mapping in self.volume_map.items():
-            if path != '/dev/vda':  # Detach non-root volumes
-                volume_id = mapping['source_id']
-                volume = self.conn.get_volume_by_id(volume_id)
-                self.log.info('Detaching %s from %s', volume['id'], sourcevm.id)
-                self.conn.detach_volume(server=sourcevm, volume=volume,
-                                        wait=True, timeout=self.timeout)
-
-    # Lock this part to have a better chance of the OpenStack device path
-    # matching the device path seen inside the conversion host.
-    @use_lock(ATTACH_LOCK_FILE_SOURCE)
-    def _attach_volumes_to_converter(self):
-        """
-        Attach all the source volumes to the conversion host. Volume mapping
-        step 3: fill in the volume's device path on the source conversion host.
-        """
-        def update_source(volume_mapping, dev_path):
-            volume_mapping['source_dev'] = dev_path
-            return volume_mapping
-
-        def volume_id(volume_mapping):
-            return volume_mapping['source_id']
-
-        self._attach_volumes(self.conn, 'source', (self._converter,
-                                                   self.shell.cmd_out,
-                                                   update_source, volume_id))
-
-    def _export_volumes_from_converter(self):
-        """
-        SSH to source conversion host and start an NBD export. Volume mapping
-        step 4: fill in the URL to the volume's matching NBD export.
-        """
-        self.log.info('Exporting volumes from source conversion host...')
-        for path, mapping in self.volume_map.items():
-            port = self._find_free_port()
-            volume_id = mapping['source_id']
-            disk = mapping['source_dev']
-            self.log.info('Exporting %s from volume %s', disk, volume_id)
-
-            # Fall back to qemu-nbd if nbdkit is not present
-            qemu_nbd_present = (self.shell.cmd_val(['which', 'qemu-nbd']) == 0)
-            nbdkit_present = (self.shell.cmd_val(['which', 'nbdkit']) == 0)
-            if nbdkit_present:
-                dump_plugin = ['nbdkit', '--dump-plugin', 'file']
-                file_plugin_present = (self.shell.cmd_val(dump_plugin) == 0)
-                if not file_plugin_present:
-                    self.log.info('Found nbdkit, but without file plugin.')
-            else:
-                file_plugin_present = False
-
-            if nbdkit_present and file_plugin_present:
-                cmd = ['sudo', 'nbdkit', '--exportname', self.transfer_uuid,
-                       '--ipaddr', '127.0.0.1', '--port', str(port), 'file',
-                       'file=' + disk]
-                self.log.info('Using nbdkit for export command: %s', cmd)
-            elif qemu_nbd_present:
-                cmd = ['sudo', 'qemu-nbd', '-p', str(port), '-b', '127.0.0.1',
-                       '--fork', '--verbose', '--read-only', '--persistent',
-                       '-x', self.transfer_uuid, disk]
-                self.log.info('Using qemu-nbd for export command: %s', cmd)
-            else:
-                raise RuntimeError('No supported NBD export tool available!')
-
-            self.log.info('Exporting %s over NBD, port %s', disk, str(port))
-            result = self.shell.cmd_out(cmd)
-            if result:
-                self.log.debug('Result from NBD exporter: %s', result)
-
-            # Check qemu-img info on this disk to make sure it is ready
-            self.log.info('Waiting for valid qemu-img info on all exports...')
-            for second in range(self.timeout):
-                try:
-                    cmd = ['qemu-img', 'info', 'nbd://localhost:' + str(port) +
-                           '/' + self.transfer_uuid]
-                    image_info = self.shell.cmd_out(cmd)
-                    self.log.info('qemu-img info for %s: %s', disk, image_info)
-                except subprocess.CalledProcessError as error:
-                    self.log.info('Got exception: %s', error)
-                    self.log.info('Trying again.')
-                    time.sleep(1)
-                else:
-                    self.log.info('All volume exports ready.')
-                    break
-            else:
-                raise RuntimeError('Timed out starting nbdkit exports!')
-
-            # pylint: disable=unnecessary-dict-index-lookup
-            self.volume_map[path]['port'] = port
-            self.log.info('Volume map so far: %s', self.volume_map)
 
 
 def run_module():
@@ -560,7 +382,7 @@ def run_module():
     boot_volume_prefix = module.params.get('boot_volume_prefix', None)
     timeout = module.params['timeout']
 
-    source_host = OpenStackSourceHost(
+    source_host = OpenStackSourceVolume(
         conn,
         source_conversion_host_id,
         ssh_key_path,

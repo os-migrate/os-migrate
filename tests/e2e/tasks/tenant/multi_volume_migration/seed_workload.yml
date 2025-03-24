@@ -18,6 +18,17 @@
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
 
+- name: Create detached osm_volume
+  openstack.cloud.volume:
+    display_name: osm_detached_volume
+    size: 1
+    auth: "{{ os_migrate_src_auth }}"
+    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+  when: test_detached_volumes|default(false)|bool
+
 - name: Create osm_server
   openstack.cloud.server:
     name: osm_server
