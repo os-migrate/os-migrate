@@ -1,0 +1,30 @@
+- name: scan all volumes in src
+  openstack.cloud.volume_info:
+    cloud: src
+    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+  register: src_volumes_info
+
+- name: filter only detached volumes
+  ansible.builtin.set_fact:
+    src_detached_volumes_info: "{{ (
+      src_volumes_info.volumes
+        | os_migrate.os_migrate.stringfilter(os_migrate_volumes_filter,
+                                             attribute='name')
+        | selectattr('status', '!=' , 'in-use')
+        | json_query('[*].{name: name, id: id}')
+        | sort(attribute='id')
+        ) }}"
+
+- name: export detached volumes
+  os_migrate.os_migrate.export_detached_volume:
+    path: "{{ os_migrate_data_dir }}/detached_volumes.yml"
+    volume_id: "{{ item['id'] }}"
+    cloud: src
+    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+  loop: "{{ src_detached_volumes_info }}"

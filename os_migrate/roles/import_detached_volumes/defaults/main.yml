@@ -1,0 +1,4 @@
+os_migrate_conversion_keypair_private_path: "{{ os_migrate_data_dir }}/conversion/ssh.key"
+os_migrate_timeout: 1800
+os_migrate_detached_volumes_filter:
+  - regex: .*

@@ -270,14 +270,11 @@ except ImportError:
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import server
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils.workload_common \
-    import use_lock, ATTACH_LOCK_FILE_SOURCE, DEFAULT_TIMEOUT, OpenStackHostBase
-
-import subprocess
-import time
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils.volume_common \
+    import DEFAULT_TIMEOUT, OpenstackVolumeClean
 
 
-class OpenStackSourceHostCleanup(OpenStackHostBase):
+class OpenStackSourceHostCleanup(OpenstackVolumeClean):
     """ Removes temporary migration volumes and snapshots from source cloud. """
 
     def __init__(self, openstack_connection, source_conversion_host_id,
@@ -307,107 +304,6 @@ class OpenStackSourceHostCleanup(OpenStackHostBase):
         for path, mapping in volume_map.items():
             port = mapping['port']
             self.claimed_ports.append(port)
-
-    def _source_vm(self):
-        """
-        Changes to the VM returned by get_server_by_id are not necessarily
-        reflected in existing objects, so just get a new one every time.
-        """
-        return self.conn.get_server_by_id(self.source_instance_id)
-
-    def close_exports(self):
-        """ Put the source VM's volumes back where they were. """
-        self._converter_close_exports()
-        self._detach_volumes_from_converter()
-        self._attach_data_volumes_to_source()
-
-    def _converter_close_exports(self):
-        """
-        SSH to source conversion host and close the NBD export process.
-        """
-        self.log.info('Stopping exports from source conversion host...')
-        try:
-            pattern = "'" + self.transfer_uuid + "'"
-            pids = self.shell.cmd_out(['pgrep', '-f', pattern]).split('\n')
-            if len(pids) > 0:
-                self.log.debug('Stopping NBD export PIDs (%s)', str(pids))
-                try:
-                    self.shell.cmd_out(['sudo', 'pkill', '-f', pattern])
-                except subprocess.CalledProcessError as err:
-                    self.log.debug('Error stopping exports! %s', str(err))
-        except subprocess.CalledProcessError as err:
-            self.log.debug('Unable to get remote NBD PID! %s', str(err))
-
-        self._release_ports()
-
-    def _volume_still_attached(self, volume, vm):
-        """ Check if a volume is still attached to a VM. """
-        for attachment in volume.attachments:
-            if attachment['server_id'] == vm.id:
-                return True
-        return False
-
-    @use_lock(ATTACH_LOCK_FILE_SOURCE)
-    def _detach_volumes_from_converter(self):
-        """ Detach volumes from conversion host. """
-        self.log.info('Detaching volumes from the source conversion host.')
-        converter = self._converter()
-        for path, mapping in self.volume_map.items():
-            volume = self.conn.get_volume_by_id(mapping['source_id'])
-            self.log.info('Inspecting volume %s', volume.id)
-            if mapping['source_dev'] is None:
-                self.log.info('Volume is not attached to conversion host, '
-                              'skipping detach.')
-                continue
-            self.conn.detach_volume(server=converter, volume=volume,
-                                    timeout=self.timeout, wait=True)
-            for second in range(self.timeout):
-                converter = self._converter()
-                volume = self.conn.get_volume_by_id(mapping['source_id'])
-                if not self._volume_still_attached(volume, converter):
-                    break
-                time.sleep(1)
-            else:
-                raise RuntimeError('Timed out waiting to detach volumes from '
-                                   'source conversion host!')
-
-    def _attach_data_volumes_to_source(self):
-        """ Clean up the copy of the root volume and reattach data volumes. """
-        self.log.info('Re-attaching volumes to source VM...')
-        for path, mapping in sorted(self.volume_map.items()):
-            if path == '/dev/vda':
-                # Delete the temporary copy of the source root disk
-                self.log.info('Removing copy of root volume')
-                self.conn.delete_volume(name_or_id=mapping['source_id'],
-                                        wait=True, timeout=self.timeout)
-
-                # Remove the root volume snapshot
-                if mapping['snap_id']:
-                    self.log.info('Deleting temporary root device snapshot')
-                    self.conn.delete_volume_snapshot(
-                        timeout=self.timeout, wait=True,
-                        name_or_id=mapping['snap_id'])
-
-                # Remove root image copy, for image-launched instances
-                if mapping['image_id']:
-                    self.log.info('Deleting temporary root device image')
-                    self.conn.delete_image(
-                        timeout=self.timeout, wait=True,
-                        name_or_id=mapping['image_id'])
-            else:
-                # Attach data volumes back to source VM
-                volume = self.conn.get_volume_by_id(mapping['source_id'])
-                sourcevm = self._source_vm()
-                try:
-                    self._get_attachment(volume, sourcevm)
-                except RuntimeError:
-                    self.log.info('Attaching %s back to source VM', volume.id)
-                    self.conn.attach_volume(volume=volume, server=sourcevm,
-                                            wait=True, timeout=self.timeout)
-                else:
-                    self.log.info('Volume %s is already attached to source VM',
-                                  volume.id)
-                    continue
 
 
 def run_module():
