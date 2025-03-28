@@ -1,0 +1,12 @@
+ifdev::context[:parent-context: {context}]
+
+[id="os-migrate-overview_{context}"]
+
+:context: planning
+
+= os-migrate overview
+
+OS-Migrate is a toolsuite designed to assist in the process of moving OpenStack workloads from one environment to another. Please read tthe entire workflow notes in order to be sufficiently prepared for this endeavour.
+
+ifdef::parent-context[:context: {parent-context}]
+ifndef::parent-context[:!context:]
