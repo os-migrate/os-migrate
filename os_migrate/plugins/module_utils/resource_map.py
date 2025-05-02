@@ -14,6 +14,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import \
     server, \
     server_floating_ip, \
     server_port, \
+    server_volume, \
     subnet, \
     user
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
@@ -31,6 +32,7 @@ RESOURCE_MAP = {
     const.RES_TYPE_SERVER: server.Server,
     const.RES_TYPE_SERVER_FLOATING_IP: server_floating_ip.ServerFloatingIP,
     const.RES_TYPE_SERVER_PORT: server_port.ServerPort,
+    const.RES_TYPE_SERVER_VOLUME: server_volume.ServerVolume,
     const.RES_TYPE_SUBNET: subnet.Subnet,
     const.RES_TYPE_USER: user.User,
 }

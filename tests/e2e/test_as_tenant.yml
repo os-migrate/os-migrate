@@ -235,6 +235,7 @@
       tags: always
       vars:
         workload_image: "{{ os_migrate_src_osm_server_image }}"
+        test_detached_volumes: true
 
     - name: assert workloads seeded properly
       ansible.builtin.include_tasks: tasks/common/test_seeded_workloads.yml
@@ -254,6 +255,7 @@
       tags: always
       vars:
         port_creation_mode: nova
+        test_detached_volumes: true
 
     - name: clean the workloads
       ansible.builtin.include_tasks: tasks/tenant/clean_workload.yml
