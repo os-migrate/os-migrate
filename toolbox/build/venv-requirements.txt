@@ -7,7 +7,7 @@ ansible-core==2.17.5
 openstacksdk==1.0.2
 
 # test
-python-openstackclient==6.2.1
+python-openstackclient==6.3.0
 
 ansible-lint==24.9.2
 bashate==2.1.1
