@@ -1,0 +1,22 @@
+name: Validate content
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+# TODO: finish this workflow
+jobs:
+  build:
+    name: Validate playbooks and roles
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run sanity checks
+        uses: ansible/ansible-lint@main
+        with:
+          setup_python: "true"
+          working_directory: "os_migrate"

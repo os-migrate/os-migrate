@@ -22,12 +22,8 @@ ATTACH_LOCK_FILE_DESTINATION = '/var/lock/v2v-destination-volume-lock'
 PORT_MAP_FILE = '/var/run/v2v-migration-ports'
 PORT_LOCK_FILE = '/var/lock/v2v-migration-lock'  # Lock for the port map
 
-try:
-    # will be fixed in another PR
-    # pylint: disable-next=unused-import
-    from subprocess import DEVNULL
-except ImportError:
-    DEVNULL = open(os.devnull, 'r+', encoding='utf8')
+# Use os.devnull directly instead of importing DEVNULL
+DEVNULL = open(os.devnull, 'r+', encoding='utf8')
 
 
 def use_lock(lock_file):
