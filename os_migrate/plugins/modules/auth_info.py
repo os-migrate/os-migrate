@@ -16,7 +16,7 @@ module: auth_info
 
 short_description: Fetch information about authenticated user/project
 
-extends_documentation_fragment: openstack
+extends_documentation_fragment: openstack.cloud.openstack
 
 version_added: "2.9.0"
 

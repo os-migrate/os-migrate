@@ -1,0 +1,42 @@
+name: Ansible Build Setup
+
+on:
+  workflow_call:
+    outputs:
+      python-path:
+        description: "Path to Python executable"
+        value: ${{ jobs.setup.outputs.python-path }}
+
+jobs:
+  setup:
+    name: Setup Build Environment
+    runs-on: ubuntu-24.04
+    outputs:
+      python-path: ${{ steps.setup-python.outputs.python-path }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        id: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible
+
+      - name: Build and install collection
+        run: |
+          ./scripts/build.sh
+          mkdir -p ansible_collections/os_migrate
+          cp -r os_migrate ansible_collections/os_migrate/
+          ansible-galaxy collection install --force releases/os_migrate-os_migrate-latest.tar.gz
+
+      - name: Upload collection
+        uses: actions/upload-artifact@v4
+        with:
+          name: ansible-collection
+          path: ansible_collections

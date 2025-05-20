@@ -1,0 +1,33 @@
+name: Ansible Sanity
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    uses: ./.github/workflows/actions-build.yml
+
+  sanity:
+    name: Run Sanity Tests
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download collection
+        uses: actions/download-artifact@v4
+        with:
+          name: ansible-collection
+          path: ansible_collections
+
+      - name: Run sanity checks
+        run: |
+          cd ansible_collections/os_migrate/os_migrate
+          TARGET_PYTHON_VERSION=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+          echo "Running Ansible sanity tests with python version ${TARGET_PYTHON_VERSION}"
+          ansible-test sanity --python ${TARGET_PYTHON_VERSION} --local --skip-test import --skip-test validate-modules
