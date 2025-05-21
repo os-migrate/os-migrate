@@ -1,0 +1,30 @@
+# env
+wheel==0.44.0
+passlib==1.7.4
+
+# runtime
+ansible-core==2.17.5
+openstacksdk==1.0.2
+# kolla-ansible==15.0.0
+# kolla==15.0.0
+
+# test
+python-openstackclient==6.2.1
+
+ansible-lint==24.9.2
+bashate==2.1.1
+flake8==7.1.1
+mock==5.1.0
+pylint==3.3.1
+pycodestyle==2.12.1
+pytest==8.3.3
+pytest-mock==3.14.0
+pytest-xdist==3.6.1
+voluptuous==0.15.2
+yamllint==1.35.1
+
+# docs
+gitchangelog==3.0.4
+markdown==3.7
+ruamel.yaml==0.18.6
+sphinx-rtd-theme==3.0.0

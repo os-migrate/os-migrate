@@ -185,6 +185,17 @@ toolbox-build:
 toolbox-clean:
 	podman rmi localhost/os_migrate_toolbox:latest
 
+# EXECUTION ENVIRONMENT
+
+dev-build:
+	mkdir -p tmp && \
+	ansible-builder create --context tmp && \
+	ansible-builder build --context tmp --tag localhost/os_migrate_ee:latest -vvv && \
+	podman run -it --rm -v $(PWD):/opt/stack/os-migrate:Z localhost/os_migrate_ee:latest /bin/bash
+
+dev-clean:
+	podman rmi localhost/os_migrate_ee:latest
+	rm -rf tmp
 
 # LINT COMMITS
 

@@ -13,3 +13,4 @@
 /toolbox/vagrant/env
 /toolbox/build/galaxy.yml
 /.idea/
+tmp/

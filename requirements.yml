@@ -1,0 +1,7 @@
+collections:
+  - name: awx.awx
+  - name: community.general
+  - name: os_migrate.os_migrate
+  - name: openstack.cloud
+  - name: community.crypto
+  - name: ansible.posix

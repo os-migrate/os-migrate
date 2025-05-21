@@ -1,0 +1,40 @@
+---
+version: 3
+images:
+  base_image:
+    name: 'registry.fedoraproject.org/fedora:latest'
+
+dependencies:
+  galaxy: requirements.yml
+  python: requirements.txt
+  ansible_core:
+    package_pip: "ansible-core==2.17.5"
+  ansible_runner:
+    package_pip: "ansible-runner==2.3.4"
+
+options:
+    package_manager_path: /usr/bin/dnf
+
+additional_build_steps:
+    prepend_base:
+        - RUN dnf update -y
+        - RUN dnf install -y python3-pip git gcc python3-devel libffi-devel openssl-devel python3-libselinux sudo procps-ng shadow-utils
+        - RUN pip install --upgrade pip setuptools
+    append_final:
+        - WORKDIR /opt/stack
+        - RUN mkdir -p /opt/stack/devstack
+        - RUN useradd -m -s /bin/bash -d /opt/stack stack
+        - RUN echo "stack:stack" | chpasswd
+        - RUN usermod -aG wheel stack
+        - RUN chown -R stack:stack /opt/stack
+        - USER stack
+        - COPY . /opt/stack/os-migrate/
+        - RUN python3 -m venv /opt/stack/venv && \
+            . /opt/stack/venv/bin/activate && \
+            pip install -U pip python-openstackclient && \
+            git clone --branch master https://opendev.org/openstack/kolla-ansible && \
+            pip install ./kolla-ansible && \
+            mkdir -p /etc/kolla && \
+            cp -r kolla-ansible/etc/kolla/* /etc/kolla/ && \
+            cp kolla-ansible/ansible/inventory/* /opt/stack/ && \
+            kolla-ansible install-deps
