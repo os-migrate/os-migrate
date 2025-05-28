@@ -18,6 +18,8 @@ if [ -n "${OS_MIGRATE_REQUIREMENTS_OVERRIDE:-}" ]; then
     python3 -m pip cache purge && rm -rf $(python3 -m pip cache dir)
     python3 -m pip cache purge && rm -rf $cache_dir
     sleep 1
+    python3 -m pip cache purge && rm -rf $(python3 -m pip cache dir)
+    sleep 1
     python3 -m pip install --upgrade pip
     sleep 1
     python3 -m pip cache purge && rm -rf $cache_dir
