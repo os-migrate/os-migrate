@@ -1,0 +1,9 @@
+ifdev::context[:parent-context: {context}]
+
+[id="os-migrate-contributing_{context}]
+
+:context: development
+
+= OS Migrate Contribution Guidelines
+
+== TBD - but largely based on combination of existing guide, and David & Roberto collaboration

@@ -1,0 +1,11 @@
+ifdev::context[:parent-context: {context}]
+
+[id="os-migrate-capacity-planning_{context}]
+
+:context: planning
+
+= OS Migrate Capacity Planning
+
+== Hardware Requirements
+
+== Expectations

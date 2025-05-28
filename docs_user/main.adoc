@@ -1,0 +1,18 @@
+= OS Migrate user or operator documentation
+:toc: left
+:toclevels: 3
+:icons: font
+:compat-mode:
+:doctype: book
+:context: os-migration
+:images: ./images
+
+include::chapters/chapter_os-migrate-overview.adoc[leveloffset=+1]
+include::chapters/chapter_os-migrate-walkthrough.adoc[leveloffset=+1]
+include::chapters/chapter_os-migrate-process-summary.adoc[leveloffset=+1]
+include::chapters/chapter_os-migrate-capacity-planning.adoc[leveloffset=+1]
+include::chapters/chapter_os-migrate-performance-expectations.adoc[leveloffset=+1]
+include::chapters/chapter_os-migrate-quickstart-guide.adoc[leveloffset=+1]
+include::chapters/chapter_os-migrate-vmware-guide.adoc[leveloffset=+1]
+include::chapters/chapter_os-migrate-glossary.adoc[leveloffset=+1]
+include::chapters/chapter_os-migrate-contributing.adoc[leveloffset=+1]

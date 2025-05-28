@@ -1,0 +1,11 @@
+ifdev::context[:parent-context: {context}]
+
+[id="os-migrate-quickstart-guide_{context}]
+
+:context: planning
+
+= OS Migrate Quickstart Guide
+
+== Software Pre-Requisites
+
+== Installation
