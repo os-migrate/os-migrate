@@ -1,0 +1,33 @@
+name: Ansible Unit Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    uses: ./.github/workflows/actions-build.yml
+
+  unit:
+    name: Run Unit Tests
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download collection
+        uses: actions/download-artifact@v4
+        with:
+          name: ansible-collection
+          path: ansible_collections
+
+      - name: Run unit tests
+        run: |
+          cd ansible_collections/os_migrate/os_migrate
+          TARGET_PYTHON_VERSION=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+          echo "Running Ansible unit tests with python version ${TARGET_PYTHON_VERSION}"
+          ansible-test units --python ${TARGET_PYTHON_VERSION} --local
