@@ -12,22 +12,17 @@ https://www.sphinx-doc.org/en/master/usage/configuration.html
 import os
 import sys
 
-from ansible.plugins import loader
-
-
-os.environ["PROJECT_ROOT"] = os.path.abspath('../..')
-
 # Add the project
-sys.path.insert(0, os.path.abspath('../..'))
+sys.path.insert(0, os.path.abspath("../.."))
 
 # Add the extensions
-sys.path.insert(0, os.path.join(os.path.abspath('.'), '_exts'))
+sys.path.insert(0, os.path.join(os.path.abspath("."), "_exts"))
 
 # -- Project information -----------------------------------------------------
 
-project = 'os-migrate'
-copyright = '2020, os-migrate'
-author = 'os-migrate'
+project = "os-migrate"
+copyright = "2020, os-migrate"
+author = "os-migrate"
 
 
 # -- General configuration ---------------------------------------------------
@@ -35,27 +30,23 @@ author = 'os-migrate'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [
-    'sphinx_rtd_theme',
-    'sphinx.ext.autodoc',
-    'ansible-autodoc'
-]
+extensions = ["sphinx_rtd_theme", "sphinx.ext.autodoc", "ansible-autodoc"]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 
 # -- Options for HTML output -------------------------------------------------
 
-master_doc = 'index'
+master_doc = "index"
 
 # The suffix of source filenames.
-source_suffix = '.rst'
+source_suffix = ".rst"
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 add_function_parentheses = True
@@ -65,7 +56,7 @@ add_function_parentheses = True
 add_module_names = True
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'native'
+pygments_style = "native"
 
 # -- Options for HTML output --------------------------------------------------
 
@@ -83,13 +74,13 @@ pygments_style = 'native'
 # }
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = '%sdocs' % project
-html_theme = 'sphinx_rtd_theme'
+htmlhelp_basename = "%sdocs" % project
+html_theme = "sphinx_rtd_theme"
 
-needed_module_utils = [
-    'module_1',
-    'module_2'
-]
+# Comment out or remove the following block if you do not need to load module_utils
+from ansible.plugins import loader
+
+needed_module_utils = ["module_1", "module_2"]
 # load our custom module_utils so that modules can be imported for
 # generating docs
 for m in needed_module_utils:
