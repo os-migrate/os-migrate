@@ -12,6 +12,9 @@ https://www.sphinx-doc.org/en/master/usage/configuration.html
 import os
 import sys
 
+
+os.environ["PROJECT_ROOT"] = os.path.abspath("../..")
+
 # Add the project
 sys.path.insert(0, os.path.abspath("../.."))
 
@@ -78,13 +81,16 @@ htmlhelp_basename = "%sdocs" % project
 html_theme = "sphinx_rtd_theme"
 
 # Comment out or remove the following block if you do not need to load module_utils
-from ansible.plugins import loader
+from ansible.plugins.loader import init_plugin_loader, module_utils_loader
+
+init_plugin_loader()
 
 needed_module_utils = ["module_1", "module_2"]
+
 # load our custom module_utils so that modules can be imported for
 # generating docs
 for m in needed_module_utils:
     try:
-        loader.module_utils_loader.get(m)
+        module_utils_loader.get(m)
     except AttributeError:
         pass
