@@ -5,5 +5,3 @@
 :compat-mode:
 :doctype: book
 :context: osp
-
-

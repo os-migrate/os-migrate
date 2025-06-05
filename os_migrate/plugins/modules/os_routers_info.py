@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: os_routers_info
 
@@ -57,14 +58,14 @@ options:
       - Required if 'auth' param not used.
     required: false
     type: raw
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - os_routers_info:
     cloud: srccloud
-'''
+"""
 
-RETURN = '''
+RETURN = """
 openstack_routers:
     description: information about the routers
     returned: always, but can be empty
@@ -78,22 +79,27 @@ openstack_routers:
             description: Router name.
             returned: success
             type: str
-'''
+"""
 
 from ansible.module_utils.basic import AnsibleModule
+
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
 try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 except ImportError:
     # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 
 
 def main():
     argument_spec = openstack_full_argument_spec(
-        filters=dict(required=False, type='dict', default={}),
+        filters=dict(required=False, type="dict", default={}),
     )
 
     module = AnsibleModule(
@@ -103,14 +109,14 @@ def main():
 
     try:
         sdk, conn = openstack_cloud_from_module(module)
-        routers = list(map(
-            lambda r: r.to_dict(),
-            conn.network.routers(**module.params['filters'])))
+        routers = list(
+            map(lambda r: r.to_dict(), conn.network.routers(**module.params["filters"]))
+        )
         module.exit_json(changed=False, openstack_routers=routers)
 
     except sdk.exceptions.OpenStackCloudException as e:
         module.fail_json(msg=str(e))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

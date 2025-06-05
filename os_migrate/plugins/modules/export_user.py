@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: export_user
 short_description: Export OpenStack Identity User
@@ -60,28 +61,33 @@ options:
       - Required if 'auth' param not used.
     required: false
     type: raw
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: Export osm_user into /opt/os-migrate/users.yml
   os_migrate.os_migrate.export_user:
     cloud: source_cloud
     path: /opt/os-migrate/users.yml
     name: osm_user
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible.module_utils.basic import AnsibleModule
+
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
 try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 except ImportError:
     # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import filesystem
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import user
@@ -89,8 +95,8 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import user
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        path=dict(type='str', required=True),
-        name=dict(type='str', required=True),
+        path=dict(type="str", required=True),
+        name=dict(type="str", required=True),
     )
     # TODO: check the del
     # del argument_spec['cloud']
@@ -107,11 +113,12 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    sdk_user = conn.identity.find_user(module.params['name'], ignore_missing=False)
+    sdk_user = conn.identity.find_user(module.params["name"], ignore_missing=False)
     data = user.User.from_sdk(conn, sdk_user)
 
-    result['changed'] = filesystem.write_or_replace_resource(
-        module.params['path'], data)
+    result["changed"] = filesystem.write_or_replace_resource(
+        module.params["path"], data
+    )
 
     module.exit_json(**result)
 
@@ -120,5 +127,5 @@ def main():
     run_module()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: export_workload
 
@@ -76,27 +77,32 @@ options:
       - Required if 'auth' param not used.
     required: false
     type: raw
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: Export migration-vm into /opt/os-migrate/workloads.yml
   os_migrate.os_migrate.export_workload:
     path: /opt/os-migrate/workloads.yml
     name: migration-vm
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible.module_utils.basic import AnsibleModule
+
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
 try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 except ImportError:
     # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import filesystem
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import server
@@ -104,9 +110,9 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import serve
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        path=dict(type='str', required=True),
-        name=dict(type='str', required=True),
-        migration_params=dict(type='dict', required=False, default={}),
+        path=dict(type="str", required=True),
+        name=dict(type="str", required=True),
+        migration_params=dict(type="dict", required=False, default={}),
     )
     # TODO: check the del
     # del argument_spec['cloud']
@@ -123,13 +129,14 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    sdk_server_nodetails = conn.compute.find_server(module.params['name'], ignore_missing=False)
-    sdk_server = conn.compute.get_server(sdk_server_nodetails['id'])
+    sdk_server_nodetails = conn.compute.find_server(
+        module.params["name"], ignore_missing=False
+    )
+    sdk_server = conn.compute.get_server(sdk_server_nodetails["id"])
     srv = server.Server.from_sdk(conn, sdk_server)
-    srv.update_migration_params(module.params['migration_params'])
+    srv.update_migration_params(module.params["migration_params"])
 
-    result['changed'] = filesystem.write_or_replace_resource(
-        module.params['path'], srv)
+    result["changed"] = filesystem.write_or_replace_resource(module.params["path"], srv)
 
     module.exit_json(**result)
 
@@ -138,5 +145,5 @@ def main():
     run_module()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

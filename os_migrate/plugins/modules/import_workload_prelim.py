@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: import_workload_prelim
 
@@ -77,9 +78,9 @@ options:
       - Required if 'auth' param not used
     required: false
     type: raw
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 main.yml:
 
 - name: validate loaded resources
@@ -159,9 +160,9 @@ workload.yml:
   rescue:
     - debug:
         msg: "Failed to begin import of {{ prelim.server_name }}!"
-'''
+"""
 
-RETURN = '''
+RETURN = """
 server_name:
   description: The name of the target instance from params, as a convenience.
   returned: Only after successful connection to destination cloud.
@@ -177,17 +178,22 @@ state_file:
   returned: Only on success.
   type: str
   sample: lab-migration-data/migration-vm.state
-'''
+"""
 
 from ansible.module_utils.basic import AnsibleModule
+
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
 try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 except ImportError:
     # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import server
 
@@ -196,10 +202,10 @@ import os
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        dst_filters=dict(type='dict', required=False, default={}),
-        src_conversion_host=dict(type='dict', required=True),
-        data=dict(type='dict', required=True),
-        log_dir=dict(type='str', default=None),
+        dst_filters=dict(type="dict", required=False, default={}),
+        src_conversion_host=dict(type="dict", required=True),
+        data=dict(type="dict", required=True),
+        log_dir=dict(type="str", default=None),
     )
 
     result = dict(
@@ -211,29 +217,41 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    src = server.Server.from_data(module.params['data'])
+    src = server.Server.from_data(module.params["data"])
     params, info = src.params_and_info()
 
-    server_name = params['name']
-    result['server_name'] = server_name
-    log_dir = module.params['log_dir']
+    server_name = params["name"]
+    result["server_name"] = server_name
+    log_dir = module.params["log_dir"]
 
     # Do not convert source conversion host!
-    if info['id'] == module.params['src_conversion_host']['id']:
-        module.exit_json(skipped=True, skip_reason='Skipping conversion host.',
-                         **result)
+    if info["id"] == module.params["src_conversion_host"]["id"]:
+        module.exit_json(
+            skipped=True, skip_reason="Skipping conversion host.", **result
+        )
 
     # Assume an existing VM with the same name means it was already migrated.
     # With Nova, the 'name' parameter for list request is a regular expression.
     server_name_regex = f"^{server_name}$"
-    if len(list(conn.compute.servers(
-            details=False, name=server_name_regex, **module.params['dst_filters']))) > 0:
+    if (
+        len(
+            list(
+                conn.compute.servers(
+                    details=False,
+                    name=server_name_regex,
+                    **module.params["dst_filters"],
+                )
+            )
+        )
+        > 0
+    ):
         module.exit_json(
-            msg=f"VM '{server_name}' already exists on destination, skipping.", **result)
+            msg=f"VM '{server_name}' already exists on destination, skipping.", **result
+        )
 
-    result['log_file'] = os.path.join(log_dir, server_name) + '.log'
-    result['state_file'] = os.path.join(log_dir, server_name) + '.state'
-    result['changed'] = True
+    result["log_file"] = os.path.join(log_dir, server_name) + ".log"
+    result["state_file"] = os.path.join(log_dir, server_name) + ".state"
+    result["changed"] = True
 
     module.exit_json(**result)
 
@@ -242,5 +260,5 @@ def main():
     run_module()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

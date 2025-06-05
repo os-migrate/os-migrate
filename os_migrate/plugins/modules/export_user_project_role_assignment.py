@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: export_user_project_role_assignment
 short_description: Export OpenStack Identity Role Assignment
@@ -70,40 +71,46 @@ options:
       - Required if 'auth' param not used.
     required: false
     type: raw
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: Export my_project into /opt/os-migrate/user_project_role_assignment.yml
   os_migrate.os_migrate.export_user_project_role_assignment:
     cloud: source_cloud
     path: /opt/os-migrate/user_project_role_assignment.yml
     name: my_project
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible.module_utils.basic import AnsibleModule
 
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
 try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 except ImportError:
     # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import filesystem
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils import user_project_role_assignment
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
+    user_project_role_assignment,
+)
 
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        path=dict(type='str', required=True),
-        user_id=dict(type='str', required=True),
-        project_id=dict(type='str', required=True),
-        role_id=dict(type='str', required=True),
+        path=dict(type="str", required=True),
+        user_id=dict(type="str", required=True),
+        project_id=dict(type="str", required=True),
+        role_id=dict(type="str", required=True),
     )
     # TODO: check the del
     # del argument_spec['cloud']
@@ -119,23 +126,33 @@ def run_module():
         # supports_check_mode=True,
     )
 
-    user_id = module.params['user_id']
-    project_id = module.params['project_id']
-    role_id = module.params['role_id']
+    user_id = module.params["user_id"]
+    project_id = module.params["project_id"]
+    role_id = module.params["role_id"]
 
     sdk, conn = openstack_cloud_from_module(module)
-    sdk_assignments = list(conn.identity.role_assignments(
-        user_id=user_id, scope_project_id=project_id, role_id=role_id))
+    sdk_assignments = list(
+        conn.identity.role_assignments(
+            user_id=user_id, scope_project_id=project_id, role_id=role_id
+        )
+    )
     if len(sdk_assignments) == 0:
-        module.fail_json(msg=f"No role assignment found for user {user_id}, project {project_id}, role {role_id}.")
+        module.fail_json(
+            msg=f"No role assignment found for user {user_id}, project {project_id}, role {role_id}."
+        )
     elif len(sdk_assignments) > 1:
-        module.fail_json(msg=f"Multiple role assignments found for user {user_id}, project {project_id}, role {role_id}.")
+        module.fail_json(
+            msg=f"Multiple role assignments found for user {user_id}, project {project_id}, role {role_id}."
+        )
     else:
         sdk_assignment = sdk_assignments[0]
 
-    data = user_project_role_assignment.UserProjectRoleAssignment.from_sdk(conn, sdk_assignment)
-    result['changed'] = filesystem.write_or_replace_resource(
-        module.params['path'], data)
+    data = user_project_role_assignment.UserProjectRoleAssignment.from_sdk(
+        conn, sdk_assignment
+    )
+    result["changed"] = filesystem.write_or_replace_resource(
+        module.params["path"], data
+    )
 
     module.exit_json(**result)
 
@@ -144,5 +161,5 @@ def main():
     run_module()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

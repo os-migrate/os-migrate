@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: import_workload_create_instance
 
@@ -69,9 +70,9 @@ options:
     required: true
     type: list
     elements: dict
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 main.yml:
 
 - name: validate loaded resources
@@ -205,33 +206,38 @@ workload.yml:
   rescue:
     - fail:
         msg: "Failed to import {{ item.params.name }}!"
-'''
+"""
 
-RETURN = '''
+RETURN = """
 server_id:
   description: The ID of the newly created server.
   returned: On successful creation of migrated server on destination cloud.
   type: str
   sample: 059635b7-451f-4a64-978a-7c2e9e4c15ff
-'''
+"""
 
 from ansible.module_utils.basic import AnsibleModule
+
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
 try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 except ImportError:
     # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import server
 
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        data=dict(type='dict', required=True),
-        block_device_mapping=dict(type='list', required=True, elements='dict'),
+        data=dict(type="dict", required=True),
+        block_device_mapping=dict(type="list", required=True, elements="dict"),
     )
 
     result = dict(
@@ -243,19 +249,19 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    block_device_mapping = module.params['block_device_mapping']
+    block_device_mapping = module.params["block_device_mapping"]
 
-    ser_server = server.Server.from_data(module.params['data'])
+    ser_server = server.Server.from_data(module.params["data"])
     sdk_server = ser_server.create(conn, block_device_mapping)
     # Some info (e.g. flavor ID) will only become available after the
     # server is in ACTIVE state, we need to wait for it.
-    sdk_server = conn.compute.wait_for_server(sdk_server, failures=['ERROR'], wait=600)
+    sdk_server = conn.compute.wait_for_server(sdk_server, failures=["ERROR"], wait=600)
     dst_ser_server = server.Server.from_sdk(conn, sdk_server)
 
     if sdk_server:
-        result['changed'] = True
-        result['server'] = dst_ser_server.data
-        result['server_id'] = sdk_server.id
+        result["changed"] = True
+        result["server"] = dst_ser_server.data
+        result["server_id"] = sdk_server.id
 
     module.exit_json(**result)
 
@@ -264,5 +270,5 @@ def main():
     run_module()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

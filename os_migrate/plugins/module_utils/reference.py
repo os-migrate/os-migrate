@@ -1,11 +1,11 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 import openstack
 from openstack.exceptions import DuplicateResource, HttpException, ResourceFailure
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
-    import const
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
 
 
 def image_id(conn, ref, required=True):
@@ -21,10 +21,10 @@ def image_id(conn, ref, required=True):
     if ref is None:
         return None
 
-    filters = {'name': ref['name']}
+    filters = {"name": ref["name"]}
     project_id_filters = _project_id_filters(conn, ref)
-    if 'project_id' in project_id_filters:
-        filters['owner'] = project_id_filters['project_id']
+    if "project_id" in project_id_filters:
+        filters["owner"] = project_id_filters["project_id"]
 
     matches = list(conn.image.images(**filters))
 
@@ -35,7 +35,7 @@ def image_id(conn, ref, required=True):
             raise ResourceFailure(f"No image found for query: {filters}")
         else:
             return None
-    return matches[0]['id']
+    return matches[0]["id"]
 
 
 def image_ref(conn, id_, required=True):
@@ -244,7 +244,8 @@ def flavor_ref(conn, id_, required=True):
     """
     # Flavor objects don't have project_id and domain_id on them
     return _fetch_ref(
-        conn, conn.compute.find_flavor, id_, required, get_project_info=False)
+        conn, conn.compute.find_flavor, id_, required, get_project_info=False
+    )
 
 
 def subnet_pool_id(conn, ref, required=True):
@@ -289,7 +290,9 @@ def domain_ref(conn, id_, required=True):
     Raises: openstack's ResourceNotFound when `required` but not found
     """
     # Domain objects don't have project_id
-    return _fetch_ref(conn, conn.identity.find_domain, id_, required, get_project_info=False)
+    return _fetch_ref(
+        conn, conn.identity.find_domain, id_, required, get_project_info=False
+    )
 
 
 def project_id(conn, ref, required=True):
@@ -313,14 +316,16 @@ def project_ref(conn, id_, required=True):
     # domain_id (unless they're domains themselves). Since extending
     # _fetch_ref with this very special case doesn't make much sense,
     # we handle it here.
-    ref = _fetch_ref(conn, conn.identity.find_project, id_, required, get_project_info=False)
+    ref = _fetch_ref(
+        conn, conn.identity.find_project, id_, required, get_project_info=False
+    )
     if ref is None:
         return
 
     project = conn.identity.find_project(id_)
-    if project is not None and project['domain_id'] is not None:
-        domain = conn.identity.find_domain(project['domain_id'])
-        ref['domain_name'] = domain['name']
+    if project is not None and project["domain_id"] is not None:
+        domain = conn.identity.find_domain(project["domain_id"])
+        ref["domain_name"] = domain["name"]
 
     return ref
 
@@ -334,7 +339,7 @@ def user_id(conn, ref, required=True, none_if_auth=False):
     Returns: the ID, or None if not found and not `required`
     Raises: openstack's ResourceNotFound when `required` but not found
     """
-    if ref['name'] == const.REF_AUTH:
+    if ref["name"] == const.REF_AUTH:
         if none_if_auth:
             return None
         else:
@@ -354,22 +359,24 @@ def user_ref(conn, id_, required=True, allow_auth=True):
     """
     if allow_auth and id_ == conn.current_user_id:
         return {
-            'project_name': None,
-            'name': const.REF_AUTH,
-            'domain_name': const.REF_AUTH,
+            "project_name": None,
+            "name": const.REF_AUTH,
+            "domain_name": const.REF_AUTH,
         }
 
     # User objects don't have project_id, but they have a
     # domain_id. Since extending _fetch_ref with this very special
     # case doesn't make much sense, we handle it here.
-    ref = _fetch_ref(conn, conn.identity.find_user, id_, required, get_project_info=False)
+    ref = _fetch_ref(
+        conn, conn.identity.find_user, id_, required, get_project_info=False
+    )
     if ref is None:
         return
 
     user = conn.identity.find_user(id_)
-    if user is not None and user['domain_id'] is not None:
-        domain = conn.identity.find_domain(user['domain_id'])
-        ref['domain_name'] = domain['name']
+    if user is not None and user["domain_id"] is not None:
+        domain = conn.identity.find_domain(user["domain_id"])
+        ref["domain_name"] = domain["name"]
 
     return ref
 
@@ -391,14 +398,16 @@ def role_ref(conn, id_, required=True):
     Returns: the ref dict, or None if not found and not `required`
     Raises: openstack's ResourceNotFound when `required` but not found
     """
-    ref = _fetch_ref(conn, conn.identity.find_role, id_, required, get_project_info=False)
+    ref = _fetch_ref(
+        conn, conn.identity.find_role, id_, required, get_project_info=False
+    )
     if ref is None:
         return
 
     role = conn.identity.find_role(id_)
-    if role is not None and role['domain_id'] is not None:
-        domain = conn.identity.find_domain(role['domain_id'])
-        ref['domain_name'] = domain['name']
+    if role is not None and role["domain_id"] is not None:
+        domain = conn.identity.find_domain(role["domain_id"])
+        ref["domain_name"] = domain["name"]
 
     return ref
 
@@ -414,16 +423,18 @@ def _fetch_ref(conn, get_method, id_, required=True, get_project_info=True):
     if get_project_info:
         if isinstance(resource, openstack.image.v2.image.Image):
             project_name, domain_name = _fetch_project_name_and_domain_name(
-                conn, resource.owner_id)
+                conn, resource.owner_id
+            )
         else:
             project_name, domain_name = _fetch_project_name_and_domain_name(
-                conn, resource.project_id)
+                conn, resource.project_id
+            )
     else:
         project_name, domain_name = None, None
     return {
-        'name': resource['name'],
-        'project_name': project_name,
-        'domain_name': domain_name,
+        "name": resource["name"],
+        "project_name": project_name,
+        "domain_name": domain_name,
     }
 
 
@@ -432,31 +443,31 @@ def _fetch_id(conn, get_method, ref, required=True):
         return None
 
     sdk_res = get_method(
-        ref['name'],
+        ref["name"],
         ignore_missing=not required,
         **_project_id_filters(conn, ref),
     )
     if sdk_res:
-        return sdk_res['id']
+        return sdk_res["id"]
 
 
 def _project_id_filters(conn, ref):
-    if ref['project_name'] == const.REF_AUTH:
-        return {'project_id': conn.current_project_id}
+    if ref["project_name"] == const.REF_AUTH:
+        return {"project_id": conn.current_project_id}
 
     domain_filters = {}
-    if ref['domain_name'] is not None and ref['domain_name'] != const.REF_AUTH:
+    if ref["domain_name"] is not None and ref["domain_name"] != const.REF_AUTH:
         try:
-            domain = conn.identity.find_domain(ref['domain_name'])
-            domain_filters = {'domain_id': domain['id']}
+            domain = conn.identity.find_domain(ref["domain_name"])
+            domain_filters = {"domain_id": domain["id"]}
         except HttpException as e:
             if e.status_code != 403:
                 raise e
 
-    if ref['project_name'] is not None:
+    if ref["project_name"] is not None:
         try:
-            project = conn.identity.find_project(ref['project_name'], **domain_filters)
-            return {'project_id': project['id']}
+            project = conn.identity.find_project(ref["project_name"], **domain_filters)
+            return {"project_id": project["id"]}
         except HttpException as e:
             if e.status_code != 403:
                 raise e
@@ -476,10 +487,10 @@ def _fetch_project_name_and_domain_name(conn, project_id):
     domain_name = None
     try:
         project = conn.identity.get_project(project_id)
-        project_name = project['name']
+        project_name = project["name"]
 
         domain = conn.identity.get_domain(project.domain_id)
-        domain_name = domain['name']
+        domain_name = domain["name"]
     except HttpException as e:
         # If we don't have permission to fetch project/domain names,
         # make a simple reference based on resource name only (keep

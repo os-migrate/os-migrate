@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: export_image_meta
 
@@ -66,27 +67,32 @@ options:
       - Required if 'auth' parameter is not used.
     required: false
     type: raw
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: Export myimage into /opt/os-migrate/images.yml
   os_migrate.os_migrate.export_image_meta:
     path: /opt/os-migrate/images.yml
     name: myimage
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible.module_utils.basic import AnsibleModule
+
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
 try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 except ImportError:
     # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import filesystem
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import image
@@ -94,8 +100,8 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import image
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        path=dict(type='str', required=True),
-        name=dict(type='str', required=True),
+        path=dict(type="str", required=True),
+        name=dict(type="str", required=True),
     )
     # TODO: check the del
     # del argument_spec['cloud']
@@ -112,11 +118,12 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    sdk_image = conn.image.find_image(module.params['name'], ignore_missing=False)
+    sdk_image = conn.image.find_image(module.params["name"], ignore_missing=False)
     ser_image = image.Image.from_sdk(conn, sdk_image)
 
-    result['changed'] = filesystem.write_or_replace_resource(
-        module.params['path'], ser_image)
+    result["changed"] = filesystem.write_or_replace_resource(
+        module.params["path"], ser_image
+    )
 
     module.exit_json(**result)
 
@@ -125,5 +132,5 @@ def main():
     run_module()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

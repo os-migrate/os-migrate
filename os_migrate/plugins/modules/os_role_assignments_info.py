@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: os_role_assignments_info
 
@@ -64,14 +65,14 @@ options:
       - Required if 'auth' param not used.
     required: false
     type: raw
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - os_role_assignments_info:
     cloud: srccloud
-'''
+"""
 
-RETURN = '''
+RETURN = """
 openstack_role_assignments:
     description: information about the role assignments
     returned: always, but can be empty
@@ -85,23 +86,28 @@ openstack_role_assignments:
             description: Router name.
             returned: success
             type: str
-'''
+"""
 
 from ansible.module_utils.basic import AnsibleModule
+
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
 try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 except ImportError:
     # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 
 
 def main():
     argument_spec = openstack_full_argument_spec(
-        assignee_types=dict(required=False, type='list', default=None),
-        scope_types=dict(required=False, type='list', default=None),
+        assignee_types=dict(required=False, type="list", default=None),
+        scope_types=dict(required=False, type="list", default=None),
     )
 
     module = AnsibleModule(
@@ -109,13 +115,13 @@ def main():
         supports_check_mode=True,
     )
 
-    assignee_types = module.params['assignee_types']
-    scope_types = module.params['scope_types']
+    assignee_types = module.params["assignee_types"]
+    scope_types = module.params["scope_types"]
     try:
         sdk, conn = openstack_cloud_from_module(module)
         role_assignment_dicts = map(
-            lambda r: r.to_dict(),
-            conn.identity.role_assignments(include_names=True))
+            lambda r: r.to_dict(), conn.identity.role_assignments(include_names=True)
+        )
 
         def assignee_filter(role_assignment_dict):
             if assignee_types is None:
@@ -129,17 +135,19 @@ def main():
             if scope_types is None:
                 return True
             for scope_type in scope_types:
-                if role_assignment_dict['scope'].get(scope_type) is not None:
+                if role_assignment_dict["scope"].get(scope_type) is not None:
                     return True
             return False
 
         filtered_role_assignments = filter(assignee_filter, role_assignment_dicts)
         filtered_role_assignments = filter(scope_filter, filtered_role_assignments)
-        module.exit_json(changed=False, openstack_role_assignments=list(filtered_role_assignments))
+        module.exit_json(
+            changed=False, openstack_role_assignments=list(filtered_role_assignments)
+        )
 
     except sdk.exceptions.OpenStackCloudException as e:
         module.fail_json(msg=str(e))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

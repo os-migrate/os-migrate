@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: export_keypair
 
@@ -72,28 +73,33 @@ options:
       - Required if 'auth' parameter is not used.
     required: false
     type: raw
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: Export my_keypair into /opt/os-migrate/keypairs.yml
   os_migrate.os_migrate.export_keypair:
     cloud: source_cloud
     path: /opt/os-migrate/keypairs.yml
     name: my_keypair
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible.module_utils.basic import AnsibleModule
+
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
 try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 except ImportError:
     # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import filesystem
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import keypair
@@ -101,9 +107,9 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import keypa
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        path=dict(type='str', required=True),
-        name=dict(type='str', required=True),
-        user_id=dict(type='str', required=False, default=None),
+        path=dict(type="str", required=True),
+        name=dict(type="str", required=True),
+        user_id=dict(type="str", required=False, default=None),
     )
 
     result = dict(
@@ -119,15 +125,16 @@ def run_module():
 
     sdk, conn = openstack_cloud_from_module(module)
     filters = {
-        'ignore_missing': False,
+        "ignore_missing": False,
     }
-    if module.params['user_id'] is not None:
-        filters['user_id'] = module.params['user_id']
-    sdk_keypair = conn.compute.find_keypair(module.params['name'], **filters)
+    if module.params["user_id"] is not None:
+        filters["user_id"] = module.params["user_id"]
+    sdk_keypair = conn.compute.find_keypair(module.params["name"], **filters)
     data = keypair.Keypair.from_sdk(conn, sdk_keypair)
 
-    result['changed'] = filesystem.write_or_replace_resource(
-        module.params['path'], data)
+    result["changed"] = filesystem.write_or_replace_resource(
+        module.params["path"], data
+    )
 
     module.exit_json(**result)
 
@@ -136,5 +143,5 @@ def main():
     run_module()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

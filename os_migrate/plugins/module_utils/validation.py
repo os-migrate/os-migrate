@@ -1,8 +1,11 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils import \
-    resource_map, serialization
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
+    resource_map,
+    serialization,
+)
 
 
 def get_errors_in_file_structs(file_structs, resrc_map=None):
@@ -17,9 +20,10 @@ def get_errors_in_file_structs(file_structs, resrc_map=None):
 
     all_resource_structs = []
     for file_struct in file_structs:
-        all_resource_structs.extend(file_struct['resources'])
+        all_resource_structs.extend(file_struct["resources"])
     all_resources, errors = serialization.create_resources_from_struct(
-        all_resource_structs, resrc_map)
+        all_resource_structs, resrc_map
+    )
 
     errors.extend(_resource_duplicate_name_errors(all_resources))
     errors.extend(_resource_data_errors(all_resources))
@@ -52,6 +56,7 @@ def _resource_duplicate_name_errors(resources):
         if count > 1:
             errors.append(
                 f"Resource duplication: {count} resources with import identity '{import_id}'. "
-                "This would result in duplicit imports.")
+                "This would result in duplicit imports."
+            )
 
     return errors

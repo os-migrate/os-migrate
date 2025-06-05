@@ -1,16 +1,20 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 import openstack
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
-    import exc, const, resource
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
+    exc,
+    const,
+    resource,
+)
 
 
 def server_volumes(conn, sdk_res):
     volumes = []
     for attachment in conn.compute.volume_attachments(sdk_res):
-        volumes.append(conn.block_storage.get_volume(attachment['volume_id']))
+        volumes.append(conn.block_storage.get_volume(attachment["volume_id"]))
     return volumes
 
 
@@ -20,21 +24,23 @@ class ServerVolume(resource.Resource):
     sdk_class = openstack.block_storage.v3.volume.Volume
 
     info_from_sdk = [
-        'attachments',
-        'is_bootable',
-        'id',
+        "attachments",
+        "is_bootable",
+        "id",
         # size is set to match the source volume, not editable
-        'size',
+        "size",
     ]
     params_from_sdk = [
-        'availability_zone',
-        'name',
-        'description',
-        'volume_type',
+        "availability_zone",
+        "name",
+        "description",
+        "volume_type",
     ]
 
     def create_or_update(self, conn, filters=None):
-        raise exc.Unsupported("Direct ServerVolume.create_or_update call is unsupported.")
+        raise exc.Unsupported(
+            "Direct ServerVolume.create_or_update call is unsupported."
+        )
 
     def sdk_params(self, conn):
         """Return creation SDK params which are editable by the user in the

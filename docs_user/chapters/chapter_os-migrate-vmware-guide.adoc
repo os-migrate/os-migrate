@@ -167,7 +167,7 @@ You can use os_migrate.os_migration collection to deploy a conversion, but you c
 easily create your conversion host manually.
 
 A conversion host is basically an OpenStack instance.
- 
+
 [NOTE]
 ====
 Important: If you want to take benefit of the current supported OS, it's highly recommended to use a *CentOS-10* release or *RHEL-9.5* and superior. If you want to use other Linux distribution, make sure the virtio-win package is equal or higher than 1.40 version.

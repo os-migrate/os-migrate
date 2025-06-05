@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: import_workload_dst_failure_cleanup
 
@@ -105,9 +106,9 @@ options:
     required: false
     default: 1800
     type: int
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
   rescue:
     - name: clean up in the destination cloud after migration failure
       os_migrate.os_migrate.import_workload_dst_failure_cleanup:
@@ -133,33 +134,49 @@ EXAMPLES = '''
 
     - fail:
         msg: "Failed to import {{ item.params.name }}!"
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible.module_utils.basic import AnsibleModule
+
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
 try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 except ImportError:
     # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import server
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils.volume_common \
-    import DEFAULT_TIMEOUT, OpenStackVolumeBase
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils.volume_common import (
+    DEFAULT_TIMEOUT,
+    OpenStackVolumeBase,
+)
 
 
 class OpenStackDstFailureCleanup(OpenStackVolumeBase):
-    """ Removes volumes after a failed migration from the destination cloud. """
+    """Removes volumes after a failed migration from the destination cloud."""
 
-    def __init__(self, openstack_connection, destination_conversion_host_id,
-                 ssh_key_path, ssh_user, transfer_uuid, volume_map,
-                 state_file=None, log_file=None, timeout=DEFAULT_TIMEOUT):
+    def __init__(
+        self,
+        openstack_connection,
+        destination_conversion_host_id,
+        ssh_key_path,
+        ssh_user,
+        transfer_uuid,
+        volume_map,
+        state_file=None,
+        log_file=None,
+        timeout=DEFAULT_TIMEOUT,
+    ):
 
         super().__init__(
             openstack_connection,
@@ -176,15 +193,15 @@ class OpenStackDstFailureCleanup(OpenStackVolumeBase):
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        data=dict(type='dict', required=True),
-        conversion_host=dict(type='dict', required=True),
-        ssh_key_path=dict(type='str', required=True),
-        ssh_user=dict(type='str', required=True),
-        transfer_uuid=dict(type='str', required=True),
-        volume_map=dict(type='dict', required=True),
-        state_file=dict(type='str', default=None),
-        log_file=dict(type='str', default=None),
-        timeout=dict(type='int', default=DEFAULT_TIMEOUT),
+        data=dict(type="dict", required=True),
+        conversion_host=dict(type="dict", required=True),
+        ssh_key_path=dict(type="str", required=True),
+        ssh_user=dict(type="str", required=True),
+        transfer_uuid=dict(type="str", required=True),
+        volume_map=dict(type="dict", required=True),
+        state_file=dict(type="str", default=None),
+        log_file=dict(type="str", default=None),
+        timeout=dict(type="int", default=DEFAULT_TIMEOUT),
     )
 
     result = dict(
@@ -196,20 +213,20 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    src = server.Server.from_data(module.params['data'])
+    src = server.Server.from_data(module.params["data"])
     params, info = src.params_and_info()
 
     # Required parameters
-    destination_conversion_host_id = module.params['conversion_host']['id']
-    ssh_key_path = module.params['ssh_key_path']
-    ssh_user = module.params['ssh_user']
-    transfer_uuid = module.params['transfer_uuid']
-    volume_map = module.params['volume_map']
+    destination_conversion_host_id = module.params["conversion_host"]["id"]
+    ssh_key_path = module.params["ssh_key_path"]
+    ssh_user = module.params["ssh_user"]
+    transfer_uuid = module.params["transfer_uuid"]
+    volume_map = module.params["volume_map"]
 
     # Optional parameters
-    state_file = module.params.get('state_file', None)
-    log_file = module.params.get('log_file', None)
-    timeout = module.params['timeout']
+    state_file = module.params.get("state_file", None)
+    log_file = module.params.get("log_file", None)
+    timeout = module.params["timeout"]
 
     failure_cleanup = OpenStackDstFailureCleanup(
         conn,
@@ -231,5 +248,5 @@ def main():
     run_module()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
