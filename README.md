@@ -2,6 +2,15 @@
 OS Migrate is an open source toolbox for parallel cloud migration
 between OpenStack/Openshift clouds.
 
+[![consistency-functional](https://github.com/os-migrate/os-migrate/actions/workflows/consistency-functional.yml/badge.svg?branch=main)](https://github.com/os-migrate/os-migrate/actions/workflows/consistency-functional.yml)
+[![container-image-build](https://github.com/os-migrate/os-migrate/actions/workflows/container-image-build.yml/badge.svg?branch=main)](https://github.com/os-migrate/os-migrate/actions/workflows/container-image-build.yml)
+[![docs-build](https://github.com/os-migrate/os-migrate/actions/workflows/docs-build.yml/badge.svg?branch=main)](https://github.com/os-migrate/os-migrate/actions/workflows/docs-build.yml)
+<img src="https://img.shields.io/badge/Python-v3.7+-blue.svg">
+<img src="https://img.shields.io/badge/Ansible-v2.9-blue.svg">
+<a href="https://opensource.org/licenses/Apache-2.0">
+  <img src="https://img.shields.io/badge/License-Apache2.0-blue.svg">
+</a>
+
 ## Description
 
 Parallel cloud migration is a way to
@@ -60,7 +69,7 @@ ansible-galaxy collection install os_migrate.os_migrate:==1.0.0
 See [using Ansible collections](https://docs.ansible.com/ansible/devel/user_guide/collections_using.html) for more details.
 
 
-In addition to the above boilerplate, this section should include any additional details specific to your collection, and what to expect at each step and after installation. Be sure to include any information that supports the installation process, such as information about authentication and credentialing. 
+In addition to the above boilerplate, this section should include any additional details specific to your collection, and what to expect at each step and after installation. Be sure to include any information that supports the installation process, such as information about authentication and credentialing.
 
 ## Overview
 
