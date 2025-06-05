@@ -3,7 +3,7 @@ OS Migrate Walkthrough
 
 OS Migrate is a framework for OpenStack parallel cloud migration
 (migrating content between OpenStack tenants which are not necessarily
-in the same cloud). It’s a collection of Ansible playbooks that provide
+in the same cloud). It's a collection of Ansible playbooks that provide
 the basic functionality, but may not fit each use case out of the box.
 You can craft custom playbooks using the OS Migrate collection pieces
 (roles and modules) as building blocks.
@@ -33,7 +33,7 @@ The migration is generally performed in this sequence:
 -  prerequisites: prepare authentication info, parameter files,
 
 -  pre-workload migration, which copies applicable resources into the
-   destination cloud (e.g. networks, security groups, images) while
+   destination cloud (e.g. networks, security groups, images) while
    workloads keep running in the source cloud,
 
 -  workload migration, which stops usage of applicable resources in the
@@ -72,7 +72,7 @@ two options:
 Parameter file
 ~~~~~~~~~~~~~~
 
-Let’s create an ``os-migrate-vars.yml`` file with Ansible variables:
+Let's create an ``os-migrate-vars.yml`` file with Ansible variables:
 
 .. code:: yaml
 
@@ -137,7 +137,7 @@ Shortcuts
 ~~~~~~~~~
 
 We will use the OS Migrate collection path and an ansible-playbook
-command with the following arguments routinely, so let’s save them as
+command with the following arguments routinely, so let's save them as
 variables in the shell:
 
 .. code:: bash
@@ -156,8 +156,8 @@ from the source cloud onto the migrator machine, the option to edit the
 resources if desired, and importing them into the destination cloud.
 
 Exporting or importing resources is enabled by running the corresponding
-playbook from OS Migrate. Let’s look at a concrete example. To export
-the networks, run the “export_networks” playbook.
+playbook from OS Migrate. Let's look at a concrete example. To export
+the networks, run the "export_networks" playbook.
 
 Export and import
 ~~~~~~~~~~~~~~~~~
@@ -207,7 +207,7 @@ this:
          segments: null
        type: openstack.network.Network
 
-You may edit the file as needed and then run the “import_networks”
+You may edit the file as needed and then run the "import_networks"
 playbook to import the networks from this file into the destination
 cloud:
 
@@ -250,11 +250,11 @@ Demo
 Detached volume migration
 -------------------------
 
-It is possible to migrate detached volumes in the same way as we do 
-with other openstack resource types. The migration process includes 
+It is possible to migrate detached volumes in the same way as we do
+with other openstack resource types. The migration process includes
 exporting these volumes from the source cloud onto the migrator machine,
-attaching the volume to the conversion host in source cloud, creating 
-the volume in the destination cloud and transferring the content 
+attaching the volume to the conversion host in source cloud, creating
+the volume in the destination cloud and transferring the content
 of the volumes.
 It is possible to choose the volumes to migrate using the reource filter
 
@@ -278,6 +278,7 @@ This will create detached_volumes.yml file in the data directory, similar to
 this:
 
 .. code:: yaml
+
    os_migrate_version: 1.0.1
    resources:
    - _info:
@@ -293,7 +294,7 @@ this:
        volume_type: tripleo
      type: openstack.network.ServerVolume
 
-You may edit the file as needed and then run the “import_detached_volumes”
+You may edit the file as needed and then run the "import_detached_volumes"
 playbook to import the volumes from this file into the destination
 cloud:
 
@@ -315,7 +316,7 @@ Workload migration
 
 Workload information is exported in a similar method to networks,
 security groups, etc. as in the previous sections. Run the
-“export_workloads” playbook, and edit the resulting workloads.yml as
+"export_workloads" playbook, and edit the resulting workloads.yml as
 desired:
 
 .. code:: yaml
@@ -351,7 +352,7 @@ Process Summary
 ~~~~~~~~~~~~~~~
 
 This flowchart illustrates the high-level migration workflow, from a
-user’s point of view:
+user's point of view:
 
 .. figure:: ../images/plantuml/render/workload-migration-workflow.png
    :alt: Workload migration (workflow)
@@ -359,7 +360,7 @@ user’s point of view:
 
    Workload migration (workflow)
 
-The process involves the deployment of a “conversion host” on source
+The process involves the deployment of a "conversion host" on source
 and destination clouds. A conversion host is an OpenStack server which
 will be used to transfer binary volume data from the source to the
 destination cloud. The conversion hosts are expected to be created
@@ -411,7 +412,7 @@ total data transfer.
 Preparation
 ~~~~~~~~~~~
 
-We’ll put additional parameters into ``os-migrate-vars.yml``:
+We'll put additional parameters into ``os-migrate-vars.yml``:
 
 .. code:: yaml
 
@@ -548,11 +549,11 @@ Then run the import_workloads playbook to migrate the workloads:
 
    $OSM_CMD $OSM_DIR/playbooks/import_workloads.yml
 
-Any server marked “changed” should be successfully migrated to the
-destination cloud. Servers are “skipped” if they match the name or
+Any server marked "changed" should be successfully migrated to the
+destination cloud. Servers are "skipped" if they match the name or
 ID of the specified conversion host. If there is already an server
 on the destination matching the name of the current server, it will
-be marked “ok” and no extra work will be performed.
+be marked "ok" and no extra work will be performed.
 
 Cleanup of conversion hosts
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
