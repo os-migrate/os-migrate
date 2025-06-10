@@ -36,25 +36,25 @@ Common issues
    re-exporting the data.
 
 - ``AnsibleCensoringStringIssue: workloads.yml setup task altering
-  log_file path during preliminary import workload steps. (As a 
+  log_file path during preliminary import workload steps. (As a
   result susequent import tasks are failing due to non-existent path
   error.)``
 
-  OS Migrate uses OpenStack modules to build their argument spec by 
+  OS Migrate uses OpenStack modules to build their argument spec by
   using a function in OpenStack module utils. When project names are
-  marked as ``no_log`` it causes values to be censored in the 
+  marked as ``no_log`` it causes values to be censored in the
   response. This is seen here in the import workloads setup task  where
-  ``/home/project_name/workloads/import_workloads.yml`` becomes 
-  ``/home/******/workloads/import_workloads.yml``. 
+  ``/home/project_name/workloads/import_workloads.yml`` becomes
+  ``/home/******/workloads/import_workloads.yml``.
 
-  OS Migrate cannot specify that only the password in the credentials 
-  dictionary should be treated as a secret, instead the whole 
+  OS Migrate cannot specify that only the password in the credentials
+  dictionary should be treated as a secret, instead the whole
   credentials dictionary is marked as a secret.
 
   A workaround to this is to sanitize the project name with something
-  in a pre-migration playbook that sets up storage directories for 
-  OS Migrate variables or data. This can prove beneficial in the 
-  event of users running into censored string issues relating to 
+  in a pre-migration playbook that sets up storage directories for
+  OS Migrate variables or data. This can prove beneficial in the
+  event of users running into censored string issues relating to
   ansible.
 
 - ``KeypairMigrationPitfalls: Keys are not seen by user performing
@@ -68,11 +68,11 @@ Common issues
   privileges. By default it iterates over all users and their keys,
   but it listens for filter variables which can help scope down the export.
 
-  How to use those key exports depends on how the workload migration 
-  should be done. Either the keys can be uploaded to destination to the 
+  How to use those key exports depends on how the workload migration
+  should be done. Either the keys can be uploaded to destination to the
   respective users via import_users_keypairs.yml playbook, and destination
   credentials for workload migration have to be of the users who can see the
-  keys. 
+  keys.
 
   An alternative for the following issues is the user_ref.name and
   user_ref.domain_name in the exported YAML could be edited from actual

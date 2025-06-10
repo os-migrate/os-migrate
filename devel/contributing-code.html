@@ -1,22 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contributing Code &mdash; os-migrate  documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fe63c2af" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=7ab3649f" />
+
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -29,11 +28,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> os-migrate
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            os-migrate
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -90,9 +93,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="README.html">OS Migrate Developer Documentation</a> &raquo;</li>
-      <li>Contributing Code</li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="README.html">OS Migrate Developer Documentation</a></li>
+      <li class="breadcrumb-item active">Contributing Code</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/devel/contributing-code.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -103,7 +106,7 @@
            <div itemprop="articleBody">
              
   <section id="contributing-code">
-<h1>Contributing Code<a class="headerlink" href="#contributing-code" title="Permalink to this heading"></a></h1>
+<h1>Contributing Code<a class="headerlink" href="#contributing-code" title="Link to this heading"></a></h1>
 <p>As an open source project, OS Migrate welcomes contributions from the
 community at large. The following guide provides information on how to
 add a new role to the project and where additional testing or
@@ -111,7 +114,7 @@ documentation artifacts should be added. This isn’t an exhaustive
 reference and is a living document subject to change as needed when
 the project formalizes any practice or pattern.</p>
 <section id="adding-a-new-role">
-<h2>Adding a New Role<a class="headerlink" href="#adding-a-new-role" title="Permalink to this heading"></a></h2>
+<h2>Adding a New Role<a class="headerlink" href="#adding-a-new-role" title="Link to this heading"></a></h2>
 <p>The most common contribution to OS Migrate is adding a new role to
 support the export or import of resources. The construction of the roles
 will likely follow a similar pattern. Each role also has specific unit
@@ -133,7 +136,7 @@ idempotency, and updates as a minimum. Additional tests as necessary.</p></li>
 Update developer or user documentation as needed.</p></li>
 </ul>
 <section id="creating-the-role-skeleton-automatically">
-<h3>Creating the role skeleton automatically<a class="headerlink" href="#creating-the-role-skeleton-automatically" title="Permalink to this heading"></a></h3>
+<h3>Creating the role skeleton automatically<a class="headerlink" href="#creating-the-role-skeleton-automatically" title="Link to this heading"></a></h3>
 <p>Adding roles into os-migrate can be easily achieved by
 creating the role structure skeleton automatically.</p>
 <p>From the repository root directory execute:</p>
@@ -148,7 +151,7 @@ creating the role structure skeleton automatically.</p>
 and the documentation stub.</p>
 </section>
 <section id="resources">
-<h3>Resources<a class="headerlink" href="#resources" title="Permalink to this heading"></a></h3>
+<h3>Resources<a class="headerlink" href="#resources" title="Link to this heading"></a></h3>
 <p>Resources are the primary data structures that are exported from and
 imported to clouds. In
 <code class="docutils literal notranslate"><span class="pre">os_migrate/plugins/module_utils/resource.py</span></code>, there is a
@@ -175,7 +178,7 @@ imported before are not attempted to be imported again.</p></li>
 </ul>
 </section>
 <section id="export-roles">
-<h3>Export Roles<a class="headerlink" href="#export-roles" title="Permalink to this heading"></a></h3>
+<h3>Export Roles<a class="headerlink" href="#export-roles" title="Link to this heading"></a></h3>
 <p>In the <code class="docutils literal notranslate"><span class="pre">defaults/main.yml</span></code> file, at a minimum you will need to
 define the <code class="docutils literal notranslate"><span class="pre">os_migrate_[resource]_filter</span></code> variable to support
 filtering of resources by the name property.</p>
@@ -206,7 +209,7 @@ for specific resources, and then calling the module you created for
 export.</p>
 </section>
 <section id="import-roles">
-<h3>Import Roles<a class="headerlink" href="#import-roles" title="Permalink to this heading"></a></h3>
+<h3>Import Roles<a class="headerlink" href="#import-roles" title="Link to this heading"></a></h3>
 <p>In the <code class="docutils literal notranslate"><span class="pre">defaults/main.yml</span></code> file, at a minimum you will need to
 define the same <code class="docutils literal notranslate"><span class="pre">os_migrate_[resource]_filter</span></code> variable as with
 export, and <code class="docutils literal notranslate"><span class="pre">import_[resource]_validate_file:</span> <span class="pre">true</span></code> variable to set
@@ -237,10 +240,10 @@ module you created for import.</p>
 </section>
 </section>
 <section id="writing-tests">
-<h2>Writing Tests<a class="headerlink" href="#writing-tests" title="Permalink to this heading"></a></h2>
+<h2>Writing Tests<a class="headerlink" href="#writing-tests" title="Link to this heading"></a></h2>
 <p>For newly implemented resources, ensure comprehensive test coverage by following this checklist:</p>
 <section id="functional-tests">
-<h3>Functional Tests<a class="headerlink" href="#functional-tests" title="Permalink to this heading"></a></h3>
+<h3>Functional Tests<a class="headerlink" href="#functional-tests" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>Ensure both import and export functionalities are tested, not just idempotency.</p></li>
 <li><p>Include tests for admin-only resources, ensuring they are renamed before import.</p></li>
@@ -249,56 +252,56 @@ module you created for import.</p>
 </ul>
 </section>
 <section id="unit-tests">
-<h3>Unit Tests<a class="headerlink" href="#unit-tests" title="Permalink to this heading"></a></h3>
+<h3>Unit Tests<a class="headerlink" href="#unit-tests" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>Write unit tests for each new module created, focusing on the logic within the module.</p></li>
 <li><p>Ensure that edge cases and error handling paths are covered in unit tests.</p></li>
 </ul>
 </section>
 <section id="integration-tests">
-<h3>Integration Tests<a class="headerlink" href="#integration-tests" title="Permalink to this heading"></a></h3>
+<h3>Integration Tests<a class="headerlink" href="#integration-tests" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>Add integration tests that cover the entire process of exporting and then importing the resource, verifying the integrity and consistency of the data.</p></li>
 <li><p>Verify that the resource behaves as expected in the context of the os-migrate ecosystem.</p></li>
 </ul>
 </section>
 <section id="documentation-and-examples">
-<h3>Documentation and Examples<a class="headerlink" href="#documentation-and-examples" title="Permalink to this heading"></a></h3>
+<h3>Documentation and Examples<a class="headerlink" href="#documentation-and-examples" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>In the <code class="docutils literal notranslate"><span class="pre">DOCUMENTATION</span></code> constant of each module, include examples of how to use the module in a playbook.</p></li>
 <li><p>Ensure that the <code class="docutils literal notranslate"><span class="pre">README.md</span></code> file for the new role is comprehensive, covering the role’s purpose, usage, and any dependencies.</p></li>
 </ul>
 </section>
 <section id="test-execution-in-ci">
-<h3>Test Execution in CI<a class="headerlink" href="#test-execution-in-ci" title="Permalink to this heading"></a></h3>
+<h3>Test Execution in CI<a class="headerlink" href="#test-execution-in-ci" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>Confirm that all tests are executed in the Continuous Integration (CI) environment before merging.</p></li>
 <li><p>If a feature is merged without proper tests due to specific circumstances, create a technical debt tracking card to follow up.</p></li>
 </ul>
 </section>
 <section id="review-and-inspection">
-<h3>Review and Inspection<a class="headerlink" href="#review-and-inspection" title="Permalink to this heading"></a></h3>
+<h3>Review and Inspection<a class="headerlink" href="#review-and-inspection" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>Conduct thorough reviews, especially when introducing new resources, to catch potential issues early.</p></li>
 <li><p>Implement policies or checklists in development documentation to ensure test soundness and coverage.</p></li>
 </ul>
 </section>
 <section id="location-of-tests">
-<h3>Location of Tests<a class="headerlink" href="#location-of-tests" title="Permalink to this heading"></a></h3>
+<h3>Location of Tests<a class="headerlink" href="#location-of-tests" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>Place functional and integration tests in the <code class="docutils literal notranslate"><span class="pre">tests/e2e</span></code> or <code class="docutils literal notranslate"><span class="pre">tests/func</span></code> directory respectively, following the existing structure for similar resources.</p></li>
 <li><p>Unit tests should reside alongside the modules they are testing, in the <code class="docutils literal notranslate"><span class="pre">os_migrate/tests/</span></code> directory.</p></li>
 </ul>
 </section>
 <section id="special-considerations">
-<h3>Special Considerations<a class="headerlink" href="#special-considerations" title="Permalink to this heading"></a></h3>
+<h3>Special Considerations<a class="headerlink" href="#special-considerations" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>For resources that are only accessible by admin users, ensure tests reflect this by running them with appropriate permissions.</p></li>
 <li><p>Address any known issues from previous retrospectives, such as fixing the handling of Nova keypairs or ensuring resources are tested in tenant context.</p></li>
 </ul>
 </section>
 <section id="necessary-documentation">
-<h3>Necessary Documentation<a class="headerlink" href="#necessary-documentation" title="Permalink to this heading"></a></h3>
+<h3>Necessary Documentation<a class="headerlink" href="#necessary-documentation" title="Link to this heading"></a></h3>
 <p>If this is your first time adding a pull request to the os-migrate
 repository, add your author information to <code class="docutils literal notranslate"><span class="pre">galaxy.yml</span></code>.</p>
 <p>In each Ansible module in <code class="docutils literal notranslate"><span class="pre">os_migrate/plugins/modules</span></code>, there is a

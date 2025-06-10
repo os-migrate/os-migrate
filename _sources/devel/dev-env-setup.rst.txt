@@ -424,6 +424,3 @@ The following environment variables can be used when running e2e tests.
   toolbox this is set to `/root/os_migrate`.
 - `OS_MIGRATE`: Absolute directory path to the OS Migrate ansible collection. When not set the default when run using
   os-migrate developer toolbox this is set to `/root/.ansible/collections/ansible_collections/os_migrate/os_migrate`.
-
-
-

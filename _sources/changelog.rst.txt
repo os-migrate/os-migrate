@@ -2,6 +2,41 @@ Changelog
 =========
 
 
+(unreleased)
+------------
+
+New
+~~~
+- Fix docs-build workflow, new readme, pre-commit and codeowners file.
+  [Adrian Brown]
+- Certified readme for os-migrate. [Adrian Brown]
+
+Fix
+~~~
+- Pin `openstack.cloud` collection to the last v2.3.x available version.
+  [Roberto Alfieri]
+
+  With the release of the v2.4.x versions of the `openstack.cloud`
+  collection, the support of tags for the `openstack.cloud.server` module
+  has been added, but it seems that it broke our collection somehow.
+
+  We will revert this commit when the problem will be found and solved.
+- Update Fedora 36 Vagrant image URL. [Roberto Alfieri]
+
+  Since the older Fedora releases have been migrated to
+  `archives.fedoraproject.org`, the `vagrant-up` command failed because
+  the image wasn't found.
+
+Other
+~~~~~
+- Merge branch 'os-migrate:main' into cloud/vars/default. [mathieu
+  bultel]
+- Merge branch 'os-migrate:main' into cloud/vars/default. [mathieu
+  bultel]
+- Merge branch 'os-migrate:main' into cloud/vars/default. [mathieu
+  bultel]
+
+
 1.0.1 (2024-07-29)
 ------------------
 

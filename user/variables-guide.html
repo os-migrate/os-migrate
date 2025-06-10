@@ -1,22 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Variables Guide &mdash; os-migrate  documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fe63c2af" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=7ab3649f" />
+
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -29,11 +28,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> os-migrate
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            os-migrate
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -99,9 +102,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="README.html">OS Migrate User Documentation</a> &raquo;</li>
-      <li>Variables Guide</li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="README.html">OS Migrate User Documentation</a></li>
+      <li class="breadcrumb-item active">Variables Guide</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/user/variables-guide.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -112,15 +115,15 @@
            <div itemprop="articleBody">
              
   <section id="variables-guide">
-<h1>Variables Guide<a class="headerlink" href="#variables-guide" title="Permalink to this heading"></a></h1>
+<h1>Variables Guide<a class="headerlink" href="#variables-guide" title="Link to this heading"></a></h1>
 <p>The goal of this document is to guide users to correctly configure the
 most important variables in OS Migrate. For a complete listing of
 variables configurable for each Ansible role, refer to the
 documentation of the individual roles.</p>
 <section id="general-variables">
-<h2>General variables<a class="headerlink" href="#general-variables" title="Permalink to this heading"></a></h2>
+<h2>General variables<a class="headerlink" href="#general-variables" title="Link to this heading"></a></h2>
 <section id="resource-filters">
-<h3>Resource filters<a class="headerlink" href="#resource-filters" title="Permalink to this heading"></a></h3>
+<h3>Resource filters<a class="headerlink" href="#resource-filters" title="Link to this heading"></a></h3>
 <p>Resource filters allow the user to control which resources will be
 migrated. The filters match against resource <strong>names</strong>.</p>
 <p>The filters work <strong>both during export and during import</strong>, and it is
@@ -180,11 +183,11 @@ copy into your variables file and customize:</p>
 </section>
 </section>
 <section id="conversion-host-variables">
-<h2>Conversion host variables<a class="headerlink" href="#conversion-host-variables" title="Permalink to this heading"></a></h2>
+<h2>Conversion host variables<a class="headerlink" href="#conversion-host-variables" title="Link to this heading"></a></h2>
 <p>The following variables are those that need to be configured prior to
 running OS Migrate.</p>
 <section id="conversion-host-name">
-<h3>Conversion host name<a class="headerlink" href="#conversion-host-name" title="Permalink to this heading"></a></h3>
+<h3>Conversion host name<a class="headerlink" href="#conversion-host-name" title="Link to this heading"></a></h3>
 <p>The conversion hosts might be configured using different names,
 this is in case an operator needs to have them registered
 with the subscription manager and avoid collisions with the names.</p>
@@ -199,7 +202,7 @@ for both conversion hosts <cite>os_migrate_conv_src</cite>
 and <cite>os_migrate_conv_dst</cite> respectively.</p>
 </section>
 <section id="conversion-host-image-name">
-<h3>Conversion host image name<a class="headerlink" href="#conversion-host-image-name" title="Permalink to this heading"></a></h3>
+<h3>Conversion host image name<a class="headerlink" href="#conversion-host-image-name" title="Link to this heading"></a></h3>
 <p>The conversion host image is the guest configure to execute the
 instances migrations.</p>
 <p>The variables to be configured are:</p>
@@ -219,7 +222,7 @@ or
 <a class="reference external" href="https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.3/x86_64/product-software">RHEL 8 KVM Guest Image</a>.</p>
 </section>
 <section id="conversion-host-flavor-name">
-<h3>Conversion host flavor name<a class="headerlink" href="#conversion-host-flavor-name" title="Permalink to this heading"></a></h3>
+<h3>Conversion host flavor name<a class="headerlink" href="#conversion-host-flavor-name" title="Link to this heading"></a></h3>
 <p>The conversion host flavor defines the compute, memory, and storage
 capacity that will be allocated for the conversion hosts. It needs to
 have at least a volume with 20GB.</p>
@@ -232,7 +235,7 @@ have at least a volume with 20GB.</p>
 be different between deployments.</p>
 </section>
 <section id="conversion-host-external-network-name">
-<h3>Conversion host external network name<a class="headerlink" href="#conversion-host-external-network-name" title="Permalink to this heading"></a></h3>
+<h3>Conversion host external network name<a class="headerlink" href="#conversion-host-external-network-name" title="Link to this heading"></a></h3>
 <p>The external network configuration allows the connection of the
 conversion host router for external access, this external network must
 be able to allocate floating IPs reachable between both conversion
@@ -249,7 +252,7 @@ pre-existing network (when
 <cite>os_migrate_src/dst_conversion_manage_network</cite> is <cite>false</cite>).</p>
 </section>
 <section id="other-conversion-host-dependency-names">
-<h3>Other conversion host dependency names<a class="headerlink" href="#other-conversion-host-dependency-names" title="Permalink to this heading"></a></h3>
+<h3>Other conversion host dependency names<a class="headerlink" href="#other-conversion-host-dependency-names" title="Link to this heading"></a></h3>
 <p>In addition to the name variables described above, it is possible to
 customize names of other conversion host dependency resources:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_net_name</span>
@@ -266,7 +269,7 @@ customize names of other conversion host dependency resources:</p>
 </div>
 </section>
 <section id="conversion-host-availablility-zone-management">
-<h3>Conversion host availablility zone management<a class="headerlink" href="#conversion-host-availablility-zone-management" title="Permalink to this heading"></a></h3>
+<h3>Conversion host availablility zone management<a class="headerlink" href="#conversion-host-availablility-zone-management" title="Link to this heading"></a></h3>
 <p>Availability zones are defined by attaching specific metadata
 information to an aggregate:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_availability_zone</span>
@@ -278,7 +281,7 @@ instances to a specific set of hosts belonging to an aggregate.</p>
 <p>The default is <cite>false</cite> (meaning no specification provided).</p>
 </section>
 <section id="conversion-host-network-management">
-<h3>Conversion host network management<a class="headerlink" href="#conversion-host-network-management" title="Permalink to this heading"></a></h3>
+<h3>Conversion host network management<a class="headerlink" href="#conversion-host-network-management" title="Link to this heading"></a></h3>
 <p>It is possible to disable creation and deletion of conversion host
 private network by setting these variables to <cite>false</cite>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_manage_network</span>
@@ -297,7 +300,7 @@ accordingly:</p>
 </div>
 </section>
 <section id="conversion-host-floating-ip-management">
-<h3>Conversion host floating IP management<a class="headerlink" href="#conversion-host-floating-ip-management" title="Permalink to this heading"></a></h3>
+<h3>Conversion host floating IP management<a class="headerlink" href="#conversion-host-floating-ip-management" title="Link to this heading"></a></h3>
 <p>OS Migrate can be told to not attempt to create any floating IPs on
 the conversion hosts. This can be useful when attaching a conversion
 host to some public network, where its IP address will be
@@ -321,7 +324,7 @@ floating IP deletion is not attempted even if <cite>…_delete_fip</cite> is set
 to <cite>true</cite>.</p>
 </section>
 <section id="conversion-host-specific-floating-ip">
-<h3>Conversion host specific floating IP<a class="headerlink" href="#conversion-host-specific-floating-ip" title="Permalink to this heading"></a></h3>
+<h3>Conversion host specific floating IP<a class="headerlink" href="#conversion-host-specific-floating-ip" title="Link to this heading"></a></h3>
 <p>Each conversion host needs to have a floating IP,
 these floating IPs can be assigned automatically or
 defined by the operator with the usage of the
@@ -334,7 +337,7 @@ following variables:</p>
 IP must already exist and be available for attaching.</p>
 </section>
 <section id="attaching-conversion-hosts-onto-public-networks">
-<h3>Attaching conversion hosts onto public networks<a class="headerlink" href="#attaching-conversion-hosts-onto-public-networks" title="Permalink to this heading"></a></h3>
+<h3>Attaching conversion hosts onto public networks<a class="headerlink" href="#attaching-conversion-hosts-onto-public-networks" title="Link to this heading"></a></h3>
 <p>A combination of variables described earlier can be used to attach the
 conversion hosts directly onto pre-existing public networks. We need
 to make sure that we don’t try to create any private network, we don’t
@@ -350,7 +353,7 @@ names accordingly:</p>
 </div>
 </section>
 <section id="storage-migration-modes">
-<h3>Storage migration modes<a class="headerlink" href="#storage-migration-modes" title="Permalink to this heading"></a></h3>
+<h3>Storage migration modes<a class="headerlink" href="#storage-migration-modes" title="Link to this heading"></a></h3>
 <p>The modes for workload migrations can be changed in either
 cloud. The variable that control the behavior are:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_workloads_data_copy</span>
@@ -363,7 +366,7 @@ destination cloud that we just want to attach when creating
 the VM in the destination.</p>
 </section>
 <section id="conversion-host-boot-from-volume">
-<h3>Conversion host boot from volume<a class="headerlink" href="#conversion-host-boot-from-volume" title="Permalink to this heading"></a></h3>
+<h3>Conversion host boot from volume<a class="headerlink" href="#conversion-host-boot-from-volume" title="Link to this heading"></a></h3>
 <p>The conversion hosts can be created as boot-from-volume servers in
 either cloud. The variables that control the behavior are:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_src_conversion_host_boot_from_volume</span>
@@ -380,7 +383,7 @@ customize the size in GB for the boot volume:</p>
 <p>The size should be 20 or more, the default is 20.</p>
 </section>
 <section id="conversion-host-rhel-variables">
-<h3>Conversion host RHEL variables<a class="headerlink" href="#conversion-host-rhel-variables" title="Permalink to this heading"></a></h3>
+<h3>Conversion host RHEL variables<a class="headerlink" href="#conversion-host-rhel-variables" title="Link to this heading"></a></h3>
 <p>When using RHEL as conversion host, set the SSH user name as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_conversion_host_ssh_user</span><span class="p">:</span> <span class="n">cloud</span><span class="o">-</span><span class="n">user</span>
 </pre></div>
@@ -441,7 +444,7 @@ list of those repositories that will be enabled on the conversion
 host.</p>
 </section>
 <section id="enabling-password-based-ssh-access-to-the-conversion-hosts">
-<h3>Enabling password-based SSH access to the conversion hosts<a class="headerlink" href="#enabling-password-based-ssh-access-to-the-conversion-hosts" title="Permalink to this heading"></a></h3>
+<h3>Enabling password-based SSH access to the conversion hosts<a class="headerlink" href="#enabling-password-based-ssh-access-to-the-conversion-hosts" title="Link to this heading"></a></h3>
 <p>When required, a user can configure password-based SSH access to
 the conversion hosts, this feature might be useful for debugging
 when the private key of the hosts is not available anymore.</p>
@@ -459,7 +462,7 @@ following string <cite>weak_password_disabled_by_default</cite>.</p>
 is the one defined in the <cite>os_migrate_conversion_host_ssh_user</cite> variable.</p>
 </section>
 <section id="running-custom-bash-scripts-in-the-conversion-hosts">
-<h3>Running custom bash scripts in the conversion hosts<a class="headerlink" href="#running-custom-bash-scripts-in-the-conversion-hosts" title="Permalink to this heading"></a></h3>
+<h3>Running custom bash scripts in the conversion hosts<a class="headerlink" href="#running-custom-bash-scripts-in-the-conversion-hosts" title="Link to this heading"></a></h3>
 <p>It is possible to run custom bash scripts in the conversion
 hosts before and after configuring their content.
 The content of the conversion hosts is a set of required packages
@@ -487,7 +490,7 @@ complex scripts like the following examples:</p>
 </div>
 </section>
 <section id="disabling-the-subscription-manager-tasks">
-<h3>Disabling the subscription manager tasks<a class="headerlink" href="#disabling-the-subscription-manager-tasks" title="Permalink to this heading"></a></h3>
+<h3>Disabling the subscription manager tasks<a class="headerlink" href="#disabling-the-subscription-manager-tasks" title="Link to this heading"></a></h3>
 <p>It is possible to disable the subscription manager
 native tasks by setting to false the following variable:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">os_migrate_conversion_rhsm_manage</span>
@@ -500,7 +503,7 @@ need to use instead the standard Ansible module.</p>
 </section>
 </section>
 <section id="openstack-rest-api-tls-variables">
-<h2>OpenStack REST API TLS variables<a class="headerlink" href="#openstack-rest-api-tls-variables" title="Permalink to this heading"></a></h2>
+<h2>OpenStack REST API TLS variables<a class="headerlink" href="#openstack-rest-api-tls-variables" title="Link to this heading"></a></h2>
 <p>If either of your clouds uses TLS endpoints that are not trusted by
 the Migrator host by default (e.g. using self-signed certificates), or
 if the Migrator host should authenticate itself via key+cert, you will
@@ -520,7 +523,7 @@ variables.</p></li>
 </ul>
 </section>
 <section id="workload-import-export-variables">
-<h2>Workload import/export variables<a class="headerlink" href="#workload-import-export-variables" title="Permalink to this heading"></a></h2>
+<h2>Workload import/export variables<a class="headerlink" href="#workload-import-export-variables" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">os_migrate_workload_stop_before_migration</span></code> - Set to true if you wish
 for os_migrate to stop your workloads/vms prior to migration. Note that
@@ -528,7 +531,7 @@ only workloads/vms in <cite>SHUTOFF</cite> state will be migrated.</p></li>
 </ul>
 </section>
 <section id="workload-migration-variables">
-<h2>Workload migration variables<a class="headerlink" href="#workload-migration-variables" title="Permalink to this heading"></a></h2>
+<h2>Workload migration variables<a class="headerlink" href="#workload-migration-variables" title="Link to this heading"></a></h2>
 <p>Workloads to be migrated with OS Migrate can have varying storage configurations in
 the source cloud, and the desired way to migrate their storage also varies, per cloud
 operators preference.</p>

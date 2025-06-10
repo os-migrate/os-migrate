@@ -1,22 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Documented roles in os-migrate &mdash; os-migrate  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fe63c2af" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=7ab3649f" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -29,11 +28,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> os-migrate
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            os-migrate
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -44,6 +47,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Documented roles in os-migrate</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="roles/role-conversion_host.html">Role - conversion_host</a></li>
 <li class="toctree-l2"><a class="reference internal" href="roles/role-conversion_host_content.html">Role - conversion_host_content</a></li>
+<li class="toctree-l2"><a class="reference internal" href="roles/role-export_detached_volumes.html">Role - export_detached_volumes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="roles/role-export_flavors.html">Role - export_flavors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="roles/role-export_images.html">Role - export_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="roles/role-export_keypairs.html">Role - export_keypairs</a></li>
@@ -58,6 +62,7 @@
 <li class="toctree-l2"><a class="reference internal" href="roles/role-export_users.html">Role - export_users</a></li>
 <li class="toctree-l2"><a class="reference internal" href="roles/role-export_users_keypairs.html">Role - export_users_keypairs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="roles/role-export_workloads.html">Role - export_workloads</a></li>
+<li class="toctree-l2"><a class="reference internal" href="roles/role-import_detached_volumes.html">Role - import_detached_volumes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="roles/role-import_flavors.html">Role - import_flavors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="roles/role-import_images.html">Role - import_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="roles/role-import_keypairs.html">Role - import_keypairs</a></li>
@@ -97,8 +102,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Documented roles in os-migrate</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Documented roles in os-migrate</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/roles.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -109,7 +114,7 @@
            <div itemprop="articleBody">
              
   <section id="documented-roles-in-os-migrate">
-<h1>Documented roles in os-migrate<a class="headerlink" href="#documented-roles-in-os-migrate" title="Permalink to this heading"></a></h1>
+<h1>Documented roles in os-migrate<a class="headerlink" href="#documented-roles-in-os-migrate" title="Link to this heading"></a></h1>
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
 <ul>
@@ -123,6 +128,13 @@
 <li class="toctree-l1"><a class="reference internal" href="roles/role-conversion_host_content.html">Role - conversion_host_content</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="roles/role-conversion_host_content.html#r-o-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">Role Documentation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="roles/role-conversion_host_content.html#r-o-l-e-d-e-f-a-u-l-t-s">Role Defaults</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="roles/role-export_detached_volumes.html">Role - export_detached_volumes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="roles/role-export_detached_volumes.html#r-o-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">Role Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="roles/role-export_detached_volumes.html#r-o-l-e-d-e-f-a-u-l-t-s">Role Defaults</a></li>
 </ul>
 </li>
 </ul>
@@ -221,6 +233,13 @@
 <li class="toctree-l1"><a class="reference internal" href="roles/role-export_workloads.html">Role - export_workloads</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="roles/role-export_workloads.html#r-o-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">Role Documentation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="roles/role-export_workloads.html#r-o-l-e-d-e-f-a-u-l-t-s">Role Defaults</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="roles/role-import_detached_volumes.html">Role - import_detached_volumes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="roles/role-import_detached_volumes.html#r-o-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">Role Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="roles/role-import_detached_volumes.html#r-o-l-e-d-e-f-a-u-l-t-s">Role Defaults</a></li>
 </ul>
 </li>
 </ul>

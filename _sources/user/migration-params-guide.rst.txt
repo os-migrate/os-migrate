@@ -51,7 +51,7 @@ Workload migration parameters
    parameters. Instead, edit the serialized volume in the ``volumes``
    section of the workload's ``params``.
 
--  ``boot_volume`` controls new boot disk creation parameters for 
+-  ``boot_volume`` controls new boot disk creation parameters for
    workload migrations with storage mode (data_copy) set to false.
 
    There are a few pre-filled parameters, defaulted to ``None``.  Then
@@ -64,7 +64,7 @@ Workload migration parameters
    parameters. Instead, edit the serialized volume in the ``volumes``
    section of the workload's ``params``.
 
--  ``additional_volumes`` any additonal volumes to be configured for 
+-  ``additional_volumes`` any additonal volumes to be configured for
    workload migrations with storage mode (data_copy) set to false.
 
 -  ``floating_ip_mode`` controls whether and how floating IPs should be
