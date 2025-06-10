@@ -1,10 +1,13 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 import openstack
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
-    import const, resource
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
+    const,
+    resource,
+)
 
 
 class SecurityGroup(resource.Resource):
@@ -13,15 +16,15 @@ class SecurityGroup(resource.Resource):
     sdk_class = openstack.network.v2.security_group.SecurityGroup
 
     info_from_sdk = [
-        'id',
-        'project_id',
-        'created_at',
-        'updated_at',
-        'revision_number',
+        "id",
+        "project_id",
+        "created_at",
+        "updated_at",
+        "revision_number",
     ]
     params_from_sdk = [
-        'name',
-        'description',
+        "name",
+        "description",
     ]
 
     @classmethod
@@ -31,9 +34,9 @@ class SecurityGroup(resource.Resource):
 
     @staticmethod
     def _clean_all_rules(conn, sdk_res):
-        rules = list(conn.network.security_group_rules(security_group_id=sdk_res['id']))
+        rules = list(conn.network.security_group_rules(security_group_id=sdk_res["id"]))
         for rule in rules:
-            conn.network.delete_security_group_rule(rule['id'])
+            conn.network.delete_security_group_rule(rule["id"])
 
     @staticmethod
     def _create_sdk_res(conn, sdk_params):

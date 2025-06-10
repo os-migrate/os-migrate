@@ -1,7 +1,7 @@
 clouds:
   src:
 {% if os_migrate_src_auth is defined and os_migrate_src_auth|length %}
-    auth: 
+    auth:
       {{os_migrate_src_auth|to_nice_yaml(indent=2)|indent(6)}}
 {%- endif %}
 {% if os_migrate_src_auth_type is defined %}

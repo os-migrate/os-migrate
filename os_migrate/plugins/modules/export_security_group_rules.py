@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: export_security_group_rules
 
@@ -66,37 +67,44 @@ options:
       - Required if 'auth' param not used.
     required: false
     type: raw
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: Export security groups into /opt/os-migrate/security_groups.yml
   os_migrate.os_migrate.export_security_group_rules:
     cloud: source_cloud
     path: /opt/os-migrate/security_groups.yml
     name: mysecgroup
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible.module_utils.basic import AnsibleModule
+
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
 try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 except ImportError:
     # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import filesystem
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils import security_group_rule
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
+    security_group_rule,
+)
 
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        path=dict(type='str', required=True),
-        name=dict(type='str', required=True),
+        path=dict(type="str", required=True),
+        name=dict(type="str", required=True),
     )
     # TODO: check the del
     # del argument_spec['cloud']
@@ -113,17 +121,19 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    sdk_sec = conn.network.find_security_group(module.params['name'], ignore_missing=False)
-    sdk_rules = conn.network.security_group_rules(security_group_id=sdk_sec['id'])
+    sdk_sec = conn.network.find_security_group(
+        module.params["name"], ignore_missing=False
+    )
+    sdk_rules = conn.network.security_group_rules(security_group_id=sdk_sec["id"])
 
-    result['changed'] = False
+    result["changed"] = False
 
     for sdk_rule in sdk_rules:
         ser_rule = security_group_rule.SecurityGroupRule.from_sdk(conn, sdk_rule)
 
-        rchanged = filesystem.write_or_replace_resource(module.params['path'], ser_rule)
+        rchanged = filesystem.write_or_replace_resource(module.params["path"], ser_rule)
         if rchanged:
-            result['changed'] = True
+            result["changed"] = True
 
     module.exit_json(**result)
 
@@ -132,5 +142,5 @@ def main():
     run_module()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

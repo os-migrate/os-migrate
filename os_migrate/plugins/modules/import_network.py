@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: import_network
 
@@ -63,9 +64,9 @@ options:
       - Required if 'auth' parameter is not used.
     required: false
     type: raw
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: Import mynetwork into /opt/os-migrate/networks.yml
   os_migrate.os_migrate.import_network:
     cloud: source_cloud
@@ -73,28 +74,33 @@ EXAMPLES = '''
       - type: openstack.network
         params:
           name: my_net
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible.module_utils.basic import AnsibleModule
+
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
 try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 except ImportError:
     # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import network
 
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        data=dict(type='dict', required=True),
-        filters=dict(type='dict', required=False, default={}),
+        data=dict(type="dict", required=True),
+        filters=dict(type="dict", required=False, default={}),
     )
 
     result = dict(
@@ -109,8 +115,8 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    net = network.Network.from_data(module.params['data'])
-    result['changed'] = net.create_or_update(conn, module.params['filters'])
+    net = network.Network.from_data(module.params["data"])
+    result["changed"] = net.create_or_update(conn, module.params["filters"])
 
     module.exit_json(**result)
 
@@ -119,5 +125,5 @@ def main():
     run_module()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

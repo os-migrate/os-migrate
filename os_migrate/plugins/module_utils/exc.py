@@ -1,4 +1,5 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
@@ -25,16 +26,16 @@ class DataVersionMismatch(Exception):
     )
 
     def __init__(self, file_path, got_version):
-        message = self.msg_format.format(const.OS_MIGRATE_VERSION, file_path, got_version)
+        message = self.msg_format.format(
+            const.OS_MIGRATE_VERSION, file_path, got_version
+        )
         super().__init__(message)
 
 
 class EmptyYAMLFileError(Exception):
     """Empty yaml file loaded for resource file"""
 
-    msg_format = (
-        "Detected empty resource file at {}"
-    )
+    msg_format = "Detected empty resource file at {}"
 
     def __init__(self, file_path):
         message = self.msg_format.format(file_path)

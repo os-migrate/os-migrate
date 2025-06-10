@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: import_volumes_src_cleanup
 
@@ -101,9 +102,9 @@ options:
     required: false
     default: 1800
     type: int
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: expose source volume
   os_migrate.os_migrate.import_volumes_export:
     cloud: "{{ cloud_vars_src }}"
@@ -151,32 +152,48 @@ EXAMPLES = '''
     log_file: "{{ exports.log_file }}"
     state_file: "{{ exports.state_file }}"
     timeout: "{{ os_migrate_timeout }}"
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible.module_utils.basic import AnsibleModule
+
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
 try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 except ImportError:
     # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils.volume_common \
-    import DEFAULT_TIMEOUT, OpenstackVolumeClean
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils.volume_common import (
+    DEFAULT_TIMEOUT,
+    OpenstackVolumeClean,
+)
 
 
 class OpenStackSourceCleanup(OpenstackVolumeClean):
-    """ Removes temporary migration volumes and snapshots from source cloud. """
+    """Removes temporary migration volumes and snapshots from source cloud."""
 
-    def __init__(self, openstack_connection, source_conversion_host_id,
-                 ssh_key_path, ssh_user, transfer_uuid,
-                 volume_map, source_conversion_host_address=None, state_file=None,
-                 log_file=None, timeout=DEFAULT_TIMEOUT):
+    def __init__(
+        self,
+        openstack_connection,
+        source_conversion_host_id,
+        ssh_key_path,
+        ssh_user,
+        transfer_uuid,
+        volume_map,
+        source_conversion_host_address=None,
+        state_file=None,
+        log_file=None,
+        timeout=DEFAULT_TIMEOUT,
+    ):
 
         super().__init__(
             openstack_connection,
@@ -196,7 +213,7 @@ class OpenStackSourceCleanup(OpenstackVolumeClean):
 
         # This will make _release_ports clean up ports from the export module
         for path, mapping in volume_map.items():
-            port = mapping['port']
+            port = mapping["port"]
             self.claimed_ports.append(port)
 
     def close_exports(self):
@@ -206,15 +223,15 @@ class OpenStackSourceCleanup(OpenstackVolumeClean):
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        conversion_host=dict(type='dict', required=True),
-        ssh_key_path=dict(type='str', required=True),
-        ssh_user=dict(type='str', required=True),
-        transfer_uuid=dict(type='str', required=True),
-        volume_map=dict(type='dict', required=True),
-        src_conversion_host_address=dict(type='str', default=None),
-        state_file=dict(type='str', default=None),
-        log_file=dict(type='str', default=None),
-        timeout=dict(type='int', default=DEFAULT_TIMEOUT),
+        conversion_host=dict(type="dict", required=True),
+        ssh_key_path=dict(type="str", required=True),
+        ssh_user=dict(type="str", required=True),
+        transfer_uuid=dict(type="str", required=True),
+        volume_map=dict(type="dict", required=True),
+        src_conversion_host_address=dict(type="str", default=None),
+        state_file=dict(type="str", default=None),
+        log_file=dict(type="str", default=None),
+        timeout=dict(type="int", default=DEFAULT_TIMEOUT),
     )
 
     result = dict(
@@ -228,18 +245,19 @@ def run_module():
     sdk, conn = openstack_cloud_from_module(module)
 
     # Required parameters
-    source_conversion_host_id = module.params['conversion_host']['id']
-    ssh_key_path = module.params['ssh_key_path']
-    ssh_user = module.params['ssh_user']
-    transfer_uuid = module.params['transfer_uuid']
-    volume_map = module.params['volume_map']
+    source_conversion_host_id = module.params["conversion_host"]["id"]
+    ssh_key_path = module.params["ssh_key_path"]
+    ssh_user = module.params["ssh_user"]
+    transfer_uuid = module.params["transfer_uuid"]
+    volume_map = module.params["volume_map"]
 
     # Optional parameters
-    source_conversion_host_address = \
-        module.params.get('src_conversion_host_address', None)
-    state_file = module.params.get('state_file', None)
-    log_file = module.params.get('log_file', None)
-    timeout = module.params['timeout']
+    source_conversion_host_address = module.params.get(
+        "src_conversion_host_address", None
+    )
+    state_file = module.params.get("state_file", None)
+    log_file = module.params.get("log_file", None)
+    timeout = module.params["timeout"]
 
     host_cleanup = OpenStackSourceCleanup(
         conn,
@@ -262,5 +280,5 @@ def main():
     run_module()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

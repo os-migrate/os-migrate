@@ -1,22 +1,24 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils import \
-    flavor, \
-    image, \
-    keypair, \
-    network, \
-    project, \
-    router, \
-    router_interface, \
-    security_group, \
-    security_group_rule, \
-    server, \
-    server_floating_ip, \
-    server_port, \
-    server_volume, \
-    subnet, \
-    user
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
+    flavor,
+    image,
+    keypair,
+    network,
+    project,
+    router,
+    router_interface,
+    security_group,
+    security_group_rule,
+    server,
+    server_floating_ip,
+    server_port,
+    server_volume,
+    subnet,
+    user,
+)
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
 
 RESOURCE_MAP = {

@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: export_router_interfaces
 
@@ -66,37 +67,44 @@ options:
       - Required if 'auth' parameter not used.
     required: false
     type: raw
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: Export myrouter interfaces into /opt/os-migrate/router_interfaces.yml
   os_migrate.os_migrate.export_router_interfaces:
     cloud: source_cloud
     path: /opt/os-migrate/router_interfaces.yml
     name: myrouter
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible.module_utils.basic import AnsibleModule
+
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
 try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 except ImportError:
     # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
-    import filesystem, router_interface
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
+    filesystem,
+    router_interface,
+)
 
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        path=dict(type='str', required=True),
-        name=dict(type='str', required=True),
+        path=dict(type="str", required=True),
+        name=dict(type="str", required=True),
     )
     # TODO: check the del
     # del argument_spec['cloud']
@@ -113,14 +121,15 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    sdk_rtr = conn.network.find_router(module.params['name'], ignore_missing=False)
+    sdk_rtr = conn.network.find_router(module.params["name"], ignore_missing=False)
     sdk_ports = router_interface.router_interfaces(conn, sdk_rtr)
-    ifaces = map(lambda port: router_interface.RouterInterface.from_sdk(conn, port),
-                 sdk_ports)
+    ifaces = map(
+        lambda port: router_interface.RouterInterface.from_sdk(conn, port), sdk_ports
+    )
 
     for iface in list(ifaces):
-        if filesystem.write_or_replace_resource(module.params['path'], iface):
-            result['changed'] = True
+        if filesystem.write_or_replace_resource(module.params["path"], iface):
+            result["changed"] = True
 
     module.exit_json(**result)
 
@@ -129,5 +138,5 @@ def main():
     run_module()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

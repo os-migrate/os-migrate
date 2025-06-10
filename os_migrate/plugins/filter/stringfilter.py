@@ -1,4 +1,5 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 from pprint import pformat
@@ -34,7 +35,7 @@ def stringfilter(items, queries, attribute=None):
     """
     result = []
     if attribute is not None:
-        key_path = attribute.split('.')
+        key_path = attribute.split(".")
     else:
         key_path = None
 
@@ -47,7 +48,9 @@ def stringfilter(items, queries, attribute=None):
                 )
         else:
             if not isinstance(item, str):
-                raise errors.AnsibleFilterError(f"stringfilter: list item is not string: {pformat(item)}")
+                raise errors.AnsibleFilterError(
+                    f"stringfilter: list item is not string: {pformat(item)}"
+                )
             string = item
 
         for query in queries:
@@ -55,8 +58,8 @@ def stringfilter(items, queries, attribute=None):
                 if query == string:
                     result.append(item)
                     break
-            elif isinstance(query, dict) and query.get('regex'):
-                if re.search(query['regex'], string):
+            elif isinstance(query, dict) and query.get("regex"):
+                if re.search(query["regex"], string):
                     result.append(item)
                     break
             else:
@@ -94,5 +97,5 @@ class FilterModule(object):
 
     def filters(self):
         return {
-            'stringfilter': stringfilter,
+            "stringfilter": stringfilter,
         }

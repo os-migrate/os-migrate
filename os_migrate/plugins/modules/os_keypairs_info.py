@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: os_keypairs_info
 
@@ -57,14 +58,14 @@ options:
       - Required if 'auth' parameter is not used.
     required: false
     type: raw
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - os_keypairs_info:
     cloud: srccloud
-'''
+"""
 
-RETURN = '''
+RETURN = """
 openstack_keypairs:
     description: information about the keypairs
     returned: always, but can be empty
@@ -78,22 +79,27 @@ openstack_keypairs:
             description: Keypair name.
             returned: success
             type: str
-'''
+"""
 
 from ansible.module_utils.basic import AnsibleModule
+
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
 try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 except ImportError:
     # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 
 
 def main():
     argument_spec = openstack_full_argument_spec(
-        filters=dict(required=False, type='dict', default={}),
+        filters=dict(required=False, type="dict", default={}),
     )
 
     module = AnsibleModule(
@@ -103,14 +109,16 @@ def main():
 
     try:
         sdk, conn = openstack_cloud_from_module(module)
-        keypairs = list(map(
-            lambda r: r.to_dict(),
-            conn.compute.keypairs(**module.params['filters'])))
+        keypairs = list(
+            map(
+                lambda r: r.to_dict(), conn.compute.keypairs(**module.params["filters"])
+            )
+        )
         module.exit_json(changed=False, openstack_keypairs=keypairs)
 
     except sdk.exceptions.OpenStackCloudException as e:
         module.fail_json(msg=str(e))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

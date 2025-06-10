@@ -1,4 +1,5 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
@@ -9,8 +10,8 @@ def new_resources_file_struct():
     can be added.
     """
     data = {}
-    data['os_migrate_version'] = const.OS_MIGRATE_VERSION
-    data['resources'] = []
+    data["os_migrate_version"] = const.OS_MIGRATE_VERSION
+    data["resources"] = []
     return data
 
 
@@ -38,13 +39,13 @@ def create_resources_from_struct(struct_resources, cls_map):
     resources = []
     errors = []
     for struct_res in struct_resources:
-        if not struct_res.get('type'):
+        if not struct_res.get("type"):
             errors.append("Cannot parse resource due to missing 'type'.")
             continue
-        if not cls_map.get(struct_res['type']):
+        if not cls_map.get(struct_res["type"]):
             errors.append(f"Unknown resource type '{struct_res['type']}'.")
             continue
-        resources.append(cls_map[struct_res['type']].from_data(struct_res))
+        resources.append(cls_map[struct_res["type"]].from_data(struct_res))
 
     return resources, errors
 
@@ -99,6 +100,7 @@ def _trim_info(resource):
     untouched, but the returned structure does reuse data contents to
     save memory (it is not a deep copy).
     """
+
     def _recursive_trim(obj):
         if isinstance(obj, dict):
             result_dict = {}

@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: import_workload_transfer_volumes
 
@@ -118,9 +119,9 @@ options:
     required: false
     default: 1800
     type: int
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 main.yml:
 
 - name: validate loaded resources
@@ -241,9 +242,9 @@ workload.yml:
   rescue:
     - fail:
         msg: "Failed to import {{ item.params.name }}!"
-'''
+"""
 
-RETURN = '''
+RETURN = """
 block_device_mapping:
   description:
     - A block_device_mapping_v2 structure for use in OpenStack's create_server().
@@ -276,31 +277,49 @@ volume_map:
         }
     }
 
-'''
+"""
 
 from ansible.module_utils.basic import AnsibleModule
+
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
 try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 except ImportError:
     # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import server
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils.volume_common \
-    import OpenstackVolumeTransfer, DEFAULT_TIMEOUT
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils.volume_common import (
+    OpenstackVolumeTransfer,
+    DEFAULT_TIMEOUT,
+)
 
 import re
 
 
 class OpenStackDestinationVolume(OpenstackVolumeTransfer):
-    def __init__(self, openstack_connection, destination_conversion_host_id,
-                 ssh_key_path, ssh_user, transfer_uuid, source_conversion_host_address,
-                 volume_map, ser_server, destination_conversion_host_address=None,
-                 state_file=None, log_file=None, timeout=DEFAULT_TIMEOUT):
+    def __init__(
+        self,
+        openstack_connection,
+        destination_conversion_host_id,
+        ssh_key_path,
+        ssh_user,
+        transfer_uuid,
+        source_conversion_host_address,
+        volume_map,
+        ser_server,
+        destination_conversion_host_address=None,
+        state_file=None,
+        log_file=None,
+        timeout=DEFAULT_TIMEOUT,
+    ):
 
         super().__init__(
             openstack_connection,
@@ -322,7 +341,7 @@ class OpenStackDestinationVolume(OpenstackVolumeTransfer):
         self.volume_map = volume_map
 
         # Match for qemu_img progress percentage
-        self.qemu_progress_re = re.compile(r'\((\d+\.\d+)/100%\)')
+        self.qemu_progress_re = re.compile(r"\((\d+\.\d+)/100%\)")
 
         # SSH tunnel process
         self.forwarding_process = None
@@ -344,17 +363,17 @@ class OpenStackDestinationVolume(OpenstackVolumeTransfer):
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        data=dict(type='dict', required=True),
-        conversion_host=dict(type='dict', required=True),
-        ssh_key_path=dict(type='str', required=True),
-        ssh_user=dict(type='str', required=True),
-        transfer_uuid=dict(type='str', required=True),
-        src_conversion_host_address=dict(type='str', required=True),
-        volume_map=dict(type='dict', required=True),
-        dst_conversion_host_address=dict(type='str', default=None),
-        state_file=dict(type='str', default=None),
-        log_file=dict(type='str', default=None),
-        timeout=dict(type='int', default=DEFAULT_TIMEOUT),
+        data=dict(type="dict", required=True),
+        conversion_host=dict(type="dict", required=True),
+        ssh_key_path=dict(type="str", required=True),
+        ssh_user=dict(type="str", required=True),
+        transfer_uuid=dict(type="str", required=True),
+        src_conversion_host_address=dict(type="str", required=True),
+        volume_map=dict(type="dict", required=True),
+        dst_conversion_host_address=dict(type="str", default=None),
+        state_file=dict(type="str", default=None),
+        log_file=dict(type="str", default=None),
+        timeout=dict(type="int", default=DEFAULT_TIMEOUT),
     )
 
     result = dict(
@@ -366,24 +385,24 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    ser_server = server.Server.from_data(module.params['data'])
+    ser_server = server.Server.from_data(module.params["data"])
     params, info = ser_server.params_and_info()
 
     # Required parameters
-    destination_conversion_host_id = module.params['conversion_host']['id']
-    ssh_key_path = module.params['ssh_key_path']
-    ssh_user = module.params['ssh_user']
-    transfer_uuid = module.params['transfer_uuid']
-    source_conversion_host_address = \
-        module.params['src_conversion_host_address']
-    volume_map = module.params['volume_map']
+    destination_conversion_host_id = module.params["conversion_host"]["id"]
+    ssh_key_path = module.params["ssh_key_path"]
+    ssh_user = module.params["ssh_user"]
+    transfer_uuid = module.params["transfer_uuid"]
+    source_conversion_host_address = module.params["src_conversion_host_address"]
+    volume_map = module.params["volume_map"]
 
     # Optional parameters
-    destination_conversion_host_address = \
-        module.params.get('dst_conversion_host_address', None)
-    state_file = module.params.get('state_file', None)
-    log_file = module.params.get('log_file', None)
-    timeout = module.params['timeout']
+    destination_conversion_host_address = module.params.get(
+        "dst_conversion_host_address", None
+    )
+    state_file = module.params.get("state_file", None)
+    log_file = module.params.get("log_file", None)
+    timeout = module.params["timeout"]
 
     destination_host = OpenStackDestinationVolume(
         conn,
@@ -403,31 +422,31 @@ def run_module():
 
     block_device_mapping = []
     for path in sorted(destination_host.volume_map.keys()):
-        name = path.split('/')[-1]
-        uuid = destination_host.volume_map[path]['dest_id']
+        name = path.split("/")[-1]
+        uuid = destination_host.volume_map[path]["dest_id"]
 
-        if path == '/dev/vda':
+        if path == "/dev/vda":
             entry = {
-                'boot_index': 0,
-                'delete_on_termination': True,
-                'destination_type': 'volume',
-                'device_name': name,
-                'source_type': 'volume',
-                'uuid': uuid,
+                "boot_index": 0,
+                "delete_on_termination": True,
+                "destination_type": "volume",
+                "device_name": name,
+                "source_type": "volume",
+                "uuid": uuid,
             }
         else:
             entry = {
-                'boot_index': -1,
-                'delete_on_termination': False,
-                'destination_type': 'volume',
-                'device_name': name,
-                'source_type': 'volume',
-                'uuid': uuid,
+                "boot_index": -1,
+                "delete_on_termination": False,
+                "destination_type": "volume",
+                "device_name": name,
+                "source_type": "volume",
+                "uuid": uuid,
             }
         block_device_mapping.append(entry)
 
-    result['volume_map'] = destination_host.volume_map
-    result['block_device_mapping'] = block_device_mapping
+    result["volume_map"] = destination_host.volume_map
+    result["block_device_mapping"] = block_device_mapping
 
     module.exit_json(**result)
 
@@ -436,5 +455,5 @@ def main():
     run_module()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

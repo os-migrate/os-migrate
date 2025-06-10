@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: import_workload_src_check
 
@@ -62,9 +63,9 @@ options:
       - Required if 'auth' param not used
     required: false
     type: raw
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: ensure workload in source cloud is ready to continue
   os_migrate.os_migrate.import_workload_src_check:
     auth: "{{ os_migrate_src_auth }}"
@@ -76,27 +77,32 @@ EXAMPLES = '''
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
     name: migration-vm
   when: prelim.changed
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible.module_utils.basic import AnsibleModule
+
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
 try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 except ImportError:
     # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import server
 
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        name=dict(type='str', required=True),
+        name=dict(type="str", required=True),
     )
     # TODO: check the del
     # del argument_spec['cloud']
@@ -113,11 +119,13 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    sdk_server_nodetails = conn.compute.find_server(module.params['name'], ignore_missing=False)
-    sdk_server = conn.compute.get_server(sdk_server_nodetails['id'])
+    sdk_server_nodetails = conn.compute.find_server(
+        module.params["name"], ignore_missing=False
+    )
+    sdk_server = conn.compute.get_server(sdk_server_nodetails["id"])
     srv = server.Server.from_sdk(conn, sdk_server)
     params, info = srv.params_and_info()
-    result['server_name'] = params['name']
+    result["server_name"] = params["name"]
 
     # Checks
     # below this area add a block for each check required on a source workload
@@ -131,9 +139,9 @@ def run_module():
     #: ``REVERT_RESIZE``, ``SHUTOFF``, ``SOFT_DELETED``, ``STOPPED``,
     #: ``SUSPENDED``, ``UNKNOWN``, or ``VERIFY_RESIZE``.
     # Make sure source instance is shutdown before proceeding.
-    if info['status'] != 'SHUTOFF':
+    if info["status"] != "SHUTOFF":
         msg = "Cannot migrate instance {} because it is not in state SHUTOFF! Currently in state {}."
-        module.fail_json(msg=msg.format(params['name'], info['status']), **result)
+        module.fail_json(msg=msg.format(params["name"], info["status"]), **result)
 
     module.exit_json(**result)
 
@@ -142,5 +150,5 @@ def main():
     run_module()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

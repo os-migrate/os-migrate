@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: export_network
 
@@ -67,27 +68,32 @@ options:
       - Required if 'auth' parameter is not used.
     required: false
     type: raw
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: Export mynetwork into /opt/os-migrate/networks.yml
   os_migrate.os_migrate.export_network:
     path: /opt/os-migrate/networks.yml
     name: mynetwork
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible.module_utils.basic import AnsibleModule
+
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
 try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 except ImportError:
     # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import filesystem
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import server_volume
@@ -95,8 +101,8 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import serve
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        path=dict(type='str', required=True),
-        volume_id=dict(type='str', required=True),
+        path=dict(type="str", required=True),
+        volume_id=dict(type="str", required=True),
     )
 
     result = dict(
@@ -112,15 +118,16 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    sdk_volume = conn.block_storage.get_volume(module.params['volume_id'])
+    sdk_volume = conn.block_storage.get_volume(module.params["volume_id"])
     data = server_volume.ServerVolume.from_sdk(conn, sdk_volume)
 
-    if (not sdk_volume['attachments']):
-        result['changed'] = filesystem.write_or_replace_resource(
-            module.params['path'], data)
+    if not sdk_volume["attachments"]:
+        result["changed"] = filesystem.write_or_replace_resource(
+            module.params["path"], data
+        )
     else:
-        result['failed'] = True
-        result['errors'] = "Volume " + module.params['volume_id'] + " is not detached"
+        result["failed"] = True
+        result["errors"] = "Volume " + module.params["volume_id"] + " is not detached"
 
     module.exit_json(**result)
 
@@ -129,5 +136,5 @@ def main():
     run_module()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

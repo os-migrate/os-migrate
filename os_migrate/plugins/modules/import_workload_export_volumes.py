@@ -1,15 +1,16 @@
 #!/usr/bin/python
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: import_workload_export_volumes
 
@@ -103,9 +104,9 @@ options:
     required: false
     default: 1800
     type: int
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 main.yml:
 
 - name: validate loaded resources
@@ -204,9 +205,9 @@ workload.yml:
   rescue:
     - fail:
         msg: "Failed to import {{ item.params.name }}!"
-'''
+"""
 
-RETURN = '''
+RETURN = """
 transfer_uuid:
   description: UUID to identify this transfer when needed
   returned: Only on success.
@@ -235,34 +236,50 @@ volume_map:
               "url": "nbd://localhost:49164/f544092c-6bb8-4e3e-b509-d59b1520540d"
           }
      }
-'''
+"""
 
 from ansible.module_utils.basic import AnsibleModule
+
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
 try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 except ImportError:
     # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
-    import server
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import server
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils.volume_common \
-    import DEFAULT_TIMEOUT, OpenstackVolumeExport
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils.volume_common import (
+    DEFAULT_TIMEOUT,
+    OpenstackVolumeExport,
+)
 
 import uuid
 
 
 class OpenStackSourceVolume(OpenstackVolumeExport):
-    """ Export volumes from an OpenStack instance over NBD. """
+    """Export volumes from an OpenStack instance over NBD."""
 
-    def __init__(self, openstack_connection, source_conversion_host_id,
-                 ssh_key_path, ssh_user, source_instance_id, ser_server,
-                 state_file=None, log_file=None, source_conversion_host_address=None,
-                 boot_volume_prefix=None, timeout=DEFAULT_TIMEOUT):
+    def __init__(
+        self,
+        openstack_connection,
+        source_conversion_host_id,
+        ssh_key_path,
+        ssh_user,
+        source_instance_id,
+        ser_server,
+        state_file=None,
+        log_file=None,
+        source_conversion_host_address=None,
+        boot_volume_prefix=None,
+        timeout=DEFAULT_TIMEOUT,
+    ):
         # UUID marker for child processes on conversion hosts.
         transfer_uuid = str(uuid.uuid4())
 
@@ -329,31 +346,40 @@ class OpenStackSourceVolume(OpenstackVolumeExport):
         """
         sourcevm = self._source_vm()
         for server_volume in sourcevm.volumes:
-            volume = self.conn.get_volume_by_id(server_volume['id'])
-            self.log.info('Inspecting volume: %s', volume['id'])
-            if self.source_disks and volume['id'] not in self.source_disks:
-                self.log.info('Volume is not in specified disk list, ignoring.')
+            volume = self.conn.get_volume_by_id(server_volume["id"])
+            self.log.info("Inspecting volume: %s", volume["id"])
+            if self.source_disks and volume["id"] not in self.source_disks:
+                self.log.info("Volume is not in specified disk list, ignoring.")
                 continue
-            dev_path = self._get_attachment(volume, sourcevm)['device']
+            dev_path = self._get_attachment(volume, sourcevm)["device"]
             self.volume_map[dev_path] = dict(
-                source_dev=None, source_id=volume['id'], dest_dev=None,
-                dest_id=None, snap_id=None, image_id=None, name=volume['name'],
-                size=volume['size'], port=None, url=None, progress=None,
-                bootable=volume['bootable'])
+                source_dev=None,
+                source_id=volume["id"],
+                dest_dev=None,
+                dest_id=None,
+                snap_id=None,
+                image_id=None,
+                name=volume["name"],
+                size=volume["size"],
+                port=None,
+                url=None,
+                progress=None,
+                bootable=volume["bootable"],
+            )
             self._update_progress(dev_path, 0.0)
 
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        data=dict(type='dict', required=True),
-        boot_volume_prefix=dict(type='str', default=None),
-        conversion_host=dict(type='dict', required=True),
-        ssh_key_path=dict(type='str', required=True),
-        ssh_user=dict(type='str', required=True),
-        src_conversion_host_address=dict(type='str', default=None),
-        state_file=dict(type='str', default=None),
-        log_file=dict(type='str', default=None),
-        timeout=dict(type='int', default=DEFAULT_TIMEOUT),
+        data=dict(type="dict", required=True),
+        boot_volume_prefix=dict(type="str", default=None),
+        conversion_host=dict(type="dict", required=True),
+        ssh_key_path=dict(type="str", required=True),
+        ssh_user=dict(type="str", required=True),
+        src_conversion_host_address=dict(type="str", default=None),
+        state_file=dict(type="str", default=None),
+        log_file=dict(type="str", default=None),
+        timeout=dict(type="int", default=DEFAULT_TIMEOUT),
     )
 
     result = dict(
@@ -365,22 +391,23 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    ser_server = server.Server.from_data(module.params['data'])
+    ser_server = server.Server.from_data(module.params["data"])
     params, info = ser_server.params_and_info()
 
     # Required parameters
-    source_conversion_host_id = module.params['conversion_host']['id']
-    ssh_key_path = module.params['ssh_key_path']
-    ssh_user = module.params['ssh_user']
-    source_instance_id = info['id']
+    source_conversion_host_id = module.params["conversion_host"]["id"]
+    ssh_key_path = module.params["ssh_key_path"]
+    ssh_user = module.params["ssh_user"]
+    source_instance_id = info["id"]
 
     # Optional parameters
-    source_conversion_host_address = \
-        module.params.get('src_conversion_host_address', None)
-    state_file = module.params.get('state_file', None)
-    log_file = module.params.get('log_file', None)
-    boot_volume_prefix = module.params.get('boot_volume_prefix', None)
-    timeout = module.params['timeout']
+    source_conversion_host_address = module.params.get(
+        "src_conversion_host_address", None
+    )
+    state_file = module.params.get("state_file", None)
+    log_file = module.params.get("log_file", None)
+    boot_volume_prefix = module.params.get("boot_volume_prefix", None)
+    timeout = module.params["timeout"]
 
     source_host = OpenStackSourceVolume(
         conn,
@@ -396,8 +423,8 @@ def run_module():
         timeout=timeout,
     )
     source_host.prepare_exports()
-    result['transfer_uuid'] = source_host.transfer_uuid
-    result['volume_map'] = source_host.volume_map
+    result["transfer_uuid"] = source_host.transfer_uuid
+    result["volume_map"] = source_host.volume_map
 
     module.exit_json(**result)
 
@@ -406,5 +433,5 @@ def main():
     run_module()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

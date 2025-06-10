@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: import_workload_dst_check
 
@@ -67,9 +68,9 @@ options:
       - Required if 'auth' param not used.
     required: false
     type: raw
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: ensure workload in source cloud is ready to continue
   os_migrate.os_migrate.import_workload_dst_check:
     auth: "{{ os_migrate_src_auth }}"
@@ -83,28 +84,33 @@ EXAMPLES = '''
         # ...
     }
   when: prelim.changed
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible.module_utils.basic import AnsibleModule
+
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
 try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 except ImportError:
     # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import server
 
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        data=dict(type='dict', required=True),
-        dst_filters=dict(type='dict', required=False, default={}),
+        data=dict(type="dict", required=True),
+        dst_filters=dict(type="dict", required=False, default={}),
     )
 
     result = dict(
@@ -119,11 +125,11 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    ser_server = server.Server.from_data(module.params['data'])
-    errors = ser_server.dst_prerequisites_errors(conn, module.params['dst_filters'])
+    ser_server = server.Server.from_data(module.params["data"])
+    errors = ser_server.dst_prerequisites_errors(conn, module.params["dst_filters"])
 
     if errors:
-        error_msg = ' '.join(errors)
+        error_msg = " ".join(errors)
         module.fail_json(msg=error_msg, **result)
 
     module.exit_json(**result)
@@ -133,5 +139,5 @@ def main():
     run_module()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

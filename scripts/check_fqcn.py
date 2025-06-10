@@ -40,13 +40,15 @@ def get_tasks(obj):
             yield from get_tasks(o)
     else:
         found = False
-        for key in ('tasks',
-                    'pre_tasks',
-                    'post_tasks',
-                    'handlers',
-                    'block',
-                    'rescue',
-                    'always'):
+        for key in (
+            "tasks",
+            "pre_tasks",
+            "post_tasks",
+            "handlers",
+            "block",
+            "rescue",
+            "always",
+        ):
             if obj.get(key):
                 found = True
                 yield from get_tasks(obj.get(key))
@@ -65,40 +67,45 @@ def check_tasks(file):
     if data:
         for ds in get_tasks(data):
             try:
-                task = Task.load(ds,
-                                 variable_manager=variable_manager,
-                                 loader=loader)
-                route_class = ['modules',
-                               'connection',
-                               'module_utils',
-                               'cliconf',
-                               'terminal',
-                               'action',
-                               'become',
-                               'cache',
-                               'callback',
-                               'doc_fragments',
-                               'filter',
-                               'httpapi',
-                               'inventory',
-                               'lookup',
-                               'netconf',
-                               'shell',
-                               'test']
+                task = Task.load(ds, variable_manager=variable_manager, loader=loader)
+                route_class = [
+                    "modules",
+                    "connection",
+                    "module_utils",
+                    "cliconf",
+                    "terminal",
+                    "action",
+                    "become",
+                    "cache",
+                    "callback",
+                    "doc_fragments",
+                    "filter",
+                    "httpapi",
+                    "inventory",
+                    "lookup",
+                    "netconf",
+                    "shell",
+                    "test",
+                ]
 
                 for route in route_class:
-                    module = routing[route].get(task.action,
-                                                {}).get('redirect')
+                    module = routing[route].get(task.action, {}).get("redirect")
                     if module:
                         errors.append((file, task.action, module))
                         break
 
-                if '.' not in task.action:
+                if "." not in task.action:
                     errors.append((file, task.action, "no dot in namespace"))
 
-                if task.action == 'ansible.builtin.shell':
-                    if 'executable' not in task._attributes['args']:
-                        errors.append((file, task.action, "must define the executable as an args, like /bin/bash"))
+                if task.action == "ansible.builtin.shell":
+                    if "executable" not in task._attributes["args"]:
+                        errors.append(
+                            (
+                                file,
+                                task.action,
+                                "must define the executable as an args, like /bin/bash",
+                            )
+                        )
 
             except AnsibleParserError:
                 pass
@@ -108,27 +115,29 @@ def check_tasks(file):
 
 
 loader = DataLoader()
-inventory = InventoryManager(loader=loader, sources='localhost,')
+inventory = InventoryManager(loader=loader, sources="localhost,")
 variable_manager = VariableManager(loader=loader, inventory=inventory)
 
-url = ("https://raw.githubusercontent.com/"
-       "ansible/ansible/stable-2.10/lib/ansible/config/"
-       "ansible_builtin_runtime.yml")
+url = (
+    "https://raw.githubusercontent.com/"
+    "ansible/ansible/stable-2.10/lib/ansible/config/"
+    "ansible_builtin_runtime.yml"
+)
 
 response = urllib.request.urlopen(url)
 data = response.read()
 
-routing = yaml.load(data)['plugin_routing']
+routing = yaml.load(data)["plugin_routing"]
 
 dirname = os.path.abspath(os.path.dirname(__file__))
-search_folder = os.path.join(dirname, '../os_migrate/roles/')
+search_folder = os.path.join(dirname, "../os_migrate/roles/")
 
 to_fix = []
 
-for path in Path(search_folder).rglob('*.yml'):
+for path in Path(search_folder).rglob("*.yml"):
     to_fix = to_fix + check_tasks(path)
 
 if len(to_fix) > 0:
-    msg = 'There are some tasks using non FQCN methods: ' + str(to_fix)
+    msg = "There are some tasks using non FQCN methods: " + str(to_fix)
     print(msg)
     sys.exit(1)

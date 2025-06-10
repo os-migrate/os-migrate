@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
+    "metadata_version": "1.1",
+    "status": ["preview"],
+    "supported_by": "community",
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 ---
 module: import_router
 
@@ -62,9 +63,9 @@ options:
       - Required if 'auth' param not used.
     required: false
     type: raw
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: Import myrouter into /opt/os-migrate/routers.yml
   os_migrate.os_migrate.import_router:
     cloud: source_cloud
@@ -72,28 +73,33 @@ EXAMPLES = '''
       - type: openstack.router
         params:
           name: my_rtr
-'''
+"""
 
-RETURN = '''
-'''
+RETURN = """
+"""
 
 from ansible.module_utils.basic import AnsibleModule
+
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
 try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 except ImportError:
     # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack \
-        import openstack_full_argument_spec, openstack_cloud_from_module
+    from ansible.module_utils.openstack import (
+        openstack_full_argument_spec,
+        openstack_cloud_from_module,
+    )
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import router
 
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        data=dict(type='dict', required=True),
-        filters=dict(type='dict', required=False, default={}),
+        data=dict(type="dict", required=True),
+        filters=dict(type="dict", required=False, default={}),
     )
     # TODO: check the del
     # del argument_spec['cloud']
@@ -110,8 +116,8 @@ def run_module():
     )
 
     sdk, conn = openstack_cloud_from_module(module)
-    rtr = router.Router.from_data(module.params['data'])
-    result['changed'] = rtr.create_or_update(conn, module.params['filters'])
+    rtr = router.Router.from_data(module.params["data"])
+    result["changed"] = rtr.create_or_update(conn, module.params["filters"])
 
     module.exit_json(**result)
 
@@ -120,5 +126,5 @@ def main():
     run_module()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

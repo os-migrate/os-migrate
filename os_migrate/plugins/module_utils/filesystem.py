@@ -1,4 +1,5 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 import yaml
@@ -21,7 +22,7 @@ def write_or_replace_resource(file_path, resource):
     else:
         file_struct = serialization.new_resources_file_struct()
 
-    resources = file_struct['resources']
+    resources = file_struct["resources"]
 
     if serialization.add_or_replace_resource(resources, resource):
         _write_resources_file(file_path, file_struct)
@@ -35,13 +36,13 @@ def load_resources_file(file_path):
 
     Returns: Structure (dict) of the loaded file.
     """
-    with open(file_path, 'r', encoding='utf8') as f:
+    with open(file_path, "r", encoding="utf8") as f:
         file_struct = yaml.safe_load(f)
 
     if file_struct is None:
         raise exc.EmptyYAMLFileError(file_path)
 
-    file_os_migrate_version = file_struct.get('os_migrate_version', None)
+    file_os_migrate_version = file_struct.get("os_migrate_version", None)
 
     if file_os_migrate_version != const.OS_MIGRATE_VERSION:
         raise exc.DataVersionMismatch(file_path, file_os_migrate_version)
@@ -53,5 +54,5 @@ def _write_resources_file(file_path, file_struct):
     """Write `file_struct` resources file structure into a file at
     `file_path`.
     """
-    with open(file_path, 'w', encoding='utf8') as f:
+    with open(file_path, "w", encoding="utf8") as f:
         f.write(yaml.safe_dump(file_struct))

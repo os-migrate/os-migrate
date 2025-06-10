@@ -1,18 +1,25 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 import openstack
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
-    import exc, const, reference, resource
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
+    exc,
+    const,
+    reference,
+    resource,
+)
 
 SERVER_PORT_ORDER_MAX = 1000
 
 
 def server_ports(conn, sdk_ser):
     # the device_owner part after the colon varies - it is the availability zone
-    sdk_ports = filter(lambda p: p.get('device_owner', '').startswith('compute:'),
-                       conn.network.ports(device_id=sdk_ser['id']))
+    sdk_ports = filter(
+        lambda p: p.get("device_owner", "").startswith("compute:"),
+        conn.network.ports(device_id=sdk_ser["id"]),
+    )
     return _ports_sorted_by_nova_order(sdk_ser, sdk_ports)
 
 
@@ -33,17 +40,17 @@ def _ports_sorted_by_nova_order(sdk_ser, sdk_ports):
 
 def _nova_fixed_ips_sorted(sdk_ser):
     ips_sorted = []
-    for net in sdk_ser['addresses']:
-        for addr in sdk_ser['addresses'][net]:
-            if addr.get('OS-EXT-IPS:type') != 'fixed':
+    for net in sdk_ser["addresses"]:
+        for addr in sdk_ser["addresses"][net]:
+            if addr.get("OS-EXT-IPS:type") != "fixed":
                 continue
-            ips_sorted.append(addr['addr'])
+            ips_sorted.append(addr["addr"])
     return ips_sorted
 
 
 def _neutron_port_has_fixed_ip(sdk_port, ip):
-    for addr in sdk_port['fixed_ips']:
-        if addr.get('ip_address') == ip:
+    for addr in sdk_port["fixed_ips"]:
+        if addr.get("ip_address") == ip:
             return True
     return False
 
@@ -54,30 +61,28 @@ class ServerPort(resource.Resource):
     sdk_class = openstack.network.v2.port.Port
 
     info_from_sdk = [
-        'id',
-        'device_owner',
-        'device_id',
+        "id",
+        "device_owner",
+        "device_id",
     ]
     params_from_refs = [
-        'fixed_ips_refs',
-        'network_ref',
+        "fixed_ips_refs",
+        "network_ref",
     ]
-    params_from_sdk = [
-        'binding_profile',
-        'mac_address'
-    ]
+    params_from_sdk = ["binding_profile", "mac_address"]
     sdk_params_from_refs = [
-        'fixed_ips',
-        'network_id',
+        "fixed_ips",
+        "network_id",
     ]
 
     @classmethod
     def from_sdk(cls, conn, sdk_resource):
         obj = super(ServerPort, cls).from_sdk(conn, sdk_resource)
         # the part after the colon varies - it is the availability zone
-        if not sdk_resource['device_owner'].startswith('compute:'):
+        if not sdk_resource["device_owner"].startswith("compute:"):
             raise exc.UnexpectedValue(
-                'device_owner', 'compute:*', sdk_resource['device_owner'])
+                "device_owner", "compute:*", sdk_resource["device_owner"]
+            )
         return obj
 
     def create_or_update(self, conn, filters=None):
@@ -86,14 +91,12 @@ class ServerPort(resource.Resource):
 
         # creation using neutron, NOTE: add update method
         sdk_port = conn.network.create_port(**sdk_params)
-        return {
-            'port': sdk_port['id']
-        }
+        return {"port": sdk_port["id"]}
 
     def nova_sdk_params(self, conn):
         refs = self._refs_from_ser(conn)
 
-        if len(refs['fixed_ips']) != 1:
+        if len(refs["fixed_ips"]) != 1:
             message = (
                 "Using simple port creation via Nova is only supported for a single "
                 f"IP address per port, but on network '{refs['network_ref'].get('name', '')}' "
@@ -102,23 +105,25 @@ class ServerPort(resource.Resource):
             raise exc.InconsistentState(message)
 
         return {
-            "uuid": refs['network_id'],
-            "fixed_ip": refs['fixed_ips'][0]['ip_address'],
+            "uuid": refs["network_id"],
+            "fixed_ip": refs["fixed_ips"][0]["ip_address"],
         }
 
     @staticmethod
     def _refs_from_sdk(conn, sdk_res):
         refs = {}
 
-        refs['fixed_ips'] = sdk_res['fixed_ips']
-        refs['fixed_ips_refs'] = []
-        for fixed_ip in sdk_res['fixed_ips']:
-            refs['fixed_ips_refs'].append({
-                'ip_address': fixed_ip['ip_address'],
-                'subnet_ref': reference.subnet_ref(conn, fixed_ip['subnet_id']),
-            })
-        refs['network_id'] = sdk_res['network_id']
-        refs['network_ref'] = reference.network_ref(conn, sdk_res['network_id'])
+        refs["fixed_ips"] = sdk_res["fixed_ips"]
+        refs["fixed_ips_refs"] = []
+        for fixed_ip in sdk_res["fixed_ips"]:
+            refs["fixed_ips_refs"].append(
+                {
+                    "ip_address": fixed_ip["ip_address"],
+                    "subnet_ref": reference.subnet_ref(conn, fixed_ip["subnet_id"]),
+                }
+            )
+        refs["network_id"] = sdk_res["network_id"]
+        refs["network_ref"] = reference.network_ref(conn, sdk_res["network_id"])
 
         return refs
 
@@ -126,14 +131,16 @@ class ServerPort(resource.Resource):
         refs = {}
         params = self.params()
 
-        refs['fixed_ips_refs'] = params['fixed_ips_refs']
-        refs['fixed_ips'] = []
-        for fixed_ip in params['fixed_ips_refs']:
-            refs['fixed_ips'].append({
-                'ip_address': fixed_ip['ip_address'],
-                'subnet_id': reference.subnet_id(conn, fixed_ip['subnet_ref']),
-            })
-        refs['network_ref'] = params['network_ref']
-        refs['network_id'] = reference.network_id(conn, params['network_ref'])
+        refs["fixed_ips_refs"] = params["fixed_ips_refs"]
+        refs["fixed_ips"] = []
+        for fixed_ip in params["fixed_ips_refs"]:
+            refs["fixed_ips"].append(
+                {
+                    "ip_address": fixed_ip["ip_address"],
+                    "subnet_id": reference.subnet_id(conn, fixed_ip["subnet_ref"]),
+                }
+            )
+        refs["network_ref"] = params["network_ref"]
+        refs["network_id"] = reference.network_id(conn, params["network_ref"])
 
         return refs

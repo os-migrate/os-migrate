@@ -1,18 +1,18 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 from copy import deepcopy
 from openstack import exceptions as os_exc
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
-    import const, exc
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const, exc
 
 
-class Resource():
+class Resource:
 
     # OS-Migrate resource type, checked in from_data constructor
-    resource_type = 'UNDEFINED'
+    resource_type = "UNDEFINED"
     # OpenStack SDK class, checked in from_sdk constructor
-    sdk_class = 'UNDEFINED'
+    sdk_class = "UNDEFINED"
 
     # Properties of SDK resource object that are added to _info
     # section when serializing.
@@ -59,7 +59,7 @@ class Resource():
         """Returns: a new Resource instance with internal data set from `data`
         parameter.
         """
-        res_type = data.get('type', None)
+        res_type = data.get("type", None)
         if res_type != cls.resource_type:
             raise exc.UnexpectedResourceType(cls.resource_type, res_type)
 
@@ -90,13 +90,13 @@ class Resource():
         information.
         """
         if not isinstance(sdk_resource, cls.sdk_class):
-            raise exc.UnexpectedResourceType(
-                cls.sdk_class, sdk_resource.__class__)
+            raise exc.UnexpectedResourceType(cls.sdk_class, sdk_resource.__class__)
 
         obj = cls()
         obj._data_from_sdk_and_refs(
-            sdk_resource, cls._refs_from_sdk(conn, sdk_resource))
-        obj.data['type'] = cls.resource_type
+            sdk_resource, cls._refs_from_sdk(conn, sdk_resource)
+        )
+        obj.data["type"] = cls.resource_type
         for k, v in cls.migration_param_defaults.items():
             obj.data[const.RES_MIGRATION_PARAMS][k] = deepcopy(v)
         return obj
@@ -180,11 +180,13 @@ class Resource():
     @staticmethod
     def _sort_dicts(list_of_dicts, by_keys):
         """Sort `list_of_dicts` by dict keys in `by_keys`."""
+
         def keyfn(dct):
             dct_compound_key = []
             for by_key in by_keys:
                 dct_compound_key.append(dct[by_key])
             return dct_compound_key
+
         return sorted(list_of_dicts, key=keyfn)
 
     # Must be overriden in child class if `create_or_update` isn't
@@ -214,7 +216,7 @@ class Resource():
         """
         refs = self._refs_from_ser(conn)
         sdk_params = self._to_sdk_params(refs)
-        existing = self._find_sdk_res(conn, sdk_params['name'], filters)
+        existing = self._find_sdk_res(conn, sdk_params["name"], filters)
         if existing:
             if self._needs_update(self.from_sdk(conn, existing)):
                 self._remove_readonly_params(sdk_params)
@@ -248,8 +250,8 @@ class Resource():
         Returns: string of format 'type:name:id'
         """
         params, info = self.params_and_info()
-        name = params.get('name', '')
-        id_ = info.get('id', '')
+        name = params.get("name", "")
+        id_ = info.get("id", "")
         return f"{self.resource_type}:{name}:{id_}"
 
     def import_id(self):
@@ -274,10 +276,10 @@ class Resource():
         Returns: string import ID of the resource or None if the ID
         cannot be constructed
         """
-        res_type = self.data.get('type', None)
-        res_name = self.data.get('params', {}).get('name', None)
+        res_type = self.data.get("type", None)
+        res_name = self.data.get("params", {}).get("name", None)
         if res_type and res_name:
-            return f'{res_type}:{res_name}'
+            return f"{res_type}:{res_name}"
         return None
 
     def dst_prerequisites_errors(self, conn, filters=None):
@@ -289,7 +291,11 @@ class Resource():
         errors = []
         try:
             self._refs_from_ser(conn)
-        except (os_exc.ResourceFailure, os_exc.ResourceNotFound, os_exc.DuplicateResource) as e:
+        except (
+            os_exc.ResourceFailure,
+            os_exc.ResourceNotFound,
+            os_exc.DuplicateResource,
+        ) as e:
             errors.append(f"Destination prerequisites not met: {e}")
         return errors
 
@@ -376,6 +382,7 @@ class Resource():
         structure does reuse data contents to save memory (it is not a
         deep copy). Only lists and dicts are fresh instances.
         """
+
         def _recursive_trim(obj):
             if isinstance(obj, dict):
                 result_dict = {}
@@ -405,8 +412,9 @@ class Resource():
         # if something else than ['type'] && ['_info']['id'] should be the
         # deciding factors for sameness, just override the following method in
         # the specific subclass
-        return (self.data[const.RES_INFO].get('id', '__undefined1__') ==
-                target_data[const.RES_INFO].get('id', '__undefined2__'))
+        return self.data[const.RES_INFO].get("id", "__undefined1__") == target_data[
+            const.RES_INFO
+        ].get("id", "__undefined2__")
 
     # Meant to be overriden in some subclasses.
     def _hook_after_update(self, conn, sdk_res, is_create):
@@ -461,7 +469,9 @@ class Resource():
         else:
             sdk_params_from_params = self.sdk_params_from_params
 
-        self._set_sdk_params_same_name(self.params(), sdk_params, sdk_params_from_params)
+        self._set_sdk_params_same_name(
+            self.params(), sdk_params, sdk_params_from_params
+        )
         self._set_sdk_params_same_name(refs, sdk_params, self.sdk_params_from_refs)
         self._del_sdk_params_if_falsey(sdk_params, self.skip_falsey_sdk_params)
 
@@ -477,7 +487,9 @@ class Resource():
     def _sort_param(self, param_name, by_keys=None):
         """Sort internal param `param_name`."""
         if by_keys:
-            self.params()[param_name] = self._sort_dicts(self.params()[param_name], by_keys)
+            self.params()[param_name] = self._sort_dicts(
+                self.params()[param_name], by_keys
+            )
         else:
             self.params()[param_name] = sorted(self.params()[param_name])
 
@@ -497,8 +509,8 @@ class Resource():
         Returns: list of strings (error messages)
         """
         errors = []
-        if 'id' not in self.info():
-            errors.append('Missing _info.id.')
+        if "id" not in self.info():
+            errors.append("Missing _info.id.")
         return errors
 
     # Can be overriden in some subclasses.
@@ -511,7 +523,7 @@ class Resource():
         mig_params = self.migration_params()
         for mig_param in self.migration_param_defaults.keys():
             if mig_param not in mig_params:
-                errors.append(f'Missing _migration_params.{mig_param}.')
+                errors.append(f"Missing _migration_params.{mig_param}.")
         return errors
 
     # Can be overriden in some subclasses.
@@ -524,7 +536,7 @@ class Resource():
         params = self.params()
         for param in self.params_from_sdk + self.params_from_refs:
             if param not in params:
-                errors.append(f'Missing params.{param}.')
+                errors.append(f"Missing params.{param}.")
         return errors
 
     # Can be overridden in some subclasses.
@@ -535,11 +547,11 @@ class Resource():
         """
         errors = []
         params = self.params()
-        name_param_key = 'name'
+        name_param_key = "name"
         # check to see if this resource has a name
         if name_param_key in self.params_from_sdk:
             # Check to see if name is present and if so is it empty.
             # _validation_params_errors check will catch if it is not present.
-            if name_param_key in params.keys() and not params.get(name_param_key, ''):
-                errors.append(f'params.{name_param_key} is empty.')
+            if name_param_key in params.keys() and not params.get(name_param_key, ""):
+                errors.append(f"params.{name_param_key} is empty.")
         return errors

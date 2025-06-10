@@ -1,12 +1,17 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 import hashlib
 import openstack
 import os
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils \
-    import const, exc, reference, resource
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
+    const,
+    exc,
+    reference,
+    resource,
+)
 
 
 class Image(resource.Resource):
@@ -15,78 +20,78 @@ class Image(resource.Resource):
     sdk_class = openstack.image.v2.image.Image
 
     info_from_sdk = [
-        'checksum',
-        'created_at',
-        'direct_url',
-        'file',
-        'id',
-        'instance_uuid',
-        'kernel_id',
-        'locations',
-        'metadata',
-        'owner_id',  # like project_id in other resources
-        'ramdisk_id',
-        'schema',
-        'size',
-        'status',
-        'store',
-        'updated_at',
-        'url',
-        'virtual_size',
+        "checksum",
+        "created_at",
+        "direct_url",
+        "file",
+        "id",
+        "instance_uuid",
+        "kernel_id",
+        "locations",
+        "metadata",
+        "owner_id",  # like project_id in other resources
+        "ramdisk_id",
+        "schema",
+        "size",
+        "status",
+        "store",
+        "updated_at",
+        "url",
+        "virtual_size",
     ]
     params_from_sdk = [
-        'architecture',
-        'container_format',
-        'disk_format',
-        'has_auto_disk_config',
-        'hash_algo',
-        'hash_value',
-        'hw_cpu_cores',
-        'hw_cpu_policy',
-        'hw_cpu_sockets',
-        'hw_cpu_thread_policy',
-        'hw_cpu_threads',
-        'hw_disk_bus',
-        'hw_machine_type',
-        'hw_qemu_guest_agent',
-        'hw_rng_model',
-        'hw_scsi_model',
-        'hw_serial_port_count',
-        'hw_video_model',
-        'hw_video_ram',
-        'hw_vif_model',
-        'hw_watchdog_action',
-        'hypervisor_type',
-        'instance_type_rxtx_factor',
-        'is_hidden',
-        'is_hw_boot_menu_enabled',
-        'is_hw_vif_multiqueue_enabled',
-        'is_protected',
-        'min_disk',
-        'min_ram',
-        'name',
-        'needs_config_drive',
-        'needs_secure_boot',
-        'os_admin_user',
-        'os_command_line',
-        'os_distro',
-        'os_require_quiesce',
-        'os_shutdown_timeout',
-        'os_type',
-        'os_version',
-        'properties',
-        'visibility',
-        'vm_mode',
-        'vmware_adaptertype',
-        'vmware_ostype',
+        "architecture",
+        "container_format",
+        "disk_format",
+        "has_auto_disk_config",
+        "hash_algo",
+        "hash_value",
+        "hw_cpu_cores",
+        "hw_cpu_policy",
+        "hw_cpu_sockets",
+        "hw_cpu_thread_policy",
+        "hw_cpu_threads",
+        "hw_disk_bus",
+        "hw_machine_type",
+        "hw_qemu_guest_agent",
+        "hw_rng_model",
+        "hw_scsi_model",
+        "hw_serial_port_count",
+        "hw_video_model",
+        "hw_video_ram",
+        "hw_vif_model",
+        "hw_watchdog_action",
+        "hypervisor_type",
+        "instance_type_rxtx_factor",
+        "is_hidden",
+        "is_hw_boot_menu_enabled",
+        "is_hw_vif_multiqueue_enabled",
+        "is_protected",
+        "min_disk",
+        "min_ram",
+        "name",
+        "needs_config_drive",
+        "needs_secure_boot",
+        "os_admin_user",
+        "os_command_line",
+        "os_distro",
+        "os_require_quiesce",
+        "os_shutdown_timeout",
+        "os_type",
+        "os_version",
+        "properties",
+        "visibility",
+        "vm_mode",
+        "vmware_adaptertype",
+        "vmware_ostype",
     ]
     params_from_refs = [
-        'kernel_ref',
-        'ramdisk_ref',
+        "kernel_ref",
+        "ramdisk_ref",
     ]
     sdk_params_from_refs = [
-        'kernel_id',
-        'ramdisk_id',
+        "kernel_id",
+        "ramdisk_id",
     ]
 
     @classmethod
@@ -106,22 +111,23 @@ class Image(resource.Resource):
         # * 'self'
         #   We need to remove 'self' from properties as it would break
         #   idempotency check and it's not really a property anyway.
-        readonly_properties = ['self', 'stores']
+        readonly_properties = ["self", "stores"]
 
         # cast .keys() to list to avoid 'dictionary changed size during iteration' error
-        for key in list((params.get('properties') or {}).keys()):
+        for key in list((params.get("properties") or {}).keys()):
             if key in readonly_properties:
-                del params['properties'][key]
+                del params["properties"][key]
         return obj
 
     def create_or_update(self, conn, filters=None, blob_path=None):
         if not blob_path:
             raise exc.InconsistentState(
-                "create_or_update for Image requires blob_path to be given")
+                "create_or_update for Image requires blob_path to be given"
+            )
         refs = self._refs_from_ser(conn)
         sdk_params = self._to_sdk_params(refs)
-        sdk_params['filename'] = blob_path
-        existing = self._find_sdk_res(conn, sdk_params['name'], filters)
+        sdk_params["filename"] = blob_path
+        existing = self._find_sdk_res(conn, sdk_params["name"], filters)
         if existing:
             if self._needs_update(self.from_sdk(conn, existing)):
                 self._remove_readonly_params(sdk_params)
@@ -139,7 +145,7 @@ class Image(resource.Resource):
         # e.g. is_protected as kwarg will fail. It seems that it's
         # just better to feed whatever we can via meta.
         meta_keys = set(cls.params_from_sdk)
-        meta_keys.remove('name')
+        meta_keys.remove("name")
         meta = {}
         for key in meta_keys:
             if key in sdk_params:
@@ -151,34 +157,34 @@ class Image(resource.Resource):
     def _find_sdk_res(conn, name_or_id, filters=None):
         # Glance filter require owner instead of project_id.
         glance_filters = dict(filters or {})
-        if 'project_id' in glance_filters:
-            glance_filters['owner'] = glance_filters.pop('project_id')
+        if "project_id" in glance_filters:
+            glance_filters["owner"] = glance_filters.pop("project_id")
 
         # Unlike other find methods, find_image doesn't support
         # filters, our best option is probably to do a filtered list
         # and then match on name or id.
         images = conn.image.images(**glance_filters)
         for image in images:
-            if image['id'] == name_or_id or image['name'] == name_or_id:
+            if image["id"] == name_or_id or image["name"] == name_or_id:
                 return image
         return None
 
     @staticmethod
     def _refs_from_sdk(conn, sdk_res):
         refs = {}
-        refs['kernel_id'] = sdk_res['kernel_id']
-        refs['kernel_ref'] = reference.image_ref(conn, sdk_res['kernel_id'])
-        refs['ramdisk_id'] = sdk_res['ramdisk_id']
-        refs['ramdisk_ref'] = reference.image_ref(conn, sdk_res['ramdisk_id'])
+        refs["kernel_id"] = sdk_res["kernel_id"]
+        refs["kernel_ref"] = reference.image_ref(conn, sdk_res["kernel_id"])
+        refs["ramdisk_id"] = sdk_res["ramdisk_id"]
+        refs["ramdisk_ref"] = reference.image_ref(conn, sdk_res["ramdisk_id"])
         return refs
 
     def _refs_from_ser(self, conn):
         refs = {}
         params = self.params()
-        refs['kernel_ref'] = params['kernel_ref']
-        refs['kernel_id'] = reference.image_id(conn, params['kernel_ref'])
-        refs['ramdisk_ref'] = params['ramdisk_ref']
-        refs['ramdisk_id'] = reference.image_id(conn, params['ramdisk_ref'])
+        refs["kernel_ref"] = params["kernel_ref"]
+        refs["kernel_id"] = reference.image_id(conn, params["kernel_ref"])
+        refs["ramdisk_ref"] = params["ramdisk_ref"]
+        refs["ramdisk_id"] = reference.image_id(conn, params["ramdisk_ref"])
         return refs
 
     @staticmethod
@@ -189,7 +195,7 @@ class Image(resource.Resource):
         sdk_params = super()._to_sdk_params(refs)
         # Special Glance thing - properties should be specified as
         # kwargs.
-        for key, val in (sdk_params.get('properties') or {}).items():
+        for key, val in (sdk_params.get("properties") or {}).items():
             sdk_params[key] = val
         return sdk_params
 
