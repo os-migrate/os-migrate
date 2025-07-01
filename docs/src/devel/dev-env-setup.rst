@@ -51,7 +51,7 @@ And unit tests this way:
    ./toolbox/run make test-unit
 
 To run sanity tests and then unit tests together, a shorthand target
-“test-fast” can be used:
+"test-fast" can be used:
 
 ::
 
@@ -60,7 +60,7 @@ To run sanity tests and then unit tests together, a shorthand target
 Vagrant for functional tests
 ----------------------------
 
-To run functional tests, you’ll need to connect to OpenStack cloud(s)
+To run functional tests, you'll need to connect to OpenStack cloud(s)
 where tenant resources can be managed. As a developer, the easiest way
 is to run a local virtualized all-in-one OpenStack cloud. OS Migrate has
 Vagrant+Devstack setup for this purpose.
@@ -110,7 +110,7 @@ If you need to revert the VM at any time, run:
 
    ./vagrant-snapshot-revert
 
-When you’re done developing, halt Vagrant and close ``vagrant-run``
+When you're done developing, halt Vagrant and close ``vagrant-run``
 shell:
 
 ::
@@ -165,7 +165,7 @@ Finally, run the functional tests:
 
    ./toolbox/run make test-func
 
-To run functional tests for just the resource you’re working on, run
+To run functional tests for just the resource you're working on, run
 e.g.:
 
 ::

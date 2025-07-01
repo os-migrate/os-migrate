@@ -1,70 +1,105 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-PARAMS=""
+# Exit immediately if a command exits with a non-zero status, if a variable is
+# unset, and if a command in a pipeline fails.
+set -euo pipefail
+
+# --- Functions ---
+
+# Print an error message and exit.
+# @param message The error message to print.
+error() {
+    echo "Error: $1" >&2
+    exit 1
+}
+
+# Check if a command exists.
+# @param cmd The command to check.
+check_command() {
+    command -v "$1" >/dev/null 2>&1 || error "$1 is not installed. Please install it to continue."
+}
+
+# --- Initial Setup and Dependencies Check ---
+
+check_command "ansible-galaxy"
+check_command "curl"
+check_command "jq"
+check_command "yq" # Using yq as a more standard and powerful YAML processor
+
+# --- Argument Parsing ---
+
+GALAXY_API_KEY="${ANSIBLE_GALAXY_API_KEY:-}" # Use environment variable if set
+
 while (( "$#" )); do
     case "$1" in
         -k|--galaxy-key)
-            KARG=$2
+            if [[ -z "${2:-}" ]]; then
+                error "A value is required for the --galaxy-key option."
+            fi
+            GALAXY_API_KEY="$2"
             shift 2
             ;;
-        --) # end argument parsing
-            shift
-            break
-            ;;
-        -*|--*=) # unsupported flags
-            echo "Error: Unsupported flag $1" >&2
-            echo "Please use ./publish.sh [-k <galaxy key> | --galaxy-key <galaxy key>]" >&2
-            exit 1
+        -h|--help)
+            echo "Usage: $(basename "$0") [-k <galaxy_key>]"
+            echo "Publish an Ansible collection to Galaxy if the version is new."
+            echo "The Galaxy API key can also be provided via the ANSIBLE_GALAXY_API_KEY environment variable."
+            exit 0
             ;;
         *) # preserve positional arguments
-            PARAMS="$PARAMS $1"
-            shift
-        ;;
+            # If you need to handle other positional arguments, they can be added to an array
+            # For this script's purpose, we'll treat them as an error.
+            error "Unsupported argument: $1. Use --help for usage information."
+            ;;
     esac
 done
 
-if [ ! -e /.os-migrate-toolbox ]; then
-    echo "Error: This script must be run from an os-migrate-toolbox container" >&2
-    echo "to ensure having all dependencies available and in expected versions." >&2
-    exit 1
+if [[ -z "$GALAXY_API_KEY" ]]; then
+    error "Ansible Galaxy API key not provided. Use the -k flag or the ANSIBLE_GALAXY_API_KEY environment variable."
 fi
 
-#
-# Initial variables
-#
+# --- Main Logic ---
 
-namespace=os_migrate
-name=os_migrate
-all_published_versions=$(curl https://galaxy.ansible.com/api/v2/collections/$namespace/$name/versions/ | jq -r '.results' | jq -c '.[].version')
-current_galaxy_version=$(cat os_migrate/galaxy.yml | shyaml get-value version)
-current_galaxy_namespace=$(cat os_migrate/galaxy.yml | shyaml get-value namespace)
-current_galaxy_name=$(cat os_migrate/galaxy.yml | shyaml get-value name)
-publish="1"
+GALAXY_YML="galaxy.yml"
 
-#
-# Check all the current published versions and if the
-# packaged to be created has a different version, then
-# we publish it to Galaxy Ansible
-#
+if [[ ! -f "$GALAXY_YML" ]]; then
+    error "The '$GALAXY_YML' file was not found in the current directory."
+fi
 
-for ver in $all_published_versions; do
-    echo "--"
-    echo "Published: "$ver
-    echo "Built: "$current_galaxy_version
-    echo ""
-    if [[ $ver == \"$current_galaxy_version\" ]]; then
-        echo "The current version $current_galaxy_version is already published"
-        echo "Proceed to update the galaxy.yml file with a newer version"
-        echo "After the version change, when the commit is merged, then the package"
-        echo "will be published automatically."
-        publish="0"
+# Read metadata from galaxy.yml
+# Note: For yq v4+, the syntax is as shown. For older versions, it might be different.
+NAMESPACE=$(yq e '.namespace' "$GALAXY_YML")
+NAME=$(yq e '.name' "$GALAXY_YML")
+CURRENT_VERSION=$(yq e '.version' "$GALAXY_YML")
+
+echo "--- Collection Details ---"
+echo "Namespace: $NAMESPACE"
+echo "Name:      $NAME"
+echo "Version:   $CURRENT_VERSION"
+echo "--------------------------"
+
+# Check if the current version is already published
+echo "Checking if version $CURRENT_VERSION is already published on Ansible Galaxy..."
+
+# The API returns a 404 status code if the collection or version doesn't exist.
+# We check the HTTP status code to see if the version is published.
+http_status=$(curl -s -o /dev/null -w "%{http_code}" "https://galaxy.ansible.com/api/v3/plugin/ansible/content/published/collections/index/$NAMESPACE/$NAME/versions/$CURRENT_VERSION/")
+
+if [[ "$http_status" -eq 200 ]]; then
+    echo "Version $CURRENT_VERSION is already published."
+    echo "To publish a new version, please update '$GALAXY_YML' and run this script again."
+    exit 0
+elif [[ "$http_status" -eq 404 ]]; then
+    echo "This version is not yet published. Proceeding with publishing..."
+
+    COLLECTION_TARBALL="${NAMESPACE}-${NAME}-${CURRENT_VERSION}.tar.gz"
+
+    if [[ ! -f "$COLLECTION_TARBALL" ]]; then
+        make build
     fi
-done
 
-if [ "$publish" == "1" ]; then
-    echo 'This version is not published, publishing!...'
-    ./scripts/build.sh
-    ansible-galaxy collection publish \
-        releases/$current_galaxy_namespace-$current_galaxy_name-$current_galaxy_version.tar.gz \
-        --api-key $KARG
+    echo "Publishing $COLLECTION_TARBALL to Ansible Galaxy..."
+    ansible-galaxy collection publish "$COLLECTION_TARBALL" --api-key "$GALAXY_API_KEY"
+    echo "Successfully published version $CURRENT_VERSION!"
+else
+    error "Failed to check collection version on Ansible Galaxy. Received HTTP status: $http_status"
 fi

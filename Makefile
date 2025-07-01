@@ -1,192 +1,209 @@
-.DEFAULT_GOAL := build
+# Let's use bash!
 SHELL := /bin/bash
-ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-OS_MIGRATE := $(HOME)/.ansible/collections/ansible_collections/os_migrate/os_migrate
-NO_VAGRANT ?= 0
-export OS_MIGRATE
+.SHELLFLAGS := -euo pipefail -c
+
+# --- Configuration Variables ---
+# Reuse container content if possible. Set to 'false' to always rebuild.
+USE_CACHE ?= true
+
+# Container and Python Configuration
+CONTAINER_ENGINE ?= podman
+CONTAINER_IMAGE  ?= quay.io/centos/centos:stream10
+CONTAINER_NAME   ?= os-migrate
+PYTHON_VERSION   ?= 3.12
+
+# Directory and Mount Structure
+COLLECTION_ROOT         := $(CURDIR)
+CONTAINER_COLLECTION_ROOT := /code
+MOUNT_PATH                := $(COLLECTION_ROOT):$(CONTAINER_COLLECTION_ROOT)
+VENV_DIR                  := $(CONTAINER_COLLECTION_ROOT)/.venv
+
+# --- Core Logic for Container Creation ---
+
+# Check if the container already exists and strip any whitespace/newlines
+CONTAINER_EXISTS = $(strip $(shell $(CONTAINER_ENGINE) ps -a -q -f name=$(CONTAINER_NAME)))
 
 
-# ANSIBLE COLLECTION
+# --- Dynamic Variable Setup ---
 
-build: unlink-latest os_migrate-os_migrate-latest.tar.gz
+# Check if SELinux is enforcing to set container security options
+GETENFORCE_CMD := $(shell command -v getenforce 2>/dev/null)
+SELINUX_ENFORCING := $(shell $(GETENFORCE_CMD) 2>/dev/null | grep -q "Enforcing" && echo "yes" || echo "no")
 
-install: os_migrate-os_migrate-latest.tar.gz
-	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
-		echo "Sourcing venv."; \
-		source /root/venv/bin/activate; \
-	fi; \
-	cd releases; \
-	ansible-galaxy collection install $(OS_MIGRATE_INSTALL_ARGS) --force os_migrate-os_migrate-latest.tar.gz
+ifeq ($(SELINUX_ENFORCING),yes)
+    SECURITY_OPT := --security-opt label=disable
+else
+    SECURITY_OPT :=
+endif
 
-clean:
-	ls releases/os_migrate-os_migrate*.tar.gz | xargs rm
+# Extract collection metadata from galaxy.yml
+GALAXY_YML := $(COLLECTION_ROOT)/galaxy.yml
+ifneq ($(wildcard $(GALAXY_YML)),)
+    COLLECTION_NAMESPACE := $(shell grep -E "^namespace:" $(GALAXY_YML) | sed 's/namespace: *//g')
+    COLLECTION_NAME      := $(shell grep -E "^name:" $(GALAXY_YML) | sed 's/name: *//g')
+    COLLECTION_VERSION   := $(shell grep -E "^version:" $(GALAXY_YML) | sed 's/version: *//g')
+    COLLECTION_TARBALL   := $(COLLECTION_NAMESPACE)-$(COLLECTION_NAME)-$(COLLECTION_VERSION).tar.gz
+else
+    COLLECTION_TARBALL   :=
+endif
 
-reinstall: build install
+# --- Core Logic for Container Creation ---
 
+# Check if the container already exists
+CONTAINER_EXISTS = $(shell $(CONTAINER_ENGINE) ps -a -q -f name=$(CONTAINER_NAME))
 
-# ANSIBLE COLLECTION -- utility targets
+# Determine if we need to create a container based on cache settings and existence.
+# Default to 0 (don't create).
+CREATE_CONTAINER := 0
+ifeq ($(USE_CACHE),true)
+    # If using cache, only create if the container doesn't exist.
+    ifeq ($(CONTAINER_EXISTS),)
+        CREATE_CONTAINER := 1
+    endif
+else
+    # If not using cache, always create a fresh container.
+    CREATE_CONTAINER := 1
+endif
 
-unlink-latest:
-	rm releases/os_migrate-os_migrate-latest.tar.gz || true
+# --- Phony Targets Definition ---
+.PHONY: all help build clean-build tests test-ansible-lint test-ansible-sanity test-ansible-units \
+        create-centos-container clean-centos-container check-root check-python-version \
+        create-venv install-deps install
 
-os_migrate-os_migrate-latest.tar.gz:
-	./scripts/build.sh
+# --- Main User-Facing Targets ---
 
+# Default target when running `make`
+all: build
 
-# TESTS
+# Help screen
+help:
+	@echo "Available targets:"
+	@echo "  help                  - Display this help message"
+	@echo "  build                 - Build the Ansible collection tarball"
+	@echo "  clean-build           - Remove the built collection tarball"
+	@echo "  install               - Build and install the collection and all dependencies in the container"
+	@echo "  tests                 - Launch all available tests (lint, sanity, units)"
+	@echo "  test-ansible-lint     - Launch ansible-lint tests"
+	@echo "  test-ansible-sanity   - Launch ansible-sanity tests"
+	@echo "  test-ansible-units    - Launch ansible-test unit tests"
+	@echo ""
+	@echo "  create-centos-container - Create the CentOS container (if needed)"
+	@echo "  clean-centos-container  - Stop and remove the CentOS container"
+	@echo "  create-venv           - Create the Python virtual environment in the container"
+	@echo "  install-deps          - Install Python dependencies from requirements files"
+	@echo ""
+	@echo "Customizable variables:"
+	@echo "  USE_CACHE        - Reuse container if it exists (default: $(USE_CACHE))"
+	@echo "  CONTAINER_ENGINE - Container runtime (default: $(CONTAINER_ENGINE))"
+	@echo "  CONTAINER_IMAGE  - Container image (default: $(CONTAINER_IMAGE))"
+	@echo "  PYTHON_VERSION   - Python version to use in the container (default: $(PYTHON_VERSION))"
 
-test-lint: reinstall
-	set -euo pipefail; \
-	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
-		echo "Sourcing venv."; \
-		source /root/venv/bin/activate; \
-	fi; \
-	./scripts/linters.sh
+# --- Build Targets ---
 
-test-setup-vagrant-devstack:
-	./scripts/auth-from-clouds.sh \
-		--config toolbox/vagrant/env/clouds.yaml \
-		--src devstack \
-		--dst devstack-alt-member \
-		> tests/auth_tenant.yml
+build: check-root clean-build
+	@echo "--- Building Ansible collection: $(COLLECTION_TARBALL) ---"
+	@ansible-galaxy collection build
 
-test-setup-vagrant-devstack-admin:
-	./scripts/auth-from-clouds.sh \
-		--config toolbox/vagrant/env/clouds.yaml \
-		--src devstack-admin \
-		--dst devstack-admin \
-		> tests/auth_admin.yml
-
-test: test-fast test-func
-
-test-func: test-func-tenant test-func-admin
-
-test-func-tenant: reinstall
-	set -euo pipefail; \
-	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
-		echo "Sourcing venv."; \
-		source /root/venv/bin/activate; \
-	fi; \
-	cd tests/func; \
-	ansible-playbook \
-		-vvv \
-		-i $(ROOT_DIR)/os_migrate/localhost_inventory.yml \
-		-e os_migrate_tests_tmp_dir=$(ROOT_DIR)/tests/func/tmp \
-		-e os_migrate_data_dir=$(ROOT_DIR)/tests/func/tmp/data \
-		-e @$(ROOT_DIR)/tests/auth_tenant.yml \
-		$(OS_MIGRATE_FUNC_TEST_ARGS) test_as_tenant.yml
-
-test-func-admin: reinstall
-	set -euo pipefail; \
-	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
-		echo "Sourcing venv."; \
-		source /root/venv/bin/activate; \
-	fi; \
-	cd tests/func; \
-	ansible-playbook \
-		-vvv \
-		-i $(ROOT_DIR)/os_migrate/localhost_inventory.yml \
-		-e os_migrate_tests_tmp_dir=$(ROOT_DIR)/tests/func/tmp \
-		-e os_migrate_data_dir=$(ROOT_DIR)/tests/func/tmp/data \
-		-e @$(ROOT_DIR)/tests/auth_admin.yml \
-		$(OS_MIGRATE_FUNC_TEST_ARGS) test_as_admin.yml
-
-test-e2e: test-e2e-tenant test-e2e-admin
-
-test-e2e-tenant: reinstall
-	set -euo pipefail; \
-	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
-		echo "Sourcing venv."; \
-		source /root/venv/bin/activate; \
-	fi; \
-	cd tests/e2e; \
-	ansible-playbook \
-		-v \
-		-i $(OS_MIGRATE)/localhost_inventory.yml \
-		-e os_migrate_tests_tmp_dir=$(ROOT_DIR)/tests/e2e/tmp \
-		-e os_migrate_data_dir=$(ROOT_DIR)/tests/e2e/tmp/data \
-		-e os_migrate_conversion_host_key=$(ROOT_DIR)/tests/e2e/tmpdata/conversion/ssh.key \
-		-e @$(ROOT_DIR)/tests/auth_tenant.yml \
-		-e @$(ROOT_DIR)/tests/e2e/tasks/tenant/scenario_variables.yml \
-		$(OS_MIGRATE_E2E_TEST_ARGS) test_as_tenant.yml
-
-test-e2e-admin: reinstall
-	set -euo pipefail; \
-	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
-		echo "Sourcing venv."; \
-		source /root/venv/bin/activate; \
-	fi; \
-	cd tests/e2e; \
-	ansible-playbook \
-		-v \
-		-i $(OS_MIGRATE)/localhost_inventory.yml \
-		-e os_migrate_tests_tmp_dir=$(ROOT_DIR)/tests/e2e/tmp \
-		-e os_migrate_data_dir=$(ROOT_DIR)/tests/e2e/tmp/data \
-		-e os_migrate_conversion_host_key=$(ROOT_DIR)/tests/e2e/tmpdata/conversion/ssh.key \
-		-e @$(ROOT_DIR)/tests/auth_admin.yml \
-		-e @$(ROOT_DIR)/tests/e2e/tasks/admin/scenario_variables.yml \
-		$(OS_MIGRATE_E2E_TEST_ARGS) test_as_admin.yml
-
-test-fast: test-lint test-sanity test-unit
-
-test-sanity: reinstall
-	set -euo pipefail; \
-	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
-		echo "Sourcing venv."; \
-		source /root/venv/bin/activate; \
-	fi; \
-	cd /root/.ansible/collections/ansible_collections/os_migrate/os_migrate; \
-    # Only target the version of python3 in the activate virtual environment. Do not target; \
-    # any other discovered python runtimes.; \
-    TARGET_PYTHON_VERSION=$$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")'); \
-	echo "Running Ansible sanity tests with python version $${TARGET_PYTHON_VERSION}"; \
-	ansible-test sanity --python $${TARGET_PYTHON_VERSION} --local --skip-test import --skip-test validate-modules
-
-test-unit: reinstall
-	set -euo pipefail; \
-	if [ -z "$${VIRTUAL_ENV:-}" ]; then \
-		echo "Sourcing venv."; \
-		source /root/venv/bin/activate; \
-	fi; \
-	cd /root/.ansible/collections/ansible_collections/os_migrate/os_migrate; \
-    # Only target the version of python3 in the activate virtual environment. Do not target; \
-    # any other discovered python runtimes.; \
-	TARGET_PYTHON_VERSION=$$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")'); \
-	echo "Running Ansible unit tests with python version $${TARGET_PYTHON_VERSION}"; \
-	ansible-test units --python $${TARGET_PYTHON_VERSION} --local
-
-
-# DOCS
-
-docs: reinstall docs-diagrams
-	./scripts/docs-build.sh
-
-docs-diagrams:
-	plantuml -SDpi=150 -output render ./docs/src/images/plantuml/*.plantuml
-
-
-# TOOLBOX
-
-toolbox-build:
-	if [ "$${REUSE_TOOLBOX:-0}" -eq "0" ]; then \
-		echo "Building the toolbox container image"; \
-		cp os_migrate/galaxy.yml toolbox/build/; \
-		cd toolbox && \
-		podman build --no-cache --build-arg NO_VAGRANT=$(NO_VAGRANT) -t localhost/os_migrate_toolbox:latest . && \
-		podman tag localhost/os_migrate_toolbox:latest localhost/os_migrate_toolbox:$$(date "+%Y_%m_%d"); \
+clean-build:
+	@echo "--- Cleaning built collection ---"
+	@if [ -n "$(COLLECTION_TARBALL)" ]; then \
+		if [ -f "$(COLLECTION_TARBALL)" ]; then \
+			echo "Removing $(COLLECTION_TARBALL)"; \
+			rm -f "$(COLLECTION_TARBALL)"; \
+		fi \
 	else \
-		echo "Reusing the toolbox container image"; \
-		podman pull ghcr.io/os-migrate/os-migrate/os_migrate_toolbox:latest; \
-		podman image tag ghcr.io/os-migrate/os-migrate/os_migrate_toolbox:latest localhost/os_migrate_toolbox:latest; \
-		podman image tag localhost/os_migrate_toolbox:latest localhost/os_migrate_toolbox:$$(date "+%Y_%m_%d"); \
-		podman image list -a; \
-	fi; \
+		echo "Skipping removal, collection tarball name not determined from galaxy.yml."; \
+	fi
 
-toolbox-clean:
-	podman rmi localhost/os_migrate_toolbox:latest
+# --- Container and Environment Setup Targets ---
 
+# Define a reusable function to verify we're in the right directory
+define verify_collection_root
+    @if [ ! -f "$(COLLECTION_ROOT)/galaxy.yml" ]; then \
+        echo "Error: Must be run from the Ansible collection root directory (missing galaxy.yml)."; \
+        exit 1; \
+    fi
+endef
 
-# LINT COMMITS
+check-root:
+	$(call verify_collection_root)
 
-lint-commit-messages:
-	./scripts/lint-messages.sh
+create-centos-container:
+ifeq ($(CREATE_CONTAINER),1)
+	@# This recipe runs only if a new container is needed.
+	@# First, check with a shell 'if' if the old one must be cleaned up.
+	@if [ "$(USE_CACHE)" = "false" ] && [ -n "$(CONTAINER_EXISTS)" ]; then \
+		echo "--- Stale container found and USE_CACHE is false. Cleaning it first. ---"; \
+		$(MAKE) clean-centos-container; \
+	fi
+	@echo "--- Spawning new container: $(CONTAINER_NAME) ---"
+	@$(CONTAINER_ENGINE) run -q --rm -d --name $(CONTAINER_NAME) -v $(MOUNT_PATH) \
+		$(SECURITY_OPT) $(CONTAINER_IMAGE) sleep infinity
+else
+	@# This recipe runs if CREATE_CONTAINER is 0
+	@echo "--- Using cached container ---"
+endif
+
+clean-centos-container:
+	@echo "--- Removing container '$(CONTAINER_NAME)' if it exists ---"
+	@$(CONTAINER_ENGINE) rm -f $(CONTAINER_NAME)
+
+check-python-version: create-centos-container
+	@echo "--- Checking for Python $(PYTHON_VERSION) in container ---"
+	@$(CONTAINER_ENGINE) exec $(CONTAINER_NAME) bash -c '\
+	if [[ ! -x "$$(command -v python$(PYTHON_VERSION))" ]]; then \
+		echo "Installing Python $(PYTHON_VERSION)..."; \
+		dnf -y install python$(PYTHON_VERSION)-devel >/dev/null || \
+			(echo "Error: package python$(PYTHON_VERSION) is unavailable." && exit 1); \
+	fi'
+
+create-venv: check-python-version
+	@echo "--- Ensuring venv exists at $(VENV_DIR) ---"
+	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
+		if [[ ! -d "$(VENV_DIR)" ]]; then \
+			echo "Creating venv..."; \
+			dnf -y install gcc python3-devel >/dev/null; \
+			python$(PYTHON_VERSION) -m venv $(VENV_DIR); \
+		fi'
+
+install-deps: create-venv
+	@echo "--- Installing/updating Python dependencies ---"
+	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
+		source $(VENV_DIR)/bin/activate; \
+		pip install -q --upgrade pip; \
+		pip install -q -r requirements.txt; \
+		pip install -q -r requirements-tests.txt'
+
+install: install-deps build
+	@echo "--- Installing collection $(COLLECTION_TARBALL) into the container ---"
+	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
+		source $(VENV_DIR)/bin/activate; \
+		ansible-galaxy collection install $(COLLECTION_TARBALL) --force-with-deps'
+
+# --- Test Targets ---
+
+tests: test-ansible-lint test-ansible-sanity test-ansible-units
+
+test-ansible-lint: install-deps
+	@echo "--- Launching ansible-lint ---"
+	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
+		source $(VENV_DIR)/bin/activate && ansible-lint'
+	@if [[ $(USE_CACHE) == false ]]; then $(MAKE) clean-centos-container; fi
+
+test-ansible-sanity: install-deps
+	@echo "--- Running Ansible sanity tests ---"
+	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
+		source $(VENV_DIR)/bin/activate && \
+		ansible-galaxy collection install -f --no-deps . && \
+		cd /root/.ansible/collections/ansible_collections/$(COLLECTION_NAMESPACE)/$(COLLECTION_NAME) && \
+		ansible-test sanity --python $(PYTHON_VERSION) --requirements'
+	@if [[ $(USE_CACHE) == false ]]; then $(MAKE) clean-centos-container; fi
+
+test-ansible-units: install-deps
+	@echo "--- Running Ansible unit tests ---"
+	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
+		source $(VENV_DIR)/bin/activate && \
+		ansible-galaxy collection install -f --no-deps . && \
+		cd /root/.ansible/collections/ansible_collections/$(COLLECTION_NAMESPACE)/$(COLLECTION_NAME) && \
+		ansible-test units --python $(PYTHON_VERSION) --local'
+	@if [[ $(USE_CACHE) == false ]]; then $(MAKE) clean-centos-container; fi

@@ -24,7 +24,7 @@ A build is required to update const.py:
 
    ./toolbox/run make
 
-Create a pull request with these changes. Once it’s merged, check out
+Create a pull request with these changes. Once it's merged, check out
 the merge commit and release to galaxy:
 
 ::
@@ -41,8 +41,8 @@ release from, and push the tag to the upstream repo:
    # assuming the os-migrate upstream repo is named 'upstream' in your repo clone
    git push upstream --tags
 
-If you’ve incremented “X” or “Y” in “X.Y.Z” version scheme, create also
-a stable branch to allow us to create “.Z” releases:
+If you've incremented "X" or "Y" in "X.Y.Z" version scheme, create also
+a stable branch to allow us to create ".Z" releases:
 
 ::
 

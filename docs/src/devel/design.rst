@@ -6,8 +6,8 @@ High-level development goals
 
 -  I/O-based. Fetch metadata and/or content from source cloud -> write
    them as outputs -> read them as inputs -> push it to the destination
-   cloud. This allows other tools to enter the phase between the “write
-   output” and “read input”.
+   cloud. This allows other tools to enter the phase between the "write
+   output" and "read input".
 
    -  E.g. arbitrary/custom yaml-parsing tools can be used as a smart
       filter to analyze the exported contents from source cloud and
@@ -18,7 +18,7 @@ High-level development goals
       binary data is transferred in a direct path between the clouds
       for performance reasons.
 
--  Logging. When contributing code, don’t forget about logging and how
+-  Logging. When contributing code, don't forget about logging and how
    will information be presented to the user. Try to think about what
    can potentially fail and what kind of log output might help figuring
    out what went wrong, and on the contrary, what kind of log output
@@ -39,7 +39,7 @@ High-level development goals
 -  Always talking to OpenStack via API. The tool must be able to be
    deployed externally to both source and destination clouds. No looking
    at DBs or other hacks. If we hit a hurdle due to no-hacks approach,
-   it could mean that OpenStack’s capabilities for tenant-to-tenant
+   it could mean that OpenStack's capabilities for tenant-to-tenant
    content migration are lacking, and an RFE for OpenStack might be
    required.
 
@@ -74,13 +74,13 @@ Challenges of the problem domain
 
    -  This is not true for *some* resources. As of January 2020,
       e.g. networking resources can be created under arbitrary
-      domain/project by admin using Networking API v2, but it’s not the
+      domain/project by admin using Networking API v2, but it's not the
       case for e.g. volumes, servers, keypairs. At least initially, we
-      will assume the general scenario that we’re running the migration
+      will assume the general scenario that we're running the migration
       as the tenant who owns the resources on both src/dst sides.
 
--  OpenStack doesn’t have strict requirements on resource naming
-   (doesn’t require non-empty, unique names). The migration tool will
+-  OpenStack doesn't have strict requirements on resource naming
+   (doesn't require non-empty, unique names). The migration tool will
    enforce names which are non-empty, and unique per resource type. This
    is to allow idempotent imports, which is necessary for retrying
    imports on failure. The tool should allow to export/serialize
@@ -88,7 +88,7 @@ Challenges of the problem domain
    fail validation and be refused when fed into the import command.
 
    -  In the future, if we implement running all migrations as admin
-      (might need OpenStack RFEs) instead of the tenant, we’d perhaps
+      (might need OpenStack RFEs) instead of the tenant, we'd perhaps
       require uniqueness per resource type per tenant, rather than just
       per resource type.
 
@@ -96,7 +96,7 @@ Basic Ansible workflow design
 -----------------------------
 
 -  The challenge and a goal here is to give meaningful Ansible log
-   output for debugging. This means, for example, that we shouldn’t have
+   output for debugging. This means, for example, that we shouldn't have
    a single Ansible task (one module call) to export/import the whole
    tenant, and we should also consider not having a single task to
    export/import all resources of some type. Ideally, each resource
@@ -120,7 +120,7 @@ Basic Ansible workflow design
       needs, re-register the list var.
 
       -  Eventually we may want to provide some hooks here, but
-         initially we’d be fine with users simply editing the provided
+         initially we'd be fine with users simply editing the provided
          playbook.
 
    -  Ansible task, provided: filter networks by names, either via exact
@@ -146,7 +146,7 @@ Basic Ansible workflow design
       memory, register a list variable.
 
    -  Anisble task, provided: Iterate (``loop``) over the list of
-      networks, and call an Ansible module to create each network. We’ll
+      networks, and call an Ansible module to create each network. We'll
       want to create our own module here to deal with our file format
       specifics, but underneath we may be calling the community
       OpenStack Ansible module if that proves helpful.
@@ -155,7 +155,7 @@ Basic Ansible workflow design
    sub-executions. However, it may be that chunking up the code and
    using ``import_playbook`` might be more clear and safe to use than
    ``tags`` in many cases. If we do happen to add ``tags``, they
-   shouldn’t be added wildly, use cases should be thought through and
+   shouldn't be added wildly, use cases should be thought through and
    documented for both users and developers. Tags need clarity and
    disciplined use in order to be helpful.
 
