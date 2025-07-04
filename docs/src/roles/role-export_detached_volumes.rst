@@ -3,4 +3,4 @@ Role - export_detached_volumes
 ===============================
 
 .. ansibleautoplugin::
-  :role: os_migrate/roles/export_detached_volumes
+  :role: roles/export_detached_volumes

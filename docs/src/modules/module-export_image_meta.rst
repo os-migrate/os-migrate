@@ -9,6 +9,6 @@ This module provides for the following ansible plugin:
 
 
 .. ansibleautoplugin::
-   :module: os_migrate/plugins/modules/export_image_meta.py
+   :module: plugins/modules/export_image_meta.py
    :documentation: true
    :examples: true

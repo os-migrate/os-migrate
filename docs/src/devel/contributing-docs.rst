@@ -12,10 +12,10 @@ Documentation sources in the repository:
 -  The majority of documentation is located under ``docs/src`` folder.
 
 -  Individual roles have a readme file under
-   ``os_migrate/roles/<ROLE>/README.md`` (Ansible Galaxy requirement).
+   ``roles/<ROLE>/README.md`` (Ansible Galaxy requirement).
 
 -  Modules are documented directly in their Python file
-   ``os_migrate/plugins/modules/<MODULE>.py`` (Ansible convention).
+   ``/plugins/modules/<MODULE>.py`` (Ansible convention).
 
 
 Rendering the Documentation

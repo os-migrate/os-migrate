@@ -9,6 +9,6 @@ This module provides for the following ansible plugin:
 
 
 .. ansibleautoplugin::
-   :module: os_migrate/plugins/modules/import_user_project_role_assignment.py
+   :module: plugins/modules/import_user_project_role_assignment.py
    :documentation: true
    :examples: true

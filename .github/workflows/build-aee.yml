@@ -1,0 +1,48 @@
+name: Build and push AEE image
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    tags:
+      - "*"
+
+env:
+  QUAY_USER: ${{ secrets.QUAY_USERNAME }}
+  IMAGE_REGISTRY: quay.io
+  QUAY_PASSWORD: ${{ secrets.QUAY_PASSWORD }}
+  QUAY_NAMESPACE: ${{ secrets.QUAY_NAMESPACE }}
+  IMAGE_NAME: os-migrate
+  IMAGE_TAG: ${{ github.ref == 'refs/heads/main' && 'latest' || github.ref_name }}
+
+jobs:
+  build:
+    name: Build and push AEE image
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Logging into quay.io registry
+        uses: redhat-actions/podman-login@v1
+        with:
+          username: ${{ env.QUAY_USER }}
+          password: ${{ env.QUAY_PASSWORD }}
+          registry: ${{ env.IMAGE_REGISTRY }}
+      - name: Setup python version
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Create and start virtual environment
+        run: |
+          python3 -m venv venv
+          source venv/bin/activate
+      - name: Install build requirements
+        run: pip install -r requirements-build.txt
+      - name: Build and tag the image
+        working-directory: ./aee
+        run: |
+          ansible-builder build --tag "${{ env.IMAGE_TAG }}"
+          podman push "localhost/${{ env.IMAGE_TAG }}" "${{ env.IMAGE_REGISTRY }}/${{ env.QUAY_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}"
+          if [[ "${{ github.ref }}" == *"refs/tags/v"* ]]; then
+            podman push "localhost/${{ env.IMAGE_TAG }}" "${{ env.IMAGE_REGISTRY }}/${{ env.QUAY_NAMESPACE }}/${{ env.IMAGE_NAME }}:stable"
+          fi

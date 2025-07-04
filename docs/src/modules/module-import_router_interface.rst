@@ -9,6 +9,6 @@ This module provides for the following ansible plugin:
 
 
 .. ansibleautoplugin::
-   :module: os_migrate/plugins/modules/import_router_interface.py
+   :module: plugins/modules/import_router_interface.py
    :documentation: true
    :examples: true

@@ -1,0 +1,22 @@
+name: Ansible Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Ansible Sanity tests
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run ansible sanity tests
+        shell: bash
+        run: make USE_CACHE=false test-ansible-sanity
+      - name: Run ansible units tests
+        shell: bash
+        run: make USE_CACHE=false test-ansible-units

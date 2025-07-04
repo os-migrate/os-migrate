@@ -1,4 +1,3 @@
-#!/usr/bin/env ansible-playbook
 ---
 # Copyright 2020 Red Hat, Inc.
 #
@@ -22,28 +21,29 @@
   gather_facts: false
   tasks:
     - name: Check for role name
-      fail:
+      ansible.builtin.fail:
         msg: >-
           The required variable `role_name` is undefined. Check your settings.
       when:
         - role_name is undefined
 
     - name: Check for role name syntax
-      fail:
+      ansible.builtin.fail:
         msg: >-
           The role_name can only have letters and underscores
-      when: not role_name|regex_search('^[A-Za-z0-9_]+$')
+      when: not role_name | regex_search('^[A-Za-z0-9_]+$')
 
     - name: Create role
-      command: >-
+      ansible.builtin.command: >-
         ansible-galaxy init
         --role-skeleton=_skeleton_role_
-        --init-path=../os_migrate/roles {{ role_name }}
+        --init-path=../roles {{ role_name }}
       args:
-        creates: "os_migrate/roles/{{ role_name }}"
+        creates: "roles/{{ role_name }}"
 
     - name: Create role documentation
-      copy:
+      ansible.builtin.copy:
+        mode: "0666"
         content: |
           {% set opening = 'Role - ' ~ role_name %}
           {{ '=' * (opening | length) }}
@@ -51,5 +51,5 @@
           {{ '=' * (opening | length) }}
 
           .. ansibleautoplugin::
-            :role: os_migrate/roles/{{ role_name }}
+            :role: roles/{{ role_name }}
         dest: "../docs/src/roles/role-{{ role_name }}.rst"

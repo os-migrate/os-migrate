@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 
-DIR=$(dirname $(realpath $0))
+DIR=$(dirname "$(realpath "${0}")")
 
 # The start of the range can be bumped up over time to something that
 # all live branches include. Currently pointing to initial commit.

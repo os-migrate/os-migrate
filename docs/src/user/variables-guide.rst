@@ -138,7 +138,7 @@ The variables to be configured are::
     os_migrate_src_conversion_flavor_name
     os_migrate_dst_conversion_flavor_name
 
-Usually, ‘m1.medium’ will suffice this requirement, but again, it can
+Usually, 'm1.medium' will suffice this requirement, but again, it can
 be different between deployments.
 
 Conversion host external network name

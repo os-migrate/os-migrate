@@ -8,6 +8,6 @@ This module provides for the following ansible plugin:
 
 
 .. ansibleautoplugin::
-   :module: os_migrate/plugins/modules/os_role_assignments_info.py
+   :module: plugins/modules/os_role_assignments_info.py
    :documentation: true
    :examples: true

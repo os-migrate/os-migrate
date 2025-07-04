@@ -1,4 +1,0 @@
-# TODO: delete file once the bot/run.sh has changes for consolidated matrix.
-ansible>=2.9.1,<2.10
-openstacksdk==1.0.0 # https://github.com/openstack-archive/tripleo-quickstart/commit/e178f95290b2bf2bd2c2f604c49845326c869af1
-python-openstackclient<5.3.0

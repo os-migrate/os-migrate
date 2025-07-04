@@ -4,7 +4,7 @@ Contributing Code
 As an open source project, OS Migrate welcomes contributions from the
 community at large. The following guide provides information on how to
 add a new role to the project and where additional testing or
-documentation artifacts should be added. This isn’t an exhaustive
+documentation artifacts should be added. This isn't an exhaustive
 reference and is a living document subject to change as needed when
 the project formalizes any practice or pattern.
 
@@ -17,21 +17,21 @@ will likely follow a similar pattern. Each role also has specific unit
 and functional test requirements. The most common pattern for adding a
 new role will follow these steps:
 
--  Add a resource class to ``os_migrate/plugins/module_utils`` that
+-  Add a resource class to `/plugins/module_utils` that
    inherits from
-   ``ansible_collections.os_migrate.os_migrate.plugins.module_utils.resource.Resource``
+   `ansible_collections.os_migrate.os_migrate.plugins.module_utils.resource.Resource`
 
--  Add a unit test to ``os_migrate/tests/unit`` to test serializing and
+-  Add a unit test to `/tests/unit` to test serializing and
    de-serializing data, and any other functionality your class may have.
 
--  Create a new module in ``os_migrate/plugins/modules`` to facilitate
+-  Create a new module in `/plugins/modules` to facilitate
    the import or export of the resource.
 
--  Add a new playbook to ``os_migrate/playbooks``.
+-  Add a new playbook to `/playbooks`.
 
--  Add a new role to ``os_migrate/roles``.
+-  Add a new role to `roles`.
 
--  Add functional tests to ``tests/func`` that test primary use,
+-  Add functional tests to `tests/func` that test primary use,
    idempotency, and updates as a minimum. Additional tests as necessary.
 
 -  Add documentation within classes and roles/playbooks as required.
@@ -64,38 +64,38 @@ Resources
 
 Resources are the primary data structures that are exported from and
 imported to clouds. In
-``os_migrate/plugins/module_utils/resource.py``, there is a
-``Resource`` class provided for your new resource to inherit from. It
+`/plugins/module_utils/resource.py`, there is a
+`Resource` class provided for your new resource to inherit from. It
 provides a way to quickly build an organized class that uses
 openstacksdk to retrieve, create and update data within a connected
-OpenStack tenant. See how other classes in the ``module_utils``
-directory inherit from ``Resource`` for inspiration.
+OpenStack tenant. See how other classes in the `module_utils`
+directory inherit from `Resource` for inspiration.
 
-Two very important properties are the ‘params’ and ‘_info’, as these are
+Two very important properties are the 'params' and '_info', as these are
 the primary data fields that will be exported and imported. At a
 minimum, the name property of any resource should be in params_from_sdk,
 and most likely addresses should be there too. The difference between
 info and params is:
 
--  A property that would be an ‘_info’ type is something that we don’t
-   want or cannot “make the same” in the destination cloud. For example,
-   typically UUIDs can’t be the same between two tenants so an ‘id’
+-  A property that would be an '_info' type is something that we don't
+   want or cannot "make the same" in the destination cloud. For example,
+   typically UUIDs can't be the same between two tenants so an 'id'
    property should remain in info.
 
--  A property that would be in a ‘params’ type are things that we do
+-  A property that would be in a 'params' type are things that we do
    want to copy to the destination cloud. These typically also get
-   looked at when we’re making sure the import behavior is idempotent.
+   looked at when we're making sure the import behavior is idempotent.
    I.e. when we re-run import playbooks, things that already got
    imported before are not attempted to be imported again.
 
 Export Roles
 ~~~~~~~~~~~~
 
-In the ``defaults/main.yml`` file, at a minimum you will need to
-define the ``os_migrate_[resource]_filter`` variable to support
+In the `defaults/main.yml` file, at a minimum you will need to
+define the `os_migrate_[resource]_filter` variable to support
 filtering of resources by the name property.
 
-In the ``meta/main.yml`` file you will likely just need to add the
+In the `meta/main.yml` file you will likely just need to add the
 following default content:
 
 .. code:: yaml
@@ -115,7 +115,7 @@ following default content:
    dependencies:
      - role: os_migrate.os_migrate.prelude_src
 
-In the ``tasks/main.yml`` file, add your Ansible tasks for exporting the
+In the `tasks/main.yml` file, add your Ansible tasks for exporting the
 data. A common pattern is retrieving data from an OpenStack tenant via a
 `cloud
 module <https://docs.ansible.com/ansible/latest/collections/openstack/cloud/index.html>`__
@@ -126,13 +126,13 @@ export.
 Import Roles
 ~~~~~~~~~~~~
 
-In the ``defaults/main.yml`` file, at a minimum you will need to
-define the same ``os_migrate_[resource]_filter`` variable as with
-export, and ``import_[resource]_validate_file: true`` variable to set
+In the `defaults/main.yml` file, at a minimum you will need to
+define the same `os_migrate_[resource]_filter` variable as with
+export, and `import_[resource]_validate_file: true` variable to set
 whether or not the import data file should be validated for this
-role. In most cases, it should be set to ``true``.
+role. In most cases, it should be set to `true`.
 
-In the ``meta/main.yml`` file you will likely just need to add the
+In the `meta/main.yml` file you will likely just need to add the
 following default content:
 
 .. code:: yaml
@@ -152,7 +152,7 @@ following default content:
    dependencies:
      - role: os_migrate.os_migrate.prelude_dst
 
-In the ``tasks/main.yml`` file, add your Ansible tasks for importing the
+In the `tasks/main.yml` file, add your Ansible tasks for importing the
 data. A common pattern is validating the data file created by the
 associated export role, reading the data file and then calling the
 module you created for import.
@@ -168,7 +168,7 @@ Functional Tests
 -  Ensure both import and export functionalities are tested, not just idempotency.
 -  Include tests for admin-only resources, ensuring they are renamed before import.
 -  Test resources as a tenant whenever possible to ensure broader coverage.
--  For resources with special properties like ``links`` or ``extra_specs``, write detailed tests inspecting these properties closely.
+-  For resources with special properties like `links` or `extra_specs`, write detailed tests inspecting these properties closely.
 
 Unit Tests
 ~~~~~~~~~~
@@ -185,8 +185,8 @@ Integration Tests
 Documentation and Examples
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  In the ``DOCUMENTATION`` constant of each module, include examples of how to use the module in a playbook.
--  Ensure that the ``README.md`` file for the new role is comprehensive, covering the role's purpose, usage, and any dependencies.
+-  In the `DOCUMENTATION` constant of each module, include examples of how to use the module in a playbook.
+-  Ensure that the `README.md` file for the new role is comprehensive, covering the role's purpose, usage, and any dependencies.
 
 Test Execution in CI
 ~~~~~~~~~~~~~~~~~~~~
@@ -203,8 +203,8 @@ Review and Inspection
 Location of Tests
 ~~~~~~~~~~~~~~~~~
 
--  Place functional and integration tests in the ``tests/e2e`` or ``tests/func`` directory respectively, following the existing structure for similar resources.
--  Unit tests should reside alongside the modules they are testing, in the ``os_migrate/tests/`` directory.
+-  Place functional and integration tests in the `tests/e2e` or `tests/func` directory respectively, following the existing structure for similar resources.
+-  Unit tests should reside alongside the modules they are testing, in the `/tests/` directory.
 
 Special Considerations
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -216,12 +216,12 @@ Necessary Documentation
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 If this is your first time adding a pull request to the os-migrate
-repository, add your author information to ``galaxy.yml``.
+repository, add your author information to `galaxy.yml`.
 
-In each Ansible module in ``os_migrate/plugins/modules``, there is a
-``DOCUMENTATION`` constant where you must provide standard
+In each Ansible module in `/plugins/modules`, there is a
+`DOCUMENTATION` constant where you must provide standard
 documentation on what the module does and an example of how you would
 use it in a playbook.
 
-Each new role must have a ``README.md`` file as a requirement for
+Each new role must have a `README.md` file as a requirement for
 Ansible Galaxy publishing.

@@ -9,6 +9,6 @@ This module provides for the following ansible plugin:
 
 
 .. ansibleautoplugin::
-   :module: os_migrate/plugins/modules/export_image_blob.py
+   :module: plugins/modules/export_image_blob.py
    :documentation: true
    :examples: true

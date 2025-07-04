@@ -1,0 +1,4 @@
+ansible==11.7.0
+ansible-lint==25.6.1
+openstacksdk==1.5.1
+PyYAML==6.0.2

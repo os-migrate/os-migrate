@@ -1,0 +1,13 @@
+name: test-import-galaxy
+"on":
+  push:
+    tags:
+      - "**"
+  pull_request:
+
+jobs:
+  import-galaxy:
+    permissions:
+      contents: read
+    name: Test import collection with Galaxy importer
+    uses: ansible-community/github-action-test-galaxy-import/.github/workflows/test-galaxy-import.yml@main
