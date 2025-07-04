@@ -156,7 +156,7 @@ check-python-version: create-centos-container
 	if [[ ! -x "$$(command -v pip$(PYTHON_VERSION))" ]]; then \
 		echo "Installing Python $(PYTHON_VERSION) development packages..."; \
 		dnf upgrade --refresh -y --skip-broken --nobest && \
-		dnf -y install gcc python3 python3-devel >/dev/null || \
+		dnf -y install gcc python$(PYTHON_VERSION) python$(PYTHON_VERSION)-devel >/dev/null || \
 			(echo "Error: packages are unavailable." && exit 1); \
 	fi'
 

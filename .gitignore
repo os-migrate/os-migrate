@@ -16,3 +16,4 @@ toolbox/build/galaxy.yml
 tests/output/
 os_migrate-os_migrate-*
 .ansible
+aee/context/

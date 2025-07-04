@@ -15,7 +15,7 @@ dependencies:
     package_pip: ansible-core
   python: ../requirements.txt
   system: binddep.txt
-  galaxy: ../galaxy.yml
+  galaxy: ../requirements.yml
   python_interpreter:
     package_system: "python3"
     python_path: "/usr/bin/python3"
