@@ -139,7 +139,7 @@ ifeq ($(CREATE_CONTAINER),1)
 		$(MAKE) clean-centos-container; \
 	fi
 	@echo "--- Spawning new container: $(CONTAINER_NAME) ---"
-	@$(CONTAINER_ENGINE) run -q --rm -d --name $(CONTAINER_NAME) -v $(MOUNT_PATH) \
+	@$(CONTAINER_ENGINE) run --pull always -q --rm -d --name $(CONTAINER_NAME) -v $(MOUNT_PATH) \
 		$(SECURITY_OPT) $(CONTAINER_IMAGE) sleep infinity
 else
 	@# This recipe runs if CREATE_CONTAINER is 0
@@ -155,8 +155,8 @@ check-python-version: create-centos-container
 	@$(CONTAINER_ENGINE) exec $(CONTAINER_NAME) bash -c '\
 	if [[ ! -x "$$(command -v pip$(PYTHON_VERSION))" ]]; then \
 		echo "Installing Python $(PYTHON_VERSION) development packages..."; \
-		dnf -y check-update && dnf upgrade -y; \
-		dnf -y install gcc python3 python$(PYTHON_VERSION)-devel >/dev/null || \
+		dnf upgrade --refresh -y --skip-broken --nobest && \
+		dnf -y install gcc python3 python3-devel >/dev/null || \
 			(echo "Error: packages are unavailable." && exit 1); \
 	fi'
 
@@ -212,7 +212,7 @@ test-ansible-units: install-deps
 
 # --- Docs Targets ---
 
-docs: create-venv install docs-diagrams
+docs: docs-diagrams
 	@echo "--- Generate documentation ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
 		dnf -y install git-core && \
@@ -220,7 +220,7 @@ docs: create-venv install docs-diagrams
 		pip install --root-user-action ignore -r requirements-docs.txt && \
 		./scripts/docs-build.sh'
 
-docs-diagrams: create-centos-container install
+docs-diagrams: install
 	@echo "--- Generate diagrams ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
 		dnf config-manager --set-enabled crb && \
@@ -228,4 +228,3 @@ docs-diagrams: create-centos-container install
 		dnf install -y plantuml graphviz && \
 		plantuml -progress -SDpi=150 -output render ./docs/src/images/plantuml/*.plantuml && \
 		echo'
-	@if [[ $(USE_CACHE) == false ]]; then $(MAKE) clean-centos-container; fi

@@ -20,7 +20,7 @@ jobs:
           sudo locale-gen en_US.UTF-8
           sudo dpkg-reconfigure locales
       - name: Render the documentation
-        run: make docs
+        run: make USE_CACHE=false docs
       - uses: actions/upload-artifact@v4
         with:
           name: DocumentationHTML
