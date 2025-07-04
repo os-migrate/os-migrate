@@ -3,4 +3,4 @@ Role - import_user_project_role_assignments
 ===========================================
 
 .. ansibleautoplugin::
-  :role: os_migrate/roles/import_user_project_role_assignments
+  :role: roles/import_user_project_role_assignments

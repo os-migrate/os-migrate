@@ -100,9 +100,11 @@ help:
 
 # --- Build Targets ---
 
-build: check-root clean-build
+build: check-root clean-build install-deps
 	@echo "--- Building Ansible collection: $(COLLECTION_TARBALL) ---"
-	@ansible-galaxy collection build
+	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
+		source $(VENV_DIR)/bin/activate; \
+		ansible-galaxy collection build'
 
 clean-build:
 	@echo "--- Cleaning built collection ---"
@@ -151,10 +153,11 @@ clean-centos-container:
 check-python-version: create-centos-container
 	@echo "--- Checking for Python $(PYTHON_VERSION) in container ---"
 	@$(CONTAINER_ENGINE) exec $(CONTAINER_NAME) bash -c '\
-	if [[ ! -x "$$(command -v python$(PYTHON_VERSION))" ]]; then \
-		echo "Installing Python $(PYTHON_VERSION)..."; \
-		dnf -y install python$(PYTHON_VERSION)-devel >/dev/null || \
-			(echo "Error: package python$(PYTHON_VERSION) is unavailable." && exit 1); \
+	if [[ ! -x "$$(command -v pip$(PYTHON_VERSION))" ]]; then \
+		echo "Installing Python $(PYTHON_VERSION) development packages..."; \
+		dnf -y check-update && dnf upgrade -y; \
+		dnf -y install gcc python3 python$(PYTHON_VERSION)-devel >/dev/null || \
+			(echo "Error: packages are unavailable." && exit 1); \
 	fi'
 
 create-venv: check-python-version
@@ -162,7 +165,6 @@ create-venv: check-python-version
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
 		if [[ ! -d "$(VENV_DIR)" ]]; then \
 			echo "Creating venv..."; \
-			dnf -y install gcc python3-devel >/dev/null; \
 			python$(PYTHON_VERSION) -m venv $(VENV_DIR); \
 		fi'
 
@@ -170,11 +172,11 @@ install-deps: create-venv
 	@echo "--- Installing/updating Python dependencies ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
 		source $(VENV_DIR)/bin/activate; \
-		pip install -q --upgrade pip; \
-		pip install -q -r requirements.txt; \
-		pip install -q -r requirements-tests.txt'
+		pip install --root-user-action ignore -q --upgrade pip; \
+		pip install --root-user-action ignore -q -r requirements.txt; \
+		pip install --root-user-action ignore -q -r requirements-tests.txt'
 
-install: install-deps build
+install: build
 	@echo "--- Installing collection $(COLLECTION_TARBALL) into the container ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
 		source $(VENV_DIR)/bin/activate; \
@@ -206,4 +208,24 @@ test-ansible-units: install-deps
 		ansible-galaxy collection install -f --no-deps . && \
 		cd /root/.ansible/collections/ansible_collections/$(COLLECTION_NAMESPACE)/$(COLLECTION_NAME) && \
 		ansible-test units --python $(PYTHON_VERSION) --local'
+	@if [[ $(USE_CACHE) == false ]]; then $(MAKE) clean-centos-container; fi
+
+# --- Docs Targets ---
+
+docs: create-venv install docs-diagrams
+	@echo "--- Generate documentation ---"
+	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
+		dnf -y install git-core && \
+		source $(VENV_DIR)/bin/activate && \
+		pip install --root-user-action ignore -r requirements-docs.txt && \
+		./scripts/docs-build.sh'
+
+docs-diagrams: create-centos-container install
+	@echo "--- Generate diagrams ---"
+	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
+		dnf config-manager --set-enabled crb && \
+		dnf install -y epel-release && \
+		dnf install -y plantuml graphviz && \
+		plantuml -progress -SDpi=150 -output render ./docs/src/images/plantuml/*.plantuml && \
+		echo'
 	@if [[ $(USE_CACHE) == false ]]; then $(MAKE) clean-centos-container; fi

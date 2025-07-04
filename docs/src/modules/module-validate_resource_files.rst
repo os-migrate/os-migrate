@@ -9,6 +9,6 @@ This module provides for the following ansible plugin:
 
 
 .. ansibleautoplugin::
-   :module: os_migrate/plugins/modules/validate_resource_files.py
+   :module: plugins/modules/validate_resource_files.py
    :documentation: true
    :examples: true

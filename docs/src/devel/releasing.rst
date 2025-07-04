@@ -5,7 +5,7 @@ Set env vars with old and new versions:
 
 ::
 
-   OLD_VERSION=$(./toolbox/run bash -c 'cat os_migrate/galaxy.yml | shyaml get-value version')
+   OLD_VERSION=$(./toolbox/run bash -c 'cat /galaxy.yml | shyaml get-value version')
    echo "OLD_VERSION=$OLD_VERSION"
 
    NEW_VERSION="SOME.NEW.VERSION"
@@ -15,7 +15,7 @@ tests:
 
 .. code:: bash
 
-   sed -i -e "s/^version: $OLD_VERSION/version: $NEW_VERSION/" ./os_migrate/galaxy.yml
+   sed -i -e "s/^version: $OLD_VERSION/version: $NEW_VERSION/" .//galaxy.yml
    grep -lr "os_migrate_version: $OLD_VERSION" ./tests | xargs sed -i -e "s/^os_migrate_version: $OLD_VERSION/os_migrate_version: $NEW_VERSION/"
 
 A build is required to update const.py:

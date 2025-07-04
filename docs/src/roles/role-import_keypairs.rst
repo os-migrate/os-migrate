@@ -3,4 +3,4 @@ Role - import_keypairs
 ======================
 
 .. ansibleautoplugin::
-  :role: os_migrate/roles/import_keypairs
+  :role: roles/import_keypairs

@@ -9,6 +9,6 @@ This module provides for the following ansible plugin:
 
 
 .. ansibleautoplugin::
-   :module: os_migrate/plugins/modules/import_workload_export_volumes.py
+   :module: plugins/modules/import_workload_export_volumes.py
    :documentation: true
    :examples: true

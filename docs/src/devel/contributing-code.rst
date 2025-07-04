@@ -17,19 +17,19 @@ will likely follow a similar pattern. Each role also has specific unit
 and functional test requirements. The most common pattern for adding a
 new role will follow these steps:
 
--  Add a resource class to `os_migrate/plugins/module_utils` that
+-  Add a resource class to `/plugins/module_utils` that
    inherits from
    `ansible_collections.os_migrate.os_migrate.plugins.module_utils.resource.Resource`
 
--  Add a unit test to `os_migrate/tests/unit` to test serializing and
+-  Add a unit test to `/tests/unit` to test serializing and
    de-serializing data, and any other functionality your class may have.
 
--  Create a new module in `os_migrate/plugins/modules` to facilitate
+-  Create a new module in `/plugins/modules` to facilitate
    the import or export of the resource.
 
--  Add a new playbook to `os_migrate/playbooks`.
+-  Add a new playbook to `/playbooks`.
 
--  Add a new role to `os_migrate/roles`.
+-  Add a new role to `roles`.
 
 -  Add functional tests to `tests/func` that test primary use,
    idempotency, and updates as a minimum. Additional tests as necessary.
@@ -64,7 +64,7 @@ Resources
 
 Resources are the primary data structures that are exported from and
 imported to clouds. In
-`os_migrate/plugins/module_utils/resource.py`, there is a
+`/plugins/module_utils/resource.py`, there is a
 `Resource` class provided for your new resource to inherit from. It
 provides a way to quickly build an organized class that uses
 openstacksdk to retrieve, create and update data within a connected
@@ -204,7 +204,7 @@ Location of Tests
 ~~~~~~~~~~~~~~~~~
 
 -  Place functional and integration tests in the `tests/e2e` or `tests/func` directory respectively, following the existing structure for similar resources.
--  Unit tests should reside alongside the modules they are testing, in the `os_migrate/tests/` directory.
+-  Unit tests should reside alongside the modules they are testing, in the `/tests/` directory.
 
 Special Considerations
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -218,7 +218,7 @@ Necessary Documentation
 If this is your first time adding a pull request to the os-migrate
 repository, add your author information to `galaxy.yml`.
 
-In each Ansible module in `os_migrate/plugins/modules`, there is a
+In each Ansible module in `/plugins/modules`, there is a
 `DOCUMENTATION` constant where you must provide standard
 documentation on what the module does and an example of how you would
 use it in a playbook.
