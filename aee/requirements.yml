@@ -1,0 +1,11 @@
+---
+collections:
+  - name: community.crypto
+    version: ">=1.4.0"
+  - name: community.general
+    version: "<5.0.0"
+  - name: openstack.cloud
+    version: ">=2.3.0,<2.4.0"
+  - name: os_migrate.os_migrate
+    source: tmp/os_migrate-os_migrate-1.0.1.tar.gz
+    type: file

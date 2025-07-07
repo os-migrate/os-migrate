@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-tag_name=vmware-migration-kit
+tag_name=os-migrate
 
-ansible-builder build --tag $tag_name
+ansible-builder build -v3 --tag $tag_name
 rm -fr "$(pwd)/context/"
