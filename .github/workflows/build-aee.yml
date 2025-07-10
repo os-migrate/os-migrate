@@ -39,7 +39,7 @@ jobs:
       - name: Install build requirements
         run: pip install -r requirements-build.txt
       - name: Build collection
-        run: make USE_CACHE=false build
+        run: ansible-galaxy collection build --force --output-path .
       - name: Build and tag the image
         working-directory: ./aee
         run: |
