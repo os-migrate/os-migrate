@@ -29,6 +29,7 @@ Fix
 
 Other
 ~~~~~
+- Fixed `auth_{tenant,admin}.yml` files position. [Roberto Alfieri]
 - Fixed missing dependencies and collection build while building aee
   image. [Roberto Alfieri]
 - Fixed the installation of the `shyaml` tool. [Roberto Alfieri]
