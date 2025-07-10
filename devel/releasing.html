@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Releasing the OS Migrate collection &mdash; os-migrate  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fe63c2af" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=7ab3649f" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
@@ -87,7 +87,7 @@
   <section id="releasing-the-os-migrate-collection">
 <h1>Releasing the OS Migrate collection<a class="headerlink" href="#releasing-the-os-migrate-collection" title="Link to this heading"></a></h1>
 <p>Set env vars with old and new versions:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>OLD_VERSION=$(./toolbox/run bash -c &#39;cat os_migrate/galaxy.yml | shyaml get-value version&#39;)
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>OLD_VERSION=$(./toolbox/run bash -c &#39;cat /galaxy.yml | shyaml get-value version&#39;)
 echo &quot;OLD_VERSION=$OLD_VERSION&quot;
 
 NEW_VERSION=&quot;SOME.NEW.VERSION&quot;
@@ -95,7 +95,7 @@ NEW_VERSION=&quot;SOME.NEW.VERSION&quot;
 </div>
 <p>Edit the version in galaxy.yml and any hardcoded values in functional
 tests:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sed<span class="w"> </span>-i<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;s/^version: </span><span class="nv">$OLD_VERSION</span><span class="s2">/version: </span><span class="nv">$NEW_VERSION</span><span class="s2">/&quot;</span><span class="w"> </span>./os_migrate/galaxy.yml
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sed<span class="w"> </span>-i<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;s/^version: </span><span class="nv">$OLD_VERSION</span><span class="s2">/version: </span><span class="nv">$NEW_VERSION</span><span class="s2">/&quot;</span><span class="w"> </span>.//galaxy.yml
 grep<span class="w"> </span>-lr<span class="w"> </span><span class="s2">&quot;os_migrate_version: </span><span class="nv">$OLD_VERSION</span><span class="s2">&quot;</span><span class="w"> </span>./tests<span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>sed<span class="w"> </span>-i<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;s/^os_migrate_version: </span><span class="nv">$OLD_VERSION</span><span class="s2">/os_migrate_version: </span><span class="nv">$NEW_VERSION</span><span class="s2">/&quot;</span>
 </pre></div>
 </div>

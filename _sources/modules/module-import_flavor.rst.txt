@@ -9,6 +9,6 @@ This module provides for the following ansible plugin:
 
 
 .. ansibleautoplugin::
-   :module: os_migrate/plugins/modules/import_flavor.py
+   :module: plugins/modules/import_flavor.py
    :documentation: true
    :examples: true

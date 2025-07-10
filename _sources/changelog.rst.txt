@@ -29,6 +29,17 @@ Fix
 
 Other
 ~~~~~
+- Re-added e2e tests to the makefile. [Roberto Alfieri]
+- Fixed aee build dependencies. [Roberto Alfieri]
+- Fixed aee build. [Roberto Alfieri]
+- Restored the original `README.md` file. [Roberto Alfieri]
+- Added github actions for ansible tests and galaxy import test.
+  [Roberto Alfieri]
+- Disabled cache while buildings documentation. [Roberto Alfieri]
+- Refactored image building. [Roberto Alfieri]
+- Removed functional tests github action. [Roberto Alfieri]
+- Fixed documentation build. [Roberto Alfieri]
+- Refactor of the os-migrate repo. [Roberto Alfieri]
 - Merge branch 'os-migrate:main' into cloud/vars/default. [mathieu
   bultel]
 - Merge branch 'os-migrate:main' into cloud/vars/default. [mathieu

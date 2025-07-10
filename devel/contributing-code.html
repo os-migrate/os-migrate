@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contributing Code &mdash; os-migrate  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fe63c2af" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=7ab3649f" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
@@ -121,16 +121,16 @@ will likely follow a similar pattern. Each role also has specific unit
 and functional test requirements. The most common pattern for adding a
 new role will follow these steps:</p>
 <ul class="simple">
-<li><p>Add a resource class to <code class="docutils literal notranslate"><span class="pre">os_migrate/plugins/module_utils</span></code> that
+<li><p>Add a resource class to <cite>/plugins/module_utils</cite> that
 inherits from
-<code class="docutils literal notranslate"><span class="pre">ansible_collections.os_migrate.os_migrate.plugins.module_utils.resource.Resource</span></code></p></li>
-<li><p>Add a unit test to <code class="docutils literal notranslate"><span class="pre">os_migrate/tests/unit</span></code> to test serializing and
+<cite>ansible_collections.os_migrate.os_migrate.plugins.module_utils.resource.Resource</cite></p></li>
+<li><p>Add a unit test to <cite>/tests/unit</cite> to test serializing and
 de-serializing data, and any other functionality your class may have.</p></li>
-<li><p>Create a new module in <code class="docutils literal notranslate"><span class="pre">os_migrate/plugins/modules</span></code> to facilitate
+<li><p>Create a new module in <cite>/plugins/modules</cite> to facilitate
 the import or export of the resource.</p></li>
-<li><p>Add a new playbook to <code class="docutils literal notranslate"><span class="pre">os_migrate/playbooks</span></code>.</p></li>
-<li><p>Add a new role to <code class="docutils literal notranslate"><span class="pre">os_migrate/roles</span></code>.</p></li>
-<li><p>Add functional tests to <code class="docutils literal notranslate"><span class="pre">tests/func</span></code> that test primary use,
+<li><p>Add a new playbook to <cite>/playbooks</cite>.</p></li>
+<li><p>Add a new role to <cite>roles</cite>.</p></li>
+<li><p>Add functional tests to <cite>tests/func</cite> that test primary use,
 idempotency, and updates as a minimum. Additional tests as necessary.</p></li>
 <li><p>Add documentation within classes and roles/playbooks as required.
 Update developer or user documentation as needed.</p></li>
@@ -154,12 +154,12 @@ and the documentation stub.</p>
 <h3>Resources<a class="headerlink" href="#resources" title="Link to this heading"></a></h3>
 <p>Resources are the primary data structures that are exported from and
 imported to clouds. In
-<code class="docutils literal notranslate"><span class="pre">os_migrate/plugins/module_utils/resource.py</span></code>, there is a
-<code class="docutils literal notranslate"><span class="pre">Resource</span></code> class provided for your new resource to inherit from. It
+<cite>/plugins/module_utils/resource.py</cite>, there is a
+<cite>Resource</cite> class provided for your new resource to inherit from. It
 provides a way to quickly build an organized class that uses
 openstacksdk to retrieve, create and update data within a connected
-OpenStack tenant. See how other classes in the <code class="docutils literal notranslate"><span class="pre">module_utils</span></code>
-directory inherit from <code class="docutils literal notranslate"><span class="pre">Resource</span></code> for inspiration.</p>
+OpenStack tenant. See how other classes in the <cite>module_utils</cite>
+directory inherit from <cite>Resource</cite> for inspiration.</p>
 <p>Two very important properties are the ‘params’ and ‘_info’, as these are
 the primary data fields that will be exported and imported. At a
 minimum, the name property of any resource should be in params_from_sdk,
@@ -179,10 +179,10 @@ imported before are not attempted to be imported again.</p></li>
 </section>
 <section id="export-roles">
 <h3>Export Roles<a class="headerlink" href="#export-roles" title="Link to this heading"></a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">defaults/main.yml</span></code> file, at a minimum you will need to
-define the <code class="docutils literal notranslate"><span class="pre">os_migrate_[resource]_filter</span></code> variable to support
+<p>In the <cite>defaults/main.yml</cite> file, at a minimum you will need to
+define the <cite>os_migrate_[resource]_filter</cite> variable to support
 filtering of resources by the name property.</p>
-<p>In the <code class="docutils literal notranslate"><span class="pre">meta/main.yml</span></code> file you will likely just need to add the
+<p>In the <cite>meta/main.yml</cite> file you will likely just need to add the
 following default content:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
 <span class="nt">galaxy_info</span><span class="p">:</span>
@@ -200,7 +200,7 @@ following default content:</p>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os_migrate.os_migrate.prelude_src</span>
 </pre></div>
 </div>
-<p>In the <code class="docutils literal notranslate"><span class="pre">tasks/main.yml</span></code> file, add your Ansible tasks for exporting the
+<p>In the <cite>tasks/main.yml</cite> file, add your Ansible tasks for exporting the
 data. A common pattern is retrieving data from an OpenStack tenant via a
 <a class="reference external" href="https://docs.ansible.com/ansible/latest/collections/openstack/cloud/index.html">cloud
 module</a>
@@ -210,12 +210,12 @@ export.</p>
 </section>
 <section id="import-roles">
 <h3>Import Roles<a class="headerlink" href="#import-roles" title="Link to this heading"></a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">defaults/main.yml</span></code> file, at a minimum you will need to
-define the same <code class="docutils literal notranslate"><span class="pre">os_migrate_[resource]_filter</span></code> variable as with
-export, and <code class="docutils literal notranslate"><span class="pre">import_[resource]_validate_file:</span> <span class="pre">true</span></code> variable to set
+<p>In the <cite>defaults/main.yml</cite> file, at a minimum you will need to
+define the same <cite>os_migrate_[resource]_filter</cite> variable as with
+export, and <cite>import_[resource]_validate_file: true</cite> variable to set
 whether or not the import data file should be validated for this
-role. In most cases, it should be set to <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p>
-<p>In the <code class="docutils literal notranslate"><span class="pre">meta/main.yml</span></code> file you will likely just need to add the
+role. In most cases, it should be set to <cite>true</cite>.</p>
+<p>In the <cite>meta/main.yml</cite> file you will likely just need to add the
 following default content:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
 <span class="nt">galaxy_info</span><span class="p">:</span>
@@ -233,7 +233,7 @@ following default content:</p>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">os_migrate.os_migrate.prelude_dst</span>
 </pre></div>
 </div>
-<p>In the <code class="docutils literal notranslate"><span class="pre">tasks/main.yml</span></code> file, add your Ansible tasks for importing the
+<p>In the <cite>tasks/main.yml</cite> file, add your Ansible tasks for importing the
 data. A common pattern is validating the data file created by the
 associated export role, reading the data file and then calling the
 module you created for import.</p>
@@ -248,7 +248,7 @@ module you created for import.</p>
 <li><p>Ensure both import and export functionalities are tested, not just idempotency.</p></li>
 <li><p>Include tests for admin-only resources, ensuring they are renamed before import.</p></li>
 <li><p>Test resources as a tenant whenever possible to ensure broader coverage.</p></li>
-<li><p>For resources with special properties like <code class="docutils literal notranslate"><span class="pre">links</span></code> or <code class="docutils literal notranslate"><span class="pre">extra_specs</span></code>, write detailed tests inspecting these properties closely.</p></li>
+<li><p>For resources with special properties like <cite>links</cite> or <cite>extra_specs</cite>, write detailed tests inspecting these properties closely.</p></li>
 </ul>
 </section>
 <section id="unit-tests">
@@ -268,8 +268,8 @@ module you created for import.</p>
 <section id="documentation-and-examples">
 <h3>Documentation and Examples<a class="headerlink" href="#documentation-and-examples" title="Link to this heading"></a></h3>
 <ul class="simple">
-<li><p>In the <code class="docutils literal notranslate"><span class="pre">DOCUMENTATION</span></code> constant of each module, include examples of how to use the module in a playbook.</p></li>
-<li><p>Ensure that the <code class="docutils literal notranslate"><span class="pre">README.md</span></code> file for the new role is comprehensive, covering the role’s purpose, usage, and any dependencies.</p></li>
+<li><p>In the <cite>DOCUMENTATION</cite> constant of each module, include examples of how to use the module in a playbook.</p></li>
+<li><p>Ensure that the <cite>README.md</cite> file for the new role is comprehensive, covering the role’s purpose, usage, and any dependencies.</p></li>
 </ul>
 </section>
 <section id="test-execution-in-ci">
@@ -289,8 +289,8 @@ module you created for import.</p>
 <section id="location-of-tests">
 <h3>Location of Tests<a class="headerlink" href="#location-of-tests" title="Link to this heading"></a></h3>
 <ul class="simple">
-<li><p>Place functional and integration tests in the <code class="docutils literal notranslate"><span class="pre">tests/e2e</span></code> or <code class="docutils literal notranslate"><span class="pre">tests/func</span></code> directory respectively, following the existing structure for similar resources.</p></li>
-<li><p>Unit tests should reside alongside the modules they are testing, in the <code class="docutils literal notranslate"><span class="pre">os_migrate/tests/</span></code> directory.</p></li>
+<li><p>Place functional and integration tests in the <cite>tests/e2e</cite> or <cite>tests/func</cite> directory respectively, following the existing structure for similar resources.</p></li>
+<li><p>Unit tests should reside alongside the modules they are testing, in the <cite>/tests/</cite> directory.</p></li>
 </ul>
 </section>
 <section id="special-considerations">
@@ -303,12 +303,12 @@ module you created for import.</p>
 <section id="necessary-documentation">
 <h3>Necessary Documentation<a class="headerlink" href="#necessary-documentation" title="Link to this heading"></a></h3>
 <p>If this is your first time adding a pull request to the os-migrate
-repository, add your author information to <code class="docutils literal notranslate"><span class="pre">galaxy.yml</span></code>.</p>
-<p>In each Ansible module in <code class="docutils literal notranslate"><span class="pre">os_migrate/plugins/modules</span></code>, there is a
-<code class="docutils literal notranslate"><span class="pre">DOCUMENTATION</span></code> constant where you must provide standard
+repository, add your author information to <cite>galaxy.yml</cite>.</p>
+<p>In each Ansible module in <cite>/plugins/modules</cite>, there is a
+<cite>DOCUMENTATION</cite> constant where you must provide standard
 documentation on what the module does and an example of how you would
 use it in a playbook.</p>
-<p>Each new role must have a <code class="docutils literal notranslate"><span class="pre">README.md</span></code> file as a requirement for
+<p>Each new role must have a <cite>README.md</cite> file as a requirement for
 Ansible Galaxy publishing.</p>
 </section>
 </section>

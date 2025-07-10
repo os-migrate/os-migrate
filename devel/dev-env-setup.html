@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Development Environment Setup &mdash; os-migrate  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fe63c2af" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=7ab3649f" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
@@ -371,7 +371,7 @@ the parameters.</p>
   <span class="n">username</span><span class="p">:</span> <span class="n">dst</span>
 <span class="n">os_migrate_dst_region_name</span><span class="p">:</span> <span class="n">regionOne</span>
 
-<span class="n">os_migrate_data_dir</span><span class="p">:</span> <span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="n">os_migrate</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">migrate</span><span class="o">-</span><span class="n">data</span>
+<span class="n">os_migrate_data_dir</span><span class="p">:</span> <span class="o">/</span><span class="n">root</span><span class="o">//</span><span class="n">local</span><span class="o">/</span><span class="n">migrate</span><span class="o">-</span><span class="n">data</span>
 
 <span class="n">os_migrate_conversion_host_ssh_user</span><span class="p">:</span> <span class="n">cloud</span><span class="o">-</span><span class="n">user</span>
 <span class="n">os_migrate_src_conversion_external_network_name</span><span class="p">:</span> <span class="n">nova</span>
@@ -398,7 +398,7 @@ the parameters.</p>
 <h3>Run e2e test using the OS Migrate toolbox and the above config<a class="headerlink" href="#run-e2e-test-using-the-os-migrate-toolbox-and-the-above-config" title="Link to this heading"></a></h3>
 <p>Copy the above config to file <cite>custom-config.yaml</cite> in the <cite>local</cite> directory of your local <cite>os-migrate</cite> source.</p>
 <p>Run the full test suite using the above config.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">OS_MIGRATE_E2E_TEST_ARGS</span><span class="o">=</span><span class="s1">&#39;-e @/root/os_migrate/local/custom-config.yaml&#39;</span> <span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span><span class="o">-</span><span class="n">e2e</span><span class="o">-</span><span class="n">tenant</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">OS_MIGRATE_E2E_TEST_ARGS</span><span class="o">=</span><span class="s1">&#39;-e @/root//local/custom-config.yaml&#39;</span> <span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span><span class="o">-</span><span class="n">e2e</span><span class="o">-</span><span class="n">tenant</span>
 </pre></div>
 </div>
 </section>
@@ -460,13 +460,13 @@ to clean up conversion hosts after test is complete.</p>
 <cite>OS_MIGRATE_E2E_TEST_ARGS</cite> environment variable. This variable is also used to pass in the playbook custom config
 file. eg:</p>
 <blockquote>
-<div><p><cite>OS_MIGRATE_E2E_TEST_ARGS=’-e &#64;/root/os_migrate/local/custom-config.yaml –tags test_clean_before,test_workload –skip-tags test_clean_after -e test_clean_conversion_hosts_after=false’</cite></p>
+<div><p><cite>OS_MIGRATE_E2E_TEST_ARGS=’-e &#64;/root//local/custom-config.yaml –tags test_clean_before,test_workload –skip-tags test_clean_after -e test_clean_conversion_hosts_after=false’</cite></p>
 </div></blockquote>
 </li>
 <li><p><cite>ROOT_DIR</cite>: Absolute directory path to OS Migrate source. When not set the default when run using OS Migrate developer
 toolbox this is set to <cite>/root/os_migrate</cite>.</p></li>
 <li><p><cite>OS_MIGRATE</cite>: Absolute directory path to the OS Migrate ansible collection. When not set the default when run using
-os-migrate developer toolbox this is set to <cite>/root/.ansible/collections/ansible_collections/os_migrate/os_migrate</cite>.</p></li>
+os-migrate developer toolbox this is set to <cite>/root/.ansible/collections/ansible_collections//os_migrate</cite>.</p></li>
 </ul>
 </section>
 </section>

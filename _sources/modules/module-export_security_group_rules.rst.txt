@@ -9,6 +9,6 @@ This module provides for the following ansible plugin:
 
 
 .. ansibleautoplugin::
-   :module: os_migrate/plugins/modules/export_security_group_rules.py
+   :module: plugins/modules/export_security_group_rules.py
    :documentation: true
    :examples: true

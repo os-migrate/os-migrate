@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OS Migrate Walkthrough &mdash; os-migrate  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fe63c2af" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=7ab3649f" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
@@ -239,7 +239,7 @@ to the Keystone v2 endpoint.</p>
 <p>We will use the OS Migrate collection path and an ansible-playbook
 command with the following arguments routinely, so let’s save them as
 variables in the shell:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">OSM_DIR</span><span class="o">=</span>/home/migrator/.ansible/collections/ansible_collections/os_migrate/os_migrate
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">OSM_DIR</span><span class="o">=</span>/home/migrator/.ansible/collections/ansible_collections//os_migrate
 <span class="nb">export</span><span class="w"> </span><span class="nv">OSM_CMD</span><span class="o">=</span><span class="s2">&quot;ansible-playbook -v -i </span><span class="nv">$OSM_DIR</span><span class="s2">/localhost_inventory.yml -e @os-migrate-vars.yml&quot;</span>
 </pre></div>
 </div>

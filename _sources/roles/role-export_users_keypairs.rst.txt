@@ -10,4 +10,4 @@ When using this role, make sure you have recent enough OpenStack SDK
 (0.57+).
 
 .. ansibleautoplugin::
-  :role: os_migrate/roles/export_users_keypairs
+  :role: roles/export_users_keypairs
