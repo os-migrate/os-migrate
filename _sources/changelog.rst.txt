@@ -29,6 +29,10 @@ Fix
 
 Other
 ~~~~~
+- Fixed the installation of the `shyaml` tool. [Roberto Alfieri]
+
+  Since CentOS Stream 10 doesn't provide the `shyaml` tool, we are
+  installing it via `pip`
 - Re-added e2e tests to the makefile. [Roberto Alfieri]
 - Fixed aee build dependencies. [Roberto Alfieri]
 - Fixed aee build. [Roberto Alfieri]
