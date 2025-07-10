@@ -1,0 +1,4 @@
+gitchangelog==3.0.4
+markdown==3.8.2
+ruamel.yaml==0.18.14
+sphinx-rtd-theme==3.0.2

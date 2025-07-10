@@ -9,6 +9,6 @@ This module provides for the following ansible plugin:
 
 
 .. ansibleautoplugin::
-   :module: os_migrate/plugins/modules/import_volumes_transfer.py
+   :module: plugins/modules/import_volumes_transfer.py
    :documentation: true
    :examples: true

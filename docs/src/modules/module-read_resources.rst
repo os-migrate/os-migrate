@@ -9,6 +9,6 @@ This module provides for the following ansible plugin:
 
 
 .. ansibleautoplugin::
-   :module: os_migrate/plugins/modules/read_resources.py
+   :module: plugins/modules/read_resources.py
    :documentation: true
    :examples: true

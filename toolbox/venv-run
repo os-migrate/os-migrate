@@ -1,7 +1,0 @@
-#!/bin/bash
-
-set -eu
-
-DIR=$(dirname $(realpath $0))
-
-$DIR/run /usr/local/bin/venv-wrapper "$@"

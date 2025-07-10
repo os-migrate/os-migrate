@@ -51,7 +51,7 @@ And unit tests this way:
    ./toolbox/run make test-unit
 
 To run sanity tests and then unit tests together, a shorthand target
-“test-fast” can be used:
+"test-fast" can be used:
 
 ::
 
@@ -60,7 +60,7 @@ To run sanity tests and then unit tests together, a shorthand target
 Vagrant for functional tests
 ----------------------------
 
-To run functional tests, you’ll need to connect to OpenStack cloud(s)
+To run functional tests, you'll need to connect to OpenStack cloud(s)
 where tenant resources can be managed. As a developer, the easiest way
 is to run a local virtualized all-in-one OpenStack cloud. OS Migrate has
 Vagrant+Devstack setup for this purpose.
@@ -110,7 +110,7 @@ If you need to revert the VM at any time, run:
 
    ./vagrant-snapshot-revert
 
-When you’re done developing, halt Vagrant and close ``vagrant-run``
+When you're done developing, halt Vagrant and close ``vagrant-run``
 shell:
 
 ::
@@ -165,7 +165,7 @@ Finally, run the functional tests:
 
    ./toolbox/run make test-func
 
-To run functional tests for just the resource you’re working on, run
+To run functional tests for just the resource you're working on, run
 e.g.:
 
 ::
@@ -326,7 +326,7 @@ Auth URLs and network names will change based on your environment.
       username: dst
     os_migrate_dst_region_name: regionOne
 
-    os_migrate_data_dir: /root/os_migrate/local/migrate-data
+    os_migrate_data_dir: /root//local/migrate-data
 
     os_migrate_conversion_host_ssh_user: cloud-user
     os_migrate_src_conversion_external_network_name: nova
@@ -356,7 +356,7 @@ Run the full test suite using the above config.
 
 .. code-block::
 
-   OS_MIGRATE_E2E_TEST_ARGS='-e @/root/os_migrate/local/custom-config.yaml' ./toolbox/run make test-e2e-tenant
+   OS_MIGRATE_E2E_TEST_ARGS='-e @/root//local/custom-config.yaml' ./toolbox/run make test-e2e-tenant
 
 
 Expected output from successful e2e test run
@@ -417,10 +417,10 @@ The following environment variables can be used when running e2e tests.
   `OS_MIGRATE_E2E_TEST_ARGS` environment variable. This variable is also used to pass in the playbook custom config
   file. eg:
 
-      `OS_MIGRATE_E2E_TEST_ARGS='-e @/root/os_migrate/local/custom-config.yaml \
+      `OS_MIGRATE_E2E_TEST_ARGS='-e @/root//local/custom-config.yaml \
       --tags test_clean_before,test_workload --skip-tags test_clean_after -e test_clean_conversion_hosts_after=false'`
 
 - `ROOT_DIR`: Absolute directory path to OS Migrate source. When not set the default when run using OS Migrate developer
   toolbox this is set to `/root/os_migrate`.
 - `OS_MIGRATE`: Absolute directory path to the OS Migrate ansible collection. When not set the default when run using
-  os-migrate developer toolbox this is set to `/root/.ansible/collections/ansible_collections/os_migrate/os_migrate`.
+  os-migrate developer toolbox this is set to `/root/.ansible/collections/ansible_collections//os_migrate`.

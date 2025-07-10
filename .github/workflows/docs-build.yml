@@ -17,24 +17,8 @@ jobs:
         run: |
           sudo locale-gen en_US.UTF-8
           sudo dpkg-reconfigure locales
-      - name: Configure podman
-        run: |
-          mkdir -p ~/.config/containers
-          echo 'cgroup_manager = "cgroupfs"' >> ~/.config/containers/libpod.conf
-          echo '[storage]' >> ~/.config/containers/storage.conf
-          echo 'driver = "overlay"' >> ~/.config/containers/storage.conf
-          echo '[storage.options]' >> ~/.config/containers/storage.conf
-          echo 'mount_program = "/usr/bin/fuse-overlayfs"' >> ~/.config/containers/storage.conf
-      - name: Log into GitHub Container Registry
-        run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | \
-            podman login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-      - name: Fetch toolbox image
-        run: |
-          REUSE_TOOLBOX=1 NO_VAGRANT=1 make toolbox-build
       - name: Render the documentation
-        run: |
-          ./toolbox/run make docs
+        run: make USE_CACHE=false docs
       - uses: actions/upload-artifact@v4
         with:
           name: DocumentationHTML

@@ -142,7 +142,7 @@ variables in the shell:
 
 .. code:: bash
 
-   export OSM_DIR=/home/migrator/.ansible/collections/ansible_collections/os_migrate/os_migrate
+   export OSM_DIR=/home/migrator/.ansible/collections/ansible_collections//os_migrate
    export OSM_CMD="ansible-playbook -v -i $OSM_DIR/localhost_inventory.yml -e @os-migrate-vars.yml"
 
 Pre-workload migration

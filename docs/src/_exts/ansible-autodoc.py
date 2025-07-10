@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
 """
@@ -123,9 +123,9 @@ class AnsibleAutoPluginDirective(Directive):
                 options_list.append(
                     self._raw_fields(data=value["description"], field_name=key)
                 )
-            else:
-                options_section.append(options_list)
-                section.append(options_section)
+
+            options_section.append(options_list)
+            section.append(options_section)
 
             # Authors Section
             authors_list = nodes.field_list()
@@ -316,9 +316,9 @@ class AnsibleAutoPluginDirective(Directive):
                     )
                 )
                 test_list.append(molecule_section)
-            else:
-                test_section.append(test_list)
-                section.append(test_section)
+
+            test_section.append(test_list)
+            section.append(test_section)
 
         self.run_returns.append(section)
 

@@ -54,7 +54,7 @@ characters.
 Message Body
 ^^^^^^^^^^^^
 
-Uses the imperative, present tense: “change” not “changed” nor
-“changes” and includes motivation for the change and contrasts with
+Uses the imperative, present tense: "change" not "changed" nor
+"changes" and includes motivation for the change and contrasts with
 previous behavior. Think how the commit message will appear in the
 project changelog.

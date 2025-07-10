@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -euo pipefail
-SCRIPT_NAME=${SCRIPT_NAME:-$(basename $0)}
+SCRIPT_NAME=${SCRIPT_NAME:-"$(basename "${0}")"}
 
 function exit_error {
     echo >&2 "Error: $*"
@@ -9,14 +9,15 @@ function exit_error {
 }
 
 function main {
-    PARSED_ARGS=$(getopt -o ,h \
+    if ! PARSED_ARGS=$(getopt -o ,h \
                          -l ,config:,dst:,help,src: \
-                         -n $SCRIPT_NAME -- "$@")
-    if [ $? -ne 0 ]; then
+                         -n "${SCRIPT_NAME}" -- "$@")
+    then
         print_usage
         exit 1
+    else
+        eval set -- "$PARSED_ARGS"
     fi
-    eval set -- "$PARSED_ARGS"
 
     local CONFIG=""
     local DST=""
@@ -35,7 +36,7 @@ function main {
     if [ "$CONFIG" = "" ]; then
         exit_error "--config argument was not provided."
     fi
-    if [ "$DST" = "" -a "$SRC" = "" ]; then
+    if [ "$DST" = "" ] && [ "$SRC" = "" ]; then
         exit_error "Neither of --src or --dst arguments was provided."
     fi
 
@@ -66,7 +67,7 @@ function print_auth_from_clouds {
 
     if [ -n "$AUTH" ]; then
         echo "${PREFIX}auth:"
-        echo "$(sed -e 's/^/  /' <<< "$AUTH")"
+        echo "${AUTH//^/  /}"
     fi
     if [ -n "$AUTH_TYPE" ]; then
         echo "${PREFIX}auth_type: $AUTH_TYPE"
