@@ -29,6 +29,8 @@ Fix
 
 Other
 ~~~~~
+- Fixed missing dependencies and collection build while building aee
+  image. [Roberto Alfieri]
 - Fixed the installation of the `shyaml` tool. [Roberto Alfieri]
 
   Since CentOS Stream 10 doesn't provide the `shyaml` tool, we are
