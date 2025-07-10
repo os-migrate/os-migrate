@@ -224,19 +224,19 @@ generate-auth-files: install-deps
 		source $(VENV_DIR)/bin/activate && \
 		pip install --root-user-action ignore -q shyaml && \
 		dnf -y install util-linux && \
-		./scripts/auth-from-clouds.sh --config tests/clouds.yml --src "$(SRC_CLOUD)" --dst "$(DST_CLOUD)" >tests/auth_tenant.yml'
+		./scripts/auth-from-clouds.sh --config tests/clouds.yml --src "$(SRC_CLOUD)" --dst "$(DST_CLOUD)" | tee "$(CONTAINER_COLLECTION_ROOT)/tests/auth_tenant.yml"'
 	@if echo "$(SRC_CLOUD)" | grep -E 'src[0-9]+' >/dev/null && echo "$(DST_CLOUD)" | grep -E 'dst[0-9]+' >/dev/null; then \
 		SRC_ADMIN_CLOUD="$${SRC_CLOUD/src/admin}"; \
 		DST_ADMIN_CLOUD="$${DST_CLOUD/dst/admin}"; \
-		$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c "\
+		$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
 			source $(VENV_DIR)/bin/activate && \
 			pip install --root-user-action ignore -q shyaml && \
 			dnf -y install util-linux && \
-			./scripts/auth-from-clouds.sh --config tests/clouds.yml --src \"$$SRC_ADMIN_CLOUD\" --dst \"$$DST_ADMIN_CLOUD\" >tests/auth_admin.yml"; \
+			./scripts/auth-from-clouds.sh --config tests/clouds.yml --src \"$$SRC_ADMIN_CLOUD\" --dst \"$$DST_ADMIN_CLOUD\" | tee "$(CONTAINER_COLLECTION_ROOT)/tests/auth_admin.yml"' ; \
 	fi
 
 
-test-e2e-tenant: install-deps install generate-auth-files
+test-e2e-tenant: install-deps install
 	@# Ensure auth files exist before running tests
 	@if [ ! -f "$(CONTAINER_COLLECTION_ROOT)/tests/auth_tenant.yml" ]; then \
 		echo "Error: auth_tenant.yml not found. Please run auth generation first."; \
@@ -256,7 +256,7 @@ test-e2e-tenant: install-deps install generate-auth-files
 			-e @$(CONTAINER_COLLECTION_ROOT)/tests/e2e/tasks/tenant/scenario_variables.yml \
 			$(OS_MIGRATE_E2E_TEST_ARGS) test_as_tenant.yml'
 
-test-e2e-admin: install-deps install generate-auth-files
+test-e2e-admin: install-deps install
 	@# Ensure auth files exist before running tests
 	@if [ ! -f "$(CONTAINER_COLLECTION_ROOT)/tests/auth_admin.yml" ]; then \
 		echo "Error: auth_admin.yml not found. Please run auth generation first."; \
