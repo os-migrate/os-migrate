@@ -221,12 +221,15 @@ generate-auth-files: install-deps
 		exit 1; \
 	fi
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
-		dnf -y install shyaml && \
+		source $(VENV_DIR)/bin/activate && \
+		pip install --root-user-action ignore -q shyaml && \
 		./scripts/auth-from-clouds.sh --config tests/clouds.yml --src "$(SRC_CLOUD)" --dst "$(DST_CLOUD)" >tests/auth_tenant.yml'
 	@if echo "$(SRC_CLOUD)" | grep -E 'src[0-9]+' >/dev/null && echo "$(DST_CLOUD)" | grep -E 'dst[0-9]+' >/dev/null; then \
 		SRC_ADMIN_CLOUD="$${SRC_CLOUD/src/admin}"; \
 		DST_ADMIN_CLOUD="$${DST_CLOUD/dst/admin}"; \
 		$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c "\
+			source $(VENV_DIR)/bin/activate && \
+			pip install --root-user-action ignore -q shyaml && \
 			./scripts/auth-from-clouds.sh --config tests/clouds.yml --src \"$$SRC_ADMIN_CLOUD\" --dst \"$$DST_ADMIN_CLOUD\" >tests/auth_admin.yml"; \
 	fi
 
