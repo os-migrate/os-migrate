@@ -67,7 +67,7 @@ function print_auth_from_clouds {
 
     if [ -n "$AUTH" ]; then
         echo "${PREFIX}auth:"
-        echo "${AUTH//^/  /}"
+        printf '%s\n' "$AUTH" | sed 's/^/ /'
     fi
     if [ -n "$AUTH_TYPE" ]; then
         echo "${PREFIX}auth_type: $AUTH_TYPE"
