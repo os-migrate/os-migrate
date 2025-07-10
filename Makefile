@@ -68,7 +68,7 @@ endif
 # --- Phony Targets Definition ---
 .PHONY: all help build clean-build tests test-ansible-lint test-ansible-sanity test-ansible-units \
         create-centos-container clean-centos-container check-root check-python-version \
-        create-venv install-deps install
+        create-venv install-deps install generate-auth-files
 
 # --- Main User-Facing Targets ---
 
@@ -86,6 +86,9 @@ help:
 	@echo "  test-ansible-lint     - Launch ansible-lint tests"
 	@echo "  test-ansible-sanity   - Launch ansible-sanity tests"
 	@echo "  test-ansible-units    - Launch ansible-test unit tests"
+	@echo "  test-e2e-tenant       - Launch e2e tenant tests"
+	@echo "  test-e2e-admin        - Launch e2e admin tests"
+	@echo "  generate-auth-files   - Generate auth files for e2e tests"
 	@echo ""
 	@echo "  create-centos-container - Create the CentOS container (if needed)"
 	@echo "  clean-centos-container  - Stop and remove the CentOS container"
@@ -186,29 +189,88 @@ install: build
 
 tests: test-ansible-lint test-ansible-sanity test-ansible-units
 
-test-ansible-lint: install-deps
+test-ansible-lint: install-deps install
 	@echo "--- Launching ansible-lint ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
 		source $(VENV_DIR)/bin/activate && ansible-lint'
 	@if [[ $(USE_CACHE) == false ]]; then $(MAKE) clean-centos-container; fi
 
-test-ansible-sanity: install-deps
+test-ansible-sanity: install-deps install
 	@echo "--- Running Ansible sanity tests ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
 		source $(VENV_DIR)/bin/activate && \
-		ansible-galaxy collection install -f --no-deps . && \
 		cd /root/.ansible/collections/ansible_collections/$(COLLECTION_NAMESPACE)/$(COLLECTION_NAME) && \
 		ansible-test sanity --python $(PYTHON_VERSION) --requirements'
 	@if [[ $(USE_CACHE) == false ]]; then $(MAKE) clean-centos-container; fi
 
-test-ansible-units: install-deps
+test-ansible-units: install-deps install
 	@echo "--- Running Ansible unit tests ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
 		source $(VENV_DIR)/bin/activate && \
-		ansible-galaxy collection install -f --no-deps . && \
 		cd /root/.ansible/collections/ansible_collections/$(COLLECTION_NAMESPACE)/$(COLLECTION_NAME) && \
 		ansible-test units --python $(PYTHON_VERSION) --local'
 	@if [[ $(USE_CACHE) == false ]]; then $(MAKE) clean-centos-container; fi
+
+
+# --- E2E Test Auth Generation ---
+
+generate-auth-files: install-deps
+	@echo "--- Generating auth files ---"
+	@if [ -z "$(SRC_CLOUD)" ] || [ -z "$(DST_CLOUD)" ]; then \
+		echo "Error: SRC_CLOUD and DST_CLOUD variables must be set"; \
+		exit 1; \
+	fi
+	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
+		dnf -y install shyaml && \
+		./scripts/auth-from-clouds.sh --config tests/clouds.yml --src "$(SRC_CLOUD)" --dst "$(DST_CLOUD)" >tests/auth_tenant.yml'
+	@if echo "$(SRC_CLOUD)" | grep -E 'src[0-9]+' >/dev/null && echo "$(DST_CLOUD)" | grep -E 'dst[0-9]+' >/dev/null; then \
+		SRC_ADMIN_CLOUD="$${SRC_CLOUD/src/admin}"; \
+		DST_ADMIN_CLOUD="$${DST_CLOUD/dst/admin}"; \
+		$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c "\
+			./scripts/auth-from-clouds.sh --config tests/clouds.yml --src \"$$SRC_ADMIN_CLOUD\" --dst \"$$DST_ADMIN_CLOUD\" >tests/auth_admin.yml"; \
+	fi
+
+
+test-e2e-tenant: install-deps install generate-auth-files
+	@# Ensure auth files exist before running tests
+	@if [ ! -f "$(CONTAINER_COLLECTION_ROOT)/tests/auth_tenant.yml" ]; then \
+		echo "Error: auth_tenant.yml not found. Please run auth generation first."; \
+		exit 1; \
+	fi
+	@echo "--- Running e2e tenant tests ---"
+	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
+		source $(VENV_DIR)/bin/activate && \
+		cd tests/e2e; \
+		ansible-playbook \
+			-v \
+			-i $(CONTAINER_COLLECTION_ROOT)/inventory/localhost.yml \
+			-e os_migrate_tests_tmp_dir=$(CONTAINER_COLLECTION_ROOT)/tests/e2e/tmp \
+			-e os_migrate_data_dir=$(CONTAINER_COLLECTION_ROOT)/tests/e2e/tmp/data \
+			-e os_migrate_conversion_host_key=$(CONTAINER_COLLECTION_ROOT)/tests/e2e/tmpdata/conversion/ssh.key \
+			-e @$(CONTAINER_COLLECTION_ROOT)/tests/auth_tenant.yml \
+			-e @$(CONTAINER_COLLECTION_ROOT)/tests/e2e/tasks/tenant/scenario_variables.yml \
+			$(OS_MIGRATE_E2E_TEST_ARGS) test_as_tenant.yml'
+
+test-e2e-admin: install-deps install generate-auth-files
+	@# Ensure auth files exist before running tests
+	@if [ ! -f "$(CONTAINER_COLLECTION_ROOT)/tests/auth_admin.yml" ]; then \
+		echo "Error: auth_admin.yml not found. Please run auth generation first."; \
+		exit 1; \
+	fi
+	@echo "--- Running e2e admin tests ---"
+	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
+		source $(VENV_DIR)/bin/activate && \
+		cd tests/e2e; \
+		ansible-playbook \
+			-v \
+			-i $(CONTAINER_COLLECTION_ROOT)/inventory/localhost.yml \
+			-e os_migrate_tests_tmp_dir=$(CONTAINER_COLLECTION_ROOT)/tests/e2e/tmp \
+			-e os_migrate_data_dir=$(CONTAINER_COLLECTION_ROOT)/tests/e2e/tmp/data \
+			-e os_migrate_conversion_host_key=$(CONTAINER_COLLECTION_ROOT)/tests/e2e/tmpdata/conversion/ssh.key \
+			-e @$(CONTAINER_COLLECTION_ROOT)/tests/auth_admin.yml \
+			-e @$(CONTAINER_COLLECTION_ROOT)/tests/e2e/tasks/admin/scenario_variables.yml \
+			$(OS_MIGRATE_E2E_TEST_ARGS) test_as_admin.yml'
+
 
 # --- Docs Targets ---
 
