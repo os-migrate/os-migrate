@@ -13,6 +13,16 @@ New
 
 Fix
 ~~~
+- Resolve e2e test auth and container issues. [Roberto Alfieri]
+
+  * Fixed Makefile variable references and bash syntax errors
+  * Fixed generate-auth-files target dependencies
+  * Fixed auth-from-clouds.sh script indentation and variable prefixes
+  * Fixed clouds.yaml.j2 template to handle None values
+  * Added python-openstackclient and passlib to requirements.txt
+  * Fixed playbook imports to use collection format
+  * Fixed container path usage throughout Makefile
+  * Removed old `admin` e2e tests (they did nothing)
 - Pin `openstack.cloud` collection to the last v2.3.x available version.
   [Roberto Alfieri]
 

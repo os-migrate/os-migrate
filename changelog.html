@@ -217,6 +217,18 @@
 <section id="fix">
 <h3>Fix<a class="headerlink" href="#fix" title="Link to this heading"></a></h3>
 <ul>
+<li><p>Resolve e2e test auth and container issues. [Roberto Alfieri]</p>
+<ul class="simple">
+<li><p>Fixed Makefile variable references and bash syntax errors</p></li>
+<li><p>Fixed generate-auth-files target dependencies</p></li>
+<li><p>Fixed auth-from-clouds.sh script indentation and variable prefixes</p></li>
+<li><p>Fixed clouds.yaml.j2 template to handle None values</p></li>
+<li><p>Added python-openstackclient and passlib to requirements.txt</p></li>
+<li><p>Fixed playbook imports to use collection format</p></li>
+<li><p>Fixed container path usage throughout Makefile</p></li>
+<li><p>Removed old <cite>admin</cite> e2e tests (they did nothing)</p></li>
+</ul>
+</li>
 <li><p>Pin <cite>openstack.cloud</cite> collection to the last v2.3.x available version.
 [Roberto Alfieri]</p>
 <p>With the release of the v2.4.x versions of the <cite>openstack.cloud</cite>
