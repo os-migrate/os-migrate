@@ -1,31 +1,33 @@
-- name: read workloads resource file
+- name: Read workloads resource file
   os_migrate.os_migrate.read_resources:
     path: "{{ os_migrate_data_dir }}/workloads.yml"
   register: read_workloads
 
-- name: include the conversion hosts inventory
+- name: Include the conversion hosts inventory
   ansible.builtin.include_role:
     name: os_migrate.os_migrate.conversion_host
     tasks_from: conv_hosts_inventory.yml
 
-- name: filter workloads to import
+- name: Filter workloads to import
   ansible.builtin.set_fact:
     filtered_workloads: "{{ (
       read_workloads.resources
-        | os_migrate.os_migrate.stringfilter(os_migrate_workloads_filter,
-                                             attribute='params.name') ) }}"
+        | os_migrate.os_migrate.stringfilter(
+            os_migrate_workloads_filter,
+            attribute='params.name'
+          ) ) }}"
 
-- name: create directory for workload migration logs
+- name: Create directory for workload migration logs
   ansible.builtin.file:
     path: "{{ os_migrate_data_dir }}/workload_logs"
     state: directory
     mode: '0750'
 
-- name: check data copy state and run conversion host operations
+- name: Check data copy state and run conversion host operations
   ansible.builtin.include_role:
     name: os_migrate.os_migrate.conversion_host
     tasks_from: conv_host_details.yml
 
-- name: import workloads
+- name: Import workloads
   ansible.builtin.include_tasks: workload.yml
   loop: "{{ filtered_workloads }}"

@@ -1,32 +1,35 @@
-- name: read detached_volumes resource file
+- name: Read detached_volumes resource file
   os_migrate.os_migrate.read_resources:
     path: "{{ os_migrate_data_dir }}/detached_volumes.yml"
   register: read_detached_volumes
 
-- name: include the conversion hosts inventory
+- name: Include the conversion hosts inventory
   ansible.builtin.include_role:
     name: os_migrate.os_migrate.conversion_host
     tasks_from: conv_hosts_inventory.yml
 
-- name: filter detached volumes to import
+- name: Filter detached volumes to import
   ansible.builtin.set_fact:
     filtered_detached_volumes: "{{ (
       read_detached_volumes.resources
-        | os_migrate.os_migrate.stringfilter(os_migrate_detached_volumes_filter, attribute='params.name')
-        ) }}"
+        | os_migrate.os_migrate.stringfilter(
+            os_migrate_detached_volumes_filter,
+            attribute='params.name'
+          )
+    ) }}"
 
-- name: create directory for detached volumes migration logs
+- name: Create directory for detached volumes migration logs
   ansible.builtin.file:
     path: "{{ os_migrate_data_dir }}/volume_logs"
     state: directory
     mode: '0750'
 
-- name: check data copy state and run conversion host operations
+- name: Check data copy state and run conversion host operations
   ansible.builtin.include_role:
     name: os_migrate.os_migrate.conversion_host
     tasks_from: conv_host_details.yml
 
-- name: import volumes
+- name: Import volumes
   ansible.builtin.include_tasks: import_volumes.yml
   vars:
     detached_volumes: "{{ filtered_detached_volumes }}"

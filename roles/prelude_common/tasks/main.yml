@@ -14,30 +14,30 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-- name: get the current openstacksdk version
+- name: Get the current openstacksdk version
   community.general.pip_package_info:
     clients: ['pip', 'pip3']
   register: _installed_openstacksdk
 
-- name: print items for sdk version
+- name: Print items for sdk version
   ansible.builtin.debug:
     msg: "{{ _installed_openstacksdk }}"
 
-- name: set openstacksdk version for pip
+- name: Set openstacksdk version for pip
   ansible.builtin.set_fact:
     _installed_openstacksdk_versions: "{{ _installed_openstacksdk['packages']['pip']['openstacksdk'] | map(attribute='version') | list | first }}"
   when: "_installed_openstacksdk['packages']['pip'] is defined"
 
-- name: set openstacksdk version for pip3
+- name: Set openstacksdk version for pip3
   ansible.builtin.set_fact:
     _installed_openstacksdk_versions: "{{ _installed_openstacksdk['packages']['pip3']['openstacksdk'] | map(attribute='version') | list | first }}"
   when: "_installed_openstacksdk['packages']['pip3'] is defined"
 
-- name: print the current installed version of openstacksdk
+- name: Print the current installed version of openstacksdk
   ansible.builtin.debug:
     var: _installed_openstacksdk_versions
 
-- name: fail if the user has an unsupported openstacksdk version
+- name: Fail if the user has an unsupported openstacksdk version
   ansible.builtin.assert:
     that:
       - _installed_openstacksdk_versions is version(os_migrate_common_minimum_openstacksdk_version, '>=')
@@ -48,8 +48,8 @@
       The installed openstacksdk version {{ _installed_openstacksdk_versions }}
       is >= than {{ os_migrate_common_minimum_openstacksdk_version }}
 
-- name: write to auth file
+- name: Write to auth file
   ansible.builtin.template:
     src: clouds.yaml.j2
-    dest: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
+    dest: "{{ os_migrate_clouds_path | default(os_migrate_data_dir ~ '/clouds.yaml') }}"
     mode: '0600'

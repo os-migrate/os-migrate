@@ -1,21 +1,21 @@
-- name: read flavors resource file
+- name: Read flavors resource file
   os_migrate.os_migrate.read_resources:
     path: "{{ os_migrate_data_dir }}/flavors.yml"
   register: read_flavors
 
-- name: filter flavors to import
+- name: Filter flavors to import
   ansible.builtin.set_fact:
     filtered_flavors: "{{ (
       read_flavors.resources
         | os_migrate.os_migrate.stringfilter(os_migrate_flavors_filter,
                                              attribute='params.name') ) }}"
 
-- name: import flavors
+- name: Import flavors
   os_migrate.os_migrate.import_flavor:
     cloud: dst
     data: "{{ item }}"
-    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_dst_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_dst_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_dst_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_dst_client_key | default(omit) }}"
   loop: "{{ filtered_flavors }}"

@@ -1,28 +1,28 @@
-- name: read users' keypairs resource file
+- name: Read users' keypairs resource file
   os_migrate.os_migrate.read_resources:
     path: "{{ os_migrate_data_dir }}/users_keypairs.yml"
   register: read_users_keypairs
 
-- name: filter users' keypairs to import based on user name
+- name: Filter users' keypairs to import based on user name
   ansible.builtin.set_fact:
     filtered_users_keypairs: "{{ (
       read_users_keypairs.resources
         | os_migrate.os_migrate.stringfilter(os_migrate_users_filter,
                                              attribute='params.user_ref.name') ) }}"
 
-- name: filter users' keypairs to import based on keypair name
+- name: Filter users' keypairs to import based on keypair name
   ansible.builtin.set_fact:
     filtered_users_keypairs: "{{ (
       filtered_users_keypairs
         | os_migrate.os_migrate.stringfilter(os_migrate_keypairs_filter,
                                              attribute='params.name') ) }}"
 
-- name: import users_keypairs
+- name: Import users_keypairs
   os_migrate.os_migrate.import_keypair:
     cloud: dst
     data: "{{ item }}"
-    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_dst_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_dst_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_dst_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_dst_client_key | default(omit) }}"
   loop: "{{ filtered_users_keypairs }}"
