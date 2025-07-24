@@ -1,35 +1,35 @@
-- name: delete os_migrate conversion host
+- name: Delete os_migrate conversion host
   openstack.cloud.server:
     name: "{{ os_migrate_conversion_host_name }}"
     state: absent
     delete_fip: "{{ os_migrate_conversion_manage_fip and os_migrate_conversion_delete_fip }}"
     wait: true
     cloud: "{{ os_migrate_conversion_cloud }}"
-    validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_conversion_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_conversion_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_conversion_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_conversion_client_key | default(omit) }}"
 
-- name: delete os_migrate conversion keypair
+- name: Delete os_migrate conversion keypair
   openstack.cloud.keypair:
     name: "{{ os_migrate_conversion_keypair_name }}"
     state: absent
     cloud: "{{ os_migrate_conversion_cloud }}"
-    validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_conversion_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_conversion_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_conversion_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_conversion_client_key | default(omit) }}"
 
-- name: delete os_migrate conversion security group
+- name: Delete os_migrate conversion security group
   openstack.cloud.security_group:
     name: "{{ os_migrate_conversion_secgroup_name }}"
     state: absent
     cloud: "{{ os_migrate_conversion_cloud }}"
-    validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_conversion_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_conversion_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_conversion_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_conversion_client_key | default(omit) }}"
 
-- name: delete a network for the conversion host
+- name: Delete a network for the conversion host
   ansible.builtin.include_tasks: delete_network.yml
   when: os_migrate_conversion_manage_network | bool

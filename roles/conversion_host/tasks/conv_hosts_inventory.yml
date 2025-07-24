@@ -1,4 +1,4 @@
-- name: add conversion hosts to inventory
+- name: Add conversion hosts to inventory
   ansible.builtin.include_tasks: conv_host_inventory.yml
   vars:
     inventory_name: "{{ item.inventory_name }}"
@@ -14,23 +14,23 @@
       inventory_group: conversion_hosts_src
       os_migrate_conversion_host_name: "{{ os_migrate_src_conversion_host_name }}"
       os_migrate_conversion_cloud: src
-      os_migrate_conversion_validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-      os_migrate_conversion_ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-      os_migrate_conversion_client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-      os_migrate_conversion_client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+      os_migrate_conversion_validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+      os_migrate_conversion_ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+      os_migrate_conversion_client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+      os_migrate_conversion_client_key: "{{ os_migrate_src_client_key | default(omit) }}"
     - inventory_name: os_migrate_conv_dst
       inventory_group: conversion_hosts_dst
       os_migrate_conversion_host_name: "{{ os_migrate_dst_conversion_host_name }}"
       os_migrate_conversion_cloud: dst
-      os_migrate_conversion_validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-      os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-      os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-      os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+      os_migrate_conversion_validate_certs: "{{ os_migrate_dst_validate_certs | default(omit) }}"
+      os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert | default(omit) }}"
+      os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert | default(omit) }}"
+      os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key | default(omit) }}"
   when:
     - item["_migration_params"]["data_copy"]|default(true)
 
 # If conversion hosts are added succesfully to each group, show them all.
-- name: list src conversion hosts
+- name: List src conversion hosts
   ansible.builtin.debug:
     msg: "Source conversion host: {{ item }}"
   with_items: "{{ groups['conversion_hosts_src'] }}"
@@ -38,7 +38,7 @@
     - "'conversion_hosts_src' in groups"
     - item["_migration_params"]["data_copy"]|default(true)
 
-- name: list dst conversion hosts
+- name: List dst conversion hosts
   ansible.builtin.debug:
     msg: "Destination conversion host: {{ item }}"
   with_items: "{{ groups['conversion_hosts_dst'] }}"
@@ -46,7 +46,7 @@
     - "'conversion_hosts_dst' in groups"
     - item["_migration_params"]["data_copy"]|default(true)
 
-- name: list all conversion hosts
+- name: List all conversion hosts
   ansible.builtin.debug:
     msg: "All conversion host: {{ item }}"
   with_items: "{{ groups['conversion_hosts'] }}"
