@@ -1,9 +1,9 @@
-- name: read users resource file
+- name: Read users resource file
   os_migrate.os_migrate.read_resources:
     path: "{{ os_migrate_data_dir }}/users.yml"
   register: read_users
 
-- name: filter users to import
+- name: Filter users to import
   ansible.builtin.set_fact:
     filtered_users: "{{ (
       read_users.resources
@@ -11,12 +11,12 @@
         | os_migrate.os_migrate.stringfilter(os_migrate_users_filter,
                                              attribute='params.name') ) }}"
 
-- name: import users
+- name: Import users
   os_migrate.os_migrate.import_user:
     cloud: dst
     data: "{{ item }}"
-    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_dst_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_dst_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_dst_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_dst_client_key | default(omit) }}"
   loop: "{{ filtered_users }}"

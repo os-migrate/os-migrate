@@ -1,9 +1,9 @@
-- name: read user project role assignments resource file
+- name: Read user project role assignments resource file
   os_migrate.os_migrate.read_resources:
     path: "{{ os_migrate_data_dir }}/user_project_role_assignments.yml"
   register: read_user_project_role_assignments
 
-- name: filter user project role assignment to import
+- name: Filter user project role assignment to import
   ansible.builtin.set_fact:
     filtered_user_project_role_assignments: "{{ (
       read_user_project_role_assignments.resources
@@ -11,12 +11,12 @@
         | os_migrate.os_migrate.stringfilter(os_migrate_user_filter,
                                              attribute='params.project_ref.name') ) }}"
 
-- name: import user project role assignment
+- name: Import user project role assignment
   os_migrate.os_migrate.import_user_project_role_assignment:
     cloud: dst
     data: "{{ item }}"
-    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_dst_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_dst_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_dst_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_dst_client_key | default(omit) }}"
   loop: "{{ filtered_user_project_role_assignments }}"

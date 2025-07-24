@@ -1,9 +1,9 @@
-- name: read networks resource file
+- name: Read networks resource file
   os_migrate.os_migrate.read_resources:
     path: "{{ os_migrate_data_dir }}/networks.yml"
   register: read_networks
 
-- name: filter networks to import
+- name: Filter networks to import
   ansible.builtin.set_fact:
     filtered_networks: "{{ (
       read_networks.resources
@@ -11,13 +11,13 @@
         | os_migrate.os_migrate.stringfilter(os_migrate_networks_filter,
                                              attribute='params.name') ) }}"
 
-- name: import networks
+- name: Import networks
   os_migrate.os_migrate.import_network:
     cloud: dst
     data: "{{ item }}"
     filters: "{{ os_migrate_dst_filters }}"
-    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_dst_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_dst_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_dst_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_dst_client_key | default(omit) }}"
   loop: "{{ filtered_networks }}"

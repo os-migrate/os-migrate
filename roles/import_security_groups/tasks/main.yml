@@ -1,9 +1,9 @@
-- name: read security groups resource file
+- name: Read security groups resource file
   os_migrate.os_migrate.read_resources:
     path: "{{ os_migrate_data_dir }}/security_groups.yml"
   register: read_security_groups
 
-- name: filter security_groups to import
+- name: Filter security_groups to import
   ansible.builtin.set_fact:
     filtered_security_groups: "{{ (
       read_security_groups.resources
@@ -11,13 +11,13 @@
         | os_migrate.os_migrate.stringfilter(os_migrate_security_groups_filter,
                                              attribute='params.name') ) }}"
 
-- name: import security groups
+- name: Import security groups
   os_migrate.os_migrate.import_security_group:
     cloud: dst
     data: "{{ item }}"
     filters: "{{ os_migrate_dst_filters }}"
-    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_dst_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_dst_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_dst_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_dst_client_key | default(omit) }}"
   loop: "{{ filtered_security_groups }}"

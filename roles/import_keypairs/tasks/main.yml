@@ -1,9 +1,9 @@
-- name: read keypairs resource file
+- name: Read keypairs resource file
   os_migrate.os_migrate.read_resources:
     path: "{{ os_migrate_data_dir }}/keypairs.yml"
   register: read_keypairs
 
-- name: filter keypairs to import
+- name: Filter keypairs to import
   ansible.builtin.set_fact:
     filtered_keypairs: "{{ (
       read_keypairs.resources
@@ -11,12 +11,12 @@
         | os_migrate.os_migrate.stringfilter(os_migrate_keypairs_filter,
                                              attribute='params.name') ) }}"
 
-- name: import keypairs
+- name: Import keypairs
   os_migrate.os_migrate.import_keypair:
     cloud: dst
     data: "{{ item }}"
-    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_dst_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_dst_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_dst_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_dst_client_key | default(omit) }}"
   loop: "{{ filtered_keypairs }}"
