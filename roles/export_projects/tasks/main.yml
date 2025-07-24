@@ -1,20 +1,20 @@
-- name: scan available projects
+- name: Scan available projects
   openstack.cloud.project_info:
     cloud: src
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key | default(omit) }}"
   register: src_projects_info
 
-- name: create id-name pairs of projects to export
+- name: Create id-name pairs of projects to export
   ansible.builtin.set_fact:
     export_projects_ids_names: "{{ (
       src_projects_info.projects
         | json_query('[*].{name: name, id: id}')
         | sort(attribute='id') ) }}"
 
-- name: filter names of projects to export
+- name: Filter names of projects to export
   ansible.builtin.set_fact:
     export_projects_ids_names: "{{ (
       export_projects_ids_names
@@ -22,13 +22,13 @@
         | os_migrate.os_migrate.stringfilter(os_migrate_projects_filter,
                                              attribute='name') ) }}"
 
-- name: export project
+- name: Export project
   os_migrate.os_migrate.export_project:
     cloud: src
     path: "{{ os_migrate_data_dir }}/projects.yml"
     name: "{{ item['id'] }}"
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key | default(omit) }}"
   loop: "{{ export_projects_ids_names }}"

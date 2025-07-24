@@ -1,21 +1,21 @@
-- name: scan available networks
+- name: Scan available networks
   openstack.cloud.networks_info:
     filters: "{{ os_migrate_src_filters }}"
     cloud: src
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key | default(omit) }}"
   register: src_networks_info
 
-- name: create id-name pairs of networks to export
+- name: Create id-name pairs of networks to export
   ansible.builtin.set_fact:
     export_networks_ids_names: "{{ (
       src_networks_info.networks
         | json_query('[*].{name: name, id: id}')
         | sort(attribute='id') ) }}"
 
-- name: filter names of networks to export
+- name: Filter names of networks to export
   ansible.builtin.set_fact:
     export_networks_ids_names: "{{ (
       export_networks_ids_names
@@ -23,13 +23,13 @@
         | os_migrate.os_migrate.stringfilter(os_migrate_networks_filter,
                                              attribute='name') ) }}"
 
-- name: export network
+- name: Export network
   os_migrate.os_migrate.export_network:
     cloud: src
     path: "{{ os_migrate_data_dir }}/networks.yml"
     name: "{{ item['id'] }}"
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key | default(omit) }}"
   loop: "{{ export_networks_ids_names }}"

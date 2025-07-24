@@ -1,17 +1,17 @@
-- name: scan available user project role assignments
+- name: Scan available user project role assignments
   os_migrate.os_migrate.os_role_assignments_info:
     assignee_types: ["user"]
     scope_types: ["project"]
     cloud: src
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key | default(omit) }}"
   register: src_user_project_role_assignments_info
 
 # We use names instead of IDs because of IDs getting hidden by no_log
 # https://github.com/os-migrate/os-migrate/issues/524
-- name: create name tuples of user project role assignments to export
+- name: Create name tuples of user project role assignments to export
   ansible.builtin.set_fact:
     export_user_project_role_assignments_ids_names: "{{ (
       src_user_project_role_assignments_info.openstack_role_assignments
@@ -24,7 +24,7 @@
 # We filter out entries which have '********'
 # or 'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER' because of the auth issue:
 # https://github.com/os-migrate/os-migrate/issues/524
-- name: create name tuples of user project role assignments to export
+- name: Create name tuples of user project role assignments to export
   ansible.builtin.set_fact:
     export_user_project_role_assignments_ids_names: "{{ (
       export_user_project_role_assignments_ids_names
@@ -36,8 +36,7 @@
                     | [?project_id != `VALUE_SPECIFIED_IN_NO_LOG_PARAMETER`]')
       ) }}"
 
-
-- name: filter names of user project role assignments to export
+- name: Filter names of user project role assignments to export
   ansible.builtin.set_fact:
     export_user_project_role_assignments_ids_names: "{{ (
       export_user_project_role_assignments_ids_names
@@ -45,16 +44,15 @@
         | os_migrate.os_migrate.stringfilter(os_migrate_user_filter,
                                              attribute='user_name') ) }}"
 
-
-- name: export user user_project_role_assignment role assignment
+- name: Export user user_project_role_assignment role assignment
   os_migrate.os_migrate.export_user_project_role_assignment:
     cloud: src
     path: "{{ os_migrate_data_dir }}/user_project_role_assignments.yml"
     user_id: "{{ item['user_id'] }}"
     project_id: "{{ item['project_id'] }}"
     role_id: "{{ item['role_id'] }}"
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key | default(omit) }}"
   loop: "{{ export_user_project_role_assignments_ids_names }}"

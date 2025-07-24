@@ -1,21 +1,21 @@
-- name: scan available security groups
+- name: Scan available security groups
   os_migrate.os_migrate.os_security_groups_info:
     filters: "{{ os_migrate_src_filters }}"
     cloud: src
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key | default(omit) }}"
   register: src_security_groups_info
 
-- name: create id-name pairs of security groups to export
+- name: Create id-name pairs of security groups to export
   ansible.builtin.set_fact:
     export_security_groups_ids_names: "{{ (
       src_security_groups_info.openstack_security_groups
         | json_query('[*].{name: name, id: id}')
         | sort(attribute='id') ) }}"
 
-- name: filter names of security groups to export
+- name: Filter names of security groups to export
   ansible.builtin.set_fact:
     export_security_groups_ids_names: "{{ (
       export_security_groups_ids_names
@@ -23,13 +23,13 @@
       | os_migrate.os_migrate.stringfilter(os_migrate_security_groups_filter,
                                            attribute='name') ) }}"
 
-- name: export security groups
+- name: Export security groups
   os_migrate.os_migrate.export_security_group:
     cloud: src
     path: "{{ os_migrate_data_dir }}/security_groups.yml"
     name: "{{ item['id'] }}"
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key | default(omit) }}"
   loop: "{{ export_security_groups_ids_names }}"

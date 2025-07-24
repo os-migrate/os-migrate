@@ -1,20 +1,20 @@
-- name: scan available users
+- name: Scan available users
   openstack.cloud.identity_user_info:
     cloud: src
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key | default(omit) }}"
   register: src_users_info
 
-- name: create id-name pairs of users to export
+- name: Create id-name pairs of users to export
   ansible.builtin.set_fact:
     export_users_ids_names: "{{ (
       src_users_info.users
         | json_query('[*].{name: name, id: id}')
         | sort(attribute='id') ) }}"
 
-- name: filter names of users to export
+- name: Filter names of users to export
   ansible.builtin.set_fact:
     export_users_ids_names: "{{ (
       export_users_ids_names
@@ -22,13 +22,13 @@
         | os_migrate.os_migrate.stringfilter(os_migrate_users_filter,
                                              attribute='name') ) }}"
 
-- name: export users
+- name: Export users
   os_migrate.os_migrate.export_user:
     cloud: src
     path: "{{ os_migrate_data_dir }}/users.yml"
     name: "{{ item['id'] }}"
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key | default(omit) }}"
   loop: "{{ export_users_ids_names }}"
