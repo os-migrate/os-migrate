@@ -1,17 +1,17 @@
-- name: add both conversion hosts to inventory
+- name: Add both conversion hosts to inventory
   ansible.builtin.import_tasks: conv_hosts_inventory.yml
 
-- name: create folder for link keypairs
+- name: Create folder for link keypairs
   ansible.builtin.file:
     path: "{{ os_migrate_conversion_link_keypair_private_path|dirname }}"
     state: directory
     mode: '0700'
 
-- name: generate a link keypair
+- name: Generate a link keypair
   community.crypto.openssh_keypair:
     path: "{{ os_migrate_conversion_link_keypair_private_path }}"
 
-- name: wait for src conversion host reachability
+- name: Wait for src conversion host reachability
   ansible.builtin.wait_for:
     port: 22
     host: "{{ hostvars['os_migrate_conv_src']['ansible_ssh_host'] }}"
@@ -20,7 +20,7 @@
     timeout: 600
   retries: 10
 
-- name: wait for dst conversion host reachability
+- name: Wait for dst conversion host reachability
   ansible.builtin.wait_for:
     port: 22
     host: "{{ hostvars['os_migrate_conv_dst']['ansible_ssh_host'] }}"
