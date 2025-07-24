@@ -1,36 +1,36 @@
-- name: scan instances for workloads to export
+- name: Scan instances for workloads to export
   openstack.cloud.server_info:
     filters: "{{ os_migrate_src_filters }}"
     cloud: src
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key | default(omit) }}"
   register: src_workloads_info
 
-- name: create id-name pairs of workloads to export
+- name: Create id-name pairs of workloads to export
   ansible.builtin.set_fact:
     export_workloads_ids_names: "{{ (
       src_workloads_info.servers
         | json_query('[*].{name: name, id: id}')
         | sort(attribute='id') ) }}"
 
-- name: filter names of workloads to export
+- name: Filter names of workloads to export
   ansible.builtin.set_fact:
     export_workloads_ids_names: "{{ (
       export_workloads_ids_names
         | os_migrate.os_migrate.stringfilter(os_migrate_workloads_filter,
                                              attribute='name') ) }}"
 
-- name: export workload
+- name: Export workload
   os_migrate.os_migrate.export_workload:
     path: "{{ os_migrate_data_dir }}/workloads.yml"
     name: "{{ item['id'] }}"
     migration_params:
       boot_disk_copy: "{{ os_migrate_workloads_boot_disk_copy }}"
     cloud: src
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key | default(omit) }}"
   loop: "{{ export_workloads_ids_names }}"
