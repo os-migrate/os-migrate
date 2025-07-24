@@ -80,7 +80,7 @@ options:
 EXAMPLES = r"""
 import_volumes.yml:
 
-- name: expose source volume
+  - name: expose source volume
   os_migrate.os_migrate.import_volumes_export:
     cloud: "{{ cloud_vars_src }}"
     conversion_host:
