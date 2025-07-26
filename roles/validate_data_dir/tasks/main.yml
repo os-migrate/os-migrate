@@ -13,7 +13,7 @@
 
 - name: Validate resource files
   os_migrate.os_migrate.validate_resource_files:
-    paths: "{{ resource_files_result.files | map(attribute = 'path') | list }}"
+    paths: "{{ resource_files_result.files | map(attribute='path') | list }}"
   register: validate_data_dir_result
 
 - name: Stop if errors found

@@ -1,4 +1,9 @@
 - name: Run the rhsm tasks
+  when:
+    - >-
+      os_migrate_conversion_rhsm_manage and (
+      os_migrate_conversion_rhsm_username is defined or
+      os_migrate_conversion_rhsm_org_id is defined)
   block:
     - name: Register and auto-subscribe to available content.
       community.general.redhat_subscription:
@@ -34,11 +39,6 @@
     - name: Log the subscription manager output
       ansible.builtin.debug:
         msg: "{{ rhsm_subscription_result }}"
-  when:
-    - >-
-      os_migrate_conversion_rhsm_manage and (
-      os_migrate_conversion_rhsm_username is defined or
-      os_migrate_conversion_rhsm_org_id is defined)
 
 - name: Enabling RHSM repositories
   community.general.rhsm_repository:

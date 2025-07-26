@@ -9,17 +9,14 @@
 
 - name: Create id-name pairs of users to export
   ansible.builtin.set_fact:
-    export_users_ids_names: "{{ (
-      src_users_info.users
-        | json_query('[*].{name: name, id: id}')
-        | sort(attribute='id') ) }}"
+    export_users_ids_names: "{{ (src_users_info.users
+      | json_query('[*].{name: name, id: id}') | sort(attribute='id')) }}"
 
 - name: Filter names of users to export
   ansible.builtin.set_fact:
-    export_users_ids_names: "{{ (
-      export_users_ids_names
-        | os_migrate.os_migrate.stringfilter(os_migrate_users_filter,
-                                             attribute='name') ) }}"
+    export_users_ids_names: "{{ (export_users_ids_names
+      | os_migrate.os_migrate.stringfilter(os_migrate_users_filter,
+       attribute='name')) }}"
 
 - name: Export users
   os_migrate.os_migrate.export_user:

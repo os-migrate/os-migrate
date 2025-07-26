@@ -3,7 +3,7 @@
 
 - name: Create folder for link keypairs
   ansible.builtin.file:
-    path: "{{ os_migrate_conversion_link_keypair_private_path|dirname }}"
+    path: "{{ os_migrate_conversion_link_keypair_private_path | dirname }}"
     state: directory
     mode: '0700'
 

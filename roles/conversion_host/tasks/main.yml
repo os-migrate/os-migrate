@@ -2,10 +2,10 @@
   ansible.builtin.include_tasks: generate_keypair.yml
   when: os_migrate_conversion_keypair_generate | bool
 
-- name: ensure conversion host keypair mode is correct
+- name: Ensure conversion host keypair mode is correct
   ansible.builtin.file:
     path: "{{ os_migrate_conversion_keypair_private_path }}"
-    mode: 0600
+    mode: "0600"
 
 - name: Create a network for the conversion host
   ansible.builtin.include_tasks: create_network.yml

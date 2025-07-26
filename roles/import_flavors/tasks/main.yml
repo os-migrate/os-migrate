@@ -5,10 +5,9 @@
 
 - name: Filter flavors to import
   ansible.builtin.set_fact:
-    filtered_flavors: "{{ (
-      read_flavors.resources
-        | os_migrate.os_migrate.stringfilter(os_migrate_flavors_filter,
-                                             attribute='params.name') ) }}"
+    filtered_flavors: "{{ (read_flavors.resources
+      | os_migrate.os_migrate.stringfilter(os_migrate_flavors_filter,
+       attribute='params.name')) }}"
 
 - name: Import flavors
   os_migrate.os_migrate.import_flavor:

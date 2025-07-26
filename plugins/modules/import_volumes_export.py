@@ -81,16 +81,16 @@ EXAMPLES = r"""
 import_volumes.yml:
 
   - name: expose source volume
-  os_migrate.os_migrate.import_volumes_export:
-    cloud: "{{ cloud_vars_src }}"
-    conversion_host:
-      "{{ os_src_conversion_host_info.openstack_conversion_host }}"
-    data: "{{ detached_volumes }}"
-    ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
-    ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
-    log_dir: "{{ os_migrate_data_dir }}/volume_logs"
-    timeout: "{{ os_migrate_timeout }}"
-  register: exports
+    os_migrate.os_migrate.import_volumes_export:
+      cloud: "{{ cloud_vars_src }}"
+      conversion_host:
+        "{{ os_src_conversion_host_info.openstack_conversion_host }}"
+      data: "{{ detached_volumes }}"
+      ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
+      ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
+      log_dir: "{{ os_migrate_data_dir }}/volume_logs"
+      timeout: "{{ os_migrate_timeout }}"
+    register: exports
 """
 
 RETURN = r"""

@@ -5,10 +5,9 @@
 
 - name: Filter images to import
   ansible.builtin.set_fact:
-    filtered_images: "{{ (
-      read_images.resources
-        | os_migrate.os_migrate.stringfilter(os_migrate_images_filter,
-                                             attribute='params.name') ) }}"
+    filtered_images: "{{ (read_images.resources
+      | os_migrate.os_migrate.stringfilter(os_migrate_images_filter,
+       attribute='params.name')) }}"
 
 - name: Import images
   os_migrate.os_migrate.import_image:

@@ -10,17 +10,14 @@
 
 - name: Create id-name pairs of workloads to export
   ansible.builtin.set_fact:
-    export_workloads_ids_names: "{{ (
-      src_workloads_info.servers
-        | json_query('[*].{name: name, id: id}')
-        | sort(attribute='id') ) }}"
+    export_workloads_ids_names: "{{ (src_workloads_info.servers
+      | json_query('[*].{name: name, id: id}') | sort(attribute='id')) }}"
 
 - name: Filter names of workloads to export
   ansible.builtin.set_fact:
-    export_workloads_ids_names: "{{ (
-      export_workloads_ids_names
-        | os_migrate.os_migrate.stringfilter(os_migrate_workloads_filter,
-                                             attribute='name') ) }}"
+    export_workloads_ids_names: "{{ (export_workloads_ids_names
+      | os_migrate.os_migrate.stringfilter(os_migrate_workloads_filter,
+       attribute='name')) }}"
 
 - name: Export workload
   os_migrate.os_migrate.export_workload:

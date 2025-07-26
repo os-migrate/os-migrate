@@ -10,13 +10,9 @@
 
 - name: Filter detached volumes to import
   ansible.builtin.set_fact:
-    filtered_detached_volumes: "{{ (
-      read_detached_volumes.resources
-        | os_migrate.os_migrate.stringfilter(
-            os_migrate_detached_volumes_filter,
-            attribute='params.name'
-          )
-    ) }}"
+    filtered_detached_volumes: "{{ (read_detached_volumes.resources
+      | os_migrate.os_migrate.stringfilter(os_migrate_detached_volumes_filter,
+       attribute='params.name')) }}"
 
 - name: Create directory for detached volumes migration logs
   ansible.builtin.file:

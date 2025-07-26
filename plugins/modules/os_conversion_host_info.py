@@ -70,12 +70,12 @@ EXAMPLES = r"""
 - os_migrate.os_migrate.os_conversion_host_info:
     server: source-migration-conversion-host
     auth:
-        auth_url: https://dest-osp:13000/v3
-        username: migrate
-        password: migrate
-        project_domain_id: default
-        project_name: migration-destination
-        user_domain_id: default
+      auth_url: https://dest-osp:13000/v3
+      username: migrate
+      password: migrate
+      project_domain_id: default
+      project_name: migration-destination
+      user_domain_id: default
   register: os_dst_conversion_host_info
 """
 

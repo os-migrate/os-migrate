@@ -5,10 +5,9 @@
 
 - name: Filter user project role assignment to import
   ansible.builtin.set_fact:
-    filtered_user_project_role_assignments: "{{ (
-      read_user_project_role_assignments.resources
-        | os_migrate.os_migrate.stringfilter(os_migrate_user_filter,
-                                             attribute='params.project_ref.name') ) }}"
+    filtered_user_project_role_assignments: "{{ (read_user_project_role_assignments.resources
+      | os_migrate.os_migrate.stringfilter(os_migrate_user_filter,
+         attribute='params.project_ref.name')) }}"
 
 - name: Import user project role assignment
   os_migrate.os_migrate.import_user_project_role_assignment:

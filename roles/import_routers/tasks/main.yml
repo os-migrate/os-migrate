@@ -5,10 +5,9 @@
 
 - name: Filter routers to import
   ansible.builtin.set_fact:
-    filtered_routers: "{{ (
-      read_routers.resources
-        | os_migrate.os_migrate.stringfilter(os_migrate_routers_filter,
-                                             attribute='params.name') ) }}"
+    filtered_routers: "{{ (read_routers.resources
+      | os_migrate.os_migrate.stringfilter(os_migrate_routers_filter,
+       attribute='params.name')) }}"
 
 - name: Import routers
   os_migrate.os_migrate.import_router:
