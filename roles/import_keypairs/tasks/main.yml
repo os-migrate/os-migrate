@@ -5,11 +5,10 @@
 
 - name: Filter keypairs to import
   ansible.builtin.set_fact:
-    filtered_keypairs: "{{ (
-      read_keypairs.resources
-        | from_yaml
-        | os_migrate.os_migrate.stringfilter(os_migrate_keypairs_filter,
-                                             attribute='params.name') ) }}"
+    filtered_keypairs: "{{ (read_keypairs.resources
+      | from_yaml
+      | os_migrate.os_migrate.stringfilter(os_migrate_keypairs_filter,
+       attribute='params.name')) }}"
 
 - name: Import keypairs
   os_migrate.os_migrate.import_keypair:

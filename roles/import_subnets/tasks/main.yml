@@ -5,11 +5,10 @@
 
 - name: Filter subnets to import
   ansible.builtin.set_fact:
-    filtered_subnets: "{{ (
-      read_subnets.resources
-        | from_yaml
-        | os_migrate.os_migrate.stringfilter(os_migrate_subnets_filter,
-                                             attribute='params.name') ) }}"
+    filtered_subnets: "{{ (read_subnets.resources
+      | from_yaml
+      | os_migrate.os_migrate.stringfilter(os_migrate_subnets_filter,
+       attribute='params.name')) }}"
 
 - name: Import subnets
   os_migrate.os_migrate.import_subnet:

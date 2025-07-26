@@ -5,11 +5,10 @@
 
 - name: Filter router_interfaces to import
   ansible.builtin.set_fact:
-    filtered_router_interfaces: "{{ (
-      read_router_interfaces.resources
-        | from_yaml
-        | os_migrate.os_migrate.stringfilter(os_migrate_routers_filter,
-                                             attribute='params.device_ref.name') ) }}"
+    filtered_router_interfaces: "{{ (read_router_interfaces.resources
+      | from_yaml
+      | os_migrate.os_migrate.stringfilter(os_migrate_routers_filter,
+       attribute='params.device_ref.name')) }}"
 
 - name: Import router interfaces
   os_migrate.os_migrate.import_router_interface:

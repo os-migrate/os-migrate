@@ -10,18 +10,16 @@
 
 - name: Create id-name pairs of subnets to export
   ansible.builtin.set_fact:
-    export_subnets_ids_names: "{{ (
-      src_subnets_info.subnets
-        | json_query('[*].{name: name, id: id}')
-        | sort(attribute='id') ) }}"
+    export_subnets_ids_names: "{{ (src_subnets_info.subnets
+      | json_query('[*].{name: name, id: id}')
+        | sort(attribute='id')) }}"
 
 - name: Filter names of subnets to export
   ansible.builtin.set_fact:
-    export_subnets_ids_names: "{{ (
-      export_subnets_ids_names
-        | from_yaml
-        | os_migrate.os_migrate.stringfilter(os_migrate_subnets_filter,
-                                             attribute='name') ) }}"
+    export_subnets_ids_names: "{{ (export_subnets_ids_names
+      | from_yaml
+      | os_migrate.os_migrate.stringfilter(os_migrate_subnets_filter,
+       attribute='name')) }}"
 
 - name: Export subnet
   os_migrate.os_migrate.export_subnet:

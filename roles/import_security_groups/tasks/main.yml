@@ -5,11 +5,10 @@
 
 - name: Filter security_groups to import
   ansible.builtin.set_fact:
-    filtered_security_groups: "{{ (
-      read_security_groups.resources
-        | from_yaml
-        | os_migrate.os_migrate.stringfilter(os_migrate_security_groups_filter,
-                                             attribute='params.name') ) }}"
+    filtered_security_groups: "{{ (read_security_groups.resources
+      | from_yaml
+      | os_migrate.os_migrate.stringfilter(os_migrate_security_groups_filter,
+       attribute='params.name')) }}"
 
 - name: Import security groups
   os_migrate.os_migrate.import_security_group:

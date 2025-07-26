@@ -10,18 +10,17 @@
 
 - name: Create id-name pairs of security groups to export
   ansible.builtin.set_fact:
-    export_security_groups_ids_names: "{{ (
-      src_security_groups_info.openstack_security_groups
+    export_security_groups_ids_names: |
+      "{{ (src_security_groups_info.openstack_security_groups
         | json_query('[*].{name: name, id: id}')
-        | sort(attribute='id') ) }}"
+          | sort(attribute='id')) }}"
 
 - name: Filter names of security groups to export
   ansible.builtin.set_fact:
-    export_security_groups_ids_names: "{{ (
-      export_security_groups_ids_names
-        | from_yaml
-        | os_migrate.os_migrate.stringfilter(os_migrate_security_groups_filter,
-                                             attribute='name') ) }}"
+    export_security_groups_ids_names: "{{ (export_security_groups_ids_names
+      | from_yaml
+      | os_migrate.os_migrate.stringfilter(os_migrate_security_groups_filter,
+       attribute='name')) }}"
 
 # In this case we will export all the security groups
 # rules for all the security groups filtered before

@@ -2,12 +2,12 @@
   ansible.builtin.file:
     path: "{{ ansible_env['HOME'] }}/.ssh"
     state: directory
-    mode: 0700
+    mode: "0700"
 
 - name: Insert conversion link public ssh key into authorized keys
   ansible.builtin.blockinfile:
     path: "{{ ansible_env['HOME'] }}/.ssh/authorized_keys"
     marker: "# {mark} CONVERSION LINK KEY"
     create: true
-    mode: 0600
+    mode: "0600"
     block: "{{ lookup('file', os_migrate_conversion_link_keypair_private_path + '.pub') }}"

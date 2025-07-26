@@ -3,7 +3,7 @@
     server: "{{ os_migrate_conversion_host_name }}"
     nat_destination: "{{ os_migrate_conversion_net_name }}"
     network: "{{ os_migrate_conversion_external_network_name }}"
-    floating_ip_address: "{{ os_migrate_conversion_floating_ip_address|default(omit) }}"
+    floating_ip_address: "{{ os_migrate_conversion_floating_ip_address | default(omit) }}"
     state: present
     wait: true
     timeout: "{{ os_migrate_conversion_host_deploy_timeout }}"

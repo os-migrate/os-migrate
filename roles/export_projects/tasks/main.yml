@@ -9,18 +9,16 @@
 
 - name: Create id-name pairs of projects to export
   ansible.builtin.set_fact:
-    export_projects_ids_names: "{{ (
-      src_projects_info.projects
-        | json_query('[*].{name: name, id: id}')
-        | sort(attribute='id') ) }}"
+    export_projects_ids_names: "{{ (src_projects_info.projects
+      | json_query('[*].{name: name, id: id}')
+        | sort(attribute='id')) }}"
 
 - name: Filter names of projects to export
   ansible.builtin.set_fact:
-    export_projects_ids_names: "{{ (
-      export_projects_ids_names
-        | from_yaml
-        | os_migrate.os_migrate.stringfilter(os_migrate_projects_filter,
-                                             attribute='name') ) }}"
+    export_projects_ids_names: "{{ (export_projects_ids_names
+      | from_yaml
+      | os_migrate.os_migrate.stringfilter(os_migrate_projects_filter,
+       attribute='name')) }}"
 
 - name: Export project
   os_migrate.os_migrate.export_project:

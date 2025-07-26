@@ -9,18 +9,16 @@
 
 - name: Create id-name pairs of keypairs to export
   ansible.builtin.set_fact:
-    export_keypairs_ids_names: "{{ (
-      src_keypairs_info.openstack_keypairs
-        | json_query('[*].{name: name, id: id}')
-        | sort(attribute='id') ) }}"
+    export_keypairs_ids_names: "{{ (src_keypairs_info.openstack_keypairs
+      | json_query('[*].{name: name, id: id}')
+        | sort(attribute='id')) }}"
 
 - name: Filter names of keypairs to export
   ansible.builtin.set_fact:
-    export_keypairs_ids_names: "{{ (
-      export_keypairs_ids_names
-        | from_yaml
-        | os_migrate.os_migrate.stringfilter(os_migrate_keypairs_filter,
-                                             attribute='name') ) }}"
+    export_keypairs_ids_names: "{{ (export_keypairs_ids_names
+      | from_yaml
+      | os_migrate.os_migrate.stringfilter(os_migrate_keypairs_filter,
+       attribute='name')) }}"
 
 - name: Export keypair
   os_migrate.os_migrate.export_keypair:
