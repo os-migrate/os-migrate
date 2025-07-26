@@ -40,13 +40,13 @@
 - name: Fail if the user has an unsupported openstacksdk version
   ansible.builtin.assert:
     that:
-      - _installed_openstacksdk_versions is version(os_migrate_common_minimum_openstacksdk_version, '>=')
+      - _installed_openstacksdk_versions is version(prelude_common_minimum_openstacksdk_version, '>=')
     fail_msg: |
       The installed openstacksdk version {{ _installed_openstacksdk_versions }}
-      must be >= than {{ os_migrate_common_minimum_openstacksdk_version }}
+      must be >= than {{ prelude_common_minimum_openstacksdk_version }}
     success_msg: |
       The installed openstacksdk version {{ _installed_openstacksdk_versions }}
-      is >= than {{ os_migrate_common_minimum_openstacksdk_version }}
+      is >= than {{ prelude_common_minimum_openstacksdk_version }}
 
 - name: Write to auth file
   ansible.builtin.template:
