@@ -110,7 +110,7 @@
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host_content
         tasks_from: enable_password_access.yml
-      when: os_migrate_conversion_host_ssh_user_enable_password_access | default(false) | bool
+      when: conversion_host_content_ssh_user_enable_password_access | default(false) | bool
   vars:
     ansible_become_user: root
     ansible_become: true
@@ -123,8 +123,8 @@
   tasks:
     - name: Set src conversion host facts
       ansible.builtin.set_fact:
-        os_migrate_conversion_host_pre_content_hook: "{{ os_migrate_src_conversion_host_pre_content_hook | default(false) }}"
-        os_migrate_conversion_host_post_content_hook: "{{ os_migrate_src_conversion_host_post_content_hook | default(false) }}"
+        conversion_host_content_pre_content_hook: "{{ os_migrate_src_conversion_host_pre_content_hook | default(false) }}"
+        conversion_host_content_post_content_hook: "{{ os_migrate_src_conversion_host_post_content_hook | default(false) }}"
 
 - name: Set destination conversion host facts
   hosts: os_migrate_conv_dst
@@ -134,8 +134,8 @@
   tasks:
     - name: Set dst conversion host facts
       ansible.builtin.set_fact:
-        os_migrate_conversion_host_pre_content_hook: "{{ os_migrate_dst_conversion_host_pre_content_hook | default(false) }}"
-        os_migrate_conversion_host_post_content_hook: "{{ os_migrate_dst_conversion_host_post_content_hook | default(false) }}"
+        conversion_host_content_pre_content_hook: "{{ os_migrate_dst_conversion_host_pre_content_hook | default(false) }}"
+        conversion_host_content_post_content_hook: "{{ os_migrate_dst_conversion_host_post_content_hook | default(false) }}"
 
 - name: Reboot source conversion host
   hosts: migrator
