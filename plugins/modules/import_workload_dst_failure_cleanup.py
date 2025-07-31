@@ -123,8 +123,8 @@ rescue:
       data: "{{ item }}"
       conversion_host:
         "{{ os_src_conversion_host_info.openstack_conversion_host }}"
-      ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
-      ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
+      ssh_key_path: "{{ conversion_host_keypair_private_path }}"
+      ssh_user: "{{ conversion_host_ssh_user }}"
       transfer_uuid: "{{ exports.transfer_uuid }}"
       volume_map: "{{ exports.volume_map }}"
       state_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.state"
