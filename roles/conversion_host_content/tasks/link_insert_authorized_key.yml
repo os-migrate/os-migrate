@@ -10,4 +10,4 @@
     marker: "# {mark} CONVERSION LINK KEY"
     create: true
     mode: "0600"
-    block: "{{ lookup('file', conversion_host_link_keypair_private_path + '.pub') }}"
+    block: "{{ lookup('file', conversion_host_content_link_keypair_private_path + '.pub') }}"

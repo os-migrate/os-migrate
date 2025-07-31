@@ -1,7 +1,7 @@
 - name: Run the rhsm tasks
   when:
     - >-
-      os_migrate_conversion_rhsm_manage and (
+      conversion_host_content_rhsm_manage and (
       os_migrate_conversion_rhsm_username is defined or
       os_migrate_conversion_rhsm_org_id is defined)
   block:
@@ -33,8 +33,8 @@
         username: "{{ os_migrate_conversion_rhsm_username | default(omit) }}"
       register: rhsm_subscription_result
       until: "'subscribed_pool_ids' in rhsm_subscription_result and not rhsm_subscription_result.failed"
-      retries: "{{ os_migrate_conversion_rhsm_retries }}"
-      delay: "{{ os_migrate_conversion_rhsm_delay }}"
+      retries: "{{ conversion_host_content_rhsm_retries }}"
+      delay: "{{ conversion_host_content_rhsm_delay }}"
 
     - name: Log the subscription manager output
       ansible.builtin.debug:

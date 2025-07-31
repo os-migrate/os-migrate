@@ -7,10 +7,10 @@
           {{ ansible_distribution }} {{ ansible_distribution_version }}
 
     - name: Running pre content hook
-      ansible.builtin.shell: "{{ os_migrate_conversion_host_pre_content_hook }}"
+      ansible.builtin.shell: "{{ conversion_host_content_pre_content_hook }}"
       args:
         executable: /bin/bash
-      when: os_migrate_conversion_host_pre_content_hook is string
+      when: conversion_host_content_pre_content_hook is string
 
     - name: Include CentOS tasks
       ansible.builtin.include_tasks: centos.yml
@@ -21,7 +21,7 @@
       when: ansible_distribution in ['RedHat']
 
     - name: Running post content hook
-      ansible.builtin.shell: "{{ os_migrate_conversion_host_post_content_hook }}"
+      ansible.builtin.shell: "{{ conversion_host_content_post_content_hook }}"
       args:
         executable: /bin/bash
-      when: os_migrate_conversion_host_post_content_hook is string
+      when: conversion_host_content_post_content_hook is string

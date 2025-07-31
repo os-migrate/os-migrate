@@ -7,5 +7,5 @@
 - name: Upload conversion link private ssh key
   ansible.builtin.copy:
     dest: "{{ ansible_env['HOME'] }}/.ssh/id_rsa"
-    src: "{{ conversion_host_link_keypair_private_path }}"
+    src: "{{ conversion_host_content_link_keypair_private_path }}"
     mode: "0600"

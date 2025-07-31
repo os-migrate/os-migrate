@@ -3,16 +3,16 @@ conversion_host_content_install: true
 # configured to set up properly the RHSM
 # os_migrate_conversion_rhsm_username: username
 # os_migrate_conversion_rhsm_password: password
-os_migrate_conversion_rhsm_retries: 5
-os_migrate_conversion_rhsm_delay: 10
+conversion_host_content_rhsm_retries: 5
+conversion_host_content_rhsm_delay: 10
 
-os_migrate_conversion_host_pre_content_hook: false
-os_migrate_conversion_host_post_content_hook: false
+conversion_host_content_pre_content_hook: false
+conversion_host_content_post_content_hook: false
 
-os_migrate_conversion_rhsm_manage: true
+conversion_host_content_rhsm_manage: true
 
 
-conversion_host_link_keypair_private_path: "{{ os_migrate_data_dir }}/conversion/link-ssh.key"
-os_migrate_conversion_host_ssh_user: cloud-user
-os_migrate_conversion_host_ssh_user_enable_password_access: false
-os_migrate_conversion_host_ssh_user_password: weak_password_disabled_by_default
+conversion_host_content_link_keypair_private_path: "{{ os_migrate_data_dir }}/conversion/link-ssh.key"
+conversion_host_content_ssh_user: cloud-user
+conversion_host_content_ssh_user_enable_password_access: false
+conversion_host_content_ssh_user_password: weak_password_disabled_by_default
