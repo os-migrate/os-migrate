@@ -194,11 +194,11 @@ os_migrate_dst_region_name: regionOne
 
 os_migrate_data_dir: /root/os_migrate/local/migrate-data
 
-os_migrate_conversion_host_ssh_user: cloud-user
+conversion_host_ssh_user: cloud-user
 os_migrate_src_conversion_external_network_name: nova
 os_migrate_dst_conversion_external_network_name: nova
 os_migrate_conversion_flavor_name: m1.large
-os_migrate_conversion_image_name: CentOS-Stream-GenericCloud-8-20220913.0.x86_64.qcow2
+conversion_host_image_name: CentOS-Stream-GenericCloud-8-20220913.0.x86_64.qcow2
 
 os_migrate_src_osm_server_flavor: m1.xtiny
 os_migrate_src_osm_server_image: cirros-0.4.0-x86_64-disk.img
@@ -210,8 +210,8 @@ os_migrate_dst_validate_certs: False
 os_migrate_src_release: 16
 os_migrate_dst_release: 16
 
-os_migrate_src_conversion_net_mtu: 1400
-os_migrate_dst_conversion_net_mtu: 1400
+conversion_host_src_net_mtu: 1400
+conversion_host_dst_net_mtu: 1400
 ```
 
 Run the migration suite using the above steps.

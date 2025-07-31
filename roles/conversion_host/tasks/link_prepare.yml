@@ -3,13 +3,13 @@
 
 - name: Create folder for link keypairs
   ansible.builtin.file:
-    path: "{{ os_migrate_conversion_link_keypair_private_path | dirname }}"
+    path: "{{ conversion_host_link_keypair_private_path | dirname }}"
     state: directory
     mode: '0700'
 
 - name: Generate a link keypair
   community.crypto.openssh_keypair:
-    path: "{{ os_migrate_conversion_link_keypair_private_path }}"
+    path: "{{ conversion_host_link_keypair_private_path }}"
 
 - name: Wait for src conversion host reachability
   ansible.builtin.wait_for:

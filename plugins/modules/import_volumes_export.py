@@ -86,8 +86,8 @@ import_volumes.yml:
       conversion_host:
         "{{ os_src_conversion_host_info.openstack_conversion_host }}"
       data: "{{ detached_volumes }}"
-      ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
-      ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
+      ssh_key_path: "{{ conversion_host_keypair_private_path }}"
+      ssh_user: "{{ conversion_host_ssh_user }}"
       log_dir: "{{ os_migrate_data_dir }}/volume_logs"
       timeout: "{{ os_migrate_timeout }}"
     register: exports

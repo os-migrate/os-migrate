@@ -344,8 +344,8 @@ Auth URLs and network names will change based on your environment.
     os_migrate_src_release: 16
     os_migrate_dst_release: 16
 
-    os_migrate_src_conversion_net_mtu: 1400
-    os_migrate_dst_conversion_net_mtu: 1400
+    conversion_host_src_net_mtu: 1400
+    conversion_host_dst_net_mtu: 1400
 
 Run e2e test using the OS Migrate toolbox and the above config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
