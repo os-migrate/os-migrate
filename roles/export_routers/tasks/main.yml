@@ -17,7 +17,7 @@
   ansible.builtin.set_fact:
     export_routers_ids_names: "{{ (export_routers_ids_names
       | from_yaml
-      | os_migrate.os_migrate.stringfilter(os_migrate_routers_filter,
+      | os_migrate.os_migrate.stringfilter(export_routers_filter,
        attribute='name')) }}"
 
 - name: Export router

@@ -40,7 +40,7 @@
     export_user_project_role_assignments_ids_names: |
       "{{ (export_user_project_role_assignments_ids_names
         | from_yaml
-        | os_migrate.os_migrate.stringfilter(os_migrate_user_filter,
+        | os_migrate.os_migrate.stringfilter(export_user_project_role_assignments_filter,
          attribute='user_name')) }}"
 
 - name: Export user user_project_role_assignment role assignment

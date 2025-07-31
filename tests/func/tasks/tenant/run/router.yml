@@ -7,7 +7,7 @@
   ansible.builtin.include_role:
     name: os_migrate.os_migrate.export_routers
   vars:
-    os_migrate_routers_filter:
+    export_routers_filter:
       - regex: '^osm_'
 
 - name: load exported data

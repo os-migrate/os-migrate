@@ -19,7 +19,7 @@
   ansible.builtin.set_fact:
     export_security_groups_ids_names: "{{ (export_security_groups_ids_names
       | from_yaml
-      | os_migrate.os_migrate.stringfilter(os_migrate_security_groups_filter,
+      | os_migrate.os_migrate.stringfilter(export_security_group_rules_filter,
        attribute='name')) }}"
 
 # In this case we will export all the security groups

@@ -2,7 +2,7 @@
   ansible.builtin.include_role:
     name: os_migrate.os_migrate.export_users
   vars:
-    os_migrate_users_filter:
+    export_users_filter:
       - regex: '^osm_'
 
 # TODO: Set domain to osmdst_domain when we support migrating domains.

@@ -1,2 +1,2 @@
-os_migrate_projects_filter:
+export_projects_filter:
   - regex: .*
