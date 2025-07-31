@@ -14,14 +14,14 @@
         # skipping the universal conversion host (osm_uch)
         # which is used to move the VM's.
         # We create it on in seed.yml but we dont export it.
-        os_migrate_workloads_filter:
+        export_workloads_filter:
           - regex: '^osm_(?!uch)'
 
     - name: export detached volumes
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.export_detached_volumes
       vars:
-        os_migrate_volumes_filter:
+        export_detached_volumes_filter:
           - regex: '^osm_detached_volume'
       when: test_detached_volumes|default(false)|bool
 

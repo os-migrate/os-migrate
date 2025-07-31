@@ -7,7 +7,7 @@
   ansible.builtin.include_role:
     name: os_migrate.os_migrate.export_images
   vars:
-    os_migrate_images_filter:
+    export_images_filter:
       - regex: '^osm_'
 
 - name: load exported data

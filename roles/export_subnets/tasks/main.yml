@@ -17,7 +17,7 @@
 - name: Filter names of subnets to export
   ansible.builtin.set_fact:
     export_subnets_ids_names: "{{ (export_subnets_ids_names
-      | os_migrate.os_migrate.stringfilter(os_migrate_subnets_filter,
+      | os_migrate.os_migrate.stringfilter(export_subnets_filter,
        attribute='name')) }}"
 
 - name: Export subnet

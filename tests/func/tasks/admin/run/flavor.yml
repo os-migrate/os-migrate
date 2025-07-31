@@ -2,7 +2,7 @@
   ansible.builtin.include_role:
     name: os_migrate.os_migrate.export_flavors
   vars:
-    os_migrate_flavors_filter:
+    export_flavors_filter:
       - regex: '^osm_'
 
 - name: set destination flavor name
