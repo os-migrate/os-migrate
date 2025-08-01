@@ -701,7 +701,7 @@ class OpenstackVolumeExport(OpenStackVolumeBase):
                 wait=True,
                 name=image.name,
                 timeout=self.timeout,
-                size=image.min_disk,
+                size=max(image.size // (1024**3), image.min_disk),
             )
             self.volume_map["/dev/vda"] = dict(
                 source_dev=None,
