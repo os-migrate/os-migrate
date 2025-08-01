@@ -47,13 +47,13 @@
   when: os_migrate_conversion_rhsm_repositories is defined
 
 - name: Update all packages
-  ansible.builtin.yum:
+  ansible.builtin.dnf:
     name: '*'
     state: latest
   when: do_yum_update|default(false)|bool
 
 - name: Install content
-  ansible.builtin.yum:
+  ansible.builtin.dnf:
     name:
       - nbdkit
       - nbdkit-basic-plugins

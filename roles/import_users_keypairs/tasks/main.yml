@@ -6,14 +6,14 @@
 - name: Filter users' keypairs to import based on user name
   ansible.builtin.set_fact:
     filtered_users_keypairs: "{{ (read_users_keypairs.resources
-      | os_migrate.os_migrate.stringfilter(os_migrate_users_filter,
+      | os_migrate.os_migrate.stringfilter(import_users_keypairs_users_filter,
          attribute='params.user_ref.name')) }}"
 
 - name: Filter users' keypairs to import based on keypair name
   ansible.builtin.set_fact:
     filtered_users_keypairs: "{{ (filtered_users_keypairs
       | from_yaml
-      | os_migrate.os_migrate.stringfilter(os_migrate_keypairs_filter,
+      | os_migrate.os_migrate.stringfilter(import_users_keypairs_filter,
          attribute='params.name')) }}"
 
 - name: Import users_keypairs

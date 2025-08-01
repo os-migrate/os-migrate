@@ -112,10 +112,10 @@ EXAMPLES = r"""
     conversion_host:
       "{{ os_src_conversion_host_info.openstack_conversion_host }}"
     data: "{{ detached_volumes }}"
-    ssh_key_path: "{{ conversion_host_keypair_private_path }}"
+    ssh_key_path: "{{ import_detached_volumes_keypair_private_path }}"
     ssh_user: "{{ conversion_host_ssh_user }}"
     log_dir: "{{ os_migrate_data_dir }}/volume_logs"
-    timeout: "{{ os_migrate_timeout }}"
+    timeout: "{{ import_detached_volumes_timeout }}"
   register: exports
 
 - name: transfer volumes to destination
@@ -127,7 +127,7 @@ EXAMPLES = r"""
     client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
     conversion_host:
       "{{ os_dst_conversion_host_info.openstack_conversion_host }}"
-    ssh_key_path: "{{ conversion_host_keypair_private_path }}"
+    ssh_key_path: "{{ import_detached_volumes_keypair_private_path }}"
     ssh_user: "{{ conversion_host_ssh_user }}"
     transfer_uuid: "{{ exports.transfer_uuid }}"
     src_conversion_host_address:
@@ -135,7 +135,7 @@ EXAMPLES = r"""
     volume_map: "{{ exports.volume_map }}"
     log_file: "{{ exports.log_file }}"
     state_file: "{{ exports.state_file }}"
-    timeout: "{{ os_migrate_timeout }}"
+    timeout: "{{ import_detached_volumes_timeout }}"
   register: transfer
 
 - name: clean up in the source cloud after migration
@@ -146,13 +146,13 @@ EXAMPLES = r"""
     client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
     conversion_host: "{{ os_src_conversion_host_info.openstack_conversion_host }}"
-    ssh_key_path: "{{ conversion_host_keypair_private_path }}"
+    ssh_key_path: "{{ import_detached_volumes_keypair_private_path }}"
     ssh_user: "{{ conversion_host_ssh_user }}"
     transfer_uuid: "{{ exports.transfer_uuid }}"
     volume_map: "{{ exports.volume_map }}"
     log_file: "{{ exports.log_file }}"
     state_file: "{{ exports.state_file }}"
-    timeout: "{{ os_migrate_timeout }}"
+    timeout: "{{ import_detached_volumes_timeout }}"
 """
 
 RETURN = r"""

@@ -7,14 +7,14 @@
   ansible.builtin.set_fact:
     filtered_security_group_rules: "{{ (read_security_group_rules.resources
       | from_yaml
-      | os_migrate.os_migrate.stringfilter(os_migrate_security_groups_filter,
+      | os_migrate.os_migrate.stringfilter(import_security_group_rules_filter,
        attribute='params.security_group_ref.name')) }}"
 
 - name: Import security_group_rules
   os_migrate.os_migrate.import_security_group_rule:
     cloud: dst
     data: "{{ item }}"
-    filters: "{{ os_migrate_dst_filters }}"
+    filters: "{{ prelude_dst_filters }}"
     validate_certs: "{{ os_migrate_dst_validate_certs | default(omit) }}"
     ca_cert: "{{ os_migrate_dst_ca_cert | default(omit) }}"
     client_cert: "{{ os_migrate_dst_client_cert | default(omit) }}"
