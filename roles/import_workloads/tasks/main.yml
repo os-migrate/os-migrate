@@ -11,7 +11,7 @@
 - name: Filter workloads to import
   ansible.builtin.set_fact:
     filtered_workloads: "{{ (read_workloads.resources
-      | os_migrate.os_migrate.stringfilter(os_migrate_workloads_filter,
+      | os_migrate.os_migrate.stringfilter(import_workloads_filter,
        attribute='params.name')) }}"
 
 - name: Create directory for workload migration logs

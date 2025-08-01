@@ -1,4 +1,4 @@
-# NOTE: os_image_info doesn't support os_migrate_src_filters, we apply
+# NOTE: os_image_info doesn't support prelude_src_filters, we apply
 # the filters manually below.
 - name: Scan available images
   openstack.cloud.image_info:
@@ -18,11 +18,11 @@
 - name: Filter images to export by project
   ansible.builtin.set_fact:
     export_images_ids_names: "{{ (export_images_ids_names
-      | json_query(\"[?owner=='\" + os_migrate_src_filters['project_id'] + \"']\")
+      | json_query(\"[?owner=='\" + prelude_src_filters['project_id'] + \"']\")
         | sort(attribute='id')) }}"
   when:
-    - os_migrate_src_filters is defined
-    - os_migrate_src_filters['project_id'] is defined
+    - prelude_src_filters is defined
+    - prelude_src_filters['project_id'] is defined
 
 - name: Filter names of images to export
   ansible.builtin.set_fact:

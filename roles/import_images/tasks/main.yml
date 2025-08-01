@@ -6,7 +6,7 @@
 - name: Filter images to import
   ansible.builtin.set_fact:
     filtered_images: "{{ (read_images.resources
-      | os_migrate.os_migrate.stringfilter(os_migrate_images_filter,
+      | os_migrate.os_migrate.stringfilter(import_images_filter,
        attribute='params.name')) }}"
 
 - name: Import images
@@ -14,8 +14,8 @@
     cloud: dst
     data: "{{ item }}"
     blob_path: >-
-      {{ os_migrate_image_blobs_dir }}/{{ item['_info']['id'] }}-{{ item['params']['name'] }}
-    filters: "{{ os_migrate_dst_filters }}"
+      {{ import_images_blobs_dir }}/{{ item['_info']['id'] }}-{{ item['params']['name'] }}
+    filters: "{{ prelude_dst_filters }}"
     validate_certs: "{{ os_migrate_dst_validate_certs | default(omit) }}"
     ca_cert: "{{ os_migrate_dst_ca_cert | default(omit) }}"
     client_cert: "{{ os_migrate_dst_client_cert | default(omit) }}"

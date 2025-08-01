@@ -6,7 +6,7 @@
 - name: Filter users to import
   ansible.builtin.set_fact:
     filtered_users: "{{ (read_users.resources
-      | os_migrate.os_migrate.stringfilter(os_migrate_users_filter,
+      | os_migrate.os_migrate.stringfilter(import_users_filter,
          attribute='params.name')) }}"
 
 - name: Import users

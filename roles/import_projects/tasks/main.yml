@@ -6,7 +6,7 @@
 - name: Filter projects to import
   ansible.builtin.set_fact:
     filtered_projects: "{{ (read_projects.resources
-      | os_migrate.os_migrate.stringfilter(os_migrate_projects_filter,
+      | os_migrate.os_migrate.stringfilter(import_projects_filter,
        attribute='params.name')) }}"
 
 - name: Import projects

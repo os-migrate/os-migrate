@@ -11,6 +11,7 @@
       args:
         executable: /bin/bash
       when: conversion_host_content_pre_content_hook is string
+      changed_when: false
 
     - name: Include CentOS tasks
       ansible.builtin.include_tasks: centos.yml
@@ -25,3 +26,4 @@
       args:
         executable: /bin/bash
       when: conversion_host_content_post_content_hook is string
+      changed_when: false
