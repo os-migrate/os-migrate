@@ -53,7 +53,7 @@ EXAMPLES = r"""
       username: user
       password: password
       project_name: someproject
-    name:  secgroup
+    name: secgroup
 """
 
 RETURN = r"""

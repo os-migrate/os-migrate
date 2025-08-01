@@ -1,29 +1,29 @@
-- name: delete os_migrate conversion router
+- name: Delete os_migrate conversion router
   openstack.cloud.router:
     name: "{{ os_migrate_conversion_router_name }}"
     state: absent
     cloud: "{{ os_migrate_conversion_cloud }}"
-    validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_conversion_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_conversion_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_conversion_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_conversion_client_key | default(omit) }}"
 
-- name: delete os_migrate conversion subnet
+- name: Delete os_migrate conversion subnet
   openstack.cloud.subnet:
     name: "{{ os_migrate_conversion_subnet_name }}"
     state: absent
     cloud: "{{ os_migrate_conversion_cloud }}"
-    validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_conversion_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_conversion_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_conversion_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_conversion_client_key | default(omit) }}"
 
-- name: delete os_migrate conversion net
+- name: Delete os_migrate conversion net
   openstack.cloud.network:
     name: "{{ os_migrate_conversion_net_name }}"
     state: absent
     cloud: "{{ os_migrate_conversion_cloud }}"
-    validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_conversion_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_conversion_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_conversion_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_conversion_client_key | default(omit) }}"

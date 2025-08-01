@@ -110,31 +110,31 @@ options:
 """
 
 EXAMPLES = r"""
-  rescue:
-    - name: clean up in the destination cloud after migration failure
-      os_migrate.os_migrate.import_workload_dst_failure_cleanup:
-        auth: "{{ os_migrate_src_auth }}"
-        auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
-        region_name: "{{ os_migrate_src_region_name|default(omit) }}"
-        validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-        ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-        client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-        client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-        data: "{{ item }}"
-        conversion_host:
-          "{{ os_src_conversion_host_info.openstack_conversion_host }}"
-        ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
-        ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
-        transfer_uuid: "{{ exports.transfer_uuid }}"
-        volume_map: "{{ exports.volume_map }}"
-        state_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.state"
-        log_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.log"
-      when:
-        - prelim.changed
-        - os_migrate_workload_cleanup_on_failure
+rescue:
+  - name: clean up in the destination cloud after migration failure
+    os_migrate.os_migrate.import_workload_dst_failure_cleanup:
+      auth: "{{ os_migrate_src_auth }}"
+      auth_type: "{{ os_migrate_src_auth_type|default(omit) }}"
+      region_name: "{{ os_migrate_src_region_name|default(omit) }}"
+      validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
+      ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
+      client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
+      client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+      data: "{{ item }}"
+      conversion_host:
+        "{{ os_src_conversion_host_info.openstack_conversion_host }}"
+      ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
+      ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
+      transfer_uuid: "{{ exports.transfer_uuid }}"
+      volume_map: "{{ exports.volume_map }}"
+      state_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.state"
+      log_file: "{{ os_migrate_data_dir }}/{{ prelim.server_name }}.log"
+    when:
+      - prelim.changed
+      - os_migrate_workload_cleanup_on_failure
 
-    - fail:
-        msg: "Failed to import {{ item.params.name }}!"
+  - fail:
+      msg: "Failed to import {{ item.params.name }}!"
 """
 
 RETURN = r"""

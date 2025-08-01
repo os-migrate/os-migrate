@@ -6,7 +6,7 @@
           Conversion Host OS is
           {{ ansible_distribution }} {{ ansible_distribution_version }}
 
-    - name: running pre content hook
+    - name: Running pre content hook
       ansible.builtin.shell: "{{ os_migrate_conversion_host_pre_content_hook }}"
       args:
         executable: /bin/bash
@@ -20,7 +20,7 @@
       ansible.builtin.include_tasks: rhel.yml
       when: ansible_distribution in ['RedHat']
 
-    - name: running post content hook
+    - name: Running post content hook
       ansible.builtin.shell: "{{ os_migrate_conversion_host_post_content_hook }}"
       args:
         executable: /bin/bash

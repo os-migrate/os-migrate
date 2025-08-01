@@ -73,8 +73,8 @@ EXAMPLES = r"""
     data:
       params:
         fixed_ips_names:
-        - ip_address: 192.168.0.10
-          subnet_name: osm_subnet
+          - ip_address: 192.168.0.10
+            subnet_name: osm_subnet
         router_name: osm_router
       type: openstack.network.RouterInterface
 """

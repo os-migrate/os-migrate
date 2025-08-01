@@ -1,21 +1,21 @@
-- name: create the conversion host floating IP with a predefined IP
+- name: Create the conversion host floating IP with a predefined IP
   openstack.cloud.floating_ip:
     server: "{{ os_migrate_conversion_host_name }}"
     nat_destination: "{{ os_migrate_conversion_net_name }}"
     network: "{{ os_migrate_conversion_external_network_name }}"
-    floating_ip_address: "{{ os_migrate_conversion_floating_ip_address|default(omit) }}"
+    floating_ip_address: "{{ os_migrate_conversion_floating_ip_address | default(omit) }}"
     state: present
     wait: true
     timeout: "{{ os_migrate_conversion_host_deploy_timeout }}"
     reuse: true
     cloud: "{{ os_migrate_conversion_cloud }}"
-    validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_conversion_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_conversion_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_conversion_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_conversion_client_key | default(omit) }}"
   when: os_migrate_conversion_floating_ip_address is defined and os_migrate_conversion_floating_ip_address is string
 
-- name: create the conversion host floating IP with auto IP enabled
+- name: Create the conversion host floating IP with auto IP enabled
   openstack.cloud.floating_ip:
     server: "{{ os_migrate_conversion_host_name }}"
     network: "{{ os_migrate_conversion_external_network_name }}"
@@ -25,8 +25,8 @@
     timeout: "{{ os_migrate_conversion_host_deploy_timeout }}"
     reuse: true
     cloud: "{{ os_migrate_conversion_cloud }}"
-    validate_certs: "{{ os_migrate_conversion_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_conversion_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_conversion_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_conversion_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_conversion_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_conversion_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_conversion_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_conversion_client_key | default(omit) }}"
   when: os_migrate_conversion_floating_ip_address is defined and not os_migrate_conversion_floating_ip_address

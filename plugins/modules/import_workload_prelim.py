@@ -84,83 +84,82 @@ options:
 EXAMPLES = r"""
 main.yml:
 
-- name: validate loaded resources
-  os_migrate.os_migrate.validate_resource_files:
-    paths:
-      - "{{ os_migrate_data_dir }}/workloads.yml"
-  register: workloads_file_validation
-  when: import_workloads_validate_file
+  - name: validate loaded resources
+    os_migrate.os_migrate.validate_resource_files:
+      paths:
+        - "{{ os_migrate_data_dir }}/workloads.yml"
+    register: workloads_file_validation
+    when: import_workloads_validate_file
 
-- name: read workloads resource file
-  os_migrate.os_migrate.read_resources:
-    path: "{{ os_migrate_data_dir }}/workloads.yml"
-  register: read_workloads
+  - name: read workloads resource file
+    os_migrate.os_migrate.read_resources:
+      path: "{{ os_migrate_data_dir }}/workloads.yml"
+    register: read_workloads
 
-- name: get source conversion host address
-  os_migrate.os_migrate.os_conversion_host_info:
-    auth:
+  - name: get source conversion host address
+    os_migrate.os_migrate.os_conversion_host_info:
+      auth:
         auth_url: https://src-osp:13000/v3
         username: migrate
         password: migrate
         project_domain_id: default
         project_name: migration-source
         user_domain_id: default
-    server_id: ce4dda96-5d8e-4b67-aee2-9845cdc943fe
-  register: os_src_conversion_host_info
+      server_id: ce4dda96-5d8e-4b67-aee2-9845cdc943fe
+    register: os_src_conversion_host_info
 
-- name: get destination conversion host address
-  os_migrate.os_migrate.os_conversion_host_info:
-    auth:
+  - name: get destination conversion host address
+    os_migrate.os_migrate.os_conversion_host_info:
+      auth:
         auth_url: https://dest-osp:13000/v3
         username: migrate
         password: migrate
         project_domain_id: default
         project_name: migration-destination
         user_domain_id: default
-    server_id: 2d2afe57-ace5-4187-8fca-5f10f9059ba1
-  register: os_dst_conversion_host_info
+      server_id: 2d2afe57-ace5-4187-8fca-5f10f9059ba1
+    register: os_dst_conversion_host_info
 
-- name: import workloads
-  include_tasks: workload.yml
-  loop: "{{ read_workloads.resources }}"
-
+  - name: import workloads
+    include_tasks: workload.yml
+    loop: "{{ read_workloads.resources }}"
 
 
 workload.yml:
 
-- block:
-  - name: preliminary setup for workload import
-    os_migrate.os_migrate.import_workload_prelim:
-      auth:
+  - block:
+    - name: preliminary setup for workload import
+      os_migrate.os_migrate.import_workload_prelim:
+        auth:
           auth_url: https://dest-osp:13000/v3
           username: migrate
           password: migrate
           project_domain_id: default
           project_name: migration-destination
           user_domain_id: default
-      validate_certs: False
-      src_conversion_host: "{{ os_src_conversion_host_info.openstack_conversion_host }}"
-      src_auth:
+        validate_certs: false
+        src_conversion_host: "{{ os_src_conversion_host_info.openstack_conversion_host }}"
+        src_auth:
           auth_url: https://src-osp:13000/v3
           username: migrate
           password: migrate
           project_domain_id: default
           project_name: migration-source
           user_domain_id: default
-      src_validate_certs: False
-      data: "{{ item }}"
-      log_dir: "{{ os_migrate_data_dir }}/workload_logs"
-    register: prelim
+        src_validate_certs: false
+        data: "{{ item }}"
+        log_dir: "{{ os_migrate_data_dir }}/workload_logs"
+      register: prelim
 
-  - debug:
-      msg:
-        - "{{ prelim.server_name }} log file: {{ prelim.log_file }}"
-        - "{{ prelim.server_name }} progress file: {{ prelim.state_file }}"
-    when: prelim.changed
-
-  rescue:
     - debug:
-        msg: "Failed to begin import of {{ prelim.server_name }}!"
+        msg:
+          - "{{ prelim.server_name }} log file: {{ prelim.log_file }}"
+          - "{{ prelim.server_name }} progress file: {{ prelim.state_file }}"
+      when: prelim.changed
+
+    rescue:
+      - debug:
+          msg: "Failed to begin import of {{ prelim.server_name }}!"
 """
 
 RETURN = r"""

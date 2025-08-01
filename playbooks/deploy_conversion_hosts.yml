@@ -1,199 +1,208 @@
-- hosts: migrator
+- name: Deploy conversion hosts
+  hosts: migrator
   environment:
-    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path | default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
   tasks:
-    - name: deploy the src conversion host inventory
+    - name: Deploy the src conversion host inventory
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host
       vars:
         os_migrate_conversion_host_name: "{{ os_migrate_src_conversion_host_name }}"
-        os_migrate_conversion_image_name: "{{ os_migrate_src_conversion_image_name|default('os_migrate_conv') }}"
-        os_migrate_conversion_net_name: "{{ os_migrate_src_conversion_net_name|default('os_migrate_conv') }}"
-        os_migrate_conversion_subnet_name: "{{ os_migrate_src_conversion_subnet_name|default('os_migrate_conv') }}"
-        os_migrate_conversion_router_name: "{{ os_migrate_src_conversion_router_name|default('os_migrate_conv') }}"
-        os_migrate_conversion_secgroup_name: "{{ os_migrate_src_conversion_secgroup_name|default('os_migrate_conv') }}"
-        os_migrate_conversion_keypair_name: "{{ os_migrate_src_conversion_keypair_name|default('os_migrate_conv') }}"
-        os_migrate_conversion_host_boot_from_volume: "{{ os_migrate_src_conversion_host_boot_from_volume|default(omit) }}"
-        os_migrate_conversion_host_volume_size: "{{ os_migrate_src_conversion_host_volume_size|default(omit) }}"
-        os_migrate_conversion_availability_zone: "{{ os_migrate_src_conversion_availability_zone|default(omit) }}"
+        os_migrate_conversion_image_name: "{{ os_migrate_src_conversion_image_name | default('os_migrate_conv') }}"
+        os_migrate_conversion_net_name: "{{ os_migrate_src_conversion_net_name | default('os_migrate_conv') }}"
+        os_migrate_conversion_subnet_name: "{{ os_migrate_src_conversion_subnet_name | default('os_migrate_conv') }}"
+        os_migrate_conversion_router_name: "{{ os_migrate_src_conversion_router_name | default('os_migrate_conv') }}"
+        os_migrate_conversion_secgroup_name: "{{ os_migrate_src_conversion_secgroup_name | default('os_migrate_conv') }}"
+        os_migrate_conversion_keypair_name: "{{ os_migrate_src_conversion_keypair_name | default('os_migrate_conv') }}"
+        os_migrate_conversion_host_boot_from_volume: "{{ os_migrate_src_conversion_host_boot_from_volume | default(omit) }}"
+        os_migrate_conversion_host_volume_size: "{{ os_migrate_src_conversion_host_volume_size | default(omit) }}"
+        os_migrate_conversion_availability_zone: "{{ os_migrate_src_conversion_availability_zone | default(omit) }}"
         os_migrate_conversion_cloud: src
-        os_migrate_conversion_validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-        os_migrate_conversion_ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-        os_migrate_conversion_client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-        os_migrate_conversion_client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+        os_migrate_conversion_validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+        os_migrate_conversion_ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+        os_migrate_conversion_client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+        os_migrate_conversion_client_key: "{{ os_migrate_src_client_key | default(omit) }}"
         os_migrate_conversion_flavor_name:
-          "{{ os_migrate_src_conversion_flavor_name|default(omit) }}"
+          "{{ os_migrate_src_conversion_flavor_name | default(omit) }}"
         os_migrate_conversion_external_network_name:
-          "{{ os_migrate_src_conversion_external_network_name|default('') }}"
-        os_migrate_conversion_net_mtu: "{{ os_migrate_src_conversion_net_mtu|default(omit) }}"
+          "{{ os_migrate_src_conversion_external_network_name | default('') }}"
+        os_migrate_conversion_net_mtu: "{{ os_migrate_src_conversion_net_mtu | default(omit) }}"
         os_migrate_conversion_subnet_dns_nameservers:
-          "{{ os_migrate_src_conversion_subnet_dns_nameservers|default(omit) }}"
-        os_migrate_conversion_manage_network: "{{ os_migrate_src_conversion_manage_network|default(true) }}"
-        os_migrate_conversion_manage_fip: "{{ os_migrate_src_conversion_manage_fip|default(true) }}"
-        os_migrate_conversion_floating_ip_address: "{{ os_migrate_src_conversion_floating_ip_address|default(false) }}"
-      when: os_migrate_deploy_src_conversion_host|default(true)|bool
+          "{{ os_migrate_src_conversion_subnet_dns_nameservers | default(omit) }}"
+        os_migrate_conversion_manage_network: "{{ os_migrate_src_conversion_manage_network | default(true) }}"
+        os_migrate_conversion_manage_fip: "{{ os_migrate_src_conversion_manage_fip | default(true) }}"
+        os_migrate_conversion_floating_ip_address: "{{ os_migrate_src_conversion_floating_ip_address | default(false) }}"
+      when: os_migrate_deploy_src_conversion_host | default(true) | bool
 
-    - name: deploy the dst conversion host inventory
+    - name: Deploy the dst conversion host inventory
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host
       vars:
         os_migrate_conversion_host_name: "{{ os_migrate_dst_conversion_host_name }}"
-        os_migrate_conversion_image_name: "{{ os_migrate_dst_conversion_image_name|default('os_migrate_conv') }}"
-        os_migrate_conversion_net_name: "{{ os_migrate_dst_conversion_net_name|default('os_migrate_conv') }}"
-        os_migrate_conversion_subnet_name: "{{ os_migrate_dst_conversion_subnet_name|default('os_migrate_conv') }}"
-        os_migrate_conversion_router_name: "{{ os_migrate_dst_conversion_router_name|default('os_migrate_conv') }}"
-        os_migrate_conversion_secgroup_name: "{{ os_migrate_dst_conversion_secgroup_name|default('os_migrate_conv') }}"
-        os_migrate_conversion_keypair_name: "{{ os_migrate_dst_conversion_keypair_name|default('os_migrate_conv') }}"
-        os_migrate_conversion_host_boot_from_volume: "{{ os_migrate_dst_conversion_host_boot_from_volume|default(omit) }}"
-        os_migrate_conversion_host_volume_size: "{{ os_migrate_dst_conversion_host_volume_size|default(omit) }}"
-        os_migrate_conversion_availability_zone: "{{ os_migrate_dst_conversion_availability_zone|default(omit) }}"
+        os_migrate_conversion_image_name: "{{ os_migrate_dst_conversion_image_name | default('os_migrate_conv') }}"
+        os_migrate_conversion_net_name: "{{ os_migrate_dst_conversion_net_name | default('os_migrate_conv') }}"
+        os_migrate_conversion_subnet_name: "{{ os_migrate_dst_conversion_subnet_name | default('os_migrate_conv') }}"
+        os_migrate_conversion_router_name: "{{ os_migrate_dst_conversion_router_name | default('os_migrate_conv') }}"
+        os_migrate_conversion_secgroup_name: "{{ os_migrate_dst_conversion_secgroup_name | default('os_migrate_conv') }}"
+        os_migrate_conversion_keypair_name: "{{ os_migrate_dst_conversion_keypair_name | default('os_migrate_conv') }}"
+        os_migrate_conversion_host_boot_from_volume: "{{ os_migrate_dst_conversion_host_boot_from_volume | default(omit) }}"
+        os_migrate_conversion_host_volume_size: "{{ os_migrate_dst_conversion_host_volume_size | default(omit) }}"
+        os_migrate_conversion_availability_zone: "{{ os_migrate_dst_conversion_availability_zone | default(omit) }}"
         os_migrate_conversion_cloud: dst
-        os_migrate_conversion_validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-        os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-        os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-        os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+        os_migrate_conversion_validate_certs: "{{ os_migrate_dst_validate_certs | default(omit) }}"
+        os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert | default(omit) }}"
+        os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert | default(omit) }}"
+        os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key | default(omit) }}"
         os_migrate_conversion_flavor_name:
-          "{{ os_migrate_dst_conversion_flavor_name|default(omit) }}"
+          "{{ os_migrate_dst_conversion_flavor_name | default(omit) }}"
         os_migrate_conversion_external_network_name:
-          "{{ os_migrate_dst_conversion_external_network_name|default('') }}"
-        os_migrate_conversion_net_mtu: "{{ os_migrate_dst_conversion_net_mtu|default(omit) }}"
+          "{{ os_migrate_dst_conversion_external_network_name | default('') }}"
+        os_migrate_conversion_net_mtu: "{{ os_migrate_dst_conversion_net_mtu | default(omit) }}"
         os_migrate_conversion_subnet_dns_nameservers:
-          "{{ os_migrate_dst_conversion_subnet_dns_nameservers|default(omit) }}"
-        os_migrate_conversion_manage_network: "{{ os_migrate_dst_conversion_manage_network|default(true) }}"
-        os_migrate_conversion_manage_fip: "{{ os_migrate_dst_conversion_manage_fip|default(true) }}"
-        os_migrate_conversion_floating_ip_address: "{{ os_migrate_dst_conversion_floating_ip_address|default(false) }}"
-      when: os_migrate_deploy_dst_conversion_host|default(true)|bool
+          "{{ os_migrate_dst_conversion_subnet_dns_nameservers | default(omit) }}"
+        os_migrate_conversion_manage_network: "{{ os_migrate_dst_conversion_manage_network | default(true) }}"
+        os_migrate_conversion_manage_fip: "{{ os_migrate_dst_conversion_manage_fip | default(true) }}"
+        os_migrate_conversion_floating_ip_address: "{{ os_migrate_dst_conversion_floating_ip_address | default(false) }}"
+      when: os_migrate_deploy_dst_conversion_host | default(true) | bool
 
-    - name: prepare the conversion host link
+    - name: Prepare the conversion host link
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host
         tasks_from: link_prepare.yml
-      when: os_migrate_link_conversion_hosts|default(true)|bool
+      when: os_migrate_link_conversion_hosts | default(true) | bool
 
-    - name: pause to let sshd start on the conversion hosts
+    - name: Pause to let sshd start on the conversion hosts
       ansible.builtin.pause:
         minutes: 2
 
-- hosts: os_migrate_conv_src
+- name: Configure source conversion host
+  hosts: os_migrate_conv_src
   environment:
-    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path | default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
   tasks:
-    - name: insert the auth keys in src
+    - name: Insert the auth keys in src
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host_content
         tasks_from: link_insert_authorized_key.yml
-      when: os_migrate_link_conversion_hosts|default(true)|bool
+      when: os_migrate_link_conversion_hosts | default(true) | bool
 
-- hosts: os_migrate_conv_dst
+- name: Configure destination conversion host
+  hosts: os_migrate_conv_dst
   environment:
-    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path | default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
   tasks:
-    - name: insert the auth keys in dst
+    - name: Insert the auth keys in dst
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host_content
         tasks_from: link_insert_private_key.yml
-      when: os_migrate_link_conversion_hosts|default(true)|bool
+      when: os_migrate_link_conversion_hosts | default(true) | bool
 
-- hosts: conversion_hosts
+- name: Configure password access for conversion hosts
+  hosts: conversion_hosts
   environment:
-    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path | default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
   tasks:
-    - name: enable ssh_user password access to the conversion hosts
+    - name: Enable ssh_user password access to the conversion hosts
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host_content
         tasks_from: enable_password_access.yml
-      when: os_migrate_conversion_host_ssh_user_enable_password_access|default(false)|bool
+      when: os_migrate_conversion_host_ssh_user_enable_password_access | default(false) | bool
   vars:
     ansible_become_user: root
     ansible_become: true
 
-- hosts: os_migrate_conv_src
+- name: Set source conversion host facts
+  hosts: os_migrate_conv_src
   environment:
-    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path | default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
   tasks:
-    - name: set src conversion host facts
+    - name: Set src conversion host facts
       ansible.builtin.set_fact:
-        os_migrate_conversion_host_pre_content_hook: "{{ os_migrate_src_conversion_host_pre_content_hook|default(false) }}"
-        os_migrate_conversion_host_post_content_hook: "{{ os_migrate_src_conversion_host_post_content_hook|default(false) }}"
+        os_migrate_conversion_host_pre_content_hook: "{{ os_migrate_src_conversion_host_pre_content_hook | default(false) }}"
+        os_migrate_conversion_host_post_content_hook: "{{ os_migrate_src_conversion_host_post_content_hook | default(false) }}"
 
-- hosts: os_migrate_conv_dst
+- name: Set destination conversion host facts
+  hosts: os_migrate_conv_dst
   environment:
-    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path | default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
   tasks:
-    - name: set dst conversion host facts
+    - name: Set dst conversion host facts
       ansible.builtin.set_fact:
-        os_migrate_conversion_host_pre_content_hook: "{{ os_migrate_dst_conversion_host_pre_content_hook|default(false) }}"
-        os_migrate_conversion_host_post_content_hook: "{{ os_migrate_dst_conversion_host_post_content_hook|default(false) }}"
+        os_migrate_conversion_host_pre_content_hook: "{{ os_migrate_dst_conversion_host_pre_content_hook | default(false) }}"
+        os_migrate_conversion_host_post_content_hook: "{{ os_migrate_dst_conversion_host_post_content_hook | default(false) }}"
 
-- hosts: migrator
+- name: Reboot source conversion host
+  hosts: migrator
   environment:
-    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path | default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
   tasks:
-    - name: reboot the src conversion host if required
+    - name: Reboot the src conversion host if required
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host
         tasks_from: reboot.yml
       vars:
         os_migrate_conversion_host_name: "{{ os_migrate_src_conversion_host_name }}"
         os_migrate_conversion_cloud: src
-        os_migrate_conversion_validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-        os_migrate_conversion_ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-        os_migrate_conversion_client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-        os_migrate_conversion_client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-      when: os_migrate_reboot_conversion_hosts|default(false)|bool
+        os_migrate_conversion_validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+        os_migrate_conversion_ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+        os_migrate_conversion_client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+        os_migrate_conversion_client_key: "{{ os_migrate_src_client_key | default(omit) }}"
+      when: os_migrate_reboot_conversion_hosts | default(false) | bool
 
-    - name: wait for src conversion host reachability
+    - name: Wait for src conversion host reachability
       ansible.builtin.wait_for:
         port: 22
         host: "{{ hostvars['os_migrate_conv_src']['ansible_ssh_host'] }}"
         search_regex: OpenSSH
         sleep: 5
         timeout: 600
-      when: os_migrate_reboot_conversion_hosts|default(false)|bool
+      when: os_migrate_reboot_conversion_hosts | default(false) | bool
 
-- hosts: migrator
+- name: Reboot destination conversion host
+  hosts: migrator
   environment:
-    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path | default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
   tasks:
-    - name: reboot the dst conversion host if required
+    - name: Reboot the dst conversion host if required
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host
         tasks_from: reboot.yml
       vars:
         os_migrate_conversion_host_name: "{{ os_migrate_dst_conversion_host_name }}"
         os_migrate_conversion_cloud: dst
-        os_migrate_conversion_validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-        os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-        os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-        os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-      when: os_migrate_reboot_conversion_hosts|default(false)|bool
+        os_migrate_conversion_validate_certs: "{{ os_migrate_dst_validate_certs | default(omit) }}"
+        os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert | default(omit) }}"
+        os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert | default(omit) }}"
+        os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key | default(omit) }}"
+      when: os_migrate_reboot_conversion_hosts | default(false) | bool
 
-    - name: wait for dst conversion host reachability
+    - name: Wait for dst conversion host reachability
       ansible.builtin.wait_for:
         port: 22
         host: "{{ hostvars['os_migrate_conv_dst']['ansible_ssh_host'] }}"
         search_regex: OpenSSH
         sleep: 5
         timeout: 600
-      when: os_migrate_reboot_conversion_hosts|default(false)|bool
+      when: os_migrate_reboot_conversion_hosts | default(false) | bool
 
-- hosts: conversion_hosts
+- name: Install conversion host content
+  hosts: conversion_hosts
   environment:
-    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path | default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   any_errors_fatal: true
   tasks:
-    - name: install the conversion host content
+    - name: Install the conversion host content
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host_content
-      when: os_migrate_conversion_host_content_install|default(true)|bool
+      when: os_migrate_conversion_host_content_install | default(true) | bool
   vars:
     ansible_become_user: root
     ansible_become: true

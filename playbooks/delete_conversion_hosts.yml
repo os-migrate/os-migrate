@@ -1,69 +1,72 @@
-- hosts: migrator
+- name: Delete conversion hosts
+  hosts: migrator
   environment:
-    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path | default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   tasks:
-    - name: delete the conversion hosts inventory
+    - name: Delete the conversion hosts inventory
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host
         tasks_from: conv_hosts_inventory.yml
       vars:
         ignore_missing_conversion_hosts: true
 
-- hosts: conversion_hosts
+- name: Unregister conversion hosts
+  hosts: conversion_hosts
   # Unregistration is best-effort. If the conversion hosts faced some
   # issues and are unreachable, we don't want the host deletion to
   # fail too.
   environment:
-    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path | default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   ignore_unreachable: true
   tasks:
-    - name: unregister the conversion hosts
+    - name: Unregister the conversion hosts
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host_content
         tasks_from: rhsm_unregister.yml
 
-- hosts: migrator
+- name: Delete source and destination hosts
+  hosts: migrator
   environment:
-    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path | default(os_migrate_data_dir ~ '/clouds.yaml') }}"
   tasks:
-    - name: delete the src conversion host
+    - name: Delete the src conversion host
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host
         tasks_from: delete.yml
       vars:
         os_migrate_conversion_host_name: "{{ os_migrate_src_conversion_host_name }}"
-        os_migrate_conversion_net_name: "{{ os_migrate_src_conversion_net_name|default('os_migrate_conv') }}"
-        os_migrate_conversion_subnet_name: "{{ os_migrate_src_conversion_subnet_name|default('os_migrate_conv') }}"
-        os_migrate_conversion_router_name: "{{ os_migrate_src_conversion_router_name|default('os_migrate_conv') }}"
-        os_migrate_conversion_secgroup_name: "{{ os_migrate_src_conversion_secgroup_name|default('os_migrate_conv') }}"
-        os_migrate_conversion_keypair_name: "{{ os_migrate_src_conversion_keypair_name|default('os_migrate_conv') }}"
-        os_migrate_conversion_manage_network: "{{ os_migrate_src_conversion_manage_network|default(true) }}"
-        os_migrate_conversion_manage_fip: "{{ os_migrate_src_conversion_manage_fip|default(true) }}"
-        os_migrate_conversion_delete_fip: "{{ os_migrate_src_conversion_host_delete_fip|default(true) }}"
+        os_migrate_conversion_net_name: "{{ os_migrate_src_conversion_net_name | default('os_migrate_conv') }}"
+        os_migrate_conversion_subnet_name: "{{ os_migrate_src_conversion_subnet_name | default('os_migrate_conv') }}"
+        os_migrate_conversion_router_name: "{{ os_migrate_src_conversion_router_name | default('os_migrate_conv') }}"
+        os_migrate_conversion_secgroup_name: "{{ os_migrate_src_conversion_secgroup_name | default('os_migrate_conv') }}"
+        os_migrate_conversion_keypair_name: "{{ os_migrate_src_conversion_keypair_name | default('os_migrate_conv') }}"
+        os_migrate_conversion_manage_network: "{{ os_migrate_src_conversion_manage_network | default(true) }}"
+        os_migrate_conversion_manage_fip: "{{ os_migrate_src_conversion_manage_fip | default(true) }}"
+        os_migrate_conversion_delete_fip: "{{ os_migrate_src_conversion_host_delete_fip | default(true) }}"
         os_migrate_conversion_cloud: src
-        os_migrate_conversion_validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-        os_migrate_conversion_ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-        os_migrate_conversion_client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-        os_migrate_conversion_client_key: "{{ os_migrate_src_client_key|default(omit) }}"
-      when: os_migrate_delete_src_conversion_host|default(true)|bool
+        os_migrate_conversion_validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+        os_migrate_conversion_ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+        os_migrate_conversion_client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+        os_migrate_conversion_client_key: "{{ os_migrate_src_client_key | default(omit) }}"
+      when: os_migrate_delete_src_conversion_host | default(true) | bool
 
-    - name: delete the dst conversion host
+    - name: Delete the dst conversion host
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.conversion_host
         tasks_from: delete.yml
       vars:
         os_migrate_conversion_host_name: "{{ os_migrate_dst_conversion_host_name }}"
-        os_migrate_conversion_net_name: "{{ os_migrate_dst_conversion_net_name|default('os_migrate_conv') }}"
-        os_migrate_conversion_subnet_name: "{{ os_migrate_dst_conversion_subnet_name|default('os_migrate_conv') }}"
-        os_migrate_conversion_router_name: "{{ os_migrate_dst_conversion_router_name|default('os_migrate_conv') }}"
-        os_migrate_conversion_secgroup_name: "{{ os_migrate_dst_conversion_secgroup_name|default('os_migrate_conv') }}"
-        os_migrate_conversion_keypair_name: "{{ os_migrate_dst_conversion_keypair_name|default('os_migrate_conv') }}"
-        os_migrate_conversion_manage_network: "{{ os_migrate_dst_conversion_manage_network|default(true) }}"
-        os_migrate_conversion_manage_fip: "{{ os_migrate_dst_conversion_manage_fip|default(true) }}"
-        os_migrate_conversion_delete_fip: "{{ os_migrate_dst_conversion_host_delete_fip|default(true) }}"
+        os_migrate_conversion_net_name: "{{ os_migrate_dst_conversion_net_name | default('os_migrate_conv') }}"
+        os_migrate_conversion_subnet_name: "{{ os_migrate_dst_conversion_subnet_name | default('os_migrate_conv') }}"
+        os_migrate_conversion_router_name: "{{ os_migrate_dst_conversion_router_name | default('os_migrate_conv') }}"
+        os_migrate_conversion_secgroup_name: "{{ os_migrate_dst_conversion_secgroup_name | default('os_migrate_conv') }}"
+        os_migrate_conversion_keypair_name: "{{ os_migrate_dst_conversion_keypair_name | default('os_migrate_conv') }}"
+        os_migrate_conversion_manage_network: "{{ os_migrate_dst_conversion_manage_network | default(true) }}"
+        os_migrate_conversion_manage_fip: "{{ os_migrate_dst_conversion_manage_fip | default(true) }}"
+        os_migrate_conversion_delete_fip: "{{ os_migrate_dst_conversion_host_delete_fip | default(true) }}"
         os_migrate_conversion_cloud: dst
-        os_migrate_conversion_validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-        os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-        os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-        os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
-      when: os_migrate_delete_dst_conversion_host|default(true)|bool
+        os_migrate_conversion_validate_certs: "{{ os_migrate_dst_validate_certs | default(omit) }}"
+        os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert | default(omit) }}"
+        os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert | default(omit) }}"
+        os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key | default(omit) }}"
+      when: os_migrate_delete_dst_conversion_host | default(true) | bool
