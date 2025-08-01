@@ -4,7 +4,7 @@
   ansible.builtin.include_role:
     name: os_migrate.os_migrate.export_security_groups
   vars:
-    os_migrate_security_groups_filter:
+    export_security_groups_filter:
       - regex: '^osm_'
 
 - name: re-load resources for idempotency test

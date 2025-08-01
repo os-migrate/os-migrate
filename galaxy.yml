@@ -17,6 +17,7 @@ license:
 tags:
   - openstack
   - migrations
+  - cloud
 dependencies:
   community.crypto: ">=1.4.0"
   community.general: "<5.0.0"

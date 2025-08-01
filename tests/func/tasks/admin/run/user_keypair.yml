@@ -2,9 +2,9 @@
   ansible.builtin.include_role:
     name: os_migrate.os_migrate.export_users_keypairs
   vars:
-    os_migrate_users_filter:
+    export_users_keypairs_users_filter:
       - regex: '^osm_'
-    os_migrate_keypairs_filter:
+    export_users_keypairs_filter:
       - regex: '^osm_'
 
 - name: set destination user name

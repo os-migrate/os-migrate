@@ -1,16 +1,16 @@
-- name: install epel release
-  ansible.builtin.yum:
+- name: Install epel release
+  ansible.builtin.dnf:
     name: epel-release
     state: present
 
-- name: update all packages
-  ansible.builtin.yum:
+- name: Update all packages
+  ansible.builtin.dnf:
     name: '*'
     state: latest
   when: do_yum_update|default(false)|bool
 
-- name: install content
-  ansible.builtin.yum:
+- name: Install content
+  ansible.builtin.dnf:
     name:
       - nbdkit
       - nbdkit-basic-plugins
@@ -19,7 +19,7 @@
       - libvirt
     state: present
 
-- name: start libvirtd
+- name: Start libvirtd
   ansible.builtin.service:
     name: libvirtd
     state: started

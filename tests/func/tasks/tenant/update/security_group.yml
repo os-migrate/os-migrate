@@ -7,7 +7,7 @@
 
 - name: scan available security_groups after before test
   os_migrate.os_migrate.os_security_groups_info:
-    filters: "{{ os_migrate_dst_filters }}"
+    filters: "{{ prelude_dst_filters }}"
     auth: "{{ os_migrate_dst_auth }}"
     auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_dst_region_name|default(omit) }}"
@@ -29,7 +29,7 @@
 
 - name: scan available security_groups after update test
   os_migrate.os_migrate.os_security_groups_info:
-    filters: "{{ os_migrate_dst_filters }}"
+    filters: "{{ prelude_dst_filters }}"
     auth: "{{ os_migrate_dst_auth }}"
     auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
     region_name: "{{ os_migrate_dst_region_name|default(omit) }}"

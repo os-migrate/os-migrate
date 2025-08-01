@@ -7,8 +7,8 @@ os_migrate_src_osm_server_flavor: m1.xtiny
 os_migrate_src_osm_server_image: cirros-0.4.0-x86_64-disk.img
 os_migrate_src_osm_router_external_network: public
 
-os_migrate_conversion_host_ssh_user: cloud-user
-os_migrate_conversion_subnet_dns_nameservers: ['10.64.63.6']
+conversion_host_ssh_user: cloud-user
+conversion_host_subnet_dns_nameservers: ['10.64.63.6']
 
 os_migrate_src_conversion_external_network_name: public
 os_migrate_src_conversion_flavor_name: m1.medium
@@ -24,4 +24,4 @@ os_migrate_dst_validate_certs: false
 os_migrate_src_release: 13
 os_migrate_dst_release: 13
 
-os_migrate_workload_stop_before_migration: true
+import_workloads_stop_before_migration: true
