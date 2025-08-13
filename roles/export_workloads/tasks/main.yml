@@ -19,6 +19,7 @@
   ansible.builtin.set_fact:
     export_workloads_ids_names: "{{ (
       export_workloads_ids_names
+        | from_yaml
         | os_migrate.os_migrate.stringfilter(os_migrate_workloads_filter,
                                              attribute='name') ) }}"
 

@@ -12,6 +12,7 @@
   ansible.builtin.set_fact:
     filtered_workloads: "{{ (
       read_workloads.resources
+        | from_yaml
         | os_migrate.os_migrate.stringfilter(os_migrate_workloads_filter,
                                              attribute='params.name') ) }}"
 

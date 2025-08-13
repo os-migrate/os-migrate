@@ -14,6 +14,7 @@
   ansible.builtin.set_fact:
     filtered_users_keypairs: "{{ (
       filtered_users_keypairs
+        | from_yaml
         | os_migrate.os_migrate.stringfilter(os_migrate_keypairs_filter,
                                              attribute='params.name') ) }}"
 

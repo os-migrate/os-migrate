@@ -11,6 +11,7 @@
   ansible.builtin.set_fact:
     src_detached_volumes_info: "{{ (
       src_volumes_info.volumes
+        | from_yaml
         | os_migrate.os_migrate.stringfilter(os_migrate_volumes_filter,
                                              attribute='name')
         | selectattr('status', '!=' , 'in-use')

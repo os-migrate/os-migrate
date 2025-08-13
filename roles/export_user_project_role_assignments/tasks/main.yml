@@ -41,6 +41,7 @@
   ansible.builtin.set_fact:
     export_user_project_role_assignments_ids_names: "{{ (
       export_user_project_role_assignments_ids_names
+        | from_yaml
         | os_migrate.os_migrate.stringfilter(os_migrate_user_filter,
                                              attribute='user_name') ) }}"
 

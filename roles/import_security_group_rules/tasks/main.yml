@@ -7,6 +7,7 @@
   ansible.builtin.set_fact:
     filtered_security_group_rules: "{{ (
       read_security_group_rules.resources
+        | from_yaml
         | os_migrate.os_migrate.stringfilter(os_migrate_security_groups_filter,
                                              attribute='params.security_group_ref.name') ) }}"
 
