@@ -39,6 +39,23 @@ Fix
 
 Other
 ~~~~~
+- Fixes to jinja and yaml formatting rules (#731) [cloudguruab]
+
+  * dev: updates to conversion host role spacing and jinja formats
+
+  * dev: updates to export roles spacing and jinja formats
+
+  * dev: updates to import roles spacing and jinja formats
+
+  * dev: updates to export plays spacing and jinja formats
+
+  * dev: updates to import plays spacing and jinja formats
+
+  * dev: updates to plays and plugins lint errors
+
+  * fix all jinja formatting issues with spacing
+
+  * update to prelude_common lints
 - Improved the usage of the `stringfilter` filter input. [Roberto
   Alfieri]
 - Update plugins/module_utils/volume_common.py. [Roberto Alfieri]
