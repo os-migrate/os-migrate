@@ -1,23 +1,22 @@
-- name: read router interfaces resource file
+- name: Read router interfaces resource file
   os_migrate.os_migrate.read_resources:
     path: "{{ os_migrate_data_dir }}/router_interfaces.yml"
   register: read_router_interfaces
 
-- name: filter router_interfaces to import
+- name: Filter router_interfaces to import
   ansible.builtin.set_fact:
-    filtered_router_interfaces: "{{ (
-      read_router_interfaces.resources
-        | from_yaml
-        | os_migrate.os_migrate.stringfilter(os_migrate_routers_filter,
-                                             attribute='params.device_ref.name') ) }}"
+    filtered_router_interfaces: "{{ (read_router_interfaces.resources
+      | from_yaml
+      | os_migrate.os_migrate.stringfilter(os_migrate_routers_filter,
+       attribute='params.device_ref.name')) }}"
 
-- name: import router interfaces
+- name: Import router interfaces
   os_migrate.os_migrate.import_router_interface:
     cloud: dst
     data: "{{ item }}"
     filters: "{{ os_migrate_dst_filters }}"
-    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_dst_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_dst_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_dst_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_dst_client_key | default(omit) }}"
   loop: "{{ filtered_router_interfaces }}"

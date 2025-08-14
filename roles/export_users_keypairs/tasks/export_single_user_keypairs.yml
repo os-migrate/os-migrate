@@ -1,37 +1,34 @@
-- name: scan available keypairs for {{ export_user['name'] }} ({{ export_user['id'] }})
+- name: Scan available keypairs
   os_migrate.os_migrate.os_keypairs_info:
     cloud: src
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key | default(omit) }}"
     filters:
       user_id: "{{ export_user['id'] }}"
   register: src_keypairs_info
 
-- name: create id-name pairs of keypairs to export
+- name: Create id-name pairs of keypairs to export
   ansible.builtin.set_fact:
-    export_keypairs_ids_names: "{{ (
-      src_keypairs_info.openstack_keypairs
-        | json_query('[*].{name: name, id: id}')
-        | sort(attribute='id') ) }}"
+    export_keypairs_ids_names: "{{ (src_keypairs_info.openstack_keypairs
+      | json_query('[*].{name: name, id: id}') | sort(attribute='id')) }}"
 
-- name: filter names of keypairs to export
+- name: Filter names of keypairs to export
   ansible.builtin.set_fact:
-    export_keypairs_ids_names: "{{ (
-      export_keypairs_ids_names
-        | from_yaml
-        | os_migrate.os_migrate.stringfilter(os_migrate_keypairs_filter,
-                                             attribute='name') ) }}"
+    export_keypairs_ids_names: "{{ (export_keypairs_ids_names
+      | from_yaml
+      | os_migrate.os_migrate.stringfilter(os_migrate_keypairs_filter,
+       attribute='name')) }}"
 
-- name: export keypair
+- name: Export keypair
   os_migrate.os_migrate.export_keypair:
     cloud: src
     path: "{{ os_migrate_data_dir }}/users_keypairs.yml"
     name: "{{ item['id'] }}"
     user_id: "{{ export_user['id'] }}"
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key | default(omit) }}"
   loop: "{{ export_keypairs_ids_names }}"

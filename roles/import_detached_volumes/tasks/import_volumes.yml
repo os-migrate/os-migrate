@@ -1,13 +1,13 @@
 - name: Open cloud.yaml and set cloud variables as ansible vars
   ansible.builtin.include_vars:
-    file: "{{ os_migrate_clouds_path|default(os_migrate_data_dir ~ '/clouds.yaml') }}"
+    file: "{{ os_migrate_clouds_path | default(os_migrate_data_dir ~ '/clouds.yaml') }}"
     name: cloud_vars
 
-- name: Set block_storage_api_version for source cloud is defined
+- name: Set block storage api version for source cloud is defined
   ansible.builtin.set_fact:
-    cloud_vars_src: "{{ cloud_vars.clouds['src'] | combine({'block_storage_api_version' : '3'}) }}"
+    cloud_vars_src: "{{ cloud_vars.clouds['src'] | combine({'block_storage_api_version': '3'}) }}"
 
-- name: expose source volume
+- name: Expose source volume
   os_migrate.os_migrate.import_volumes_export:
     cloud: "{{ cloud_vars_src }}"
     conversion_host:
@@ -19,15 +19,15 @@
     timeout: "{{ os_migrate_timeout }}"
   register: exports
   when:
-    - item["_migration_params"]["data_copy"]|default(true)
+    - item["_migration_params"]["data_copy"] | default(true)
 
-- name: transfer volumes to destination
+- name: Transfer volumes to destination
   os_migrate.os_migrate.import_volumes_transfer:
     cloud: dst
-    validate_certs: "{{ os_migrate_dst_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_dst_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_dst_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_dst_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_dst_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_dst_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_dst_client_key | default(omit) }}"
     conversion_host:
       "{{ os_dst_conversion_host_info.openstack_conversion_host }}"
     ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
@@ -41,15 +41,15 @@
     timeout: "{{ os_migrate_timeout }}"
   register: transfer
   when:
-    - item["_migration_params"]["data_copy"]|default(true)
+    - item["_migration_params"]["data_copy"] | default(true)
 
-- name: clean up in the source cloud after migration
+- name: Clean up in the source cloud after migration
   os_migrate.os_migrate.import_volumes_src_cleanup:
     cloud: src
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key | default(omit) }}"
     conversion_host: "{{ os_src_conversion_host_info.openstack_conversion_host }}"
     ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
     ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
@@ -59,4 +59,4 @@
     state_file: "{{ exports.state_file }}"
     timeout: "{{ os_migrate_timeout }}"
   when:
-    - item["_migration_params"]["data_copy"]|default(true)
+    - item["_migration_params"]["data_copy"] | default(true)

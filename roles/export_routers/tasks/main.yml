@@ -1,35 +1,32 @@
-- name: scan available routers
+- name: Scan available routers
   os_migrate.os_migrate.os_routers_info:
     filters: "{{ os_migrate_src_filters }}"
     cloud: src
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key | default(omit) }}"
   register: src_routers_info
 
-- name: create id-name pairs of routers to export
+- name: Create id-name pairs of routers to export
   ansible.builtin.set_fact:
-    export_routers_ids_names: "{{ (
-      src_routers_info.openstack_routers
-        | json_query('[*].{name: name, id: id}')
-        | sort(attribute='id') ) }}"
+    export_routers_ids_names: "{{ (src_routers_info.openstack_routers
+      | json_query('[*].{name: name, id: id}') | sort(attribute='id')) }}"
 
-- name: filter names of routers to export
+- name: Filter names of routers to export
   ansible.builtin.set_fact:
-    export_routers_ids_names: "{{ (
-      export_routers_ids_names
-        | from_yaml
-        | os_migrate.os_migrate.stringfilter(os_migrate_routers_filter,
-                                             attribute='name') ) }}"
+    export_routers_ids_names: "{{ (export_routers_ids_names
+      | from_yaml
+      | os_migrate.os_migrate.stringfilter(os_migrate_routers_filter,
+       attribute='name')) }}"
 
-- name: export router
+- name: Export router
   os_migrate.os_migrate.export_router:
     cloud: src
     path: "{{ os_migrate_data_dir }}/routers.yml"
     name: "{{ item['id'] }}"
-    validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
-    ca_cert: "{{ os_migrate_src_ca_cert|default(omit) }}"
-    client_cert: "{{ os_migrate_src_client_cert|default(omit) }}"
-    client_key: "{{ os_migrate_src_client_key|default(omit) }}"
+    validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key | default(omit) }}"
   loop: "{{ export_routers_ids_names }}"

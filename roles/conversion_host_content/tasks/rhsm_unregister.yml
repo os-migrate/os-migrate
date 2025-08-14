@@ -1,4 +1,4 @@
-- name: unregister RHEL hosts from RHSM
+- name: Unregister RHEL hosts from RHSM
   community.general.redhat_subscription:
     state: absent
   vars:

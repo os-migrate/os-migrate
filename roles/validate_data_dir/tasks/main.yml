@@ -1,4 +1,4 @@
-- name: list resource files
+- name: List resource files
   ansible.builtin.find:
     paths:
       - "{{ os_migrate_data_dir }}"
@@ -6,17 +6,17 @@
       - "*.yml"
   register: resource_files_result
 
-- name: fail if no resources are found
+- name: Fail if no resources are found
   ansible.builtin.fail:
     msg: No resource files found.
   when: resource_files_result.files | count < 1
 
-- name: validate resource files
+- name: Validate resource files
   os_migrate.os_migrate.validate_resource_files:
     paths: "{{ resource_files_result.files | map(attribute='path') | list }}"
   register: validate_data_dir_result
 
-- name: stop if errors found
+- name: Stop if errors found
   ansible.builtin.fail:
     msg: "{{ validate_data_dir_result.errors | join(' ') }}"
-  when: not ( validate_data_dir_result.ok | bool )
+  when: not (validate_data_dir_result.ok | bool)
