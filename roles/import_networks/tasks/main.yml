@@ -7,6 +7,7 @@
   ansible.builtin.set_fact:
     filtered_networks: "{{ (
       read_networks.resources
+        | from_yaml
         | os_migrate.os_migrate.stringfilter(os_migrate_networks_filter,
                                              attribute='params.name') ) }}"
 

@@ -20,6 +20,7 @@
   ansible.builtin.set_fact:
     export_keypairs_ids_names: "{{ (
       export_keypairs_ids_names
+        | from_yaml
         | os_migrate.os_migrate.stringfilter(os_migrate_keypairs_filter,
                                              attribute='name') ) }}"
 
