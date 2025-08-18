@@ -1,0 +1,44 @@
+= Installing Vagrant directly on host (alternative path)
+
+Normally you should run Vagrant containerized as the link:dev-env-setup.adoc[developer environment setup] doc suggests. If you have a
+reason to install on bare metal instead, here are relevant
+instructions.
+
+----
+yum install https://releases.hashicorp.com/vagrant/2.4.1/vagrant-2.4.1-1.x86_64.rpm -y
+vagrant --version
+----
+
+----
+virsh pool-define-as vagrant dir - - - - "/var/lib/libvirt/images/vagrant"
+virsh pool-list --all
+virsh pool-build vagrant
+virsh pool-start vagrant
+virsh pool-autostart vagrant
+virsh pool-info vagrant
+----
+
+We need to install the libvirt provider
+
+----
+yum groupinstall "Virtualization Host" -y
+yum install libvirt-devel -y
+vagrant plugin install vagrant-libvirt
+systemctl restart libvirtd
+----
+
+Go to the toolbox/vagrant folder
+
+----
+cd toolbox/vagrant
+----
+
+----
+vagrant box add --name fedora37 https://app.vagrantup.com/fedora/boxes/37-cloud-base/versions/37.20221105.0/providers/libvirt/unknown/vagrant.box
+----
+
+Start the environment using the libvirt provider
+
+----
+vagrant up --provider libvirt
+----

@@ -1,0 +1,25 @@
+= OS Migrate User Documentation
+
+OS Migrate is a tool to migrate tenant content from one OpenStack cloud
+to another.
+
+:toc:
+:toclevels: 2
+
+include::install-from-galaxy.adoc[]
+
+include::install-from-source.adoc[]
+
+include::upgrade.adoc[]
+
+include::walkthrough.adoc[]
+
+include::usage-notes.adoc[]
+
+include::variables-guide.adoc[]
+
+include::migration-params-guide.adoc[]
+
+include::how-it-works-workload-migration.adoc[]
+
+include::troubleshooting.adoc[]
