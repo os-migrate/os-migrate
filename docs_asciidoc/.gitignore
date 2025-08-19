@@ -1,0 +1,11 @@
+# AsciiDoc build artifacts
+_build/
+*.html
+*.pdf
+
+# Diagram cache
+.asciidoctor/
+
+# Ruby
+Gemfile.lock
+.bundle/

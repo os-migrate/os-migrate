@@ -1,0 +1,52 @@
+= General Contribution Guidelines
+
+== Commit Messages for Changelog
+
+OS Migrate uses commit messages for automated generation of project
+changelog. For every pull request we request contributors to be
+compliant with the following commit message notation.
+
+=== Format
+
+[source,console]
+----
+<type>: <summary>
+
+<body>
+----
+
+Accepted `<type>` values:
+
+* `new` - newly implemented user-facing features
+
+* `chg` - changes in existing user-facing features
+
+* `fix` - user-facing bugfixes
+
+* `oth` - other changes which users should know about
+
+* `dev` - any developer-facing changes, regardless of
+  new/chg/fix status
+
+=== Keeping Changelog Clean
+
+If the commit message subject starts with `dev:`, it will be omitted
+when rendering the changelog.
+
+Using this convention is important to keep the changelog document
+concise and focused on user-facing changes. Any developer-facing
+changes (developer environment, CI, developer-only docs) or miniature
+"cosmetic" edits should be tagged as `dev`.
+
+=== Summary (First Line)
+
+The first line should not be longer than 75 characters, the second
+line is always blank and other lines should be wrapped at 80
+characters.
+
+=== Message Body
+
+Uses the imperative, present tense: "change" not "changed" nor
+"changes" and includes motivation for the change and contrasts with
+previous behavior. Think how the commit message will appear in the
+project changelog.
