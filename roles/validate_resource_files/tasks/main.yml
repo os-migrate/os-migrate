@@ -2,7 +2,7 @@
   os_migrate.os_migrate.validate_resource_files:
     paths: "{{ resource_files }}"
   register: "resource_files_validation"
-  when: os_migrate_validate_files
+  when: validate_resource_files_state
 
 - name: Stop when errors found
   ansible.builtin.fail:

@@ -2,7 +2,7 @@
   openstack.cloud.server:
     name: "{{ os_migrate_conversion_host_name }}"
     state: absent
-    delete_fip: "{{ os_migrate_conversion_manage_fip and os_migrate_conversion_delete_fip }}"
+    delete_fip: "{{ os_migrate_conversion_manage_fip and conversion_host_delete_fip }}"
     wait: true
     cloud: "{{ os_migrate_conversion_cloud }}"
     validate_certs: "{{ os_migrate_conversion_validate_certs | default(omit) }}"
@@ -12,7 +12,7 @@
 
 - name: Delete os_migrate conversion keypair
   openstack.cloud.keypair:
-    name: "{{ os_migrate_conversion_keypair_name }}"
+    name: "{{ conversion_host_keypair_name }}"
     state: absent
     cloud: "{{ os_migrate_conversion_cloud }}"
     validate_certs: "{{ os_migrate_conversion_validate_certs | default(omit) }}"
@@ -22,7 +22,7 @@
 
 - name: Delete os_migrate conversion security group
   openstack.cloud.security_group:
-    name: "{{ os_migrate_conversion_secgroup_name }}"
+    name: "{{ conversion_host_secgroup_name }}"
     state: absent
     cloud: "{{ os_migrate_conversion_cloud }}"
     validate_certs: "{{ os_migrate_conversion_validate_certs | default(omit) }}"
@@ -32,4 +32,4 @@
 
 - name: Delete a network for the conversion host
   ansible.builtin.include_tasks: delete_network.yml
-  when: os_migrate_conversion_manage_network | bool
+  when: conversion_host_manage_network | bool

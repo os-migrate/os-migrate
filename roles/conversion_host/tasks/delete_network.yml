@@ -1,6 +1,6 @@
 - name: Delete os_migrate conversion router
   openstack.cloud.router:
-    name: "{{ os_migrate_conversion_router_name }}"
+    name: "{{ conversion_host_router_name }}"
     state: absent
     cloud: "{{ os_migrate_conversion_cloud }}"
     validate_certs: "{{ os_migrate_conversion_validate_certs | default(omit) }}"
@@ -10,7 +10,7 @@
 
 - name: Delete os_migrate conversion subnet
   openstack.cloud.subnet:
-    name: "{{ os_migrate_conversion_subnet_name }}"
+    name: "{{ conversion_host_subnet_name }}"
     state: absent
     cloud: "{{ os_migrate_conversion_cloud }}"
     validate_certs: "{{ os_migrate_conversion_validate_certs | default(omit) }}"
@@ -20,7 +20,7 @@
 
 - name: Delete os_migrate conversion net
   openstack.cloud.network:
-    name: "{{ os_migrate_conversion_net_name }}"
+    name: "{{ conversion_host_net_name }}"
     state: absent
     cloud: "{{ os_migrate_conversion_cloud }}"
     validate_certs: "{{ os_migrate_conversion_validate_certs | default(omit) }}"

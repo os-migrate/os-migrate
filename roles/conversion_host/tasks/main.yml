@@ -1,19 +1,19 @@
 - name: Generate os_migrate conversion keypair
   ansible.builtin.include_tasks: generate_keypair.yml
-  when: os_migrate_conversion_keypair_generate | bool
+  when: conversion_host_keypair_generate | bool
 
 - name: Ensure conversion host keypair mode is correct
   ansible.builtin.file:
-    path: "{{ os_migrate_conversion_keypair_private_path }}"
+    path: "{{ conversion_host_keypair_private_path }}"
     mode: "0600"
 
 - name: Create a network for the conversion host
   ansible.builtin.include_tasks: create_network.yml
-  when: os_migrate_conversion_manage_network | bool
+  when: conversion_host_manage_network | bool
 
 - name: Create os_migrate conversion security group
   openstack.cloud.security_group:
-    name: "{{ os_migrate_conversion_secgroup_name }}"
+    name: "{{ conversion_host_secgroup_name }}"
     cloud: "{{ os_migrate_conversion_cloud }}"
     validate_certs: "{{ os_migrate_conversion_validate_certs | default(omit) }}"
     ca_cert: "{{ os_migrate_conversion_ca_cert | default(omit) }}"
@@ -22,7 +22,7 @@
 
 - name: Allow ssh in os_migrate conversion security group
   openstack.cloud.security_group_rule:
-    security_group: "{{ os_migrate_conversion_secgroup_name }}"
+    security_group: "{{ conversion_host_secgroup_name }}"
     remote_ip_prefix: 0.0.0.0/0
     protocol: tcp
     port_range_min: 22
@@ -35,7 +35,7 @@
 
 - name: Allow icmp in os_migrate conversion security group
   openstack.cloud.security_group_rule:
-    security_group: "{{ os_migrate_conversion_secgroup_name }}"
+    security_group: "{{ conversion_host_secgroup_name }}"
     remote_ip_prefix: 0.0.0.0/0
     protocol: icmp
     cloud: "{{ os_migrate_conversion_cloud }}"
@@ -46,8 +46,8 @@
 
 - name: Create os_migrate conversion keypair
   openstack.cloud.keypair:
-    name: "{{ os_migrate_conversion_keypair_name }}"
-    public_key_file: "{{ os_migrate_conversion_keypair_private_path }}.pub"
+    name: "{{ conversion_host_keypair_name }}"
+    public_key_file: "{{ conversion_host_keypair_private_path }}.pub"
     cloud: "{{ os_migrate_conversion_cloud }}"
     validate_certs: "{{ os_migrate_conversion_validate_certs | default(omit) }}"
     ca_cert: "{{ os_migrate_conversion_ca_cert | default(omit) }}"
@@ -58,17 +58,17 @@
   openstack.cloud.server:
     name: "{{ os_migrate_conversion_host_name }}"
     flavor: "{{ os_migrate_conversion_flavor_name }}"
-    image: "{{ os_migrate_conversion_image_name }}"
-    key_name: "{{ os_migrate_conversion_keypair_name }}"
+    image: "{{ conversion_host_image_name }}"
+    key_name: "{{ conversion_host_keypair_name }}"
     boot_from_volume: "{{ os_migrate_conversion_host_boot_from_volume | default(omit) }}"
     volume_size: "{{ os_migrate_conversion_host_volume_size | default(omit) }}"
     terminate_volume: true
-    network: "{{ os_migrate_conversion_net_name }}"
+    network: "{{ conversion_host_net_name }}"
     security_groups:
-      - "{{ os_migrate_conversion_secgroup_name }}"
+      - "{{ conversion_host_secgroup_name }}"
     auto_ip: false
     wait: true
-    timeout: "{{ os_migrate_conversion_host_deploy_timeout }}"
+    timeout: "{{ conversion_host_deploy_timeout }}"
     cloud: "{{ os_migrate_conversion_cloud }}"
     availability_zone: "{{ os_migrate_conversion_availability_zone | default(omit) }}"
     validate_certs: "{{ os_migrate_conversion_validate_certs | default(omit) }}"

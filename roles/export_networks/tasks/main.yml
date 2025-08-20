@@ -1,6 +1,6 @@
 - name: Scan available networks
   openstack.cloud.networks_info:
-    filters: "{{ os_migrate_src_filters }}"
+    filters: "{{ prelude_src_filters }}"
     cloud: src
     validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
     ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
@@ -18,7 +18,7 @@
   ansible.builtin.set_fact:
     export_networks_ids_names: "{{ (export_networks_ids_names
       | from_yaml
-      | os_migrate.os_migrate.stringfilter(os_migrate_networks_filter,
+      | os_migrate.os_migrate.stringfilter(export_networks_filter,
        attribute='name')) }}"
 
 - name: Export network

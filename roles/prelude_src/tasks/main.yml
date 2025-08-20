@@ -1,6 +1,6 @@
 - name: Set os_migrate_src_project unless it was set explicitly
   when:
-    - os_migrate_src_filter_current_project | default(true) | bool
+    - prelude_src_filter_current_project | default(true) | bool
   block:
     - name: Fetch information about currently authenticated user/project
       os_migrate.os_migrate.auth_info:
@@ -11,8 +11,8 @@
         client_key: "{{ os_migrate_src_client_key | default(omit) }}"
       register: _auth_info
 
-    - name: Set os_migrate_src_project_id and os_migrate_src_filters
+    - name: Set os_migrate_src_project_id and prelude_src_filters
       ansible.builtin.set_fact:
         os_migrate_src_project_id: "{{ _auth_info.auth_info.project_id }}"
-        os_migrate_src_filters:
+        prelude_src_filters:
           project_id: "{{ _auth_info.auth_info.project_id }}"
