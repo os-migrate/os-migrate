@@ -17,7 +17,7 @@
   ansible.builtin.set_fact:
     export_projects_ids_names: "{{ (export_projects_ids_names
       | from_yaml
-      | os_migrate.os_migrate.stringfilter(os_migrate_projects_filter,
+      | os_migrate.os_migrate.stringfilter(export_projects_filter,
        attribute='name')) }}"
 
 - name: Export project

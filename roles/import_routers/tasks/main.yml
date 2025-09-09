@@ -7,14 +7,14 @@
   ansible.builtin.set_fact:
     filtered_routers: "{{ (read_routers.resources
       | from_yaml
-      | os_migrate.os_migrate.stringfilter(os_migrate_routers_filter,
+      | os_migrate.os_migrate.stringfilter(import_routers_filter,
        attribute='params.name')) }}"
 
 - name: Import routers
   os_migrate.os_migrate.import_router:
     cloud: dst
     data: "{{ item }}"
-    filters: "{{ os_migrate_dst_filters }}"
+    filters: "{{ prelude_dst_filters }}"
     validate_certs: "{{ os_migrate_dst_validate_certs | default(omit) }}"
     ca_cert: "{{ os_migrate_dst_ca_cert | default(omit) }}"
     client_cert: "{{ os_migrate_dst_client_cert | default(omit) }}"

@@ -1,6 +1,6 @@
 - name: Scan instances for workloads to export
   openstack.cloud.server_info:
-    filters: "{{ os_migrate_src_filters }}"
+    filters: "{{ prelude_src_filters }}"
     cloud: src
     validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
     ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
@@ -17,7 +17,7 @@
   ansible.builtin.set_fact:
     export_workloads_ids_names: "{{ (export_workloads_ids_names
       | from_yaml
-      | os_migrate.os_migrate.stringfilter(os_migrate_workloads_filter,
+      | os_migrate.os_migrate.stringfilter(export_workloads_filter,
        attribute='name')) }}"
 
 - name: Export workload
@@ -25,7 +25,7 @@
     path: "{{ os_migrate_data_dir }}/workloads.yml"
     name: "{{ item['id'] }}"
     migration_params:
-      boot_disk_copy: "{{ os_migrate_workloads_boot_disk_copy }}"
+      boot_disk_copy: "{{ export_workloads_boot_disk_copy }}"
     cloud: src
     validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
     ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"

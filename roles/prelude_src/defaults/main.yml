@@ -1,3 +1,3 @@
 # It is currently not supported to export/import for multiple projects.
-os_migrate_src_filter_current_project: true
-os_migrate_src_filters: {}
+prelude_src_filter_current_project: true
+prelude_src_filters: {}

@@ -1,4 +1,4 @@
-# NOTE: os_image_info doesn't support os_migrate_src_filters, we apply
+# NOTE: os_image_info doesn't support prelude_src_filters, we apply
 # the filters manually below.
 - name: Scan available images
   openstack.cloud.image_info:
@@ -18,17 +18,17 @@
 - name: Filter images to export by project
   ansible.builtin.set_fact:
     export_images_ids_names: "{{ (export_images_ids_names
-      | json_query(\"[?owner=='\" + os_migrate_src_filters['project_id'] + \"']\")
+      | json_query(\"[?owner=='\" + prelude_src_filters['project_id'] + \"']\")
         | sort(attribute='id')) }}"
   when:
-    - os_migrate_src_filters is defined
-    - os_migrate_src_filters['project_id'] is defined
+    - prelude_src_filters is defined
+    - prelude_src_filters['project_id'] is defined
 
 - name: Filter names of images to export
   ansible.builtin.set_fact:
     export_images_ids_names: "{{ (export_images_ids_names
       | from_yaml
-      | os_migrate.os_migrate.stringfilter(os_migrate_images_filter,
+      | os_migrate.os_migrate.stringfilter(export_images_filter,
        attribute='name')) }}"
 
 - name: Export image metadata
@@ -44,19 +44,19 @@
 
 - name: Make sure image blob dir exists
   ansible.builtin.file:
-    path: "{{ os_migrate_image_blobs_dir }}"
+    path: "{{ export_images_blobs_dir }}"
     state: directory
     mode: '0750'
-  when: os_migrate_export_images_blobs
+  when: export_images_blobs
 
 - name: Export image blobs
   os_migrate.os_migrate.export_image_blob:
     cloud: src
-    blob_path: "{{ os_migrate_image_blobs_dir }}/{{ item['id'] }}-{{ item['name'] }}"
+    blob_path: "{{ export_images_blobs_dir }}/{{ item['id'] }}-{{ item['name'] }}"
     name: "{{ item['id'] }}"
     validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
     ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
     client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
     client_key: "{{ os_migrate_src_client_key | default(omit) }}"
   loop: "{{ export_images_ids_names }}"
-  when: os_migrate_export_images_blobs
+  when: export_images_blobs

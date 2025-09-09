@@ -128,34 +128,34 @@ main.yml:
 workload.yml:
 
   - block:
-    - name: preliminary setup for workload import
-      os_migrate.os_migrate.import_workload_prelim:
-        auth:
-          auth_url: https://dest-osp:13000/v3
-          username: migrate
-          password: migrate
-          project_domain_id: default
-          project_name: migration-destination
-          user_domain_id: default
-        validate_certs: false
-        src_conversion_host: "{{ os_src_conversion_host_info.openstack_conversion_host }}"
-        src_auth:
-          auth_url: https://src-osp:13000/v3
-          username: migrate
-          password: migrate
-          project_domain_id: default
-          project_name: migration-source
-          user_domain_id: default
-        src_validate_certs: false
-        data: "{{ item }}"
-        log_dir: "{{ os_migrate_data_dir }}/workload_logs"
-      register: prelim
+      - name: preliminary setup for workload import
+        os_migrate.os_migrate.import_workload_prelim:
+          auth:
+            auth_url: https://dest-osp:13000/v3
+            username: migrate
+            password: migrate
+            project_domain_id: default
+            project_name: migration-destination
+            user_domain_id: default
+          validate_certs: false
+          src_conversion_host: "{{ os_src_conversion_host_info.openstack_conversion_host }}"
+          src_auth:
+            auth_url: https://src-osp:13000/v3
+            username: migrate
+            password: migrate
+            project_domain_id: default
+            project_name: migration-source
+            user_domain_id: default
+          src_validate_certs: false
+          data: "{{ item }}"
+          log_dir: "{{ os_migrate_data_dir }}/workload_logs"
+        register: prelim
 
-    - debug:
-        msg:
-          - "{{ prelim.server_name }} log file: {{ prelim.log_file }}"
-          - "{{ prelim.server_name }} progress file: {{ prelim.state_file }}"
-      when: prelim.changed
+      - debug:
+          msg:
+            - "{{ prelim.server_name }} log file: {{ prelim.log_file }}"
+            - "{{ prelim.server_name }} progress file: {{ prelim.state_file }}"
+        when: prelim.changed
 
     rescue:
       - debug:

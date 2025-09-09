@@ -2,7 +2,7 @@
   ansible.builtin.include_role:
     name: os_migrate.os_migrate.export_user_project_role_assignments
   vars:
-    os_migrate_user_filter:
+    export_user_project_role_assignments_filter:
       - regex: '^osm_'
 
 - name: set destination role assignment project name

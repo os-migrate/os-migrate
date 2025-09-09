@@ -16,7 +16,7 @@
   ansible.builtin.set_fact:
     export_users_ids_names: "{{ (export_users_ids_names
       | from_yaml
-      | os_migrate.os_migrate.stringfilter(os_migrate_users_filter,
+      | os_migrate.os_migrate.stringfilter(export_users_filter,
        attribute='name')) }}"
 
 - name: Export users
