@@ -74,7 +74,7 @@
 
     - name: Set block_storage_api_version for source cloud is defined
       ansible.builtin.set_fact:
-        cloud_vars_src: "{{ cloud_vars.clouds['src'] | combine({'block_storage_api_version': '2'}) }}"
+        cloud_vars_src: "{{ cloud_vars.clouds['src'] | combine({'block_storage_api_version': '3'}) }}"
       when:
         - prelim is defined and prelim.changed
         - item["_migration_params"]["data_copy"] | default(true)
