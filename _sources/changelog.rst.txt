@@ -39,6 +39,9 @@ Fix
 
 Other
 ~~~~~
+- Fix incorrect //os_migrate in few places in docs. [Piotr Czarnik]
+
+  Closes #742
 - Fixes to jinja and yaml formatting rules (#731) [cloudguruab]
 
   * dev: updates to conversion host role spacing and jinja formats
