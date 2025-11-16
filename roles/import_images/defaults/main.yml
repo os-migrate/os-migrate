@@ -1,3 +1,3 @@
-os_migrate_image_blobs_dir: "{{ os_migrate_data_dir }}/image_blobs"
-os_migrate_images_filter:
+import_images_blobs_dir: "{{ os_migrate_data_dir }}/image_blobs"
+import_images_filter:
   - regex: .*

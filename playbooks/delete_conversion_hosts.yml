@@ -34,15 +34,15 @@
         name: os_migrate.os_migrate.conversion_host
         tasks_from: delete.yml
       vars:
-        os_migrate_conversion_host_name: "{{ os_migrate_src_conversion_host_name }}"
-        os_migrate_conversion_net_name: "{{ os_migrate_src_conversion_net_name | default('os_migrate_conv') }}"
-        os_migrate_conversion_subnet_name: "{{ os_migrate_src_conversion_subnet_name | default('os_migrate_conv') }}"
-        os_migrate_conversion_router_name: "{{ os_migrate_src_conversion_router_name | default('os_migrate_conv') }}"
-        os_migrate_conversion_secgroup_name: "{{ os_migrate_src_conversion_secgroup_name | default('os_migrate_conv') }}"
-        os_migrate_conversion_keypair_name: "{{ os_migrate_src_conversion_keypair_name | default('os_migrate_conv') }}"
-        os_migrate_conversion_manage_network: "{{ os_migrate_src_conversion_manage_network | default(true) }}"
+        os_migrate_conversion_host_name: "{{ conversion_host_src_name }}"
+        conversion_host_net_name: "{{ os_migrate_src_conversion_net_name | default('os_migrate_conv') }}"
+        conversion_host_subnet_name: "{{ os_migrate_src_conversion_subnet_name | default('os_migrate_conv') }}"
+        conversion_host_router_name: "{{ os_migrate_src_conversion_router_name | default('os_migrate_conv') }}"
+        conversion_host_secgroup_name: "{{ os_migrate_src_conversion_secgroup_name | default('os_migrate_conv') }}"
+        conversion_host_keypair_name: "{{ os_migrate_src_conversion_keypair_name | default('os_migrate_conv') }}"
+        conversion_host_manage_network: "{{ os_migrate_src_conversion_manage_network | default(true) }}"
         os_migrate_conversion_manage_fip: "{{ os_migrate_src_conversion_manage_fip | default(true) }}"
-        os_migrate_conversion_delete_fip: "{{ os_migrate_src_conversion_host_delete_fip | default(true) }}"
+        conversion_host_delete_fip: "{{ os_migrate_src_conversion_host_delete_fip | default(true) }}"
         os_migrate_conversion_cloud: src
         os_migrate_conversion_validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
         os_migrate_conversion_ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
@@ -55,15 +55,15 @@
         name: os_migrate.os_migrate.conversion_host
         tasks_from: delete.yml
       vars:
-        os_migrate_conversion_host_name: "{{ os_migrate_dst_conversion_host_name }}"
-        os_migrate_conversion_net_name: "{{ os_migrate_dst_conversion_net_name | default('os_migrate_conv') }}"
-        os_migrate_conversion_subnet_name: "{{ os_migrate_dst_conversion_subnet_name | default('os_migrate_conv') }}"
-        os_migrate_conversion_router_name: "{{ os_migrate_dst_conversion_router_name | default('os_migrate_conv') }}"
-        os_migrate_conversion_secgroup_name: "{{ os_migrate_dst_conversion_secgroup_name | default('os_migrate_conv') }}"
-        os_migrate_conversion_keypair_name: "{{ os_migrate_dst_conversion_keypair_name | default('os_migrate_conv') }}"
-        os_migrate_conversion_manage_network: "{{ os_migrate_dst_conversion_manage_network | default(true) }}"
+        os_migrate_conversion_host_name: "{{ conversion_host_dst_name }}"
+        conversion_host_net_name: "{{ os_migrate_dst_conversion_net_name | default('os_migrate_conv') }}"
+        conversion_host_subnet_name: "{{ os_migrate_dst_conversion_subnet_name | default('os_migrate_conv') }}"
+        conversion_host_router_name: "{{ os_migrate_dst_conversion_router_name | default('os_migrate_conv') }}"
+        conversion_host_secgroup_name: "{{ os_migrate_dst_conversion_secgroup_name | default('os_migrate_conv') }}"
+        conversion_host_keypair_name: "{{ os_migrate_dst_conversion_keypair_name | default('os_migrate_conv') }}"
+        conversion_host_manage_network: "{{ os_migrate_dst_conversion_manage_network | default(true) }}"
         os_migrate_conversion_manage_fip: "{{ os_migrate_dst_conversion_manage_fip | default(true) }}"
-        os_migrate_conversion_delete_fip: "{{ os_migrate_dst_conversion_host_delete_fip | default(true) }}"
+        conversion_host_delete_fip: "{{ os_migrate_dst_conversion_host_delete_fip | default(true) }}"
         os_migrate_conversion_cloud: dst
         os_migrate_conversion_validate_certs: "{{ os_migrate_dst_validate_certs | default(omit) }}"
         os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert | default(omit) }}"

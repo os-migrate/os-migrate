@@ -7,7 +7,7 @@
         ca_cert: "{{ os_migrate_dst_ca_cert | default(omit) }}"
         client_cert: "{{ os_migrate_dst_client_cert | default(omit) }}"
         client_key: "{{ os_migrate_dst_client_key | default(omit) }}"
-        dst_filters: "{{ os_migrate_dst_filters }}"
+        dst_filters: "{{ prelude_dst_filters }}"
         src_conversion_host:
           "{{ os_src_conversion_host_info.openstack_conversion_host }}"
         log_dir: "{{ os_migrate_data_dir }}/workload_logs"
@@ -32,25 +32,25 @@
         client_cert: "{{ os_migrate_dst_client_cert | default(omit) }}"
         client_key: "{{ os_migrate_dst_client_key | default(omit) }}"
         data: "{{ item }}"
-        dst_filters: "{{ os_migrate_dst_filters }}"
+        dst_filters: "{{ prelude_dst_filters }}"
       when:
         - prelim is defined and prelim.changed
 
     # Stop VM if not stopped and if config set to true
-    - name: Perform workload stop if os_migrate_workload_stop_before_migration is true
+    - name: Perform workload stop if import_workloads_stop_before_migration is true
       openstack.cloud.server_action:
         cloud: src
         server: "{{ item['_info']['id'] }}"
         action: stop
         wait: true
-        timeout: "{{ os_migrate_timeout }}"
+        timeout: "{{ import_workloads_timeout }}"
         validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
         ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
         client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
         client_key: "{{ os_migrate_src_client_key | default(omit) }}"
       when:
         - prelim is defined and prelim.changed
-        - os_migrate_workload_stop_before_migration
+        - import_workloads_stop_before_migration
         - item["_migration_params"]["data_copy"] | default(true)
 
     - name: Perform required checks to ensure source workload is ready
@@ -82,15 +82,15 @@
     - name: Expose source volumes
       os_migrate.os_migrate.import_workload_export_volumes:
         cloud: "{{ cloud_vars_src }}"
-        boot_volume_prefix: "{{ os_migrate_workload_boot_volume_prefix }}"
+        boot_volume_prefix: "{{ import_workloads_boot_volume_prefix }}"
         conversion_host:
           "{{ os_src_conversion_host_info.openstack_conversion_host }}"
         data: "{{ item }}"
         log_file: "{{ prelim.log_file }}"
         state_file: "{{ prelim.state_file }}"
-        ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
-        ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
-        timeout: "{{ os_migrate_timeout }}"
+        ssh_key_path: "{{ import_workloads_keypair_private_path }}"
+        ssh_user: "{{ conversion_host_ssh_user }}"
+        timeout: "{{ import_workloads_timeout }}"
       register: exports
       when:
         - prelim is defined and prelim.changed
@@ -106,15 +106,15 @@
         data: "{{ item }}"
         conversion_host:
           "{{ os_dst_conversion_host_info.openstack_conversion_host }}"
-        ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
-        ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
+        ssh_key_path: "{{ import_workloads_keypair_private_path }}"
+        ssh_user: "{{ conversion_host_ssh_user }}"
         transfer_uuid: "{{ exports.transfer_uuid }}"
         src_conversion_host_address:
           "{{ os_src_conversion_host_info.openstack_conversion_host.address }}"
         volume_map: "{{ exports.volume_map }}"
         log_file: "{{ prelim.log_file }}"
         state_file: "{{ prelim.state_file }}"
-        timeout: "{{ os_migrate_timeout }}"
+        timeout: "{{ import_workloads_timeout }}"
       register: transfer
       when:
         - prelim is defined and prelim.changed
@@ -142,13 +142,13 @@
         client_key: "{{ os_migrate_src_client_key | default(omit) }}"
         data: "{{ item }}"
         conversion_host: "{{ os_src_conversion_host_info.openstack_conversion_host }}"
-        ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
-        ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
+        ssh_key_path: "{{ import_workloads_keypair_private_path }}"
+        ssh_user: "{{ conversion_host_ssh_user }}"
         transfer_uuid: "{{ exports.transfer_uuid }}"
         volume_map: "{{ exports.volume_map }}"
         log_file: "{{ prelim.log_file }}"
         state_file: "{{ prelim.state_file }}"
-        timeout: "{{ os_migrate_timeout }}"
+        timeout: "{{ import_workloads_timeout }}"
       when:
         - prelim is defined and prelim.changed
         - item["_migration_params"]["data_copy"] | default(true)
@@ -163,16 +163,16 @@
         client_key: "{{ os_migrate_src_client_key | default(omit) }}"
         data: "{{ item }}"
         conversion_host: "{{ os_src_conversion_host_info.openstack_conversion_host }}"
-        ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
-        ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
+        ssh_key_path: "{{ import_workloads_keypair_private_path }}"
+        ssh_user: "{{ conversion_host_ssh_user }}"
         transfer_uuid: "{{ exports.transfer_uuid }}"
         volume_map: "{{ exports.volume_map }}"
         log_file: "{{ prelim.log_file }}"
         state_file: "{{ prelim.state_file }}"
-        timeout: "{{ os_migrate_timeout }}"
+        timeout: "{{ import_workloads_timeout }}"
       when:
         - prelim is defined and prelim.changed
-        - os_migrate_workload_cleanup_on_failure
+        - import_workloads_cleanup_on_failure
         - exports is defined and 'volume_map' in exports
         - item["_migration_params"]["data_copy"] | default(true)
 
@@ -185,16 +185,16 @@
         client_key: "{{ os_migrate_dst_client_key | default(omit) }}"
         data: "{{ item }}"
         conversion_host: "{{ os_dst_conversion_host_info.openstack_conversion_host }}"
-        ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
-        ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
+        ssh_key_path: "{{ import_workloads_keypair_private_path }}"
+        ssh_user: "{{ conversion_host_ssh_user }}"
         transfer_uuid: "{{ exports.transfer_uuid }}"
         volume_map: "{{ transfer.volume_map }}"
         log_file: "{{ prelim.log_file }}"
         state_file: "{{ prelim.state_file }}"
-        timeout: "{{ os_migrate_timeout }}"
+        timeout: "{{ import_workloads_timeout }}"
       when:
         - prelim is defined and prelim.changed
-        - os_migrate_workload_cleanup_on_failure
+        - import_workloads_cleanup_on_failure
         - exports is defined and 'volume_map' in exports
         - transfer is defined and 'volume_map' in transfer
         - item["_migration_params"]["data_copy"] | default(true)

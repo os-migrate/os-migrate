@@ -14,7 +14,7 @@
         # skipping the universal conversion host (osm_uch)
         # which is used to move the VM's.
         # We create it on in seed.yml but we dont export it.
-        os_migrate_networks_filter:
+        export_networks_filter:
           - regex: '^osm_(?!uch)'
 
     - name: load exported data
@@ -46,7 +46,7 @@
         # skipping the universal conversion host (osm_uch)
         # which is used to move the VM's.
         # We create it on in seed.yml but we dont export it.
-        os_migrate_subnets_filter:
+        export_subnets_filter:
           - regex: '^osm_(?!uch)'
 
     - name: load exported data
@@ -74,7 +74,7 @@
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.export_security_groups
       vars:
-        os_migrate_security_groups_filter:
+        export_security_groups_filter:
           - regex: '^osm_'
 
     - name: load exported data
@@ -103,7 +103,7 @@
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.export_security_group_rules
       vars:
-        os_migrate_security_groups_filter:
+        export_security_group_rules_filter:
           - regex: '^osm_'
 
     - name: load exported data
@@ -136,7 +136,7 @@
         # skipping the universal conversion host (osm_uch)
         # which is used to move the VM's.
         # We create it on in seed.yml but we dont export it.
-        os_migrate_routers_filter:
+        export_routers_filter:
           - regex: '^osm_(?!uch)'
 
     - name: load exported data
@@ -168,7 +168,7 @@
         # skipping the universal conversion host (osm_uch)
         # which is used to move the VM's.
         # We create it on in seed.yml but we dont export it.
-        os_migrate_routers_filter:
+        export_router_interfaces_filter:
           - regex: '^osm_(?!uch)'
 
     - name: load exported data
@@ -196,7 +196,7 @@
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.export_images
       vars:
-        os_migrate_images_filter:
+        export_images_filter:
           - regex: '^osm_'
 
     - name: load exported data

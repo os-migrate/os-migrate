@@ -1,1 +1,1 @@
-os_migrate_validate_files: true
+validate_resource_files_state: true

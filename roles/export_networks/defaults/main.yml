@@ -1,2 +1,2 @@
-os_migrate_networks_filter:
+export_networks_filter:
   - regex: .*

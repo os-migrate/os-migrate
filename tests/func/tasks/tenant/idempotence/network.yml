@@ -4,7 +4,7 @@
   ansible.builtin.include_role:
     name: os_migrate.os_migrate.export_networks
   vars:
-    os_migrate_networks_filter:
+    export_networks_filter:
       - regex: '^osm_'
 
 - name: re-load network_resources for idempotency test

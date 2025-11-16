@@ -25,8 +25,8 @@
       - "{{ inventory_group }}"
     os_migrate_conversion_host_name: "{{ os_migrate_conversion_host_name }}"
     ansible_ssh_host: "{{ _server_info.servers[0].access_ipv4 }}"
-    ansible_ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
-    ansible_ssh_private_key_file: "{{ os_migrate_conversion_keypair_private_path }}"
+    ansible_ssh_user: "{{ conversion_host_ssh_user }}"
+    ansible_ssh_private_key_file: "{{ conversion_host_keypair_private_path }}"
     ansible_ssh_extra_args: '-o StrictHostKeyChecking=no'
     # Generally conversion hosts act as centos, not as
     # root. E.g. link ssh keys need to be added to centos.
