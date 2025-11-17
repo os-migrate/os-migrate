@@ -67,6 +67,8 @@ class Subnet(resource.Resource):
 
     @staticmethod
     def _create_sdk_res(conn, sdk_params):
+        if not 'gateway_ip' in sdk_params:
+            sdk_params['gateway_ip'] = None
         return conn.network.create_subnet(**sdk_params)
 
     @staticmethod
