@@ -8,7 +8,7 @@
     filtered_user_project_role_assignments: "{{ (read_user_project_role_assignments.resources
       | from_yaml
       | os_migrate.os_migrate.stringfilter(os_migrate_user_filter,
-         attribute='params.project_ref.name')) }}"
+         attribute='params.user_ref.name')) }}"
 
 - name: Import user project role assignment
   os_migrate.os_migrate.import_user_project_role_assignment:
