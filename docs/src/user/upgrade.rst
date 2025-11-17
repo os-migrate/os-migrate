@@ -23,7 +23,7 @@ To upgrade/downgrade to a particular release:
    ansible-galaxy collection install os_migrate.os_migrate:<VERSION>
 
 You can find available releases at `OS Migrate Galaxy page
-<https://galaxy.ansible.com//os_migrate>`_.
+<https://galaxy.ansible.com/os_migrate/os_migrate>`_.
 
 Usage notes related to upgrading
 --------------------------------
