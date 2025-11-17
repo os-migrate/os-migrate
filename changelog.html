@@ -225,14 +225,6 @@ from CIDR.
 To avoid the issue, this fix injects ‘gateway_ip: None’ if the option
 doesn’t exist in the file.</p>
 </li>
-<li><p>Fix user_filter not working in import_user_project_role_assignments.
-[Piotr Czarnik]</p>
-<p>Previously, when os_migrate_user_filter was used,
-import_user_project_role_assignments could fail to find any role
-assignments. The issue was caused by filtering on the project_name
-attribute instead of user_name.</p>
-<p>Closes #746</p>
-</li>
 <li><p>Resolve e2e test auth and container issues. [Roberto Alfieri]</p>
 <ul class="simple">
 <li><p>Fixed Makefile variable references and bash syntax errors</p></li>
@@ -262,17 +254,15 @@ the image wasn’t found.</p>
 <section id="other">
 <h3>Other<a class="headerlink" href="#other" title="Link to this heading"></a></h3>
 <ul>
-<li><p>Merge branch ‘main’ into user_filter-in-import-role_assignments.
-[fdiazbra]</p></li>
 <li><p>Merge branch ‘main’ into fix_subnet. [fdiazbra]</p></li>
 <li><p>Merge branch ‘main’ into modernize/default_to_cinder_v3. [fdiazbra]</p></li>
+<li><p>Fix incorrect //os_migrate in few places in docs. [Piotr Czarnik]</p>
+<p>Closes #742</p>
+</li>
 <li><p>Use CinderV3 by Default. [RageLtMan]</p>
 <p>CinderV2 API has been gone since Xena so the probability of users
 accessing such old clouds is dropping daily.</p>
 <p>Update to modern default in the workload migration task.</p>
-</li>
-<li><p>Fix incorrect //os_migrate in few places in docs. [Piotr Czarnik]</p>
-<p>Closes #742</p>
 </li>
 <li><p>Fixes to jinja and yaml formatting rules (#731) [cloudguruab]</p>
 <ul class="simple">

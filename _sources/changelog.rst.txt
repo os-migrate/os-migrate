@@ -21,15 +21,6 @@ Fix
   from CIDR.
   To avoid the issue, this fix injects 'gateway_ip: None' if the option
   doesn't exist in the file.
-- Fix user_filter not working in import_user_project_role_assignments.
-  [Piotr Czarnik]
-
-  Previously, when os_migrate_user_filter was used,
-  import_user_project_role_assignments could fail to find any role
-  assignments. The issue was caused by filtering on the project_name
-  attribute instead of user_name.
-
-  Closes #746
 - Resolve e2e test auth and container issues. [Roberto Alfieri]
 
   * Fixed Makefile variable references and bash syntax errors
@@ -56,19 +47,17 @@ Fix
 
 Other
 ~~~~~
-- Merge branch 'main' into user_filter-in-import-role_assignments.
-  [fdiazbra]
 - Merge branch 'main' into fix_subnet. [fdiazbra]
 - Merge branch 'main' into modernize/default_to_cinder_v3. [fdiazbra]
+- Fix incorrect //os_migrate in few places in docs. [Piotr Czarnik]
+
+  Closes #742
 - Use CinderV3 by Default. [RageLtMan]
 
   CinderV2 API has been gone since Xena so the probability of users
   accessing such old clouds is dropping daily.
 
   Update to modern default in the workload migration task.
-- Fix incorrect //os_migrate in few places in docs. [Piotr Czarnik]
-
-  Closes #742
 - Fixes to jinja and yaml formatting rules (#731) [cloudguruab]
 
   * dev: updates to conversion host role spacing and jinja formats
