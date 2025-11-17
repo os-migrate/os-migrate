@@ -13,7 +13,7 @@
 # https://github.com/os-migrate/os-migrate/issues/524
 - name: Create name tuples of user project role assignments to export
   ansible.builtin.set_fact:
-    export_user_project_role_assignments_ids_names: |
+    export_user_project_role_assignments_ids_names:
       "{{ (src_user_project_role_assignments_info.openstack_role_assignments
         | json_query('[*].{user_name: user.name, user_id: user.id,
          role_name: role.name, role_id: role.id, project_name: scope.project.name,
@@ -26,7 +26,7 @@
 # https://github.com/os-migrate/os-migrate/issues/524
 - name: Create name tuples of user project role assignments to export
   ansible.builtin.set_fact:
-    export_user_project_role_assignments_ids_names: |
+    export_user_project_role_assignments_ids_names:
       "{{ (export_user_project_role_assignments_ids_names
         | json_query('[?user_name != `VALUE_SPECIFIED_IN_NO_LOG_PARAMETER`]
           | [?role_name != `VALUE_SPECIFIED_IN_NO_LOG_PARAMETER`]
@@ -37,7 +37,7 @@
 
 - name: Filter names of user project role assignments to export
   ansible.builtin.set_fact:
-    export_user_project_role_assignments_ids_names: |
+    export_user_project_role_assignments_ids_names:
       "{{ (export_user_project_role_assignments_ids_names
         | from_yaml
         | os_migrate.os_migrate.stringfilter(os_migrate_user_filter,
