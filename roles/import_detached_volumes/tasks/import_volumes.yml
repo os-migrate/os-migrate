@@ -6,6 +6,8 @@
 - name: Set block storage api version for source cloud is defined
   ansible.builtin.set_fact:
     cloud_vars_src: "{{ cloud_vars.clouds['src'] | combine({'block_storage_api_version': '3'}) }}"
+  when:
+    - cloud_vars.clouds['src'].block_storage_api_version is not defined
 
 - name: Expose source volume
   os_migrate.os_migrate.import_volumes_export:
