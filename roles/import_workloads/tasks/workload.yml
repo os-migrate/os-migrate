@@ -80,7 +80,7 @@
         - item["_migration_params"]["data_copy"] | default(true)
         - cloud_vars.clouds['src'].block_storage_api_version is not defined
 
-    - name: Expose source volumes 
+    - name: Expose source volumes
       os_migrate.os_migrate.import_workload_export_volumes:
         cloud: "{{ cloud_vars_src }}"
         boot_volume_prefix: "{{ os_migrate_workload_boot_volume_prefix }}"
