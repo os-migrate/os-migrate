@@ -78,6 +78,7 @@
       when:
         - prelim is defined and prelim.changed
         - item["_migration_params"]["data_copy"] | default(true)
+        - cloud_vars.clouds['src'].block_storage_api_version is not defined
 
     - name: Expose source volumes
       os_migrate.os_migrate.import_workload_export_volumes:
