@@ -89,7 +89,7 @@ The concepts and prerequisites are the same for other deployments.
     - 1 volume totalling 1 GB in source environment
     - 2 volumes totalling 6 GB in destination environment
     - 2 VMs totalling 35 GB disk usage in each environment
-
+- Set-up a python virtual environment [here](https://www.redhat.com/en/blog/python-venv-ansible) so you're able to set a version of openstacksdk from RHOSO 18.
 
 ## Workflow
 
