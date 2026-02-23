@@ -21,10 +21,17 @@
     state: directory
     mode: '0750'
 
+- name: Check if any workload requires data copy
+  ansible.builtin.set_fact:
+    os_migrate_requires_conversion_hosts: >-
+      {{ filtered_workloads | selectattr('_migration_params.data_copy', 'defined') |
+         selectattr('_migration_params.data_copy', 'equalto', true) | list | length > 0 }}
+
 - name: Check data copy state and run conversion host operations
   ansible.builtin.include_role:
     name: os_migrate.os_migrate.conversion_host
     tasks_from: conv_host_details.yml
+  when: os_migrate_requires_conversion_hosts | bool
 
 - name: Import workloads
   ansible.builtin.include_tasks: workload.yml
