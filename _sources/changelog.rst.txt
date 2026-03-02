@@ -56,6 +56,7 @@ Fix
 
 Other
 ~~~~~
+- Merge branch 'main' into vol/img/metadata. [mathieu bultel]
 - Missing EOF newline. [Fernando Diaz]
 - Add binding type and fix data copy param. [Fernando Diaz]
 - Merge branch 'main' into user_filter-in-import-role_assignments.
