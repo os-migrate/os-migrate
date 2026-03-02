@@ -33,11 +33,7 @@ options:
       - Options for filtering the Security Group info.
     required: false
     type: dict
-  availability_zone:
-    description:
-      - Availability zone.
-    required: false
-    type: str
+    default: {}
   cloud:
     description:
       - Cloud resource from clouds.yml file
@@ -92,7 +88,7 @@ def main():
     # TODO: check the del
     # del argument_spec['cloud']
 
-    module = AnsibleModule(argument_spec)
+    module = AnsibleModule(argument_spec, supports_check_mode=True)
     sdk, cloud = openstack_cloud_from_module(module)
     try:
         security_groups = list(

@@ -43,11 +43,6 @@ options:
       - Destination OpenStack region name. Can be omitted if using default region.
     required: false
     type: str
-  availability_zone:
-    description:
-      - Availability zone.
-    required: false
-    type: str
   cloud:
     description:
       - Cloud resource from clouds.yml
@@ -365,7 +360,7 @@ def run_module():
     argument_spec = openstack_full_argument_spec(
         data=dict(type="dict", required=True),
         conversion_host=dict(type="dict", required=True),
-        ssh_key_path=dict(type="str", required=True),
+        ssh_key_path=dict(type="str", required=True, no_log=True),
         ssh_user=dict(type="str", required=True),
         transfer_uuid=dict(type="str", required=True),
         src_conversion_host_address=dict(type="str", required=True),

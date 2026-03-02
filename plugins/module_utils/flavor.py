@@ -2,7 +2,13 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import openstack
+try:
+    import openstack
+    HAS_OPENSTACK = True
+    OPENSTACK_SDK_FLAVOR = openstack.compute.v2.flavor.Flavor
+except ImportError:
+    HAS_OPENSTACK = False
+    OPENSTACK_SDK_FLAVOR = None
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     const,
@@ -12,7 +18,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
 
 class Flavor(resource.Resource):
     resource_type = const.RES_TYPE_FLAVOR
-    sdk_class = openstack.compute.v2.flavor.Flavor
+    sdk_class = OPENSTACK_SDK_FLAVOR
 
     info_from_sdk = [
         "id",

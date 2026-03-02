@@ -2,7 +2,13 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import openstack
+try:
+    import openstack
+    HAS_OPENSTACK = True
+    OPENSTACK_SDK_VOLUME = openstack.block_storage.v3.volume.Volume
+except ImportError:
+    HAS_OPENSTACK = False
+    OPENSTACK_SDK_VOLUME = None
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     exc,
@@ -21,7 +27,7 @@ def server_volumes(conn, sdk_res):
 class ServerVolume(resource.Resource):
 
     resource_type = const.RES_TYPE_SERVER_VOLUME
-    sdk_class = openstack.block_storage.v3.volume.Volume
+    sdk_class = OPENSTACK_SDK_VOLUME
 
     info_from_sdk = [
         "attachments",

@@ -2,8 +2,24 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import openstack
-from openstack.exceptions import DuplicateResource, HttpException, ResourceFailure
+try:
+    import openstack
+    HAS_OPENSTACK = True
+    from openstack.exceptions import DuplicateResource, HttpException, ResourceFailure
+    OPENSTACK_IMAGE_CLASS = openstack.image.v2.image.Image
+except ImportError:
+    HAS_OPENSTACK = False
+
+    class DuplicateResource(Exception):
+        pass
+
+    class HttpException(Exception):
+        pass
+
+    class ResourceFailure(Exception):
+        pass
+
+    OPENSTACK_IMAGE_CLASS = type(None)
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
 
@@ -421,7 +437,7 @@ def _fetch_ref(conn, get_method, id_, required=True, get_project_info=True):
         return None
 
     if get_project_info:
-        if isinstance(resource, openstack.image.v2.image.Image):
+        if isinstance(resource, OPENSTACK_IMAGE_CLASS):
             project_name, domain_name = _fetch_project_name_and_domain_name(
                 conn, resource.owner_id
             )

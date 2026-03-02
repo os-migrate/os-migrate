@@ -51,11 +51,6 @@ options:
       - Name (or ID) of a User to export.
     required: true
     type: str
-  availability_zone:
-    description:
-      - Availability zone.
-    required: false
-    type: str
   cloud:
     description:
       - Cloud resource from clouds.yml

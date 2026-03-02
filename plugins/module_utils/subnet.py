@@ -2,7 +2,13 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import openstack
+try:
+    import openstack
+    HAS_OPENSTACK = True
+    OPENSTACK_SDK_SUBNET = openstack.network.v2.subnet.Subnet
+except ImportError:
+    HAS_OPENSTACK = False
+    OPENSTACK_SDK_SUBNET = None
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     common,
@@ -14,7 +20,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
 
 class Subnet(resource.Resource):
     resource_type = const.RES_TYPE_SUBNET
-    sdk_class = openstack.network.v2.subnet.Subnet
+    sdk_class = OPENSTACK_SDK_SUBNET
 
     info_from_sdk = [
         "created_at",
@@ -67,7 +73,7 @@ class Subnet(resource.Resource):
 
     @staticmethod
     def _create_sdk_res(conn, sdk_params):
-        if not 'gateway_ip' in sdk_params:
+        if 'gateway_ip' not in sdk_params:
             sdk_params['gateway_ip'] = None
         return conn.network.create_subnet(**sdk_params)
 

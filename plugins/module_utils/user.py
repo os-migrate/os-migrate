@@ -2,7 +2,13 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import openstack
+try:
+    import openstack
+    HAS_OPENSTACK = True
+    OPENSTACK_SDK_USER = openstack.identity.v3.user.User
+except ImportError:
+    HAS_OPENSTACK = False
+    OPENSTACK_SDK_USER = None
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     const,
@@ -13,7 +19,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
 
 class User(resource.Resource):
     resource_type = const.RES_TYPE_USER
-    sdk_class = openstack.identity.v3.user.User
+    sdk_class = OPENSTACK_SDK_USER
 
     info_from_sdk = [
         "id",
