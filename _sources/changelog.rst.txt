@@ -13,6 +13,13 @@ New
 
 Fix
 ~~~
+- Resolve ansible-test sanity failures. [Veronika Vyvleckova]
+
+  Add conditional imports for openstack SDK and yaml dependencies to fix
+  Python 3.12 import tests. Fix PEP8 and pylint issues. Correct module
+  documentation to match argument specs (90+ validate-modules errors).
+
+  All ansible-test sanity tests now pass.
 - Add gateway_ip to create subnet. [Keigo Noha]
 
   In Neutron, gateway_ip: None has the special meaning that the subnet
@@ -56,6 +63,7 @@ Fix
 
 Other
 ~~~~~
+- Merge branch 'main' into sanity_tests. [mathieu bultel]
 - Merge branch 'main' into vol/img/metadata. [mathieu bultel]
 - Missing EOF newline. [Fernando Diaz]
 - Add binding type and fix data copy param. [Fernando Diaz]

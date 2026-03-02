@@ -162,34 +162,31 @@
 <dt class="field-odd">conversion_host<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Dictionary with information about the source conversion host (address, status, name, id)</p>
 </dd>
-<dt class="field-even">data<span class="colon">:</span></dt>
-<dd class="field-even"><p>Data structure with server parameters as loaded from OS-Migrate volumes YAML file.</p>
+<dt class="field-even">log_file<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to store a log file for this conversion process.</p>
 </dd>
-<dt class="field-odd">log_file<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Path to store a log file for this conversion process.</p>
+<dt class="field-odd">state_file<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Path to store a transfer progress file for this conversion process.</p>
 </dd>
-<dt class="field-even">state_file<span class="colon">:</span></dt>
-<dd class="field-even"><p>Path to store a transfer progress file for this conversion process.</p>
+<dt class="field-even">src_conversion_host_address<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional IP address of the source conversion host. Without this, the plugin will use the 'access_ipv4' property of the conversion host instance.</p>
 </dd>
-<dt class="field-odd">src_conversion_host_address<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Optional IP address of the source conversion host. Without this, the plugin will use the 'access_ipv4' property of the conversion host instance.</p>
+<dt class="field-odd">ssh_key_path<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Path to an SSH private key authorized on the source cloud.</p>
 </dd>
-<dt class="field-even">ssh_key_path<span class="colon">:</span></dt>
-<dd class="field-even"><p>Path to an SSH private key authorized on the source cloud.</p>
+<dt class="field-even">ssh_user<span class="colon">:</span></dt>
+<dd class="field-even"><p>The SSH user to connect to the conversion hosts.</p>
 </dd>
-<dt class="field-odd">ssh_user<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The SSH user to connect to the conversion hosts.</p>
-</dd>
-<dt class="field-even">transfer_uuid<span class="colon">:</span></dt>
-<dd class="field-even"><p>A UUID used to keep track of this tranfer's resources on the conversion hosts.</p>
+<dt class="field-odd">transfer_uuid<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A UUID used to keep track of this tranfer's resources on the conversion hosts.</p>
 <p>Provided by the import_volumes_export_volumes module.</p>
 </dd>
-<dt class="field-odd">volume_map<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Dictionary providing information about the volumes to transfer.</p>
+<dt class="field-even">volume_map<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary providing information about the volumes to transfer.</p>
 <p>Provided by the import_volumes_export_volumes module.</p>
 </dd>
-<dt class="field-even">timeout<span class="colon">:</span></dt>
-<dd class="field-even"><p>Timeout for long running operations, in seconds.</p>
+<dt class="field-odd">timeout<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Timeout for long running operations, in seconds.</p>
 </dd>
 </dl>
 </section>

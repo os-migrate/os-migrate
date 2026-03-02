@@ -141,7 +141,7 @@
 </div></blockquote>
 <section id="m-o-d-u-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n">
 <h2>Module Documentation<a class="headerlink" href="#m-o-d-u-l-e-d-o-c-u-m-e-n-t-a-t-i-o-n" title="Link to this heading"></a></h2>
-<p><p>Export OpenStack network definition into an OS-Migrate YAML</p>
+<p><p>Export OpenStack detached volume definition into an OS-Migrate YAML</p>
 </p>
 <section id="o-p-t-i-o-n-s">
 <h3>Options<a class="headerlink" href="#o-p-t-i-o-n-s" title="Link to this heading"></a></h3>
@@ -157,18 +157,15 @@
 <dd class="field-odd"><p>OpenStack region name. Can be omitted if using default region.</p>
 </dd>
 <dt class="field-even">path<span class="colon">:</span></dt>
-<dd class="field-even"><p>Resources YAML file to where network will be serialized.</p>
+<dd class="field-even"><p>Resources YAML file to where detached volume will be serialized.</p>
 <p>In case the resource file already exists, it must match the os-migrate version.</p>
 <p>In case the resource of same type and name exists in the file, it will be replaced.</p>
 </dd>
-<dt class="field-odd">name<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Name (or ID) of a Network to export.</p>
+<dt class="field-odd">volume_id<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Volume ID of the detached volume to export.</p>
 </dd>
-<dt class="field-even">availability_zone<span class="colon">:</span></dt>
-<dd class="field-even"><p>Availability zone.</p>
-</dd>
-<dt class="field-odd">cloud<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Cloud from clouds.yaml to use.</p>
+<dt class="field-even">cloud<span class="colon">:</span></dt>
+<dd class="field-even"><p>Cloud from clouds.yaml to use.</p>
 <p>Required if 'auth' parameter is not used.</p>
 </dd>
 </dl>
@@ -184,10 +181,10 @@
 </section>
 <section id="e-x-a-m-p-l-e-t-a-s-k-s">
 <h2>Example Tasks<a class="headerlink" href="#e-x-a-m-p-l-e-t-a-s-k-s" title="Link to this heading"></a></h2>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Export mynetwork into /opt/os-migrate/networks.yml</span>
-<span class="w">  </span><span class="nt">os_migrate.os_migrate.export_network</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/opt/os-migrate/networks.yml</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mynetwork</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Export mydetachedvolume into /opt/os-migrate/detached_volumes.yml</span>
+<span class="w">  </span><span class="nt">os_migrate.os_migrate.export_detached_volume</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/opt/os-migrate/detached_volumes.yml</span>
+<span class="w">    </span><span class="nt">volume_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;some-volume-uuid&gt;</span>
 </pre></div>
 </div>
 </section>

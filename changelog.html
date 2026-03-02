@@ -217,6 +217,12 @@
 <section id="fix">
 <h3>Fix<a class="headerlink" href="#fix" title="Link to this heading"></a></h3>
 <ul>
+<li><p>Resolve ansible-test sanity failures. [Veronika Vyvleckova]</p>
+<p>Add conditional imports for openstack SDK and yaml dependencies to fix
+Python 3.12 import tests. Fix PEP8 and pylint issues. Correct module
+documentation to match argument specs (90+ validate-modules errors).</p>
+<p>All ansible-test sanity tests now pass.</p>
+</li>
 <li><p>Add gateway_ip to create subnet. [Keigo Noha]</p>
 <p>In Neutron, gateway_ip: None has the special meaning that the subnet
 doesn’t have gateway. If we drop gateway_ip option from subnet request,
@@ -262,6 +268,7 @@ the image wasn’t found.</p>
 <section id="other">
 <h3>Other<a class="headerlink" href="#other" title="Link to this heading"></a></h3>
 <ul>
+<li><p>Merge branch ‘main’ into sanity_tests. [mathieu bultel]</p></li>
 <li><p>Merge branch ‘main’ into vol/img/metadata. [mathieu bultel]</p></li>
 <li><p>Missing EOF newline. [Fernando Diaz]</p></li>
 <li><p>Add binding type and fix data copy param. [Fernando Diaz]</p></li>

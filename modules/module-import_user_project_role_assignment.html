@@ -155,11 +155,11 @@
 <dt class="field-odd">region_name<span class="colon">:</span></dt>
 <dd class="field-odd"><p>OpenStack region name. Can be omitted if using default region.</p>
 </dd>
-<dt class="field-even">filters<span class="colon">:</span></dt>
-<dd class="field-even"><p>Options for filtering existing resources to be looked up, e.g. by role assignment.</p>
+<dt class="field-even">data<span class="colon">:</span></dt>
+<dd class="field-even"><p>Data structure with role assignment parameters as loaded from OS-Migrate YAML file.</p>
 </dd>
-<dt class="field-odd">availability_zone<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Availability zone.</p>
+<dt class="field-odd">filters<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Options for filtering existing resources to be looked up, e.g. by role assignment.</p>
 </dd>
 <dt class="field-even">cloud<span class="colon">:</span></dt>
 <dd class="field-even"><p>Cloud resource from clouds.yml.</p>
@@ -178,11 +178,10 @@
 </section>
 <section id="e-x-a-m-p-l-e-t-a-s-k-s">
 <h2>Example Tasks<a class="headerlink" href="#e-x-a-m-p-l-e-t-a-s-k-s" title="Link to this heading"></a></h2>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Import my_project into /opt/os-migrate/user_project_role_assignment.yml</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Import role assignment from data</span>
 <span class="w">  </span><span class="nt">os_migrate.os_migrate.import_user_project_role_assignment</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">cloud</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">source_cloud</span>
-<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/opt/os-migrate/user_project_role_assignment.yml</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_project</span>
+<span class="w">    </span><span class="nt">cloud</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">destination_cloud</span>
+<span class="w">    </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">role_assignment_data</span><span class="nv"> </span><span class="s">}}&#39;</span>
 </pre></div>
 </div>
 </section>
