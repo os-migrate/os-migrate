@@ -35,6 +35,7 @@ class ServerVolume(resource.Resource):
         "name",
         "description",
         "volume_type",
+        'volume_image_metadata',
     ]
 
     def create_or_update(self, conn, filters=None):
