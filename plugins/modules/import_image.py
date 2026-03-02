@@ -53,17 +53,13 @@ options:
       - Options for filtering existing resources to be looked up, e.g. by project.
     required: false
     type: dict
+    default: {}
   blob_path:
     description:
       - Path where the image blob content will be saved.
       - In case the file already exists, it is assumed that the export was
         already performed and the module doesn't overwrite it.
     required: true
-    type: str
-  availability_zone:
-    description:
-      - Availability zone.
-    required: false
     type: str
   cloud:
     description:

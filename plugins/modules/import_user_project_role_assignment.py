@@ -17,7 +17,7 @@ module: import_user_project_role_assignment
 short_description: Import OpenStack Identity Role Assignment
 extends_documentation_fragment:
   - os_migrate.os_migrate.openstack
-version_added: "2.9"
+version_added: "2.9.0"
 author: "OpenStack tenant migration tools (@os-migrate)"
 description:
   - "Export OpenStack Identity Role Assignment definition into an OS-Migrate YAML"
@@ -37,16 +37,17 @@ options:
       - OpenStack region name. Can be omitted if using default region.
     required: false
     type: str
+  data:
+    description:
+      - Data structure with role assignment parameters as loaded from OS-Migrate YAML file.
+    required: true
+    type: dict
   filters:
     description:
       - Options for filtering existing resources to be looked up, e.g. by role assignment.
     required: false
     type: dict
-  availability_zone:
-    description:
-      - Availability zone.
-    required: false
-    type: str
+    default: {}
   cloud:
     description:
       - Cloud resource from clouds.yml.
@@ -56,11 +57,10 @@ options:
 """
 
 EXAMPLES = r"""
-- name: Import my_project into /opt/os-migrate/user_project_role_assignment.yml
+- name: Import role assignment from data
   os_migrate.os_migrate.import_user_project_role_assignment:
-    cloud: source_cloud
-    path: /opt/os-migrate/user_project_role_assignment.yml
-    name: my_project
+    cloud: destination_cloud
+    data: "{{ role_assignment_data }}"
 """
 
 RETURN = r"""

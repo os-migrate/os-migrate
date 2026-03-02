@@ -43,11 +43,6 @@ options:
       - Destination OpenStack region name. Can be omitted if using default region.
     required: false
     type: str
-  availability_zone:
-    description:
-      - Availability zone.
-    required: false
-    type: str
   cloud:
     description:
       - Cloud resource from clouds.yml

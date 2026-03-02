@@ -33,6 +33,7 @@ options:
       - Options for filtering the Keypairs info.
     required: false
     type: dict
+    default: {}
   auth:
     description:
       - Required if 'cloud' parameter not used.
@@ -46,11 +47,6 @@ options:
   region_name:
     description:
       - OpenStack region name. Can be omitted if using default region.
-    required: false
-    type: str
-  availability_zone:
-    description:
-      - Availability zone.
     required: false
     type: str
   cloud:

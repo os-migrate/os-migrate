@@ -2,7 +2,13 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import openstack
+try:
+    import openstack
+    HAS_OPENSTACK = True
+    OPENSTACK_SDK_PORT = openstack.network.v2.port.Port
+except ImportError:
+    HAS_OPENSTACK = False
+    OPENSTACK_SDK_PORT = None
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     exc,
@@ -33,7 +39,7 @@ def router_ports(conn, sdk_rtr):
 class RouterInterface(resource.Resource):
 
     resource_type = const.RES_TYPE_ROUTER_INTERFACE
-    sdk_class = openstack.network.v2.port.Port
+    sdk_class = OPENSTACK_SDK_PORT
 
     info_from_sdk = [
         "id",

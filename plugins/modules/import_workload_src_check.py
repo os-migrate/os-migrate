@@ -53,11 +53,6 @@ options:
       - Name (or ID) of an instance to check.
     required: true
     type: str
-  availability_zone:
-    description:
-      - Availability zone.
-    required: false
-    type: str
   cloud:
     description:
       - Cloud resource from clouds.yml

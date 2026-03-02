@@ -54,11 +54,6 @@ options:
       - Dictionary with information about the source conversion host (address, status, name, id)
     required: true
     type: dict
-  data:
-    description:
-      - Data structure with server parameters as loaded from OS-Migrate volumes YAML file.
-    required: true
-    type: dict
   log_file:
     description:
       - Path to store a log file for this conversion process.
@@ -225,7 +220,7 @@ class OpenStackSourceCleanup(OpenstackVolumeClean):
 def run_module():
     argument_spec = openstack_full_argument_spec(
         conversion_host=dict(type="dict", required=True),
-        ssh_key_path=dict(type="str", required=True),
+        ssh_key_path=dict(type="str", required=True, no_log=True),
         ssh_user=dict(type="str", required=True),
         transfer_uuid=dict(type="str", required=True),
         volume_map=dict(type="dict", required=True),

@@ -3,7 +3,20 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from copy import deepcopy
-from openstack import exceptions as os_exc
+try:
+    import openstack
+    HAS_OPENSTACK = True
+    OPENSTACK_EXC = openstack.exceptions
+except ImportError:
+    HAS_OPENSTACK = False
+
+    class DummyException(Exception):
+        pass
+
+    class OPENSTACK_EXC:
+        ResourceFailure = DummyException
+        ResourceNotFound = DummyException
+        DuplicateResource = DummyException
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const, exc
 
 
@@ -292,9 +305,9 @@ class Resource:
         try:
             self._refs_from_ser(conn)
         except (
-            os_exc.ResourceFailure,
-            os_exc.ResourceNotFound,
-            os_exc.DuplicateResource,
+            OPENSTACK_EXC.ResourceFailure,
+            OPENSTACK_EXC.ResourceNotFound,
+            OPENSTACK_EXC.DuplicateResource,
         ) as e:
             errors.append(f"Destination prerequisites not met: {e}")
         return errors

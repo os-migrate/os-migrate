@@ -17,7 +17,7 @@ module: export_user_project_role_assignment
 short_description: Export OpenStack Identity Role Assignment
 extends_documentation_fragment:
   - os_migrate.os_migrate.openstack
-version_added: "2.9"
+version_added: "2.9.0"
 author: "OpenStack tenant migration tools (@os-migrate)"
 description:
   - "Export OpenStack Identity Role Assignment definition into an OS-Migrate YAML"
@@ -60,11 +60,6 @@ options:
     description:
       - ID of a role to export the role assignment for.
     required: true
-    type: str
-  availability_zone:
-    description:
-      - Availability zone.
-    required: false
     type: str
   cloud:
     description:

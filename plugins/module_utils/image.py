@@ -3,8 +3,15 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import hashlib
-import openstack
 import os
+
+try:
+    import openstack
+    HAS_OPENSTACK = True
+    OPENSTACK_SDK_IMAGE = openstack.image.v2.image.Image
+except ImportError:
+    HAS_OPENSTACK = False
+    OPENSTACK_SDK_IMAGE = None
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     const,
@@ -17,7 +24,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
 class Image(resource.Resource):
 
     resource_type = const.RES_TYPE_IMAGE
-    sdk_class = openstack.image.v2.image.Image
+    sdk_class = OPENSTACK_SDK_IMAGE
 
     info_from_sdk = [
         "checksum",

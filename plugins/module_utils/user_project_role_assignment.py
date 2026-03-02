@@ -2,7 +2,13 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import openstack
+try:
+    import openstack
+    HAS_OPENSTACK = True
+    OPENSTACK_SDK_ROLE_ASSIGNMENT = openstack.identity.v3.role_assignment.RoleAssignment
+except ImportError:
+    HAS_OPENSTACK = False
+    OPENSTACK_SDK_ROLE_ASSIGNMENT = None
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     const,
@@ -13,7 +19,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
 
 class UserProjectRoleAssignment(resource.Resource):
     resource_type = const.RES_TYPE_USER_PROJECT_ROLE_ASSIGNMENT
-    sdk_class = openstack.identity.v3.role_assignment.RoleAssignment
+    sdk_class = OPENSTACK_SDK_ROLE_ASSIGNMENT
 
     info_from_refs = [
         "project_id",

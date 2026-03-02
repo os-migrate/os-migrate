@@ -57,11 +57,6 @@ options:
         than the authenticated user (admin-only feature).
     required: false
     type: str
-  availability_zone:
-    description:
-      - Availability zone.
-    required: false
-    type: str
   cloud:
     description:
       - Cloud from clouds.yaml to use.

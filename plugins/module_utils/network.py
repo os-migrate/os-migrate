@@ -2,7 +2,13 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import openstack
+try:
+    import openstack
+    HAS_OPENSTACK = True
+    OPENSTACK_SDK_NETWORK = openstack.network.v2.network.Network
+except ImportError:
+    HAS_OPENSTACK = False
+    OPENSTACK_SDK_NETWORK = None
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     common,
@@ -15,7 +21,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
 class Network(resource.Resource):
 
     resource_type = const.RES_TYPE_NETWORK
-    sdk_class = openstack.network.v2.network.Network
+    sdk_class = OPENSTACK_SDK_NETWORK
 
     info_from_sdk = [
         "availability_zones",
