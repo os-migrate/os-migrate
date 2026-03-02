@@ -9,11 +9,10 @@
         client_key: "{{ os_migrate_dst_client_key | default(omit) }}"
         dst_filters: "{{ os_migrate_dst_filters }}"
         src_conversion_host:
-          "{{ os_src_conversion_host_info.openstack_conversion_host }}"
+          "{{ os_src_conversion_host_info.openstack_conversion_host | default({'id': 'none'})}}"
         log_dir: "{{ os_migrate_data_dir }}/workload_logs"
         data: "{{ item }}"
       register: prelim
-      when: item["_migration_params"]["data_copy"] | default(true)
 
     - name: Show progress data
       ansible.builtin.debug:
