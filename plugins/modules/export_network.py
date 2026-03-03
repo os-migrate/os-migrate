@@ -73,17 +73,30 @@ RETURN = r"""
 from ansible.module_utils.basic import AnsibleModule
 
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
+HAS_OPENSTACK_CLOUD = False
 try:
     from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
         openstack_full_argument_spec,
         openstack_cloud_from_module,
     )
+    HAS_OPENSTACK_CLOUD = True
 except ImportError:
-    # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack import (
-        openstack_full_argument_spec,
-        openstack_cloud_from_module,
-    )
+    try:
+        # If this fails fall back to ansible < 3 imports
+        from ansible.module_utils.openstack import (
+            openstack_full_argument_spec,
+            openstack_cloud_from_module,
+        )
+        HAS_OPENSTACK_CLOUD = True
+    except ImportError:
+        # Create stub functions for sanity testing
+        HAS_OPENSTACK_CLOUD = False
+
+        def openstack_full_argument_spec(**kwargs):
+            return {}
+
+        def openstack_cloud_from_module(module):
+            return None, None
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import filesystem
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import network
@@ -105,6 +118,9 @@ def run_module():
         # if the file representation matches it.
         # supports_check_mode=True,
     )
+
+    if not HAS_OPENSTACK_CLOUD:
+        module.fail_json(msg='openstack.cloud collection is required for this module')
 
     sdk, conn = openstack_cloud_from_module(module)
     sdk_net = conn.network.find_network(module.params["name"], ignore_missing=False)

@@ -2,6 +2,7 @@ namespace: os_migrate
 name: os_migrate
 version: 1.0.1
 readme: README.md
+requires_ansible: '>=2.15.0'
 authors:
   - Jiri Stransky <jistr@redhat.com>
   - Carlos Camacho <ccamacho@redhat.com>
