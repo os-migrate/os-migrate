@@ -106,7 +106,24 @@ except ImportError:
         HAS_OPENSTACK_CLOUD = False
 
         def openstack_full_argument_spec(**kwargs):
-            return {}
+            spec = dict(
+                cloud=dict(type='raw'),
+                auth=dict(type='dict'),
+                auth_type=dict(type='str'),
+                region_name=dict(type='str'),
+                wait=dict(type='bool', default=True),
+                timeout=dict(type='int', default=180),
+                api_timeout=dict(type='int'),
+                validate_certs=dict(type='bool', aliases=['verify']),
+                ca_cert=dict(type='str', aliases=['cacert']),
+                client_cert=dict(type='str', aliases=['cert']),
+                client_key=dict(type='str', aliases=['key']),
+                interface=dict(type='str', choices=['admin', 'internal', 'public'], default='public', aliases=['endpoint_type']),
+                sdk_log_path=dict(type='str'),
+                sdk_log_level=dict(type='str', default='INFO', choices=['INFO', 'DEBUG']),
+            )
+            spec.update(kwargs)
+            return spec
 
         def openstack_cloud_from_module(module):
             return None, None
