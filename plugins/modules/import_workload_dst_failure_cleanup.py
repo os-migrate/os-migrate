@@ -169,7 +169,7 @@ except ImportError:
                 validate_certs=dict(type='bool', aliases=['verify']),
                 ca_cert=dict(type='str', aliases=['cacert']),
                 client_cert=dict(type='str', aliases=['cert']),
-                client_key=dict(type='str', aliases=['key']),
+                client_key=dict(type='str', aliases=['key'], no_log=True),
                 interface=dict(type='str', choices=['admin', 'internal', 'public'], default='public', aliases=['endpoint_type']),
                 sdk_log_path=dict(type='str'),
                 sdk_log_level=dict(type='str', default='INFO', choices=['INFO', 'DEBUG']),
