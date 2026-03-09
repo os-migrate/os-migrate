@@ -5,6 +5,7 @@ skip_list:
   - 'command-instead-of-module'  # Sed used in place of template, replace or lineinfile module
   - 'command-instead-of-shell' # Use shell only when shell functionality is required
   - 'package-latest'  # Package installs should not use latest
+  - 'var-naming[no-role-prefix]'  # Variables names from within roles should use role_name_ as a prefix
 exclude_paths:
   - ".ansible/"
   - "tests/"
