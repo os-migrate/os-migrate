@@ -62,6 +62,8 @@ class Subnet(resource.Resource):
     ]
 
     readonly_sdk_params = ["network_id", "project_id"]
+    # Skip when empty to avoid Neutron deployments that reject the attribute
+    skip_falsey_sdk_params = ["service_types"]
 
     @classmethod
     def from_sdk(cls, conn, sdk_resource):
