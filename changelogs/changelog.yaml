@@ -1,0 +1,14 @@
+ancestor: null
+releases:
+  1.0.1:
+    release_date: '2026-02-10'
+    changes:
+      release_summary: |
+        OpenStack tenant migration tooling collection.
+        This release includes fixes for Ansible Galaxy certification requirements,
+        including conditional imports for improved compatibility across Python versions
+        and proper handling of optional dependencies.
+      bugfixes:
+        - Fixed import errors for Python 3.9-3.12 compatibility
+        - Fixed validate-modules documentation issues
+        - Added conditional imports for openstack and openstack.cloud dependencies
