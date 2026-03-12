@@ -1054,6 +1054,8 @@ class OpenstackVolumeTransfer(OpenStackVolumeBase):
                 self._update_progress(path, 100.0)
 
             try:
+                # @TODO remove this when sparsify issue will be fixed
+                raise RuntimeError("Sparsify skipped")
                 self.log.info("Attempting initial sparsify...")
                 environment = os.environ.copy()
                 environment["LIBGUESTFS_BACKEND"] = "direct"
