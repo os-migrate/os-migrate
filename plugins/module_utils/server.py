@@ -314,8 +314,8 @@ class Server(resource.Resource):
         refs["flavor_id"] = flavor_id
         refs["flavor_ref"] = reference.flavor_ref(conn, flavor_id)
 
-        refs["image_id"] = sdk_res["image"]["id"]
-        refs["image_ref"] = reference.image_ref(conn, sdk_res["image"]["id"])
+        refs["image_id"] = sdk_res["image"].get("id")
+        refs["image_ref"] = reference.image_ref(conn, sdk_res["image"].get("id"))
 
         sec_groups = list(
             conn.compute.fetch_server_security_groups(sdk_res).security_groups
