@@ -65,6 +65,10 @@ Fix
 
 Other
 ~~~~~
+- Comment out scenario 2 and 3 due to issue with Nova in devstack env.
+  [mathieu bultel]
+- Clean sparsify workaround. [mathieu bultel]
+- Bump sdk version. [mathieu bultel]
 - Revert the block storage api condition. [Fernando Diaz]
 - Stringfilter plugin fix and skip service_types. [Fernando Diaz]
 - Merge branch 'main' into sanity_tests. [mathieu bultel]
