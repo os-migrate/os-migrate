@@ -169,17 +169,47 @@ volume_map:
 from ansible.module_utils.basic import AnsibleModule
 
 # Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
+HAS_OPENSTACK_CLOUD = False
 try:
     from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
         openstack_full_argument_spec,
         openstack_cloud_from_module,
     )
+    HAS_OPENSTACK_CLOUD = True
 except ImportError:
-    # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack import (
-        openstack_full_argument_spec,
-        openstack_cloud_from_module,
-    )
+    try:
+        # If this fails fall back to ansible < 3 imports
+        from ansible.module_utils.openstack import (
+            openstack_full_argument_spec,
+            openstack_cloud_from_module,
+        )
+        HAS_OPENSTACK_CLOUD = True
+    except ImportError:
+        # Create stub functions for sanity testing
+        HAS_OPENSTACK_CLOUD = False
+
+        def openstack_full_argument_spec(**kwargs):
+            spec = dict(
+                cloud=dict(type='raw'),
+                auth=dict(type='dict'),
+                auth_type=dict(type='str'),
+                region_name=dict(type='str'),
+                wait=dict(type='bool', default=True),
+                timeout=dict(type='int', default=180),
+                api_timeout=dict(type='int'),
+                validate_certs=dict(type='bool', aliases=['verify']),
+                ca_cert=dict(type='str', aliases=['cacert']),
+                client_cert=dict(type='str', aliases=['cert']),
+                client_key=dict(type='str', aliases=['key'], no_log=True),
+                interface=dict(type='str', choices=['admin', 'internal', 'public'], default='public', aliases=['endpoint_type']),
+                sdk_log_path=dict(type='str'),
+                sdk_log_level=dict(type='str', default='INFO', choices=['INFO', 'DEBUG']),
+            )
+            spec.update(kwargs)
+            return spec
+
+        def openstack_cloud_from_module(module):
+            return None, None
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils.volume_common import (
     OpenstackVolumeTransfer,
     DEFAULT_TIMEOUT,
@@ -264,6 +294,9 @@ def run_module():
     module = AnsibleModule(
         argument_spec=argument_spec,
     )
+
+    if not HAS_OPENSTACK_CLOUD:
+        module.fail_json(msg='openstack.cloud collection is required for this module')
 
     sdk, conn = openstack_cloud_from_module(module)
 
