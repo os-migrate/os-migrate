@@ -65,6 +65,9 @@ Fix
 
 Other
 ~~~~~
+- Renable scenario 4 as well. [mathieu bultel]
+- Test openstacksdk 4.5.0 instead. [mathieu bultel]
+- Re-enable scenario 3. [mathieu bultel]
 - Comment out scenario 2 and 3 due to issue with Nova in devstack env.
   [mathieu bultel]
 - Clean sparsify workaround. [mathieu bultel]
