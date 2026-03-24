@@ -105,11 +105,7 @@ class ServerFloatingIP(resource.Resource):
     def _attach_existing(self, conn, my_port, sdk_srv, required=False):
         existing = self._find_specified_detached_floating_ip(conn, required=required)
         if existing:
-            conn.compute.add_floating_ip_to_server(
-                sdk_srv,
-                existing["floating_ip_address"],
-                self.params()["fixed_ip_address"],
-            )
+            conn.network.update_ip(existing, port_id=my_port["id"])
             return existing
         return None
 
