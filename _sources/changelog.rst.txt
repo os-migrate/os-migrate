@@ -71,6 +71,7 @@ Fix
 
 Other
 ~~~~~
+- Merge branch 'main' into verbose-lockfile-removal. [mathieu bultel]
 - Merge branch 'main' into block_storage_api_version-
   clouds_yaml_j2-error. [mathieu bultel]
 - Renable scenario 4 as well. [mathieu bultel]
