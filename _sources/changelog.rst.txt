@@ -13,6 +13,12 @@ New
 
 Fix
 ~~~
+- Allow os_migrate_src_block_storage_api_version to be a float. [Piotr
+  Czarnik]
+
+  The same applies to os_migrate_dst_block_storage_api_version
+
+  Closes #760
 - Remove the space. [Fernando Diaz]
 - Respect cinder API version in source clouds.yaml. [Fernando Diaz]
 - Resolve ansible-test sanity failures. [Veronika Vyvleckova]
@@ -65,6 +71,8 @@ Fix
 
 Other
 ~~~~~
+- Merge branch 'main' into block_storage_api_version-
+  clouds_yaml_j2-error. [mathieu bultel]
 - Renable scenario 4 as well. [mathieu bultel]
 - Test openstacksdk 4.5.0 instead. [mathieu bultel]
 - Re-enable scenario 3. [mathieu bultel]
