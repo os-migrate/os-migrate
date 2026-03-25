@@ -211,24 +211,12 @@ server_id:
 
 from ansible.module_utils.basic import AnsibleModule
 
-# Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
-try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
-        openstack_full_argument_spec,
-        openstack_cloud_from_module,
-    )
-except ImportError:
-    # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack import (
-        openstack_full_argument_spec,
-        openstack_cloud_from_module,
-    )
-
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import os_auth
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import server
 
 
 def run_module():
-    argument_spec = openstack_full_argument_spec(
+    argument_spec = os_auth.openstack_full_argument_spec(
         data=dict(type="dict", required=True),
         block_device_mapping=dict(type="list", required=True, elements="dict"),
     )
@@ -241,7 +229,7 @@ def run_module():
         argument_spec=argument_spec,
     )
 
-    sdk, conn = openstack_cloud_from_module(module)
+    conn = os_auth.get_connection(module)
     block_device_mapping = module.params["block_device_mapping"]
 
     ser_server = server.Server.from_data(module.params["data"])

@@ -88,22 +88,11 @@ openstack_role_assignments:
 
 from ansible.module_utils.basic import AnsibleModule
 
-# Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
-try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
-        openstack_full_argument_spec,
-        openstack_cloud_from_module,
-    )
-except ImportError:
-    # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack import (
-        openstack_full_argument_spec,
-        openstack_cloud_from_module,
-    )
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import os_auth
 
 
 def main():
-    argument_spec = openstack_full_argument_spec(
+    argument_spec = os_auth.openstack_full_argument_spec(
         assignee_types=dict(required=False, type="list", elements="str", default=None),
         scope_types=dict(required=False, type="list", elements="str", default=None),
     )
@@ -116,7 +105,7 @@ def main():
     assignee_types = module.params["assignee_types"]
     scope_types = module.params["scope_types"]
     try:
-        sdk, conn = openstack_cloud_from_module(module)
+        conn = os_auth.get_connection(module)
         role_assignment_dicts = map(
             lambda r: r.to_dict(), conn.identity.role_assignments(include_names=True)
         )
