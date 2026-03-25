@@ -172,7 +172,7 @@
     # * floating_ip_mode: existing
     #
     # * port_creation_mode: nova
-    #
+
     - name: seed the workloads
       ansible.builtin.include_tasks: tasks/tenant/seed_workload.yml
       args:
