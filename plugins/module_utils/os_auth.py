@@ -31,19 +31,27 @@ def get_connection(module):
         verify = params.get("validate_certs", True)
 
     try:
-        # If 'cloud' is provided, we use openstack.connect to read clouds.yaml
-        if cloud:
-            return openstack.connect(cloud=cloud, region_name=region, verify=verify)
-        
-        # Otherwise, we use the explicit 'auth' dictionary
-        if not auth:
-            module.fail_json(msg="Either 'cloud' or 'auth' must be provided")
+        # If 'cloud' is a dictionary, it's already a config object
+        if isinstance(cloud, dict):
+            return openstack.connect(**cloud)
 
-        return openstack.connection.Connection(
-            auth=auth,
-            region_name=region,
-            verify=verify,
-        )
+        # If 'cloud' is a string, it's a name in clouds.yaml
+        if isinstance(cloud, str):
+            return openstack.connect(
+                cloud=cloud, 
+                region_name=region, 
+                verify=verify,
+            )
+        
+        # If no cloud, use explicit auth dict
+        if auth:
+            return openstack.connection.Connection(
+                auth=auth,
+                region_name=region,
+                verify=verify,
+            )
+
+        module.fail_json(msg="Either 'cloud' (name or dict) or 'auth' must be provided")
 
     except Exception as e:
         module.fail_json(msg=f"Failed to create OpenStack connection: {str(e)}")
