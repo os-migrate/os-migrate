@@ -1,8 +1,6 @@
 #!/usr/bin/python
 
-
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
 ANSIBLE_METADATA = {
@@ -14,102 +12,93 @@ ANSIBLE_METADATA = {
 DOCUMENTATION = r"""
 ---
 module: export_flavor
+
 short_description: Export OpenStack Nova Flavor
-extends_documentation_fragment:
-  - os_migrate.os_migrate.openstack
+
 version_added: "2.9.0"
-author: "OpenStack tenant migration tools (@os-migrate)"
+
 description:
-  - "Export OpenStack Nova Flavor definition into an OS-Migrate YAML"
+  - Export an OpenStack Nova Flavor definition into an OS-Migrate YAML file.
+
+author:
+  - OpenStack tenant migration tools (@os-migrate)
+
 options:
-  auth:
-    description:
-      - Required if 'cloud' param not used.
-    required: false
-    type: dict
-  auth_type:
-    description:
-      - Auth type plugin for OpenStack. Can be omitted if using password authentication.
-    required: false
-    type: str
-  region_name:
-    description:
-      - OpenStack region name. Can be omitted if using default region.
-    required: false
-    type: str
-  path:
-    description:
-      - Resources YAML file to where network will be serialized.
-      - In case the resource file already exists, it must match the
-        os-migrate version.
-      - In case the resource of same type and name exists in the file,
-        it will be replaced.
-    required: true
-    type: str
-  name:
-    description:
-      - Name (or ID) of a Nova Flavor to export.
-    required: true
-    type: str
   cloud:
     description:
-      - Cloud from clouds.yaml to use.
-      - Required if 'auth' parameter is not used.
+      - Cloud name from clouds.yaml
     required: false
-    type: raw
+    type: str
+
+  auth:
+    description:
+      - OpenStack authentication dictionary
+    required: false
+    type: dict
+
+  region_name:
+    description:
+      - OpenStack region
+    required: false
+    type: str
+
+  path:
+    description:
+      - Path to YAML resource file
+    required: true
+    type: str
+
+  name:
+    description:
+      - Flavor name or ID
+    required: true
+    type: str
 """
 
 EXAMPLES = r"""
-- name: Export myflavor into /opt/os-migrate/flavors.yml
-  os_migrate.os_migrate.export_flavor:
+- name: Export flavor
+  export_flavor:
     cloud: source_cloud
     path: /opt/os-migrate/flavors.yml
-    name: myflavor
+    name: m1.small
 """
 
 RETURN = r"""
+changed:
+  description: Whether the file changed
+  type: bool
 """
 
 from ansible.module_utils.basic import AnsibleModule
-
-# Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
-try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
-        openstack_full_argument_spec,
-        openstack_cloud_from_module,
-    )
-except ImportError:
-    # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack import (
-        openstack_full_argument_spec,
-        openstack_cloud_from_module,
-    )
+import openstack
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import filesystem
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import flavor
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import os_auth
 
 
 def run_module():
-    argument_spec = openstack_full_argument_spec(
+
+    argument_spec = os_auth.openstack_full_argument_spec(
         path=dict(type="str", required=True),
         name=dict(type="str", required=True),
     )
-    # TODO: check the del
-    # del argument_spec['cloud']
+
+    module = AnsibleModule(argument_spec=argument_spec)
 
     result = dict(
         changed=False,
     )
 
-    module = AnsibleModule(
-        argument_spec=argument_spec,
-        # TODO: Consider check mode. We'd fetch the resource and check
-        # if the file representation matches it.
-        # supports_check_mode=True,
-    )
+    conn = os_auth.get_connection(module)
 
-    sdk, conn = openstack_cloud_from_module(module)
-    sdk_flavor = conn.compute.find_flavor(module.params["name"], ignore_missing=False)
+    try:
+        sdk_flavor = conn.compute.find_flavor(
+            module.params["name"], ignore_missing=False
+        )
+    except Exception as e:
+        module.fail_json(msg=f"Failed to fetch flavor: {str(e)}")
+
     data = flavor.Flavor.from_sdk(conn, sdk_flavor)
 
     result["changed"] = filesystem.write_or_replace_resource(
