@@ -16,7 +16,7 @@ clouds:
 {% if os_migrate_src_region_name is defined and os_migrate_src_region_name is not none and os_migrate_src_region_name|length %}
     region_name: {{os_migrate_src_region_name}}
 {% endif %}
-{% if os_migrate_src_block_storage_api_version is defined and os_migrate_src_block_storage_api_version is not none and os_migrate_src_block_storage_api_version|length %}
+{% if os_migrate_src_block_storage_api_version is defined and os_migrate_src_block_storage_api_version is not none and os_migrate_src_block_storage_api_version|string|length %}
     block_storage_api_version: {{os_migrate_src_block_storage_api_version}}
 {% endif %}
   dst:
@@ -36,6 +36,6 @@ clouds:
 {% if os_migrate_dst_region_name is defined and os_migrate_dst_region_name is not none and os_migrate_dst_region_name|length %}
     region_name: {{os_migrate_dst_region_name}}
 {% endif %}
-{% if os_migrate_dst_block_storage_api_version is defined and os_migrate_dst_block_storage_api_version is not none and os_migrate_dst_block_storage_api_version|length %}
+{% if os_migrate_dst_block_storage_api_version is defined and os_migrate_dst_block_storage_api_version is not none and os_migrate_dst_block_storage_api_version|string|length %}
     block_storage_api_version: {{os_migrate_dst_block_storage_api_version}}
 {% endif %}
