@@ -75,7 +75,7 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import os_auth
 
 def run_module():
-    argument_spec = openstack_full_argument_spec()
+    argument_spec = os_auth.openstack_full_argument_spec()
     # TODO: check the del
     # del argument_spec['cloud']
 
