@@ -224,6 +224,18 @@ Czarnik]</p>
 </li>
 <li><p>Remove the space. [Fernando Diaz]</p></li>
 <li><p>Respect cinder API version in source clouds.yaml. [Fernando Diaz]</p></li>
+<li><p>Fix SSL error when importing VMs and volumes with
+validate_certs=false. [Piotr Czarnik]</p>
+<p>In contrast to all other roles, the task “Expose source volume” in
+import_detached_volumes and import_workloads almost directly uses
+clouds.yaml as the source cloud config, which does not take the
+os_migrate_src_validate_certs variable into account. As a result,
+if the user uses this variable, the task “Expose source volume”
+can fail with “SSL: CERTIFICATE_VERIFY_FAILED”.
+This commit adds “insecure: true” to src or dst cloud configs in
+clouds.yaml, if the user sets os_migrate_src_validate_certs or
+os_migrate_dst_validate_certs to false.</p>
+</li>
 <li><p>Resolve ansible-test sanity failures. [Veronika Vyvleckova]</p>
 <p>Add conditional imports for openstack SDK and yaml dependencies to fix
 Python 3.12 import tests. Fix PEP8 and pylint issues. Correct module
@@ -275,6 +287,8 @@ the image wasn’t found.</p>
 <section id="other">
 <h3>Other<a class="headerlink" href="#other" title="Link to this heading"></a></h3>
 <ul>
+<li><p>Merge branch ‘main’ into ssl-certificate-verify-failed. [mathieu
+bultel]</p></li>
 <li><p>Merge branch ‘main’ into verbose-lockfile-removal. [mathieu bultel]</p></li>
 <li><p>Merge branch ‘main’ into block_storage_api_version-
 clouds_yaml_j2-error. [mathieu bultel]</p></li>
