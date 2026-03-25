@@ -4,23 +4,31 @@ __metaclass__ = type
 import openstack
 
 def openstack_full_argument_spec(**kwargs):
-    """Standard OpenStack arguments for all modules"""
+    """Standard OpenStack arguments with alias handling"""
     spec = dict(
         cloud=dict(type='str', required=False),
         auth=dict(type='dict', required=False, no_log=True),
         region_name=dict(type='str', required=False),
         auth_type=dict(type='str', required=False),
-        verify=dict(type='bool', required=False, default=True),
+        # Accept both for backward compatibility
+        verify=dict(type='bool', required=False),
+        validate_certs=dict(type='bool', required=False),
     )
     spec.update(kwargs)
     return spec
 
 def get_connection(module):
     """Create and return an OpenStack SDK connection from module params"""
+    params = module.params
     cloud = module.params.get("cloud")
     auth = module.params.get("auth")
     region = module.params.get("region_name")
-    verify = module.params.get("verify")
+    # Handle the 'validate_certs' vs 'verify' logic
+    # If verify is set, use it. If not, look for validate_certs. 
+    # Default to True if neither are provided.
+    verify = params.get("verify")
+    if verify is None:
+        verify = params.get("validate_certs", True)
 
     try:
         # If 'cloud' is provided, we use openstack.connect to read clouds.yaml
