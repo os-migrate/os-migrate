@@ -1,57 +1,61 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-import openstack
+import importlib
 
 def openstack_full_argument_spec(**kwargs):
-    """Standard OpenStack arguments with alias handling"""
+    """Refined argument spec based on official Ansible OpenStack modules"""
     spec = dict(
-        cloud=dict(type='str', required=False),
-        auth=dict(type='dict', required=False, no_log=True),
-        region_name=dict(type='str', required=False),
-        auth_type=dict(type='str', required=False),
-        # Accept both for backward compatibility
-        verify=dict(type='bool', required=False),
-        validate_certs=dict(type='bool', required=False),
+        cloud=dict(type='raw'),
+        auth_type=dict(),
+        auth=dict(type='dict', no_log=True),
+        region_name=dict(),
+        validate_certs=dict(type='bool', aliases=['verify']),
+        ca_cert=dict(aliases=['cacert']),
+        client_cert=dict(aliases=['cert']),
+        client_key=dict(no_log=True, aliases=['key']),
+        wait=dict(default=True, type='bool'),
+        timeout=dict(default=180, type='int'),
+        api_timeout=dict(type='int'),
+        interface=dict(
+            default='public', choices=['public', 'internal', 'admin'],
+            aliases=['endpoint_type']),
     )
     spec.update(kwargs)
     return spec
 
 def get_connection(module):
-    """Create and return an OpenStack SDK connection from module params"""
-    params = module.params
-    cloud = module.params.get("cloud")
-    auth = module.params.get("auth")
-    region = module.params.get("region_name")
-    # Handle the 'validate_certs' vs 'verify' logic
-    # If verify is set, use it. If not, look for validate_certs. 
-    # Default to True if neither are provided.
-    verify = params.get("verify")
-    if verify is None:
-        verify = params.get("validate_certs", True)
-
+    """Establishes connection using official Ansible logic (Simplified)"""
     try:
-        # If 'cloud' is a dictionary, it's already a config object
-        if isinstance(cloud, dict):
-            return openstack.connect(**cloud)
+        sdk = importlib.import_module('openstack')
+    except ImportError:
+        module.fail_json(msg='openstacksdk is required for this module')
 
-        # If 'cloud' is a string, it's a name in clouds.yaml
-        if isinstance(cloud, str):
-            return openstack.connect(
-                cloud=cloud, 
-                region_name=region, 
-                verify=verify,
+    cloud_config = module.params.get('cloud')
+    try:
+        if isinstance(cloud_config, dict):
+            # If cloud is a dict, other auth params must be None
+            fail_message = (
+                "A cloud config dict was provided to the cloud parameter"
+                " but also a value was provided for {param}. If a cloud"
+                " config dict is provided, {param} should be excluded.")
+            for param in ('auth', 'region_name', 'validate_certs', 'ca_cert', 
+                          'client_cert', 'client_key', 'api_timeout', 'auth_type'):
+                if module.params.get(param) is not None:
+                    module.fail_json(msg=fail_message.format(param=param))
+            return sdk.connect(**cloud_config)
+        else:
+            return sdk.connect(
+                cloud=cloud_config,
+                auth_type=module.params.get('auth_type'),
+                auth=module.params.get('auth'),
+                region_name=module.params.get('region_name'),
+                verify=module.params.get('validate_certs'),
+                cacert=module.params.get('ca_cert'),
+                key=module.params.get('client_key'),
+                cert=module.params.get('client_cert'),
+                api_timeout=module.params.get('api_timeout'),
+                interface=module.params.get('interface'),
             )
-        
-        # If no cloud, use explicit auth dict
-        if auth:
-            return openstack.connection.Connection(
-                auth=auth,
-                region_name=region,
-                verify=verify,
-            )
-
-        module.fail_json(msg="Either 'cloud' (name or dict) or 'auth' must be provided")
-
-    except Exception as e:
-        module.fail_json(msg=f"Failed to create OpenStack connection: {str(e)}")
+    except sdk.exceptions.SDKException as e:
+        module.fail_json(msg=f"OpenStack Connection Error: {str(e)}")
