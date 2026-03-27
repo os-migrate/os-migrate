@@ -1,5 +1,5 @@
 - name: create osm_router
-  openstack.cloud.router:
+  os_migrate.os_migrate.router:
     auth: "{{ os_migrate_src_auth }}"
     name: osm_router
     state: present
@@ -18,7 +18,7 @@
     var: _osm_router
 
 - name: get auth token
-  openstack.cloud.auth:
+  os_migrate.os_migrate.auth:
     auth: "{{ os_migrate_src_auth }}"
   register: auth_token
 

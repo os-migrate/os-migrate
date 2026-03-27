@@ -94,6 +94,9 @@ help:
 	@echo "  clean-centos-container  - Stop and remove the CentOS container"
 	@echo "  create-venv           - Create the Python virtual environment in the container"
 	@echo "  install-deps          - Install Python dependencies from requirements files"
+	@echo "  vendor-import         - Import the OpenStack upstream collection as a git submodule"
+	@echo "  vendor-links          - Create symlinks for vendored modules and module_utils"
+	@echo "  vendor-clean          - Remove symlinks for vendored modules and module_utils"
 	@echo ""
 	@echo "Customizable variables:"
 	@echo "  USE_CACHE        - Reuse container if it exists (default: $(USE_CACHE))"
@@ -101,9 +104,59 @@ help:
 	@echo "  CONTAINER_IMAGE  - Container image (default: $(CONTAINER_IMAGE))"
 	@echo "  PYTHON_VERSION   - Python version to use in the container (default: $(PYTHON_VERSION))"
 
+# --- Vendor install ---
+VENDOR_DIR         := plugins/modules/_vendor
+# Latest stable release:
+OS_CLOUD_VERSION   ?= 2.5.0
+UPSTREAM_REPO      := $(VENDOR_DIR)/openstack.cloud
+UPSTREAM_MODULES   := $(UPSTREAM_REPO)/plugins/modules
+UPSTREAM_UTILS     := $(UPSTREAM_REPO)/plugins/module_utils
+
+# List of required modules from vendor openstack.cloud collection.
+VENDORED_MODULES := auth compute_flavor compute_flavor_info floating_ip identity_domain identity_role \
+	identity_user identity_user_info image image_info keypair network networks_info port project \
+	project_info role_assignment router security_group security_group_rule server \
+	server_action server_info server_volume subnet subnets_info volume volume_info
+
+.PHONY: vendor-import vendor-links vendor-clean
+
+# Import vendor openstack.cloud collection.
+vendor-import:
+	@echo "--- Initializing OpenStack upstream submodule at version $(OS_CLOUD_VERSION) ---"
+	@mkdir -p $(VENDOR_DIR)
+	@if [ ! -d "$(UPSTREAM_REPO)/.git" ]; then \
+		echo "Adding submodule..."; \
+		git submodule add https://github.com/openstack/ansible-collections-openstack.git $(UPSTREAM_REPO); \
+	fi
+	@echo "Checking out tag $(OS_CLOUD_VERSION)..."
+	@cd $(UPSTREAM_REPO) && \
+		git fetch --tags && \
+		git checkout $(OS_CLOUD_VERSION)
+
+# Link vendored modules and module_utils.
+vendor-links: vendor-import
+	@echo "--- Creating symlinks for vendored modules ---"
+	@mkdir -p plugins/module_utils/openstack/cloud
+	@# Symlink Modules
+	@for mod in $(VENDORED_MODULES); do \
+		ln -sf ./_vendor/openstack.cloud/plugins/modules/$$mod.py plugins/modules/$$mod.py; \
+		echo "Linked module: os_migrate.os_migrate.$$mod"; \
+	done
+	@# Symlink Module Utils
+	@echo "--- Linking upstream module_utils ---"
+	@find $(UPSTREAM_UTILS) -maxdepth 1 -name "*.py" -exec ln -sf {} plugins/module_utils/ \;
+	@# Fix for the specific 'openstack' namespace import
+
+# Clean vender symlinks and module_utils.
+vendor-clean:
+	@echo "--- Removing vendored symlinks ---"
+	@for mod in $(VENDORED_MODULES); do rm -f plugins/modules/$$mod.py; done
+	@rm -rf plugins/module_utils/openstack/cloud
+
+
 # --- Build Targets ---
 
-build: check-root clean-build install-deps
+build: check-root clean-build install-deps vendor-links
 	@echo "--- Building Ansible collection: $(COLLECTION_TARBALL) ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
 		source $(VENV_DIR)/bin/activate; \

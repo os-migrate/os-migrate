@@ -14,11 +14,11 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     common,
     const,
     reference,
-    resource,
+    osm_resource,
 )
 
 
-class Subnet(resource.Resource):
+class Subnet(osm_resource.Resource):
     resource_type = const.RES_TYPE_SUBNET
     sdk_class = OPENSTACK_SDK_SUBNET
 

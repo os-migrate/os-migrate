@@ -17,11 +17,11 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     const,
     exc,
     reference,
-    resource,
+    osm_resource,
 )
 
 
-class Image(resource.Resource):
+class Image(osm_resource.Resource):
 
     resource_type = const.RES_TYPE_IMAGE
     sdk_class = OPENSTACK_SDK_IMAGE

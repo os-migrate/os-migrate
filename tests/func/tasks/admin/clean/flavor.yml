@@ -1,5 +1,5 @@
 - name: remove src/dst flavors
-  openstack.cloud.compute_flavor:
+  os_migrate.os_migrate.compute_flavor:
     auth: "{{ item['auth'] }}"
     name: "{{ item['flavor'] }}"
     state: absent

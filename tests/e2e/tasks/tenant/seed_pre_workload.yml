@@ -1,5 +1,5 @@
 - name: create osm_net
-  openstack.cloud.network:
+  os_migrate.os_migrate.network:
     auth: "{{ item.auth }}"
     name: osm_net
     # Apparently description is an unsupported param in Ansible even
@@ -21,7 +21,7 @@
       client_key: "{{ os_migrate_src_client_key|default(omit) }}"
 
 - name: Create osm subnet
-  openstack.cloud.subnet:
+  os_migrate.os_migrate.subnet:
     auth: "{{ item.auth }}"
     state: present
     network_name: osm_net
@@ -44,7 +44,7 @@
       client_key: "{{ os_migrate_src_client_key|default(omit) }}"
 
 - name: Create security group
-  openstack.cloud.security_group:
+  os_migrate.os_migrate.security_group:
     auth: "{{ item.auth }}"
     state: present
     name: osm_security_group
@@ -61,7 +61,7 @@
       client_key: "{{ os_migrate_src_client_key|default(omit) }}"
 
 - name: Create security group rule
-  openstack.cloud.security_group_rule:
+  os_migrate.os_migrate.security_group_rule:
     auth: "{{ item.auth }}"
     security_group: osm_security_group
     remote_ip_prefix: 0.0.0.0/0
@@ -77,7 +77,7 @@
       client_key: "{{ os_migrate_src_client_key|default(omit) }}"
 
 - name: create osm_router
-  openstack.cloud.router:
+  os_migrate.os_migrate.router:
     auth: "{{ item.auth }}"
     name: osm_router
     state: present
@@ -110,7 +110,7 @@
     path: "{{ '~' | expanduser }}/ssh-ci/id_rsa"
 
 - name: Create new keypair as osm_key
-  openstack.cloud.keypair:
+  os_migrate.os_migrate.keypair:
     auth: "{{ item.auth }}"
     state: present
     name: osm_key
@@ -144,7 +144,7 @@
     mode: 0600
 
 - name: create osm_image
-  openstack.cloud.image:
+  os_migrate.os_migrate.image:
     auth: "{{ os_migrate_src_auth }}"
     name: osm_image
     filename: "{{ os_migrate_tests_tmp_dir }}/test_inputs/cirros.img"

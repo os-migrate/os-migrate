@@ -1,12 +1,12 @@
 - name: Create security group
-  openstack.cloud.security_group:
+  os_migrate.os_migrate.security_group:
     auth: "{{ os_migrate_src_auth }}"
     state: present
     name: osm_security_group
     description: OSM security group
 
 - name: Create security group rule
-  openstack.cloud.security_group_rule:
+  os_migrate.os_migrate.security_group_rule:
     auth: "{{ os_migrate_src_auth }}"
     security_group: osm_security_group
     protocol: tcp

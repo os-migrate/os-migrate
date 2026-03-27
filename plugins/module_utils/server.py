@@ -16,7 +16,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     const,
     exc,
     reference,
-    resource,
+    osm_resource,
 )
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils.server_floating_ip import (
     server_floating_ips,
@@ -32,7 +32,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils.server_volum
 )
 
 
-class Server(resource.Resource):
+class Server(osm_resource.Resource):
 
     resource_type = const.RES_TYPE_SERVER
     sdk_class = OPENSTACK_SDK_SERVER

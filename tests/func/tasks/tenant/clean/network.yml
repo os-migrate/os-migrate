@@ -1,5 +1,5 @@
 - name: remove osm_net
-  openstack.cloud.network:
+  os_migrate.os_migrate.network:
     auth: "{{ item }}"
     name: osm_net
     state: absent

@@ -1,5 +1,5 @@
 - name: Delete os_migrate conversion host
-  openstack.cloud.server:
+  os_migrate.os_migrate.server:
     name: "{{ os_migrate_conversion_host_name }}"
     state: absent
     delete_fip: "{{ os_migrate_conversion_manage_fip and os_migrate_conversion_delete_fip }}"
@@ -11,7 +11,7 @@
     client_key: "{{ os_migrate_conversion_client_key | default(omit) }}"
 
 - name: Delete os_migrate conversion keypair
-  openstack.cloud.keypair:
+  os_migrate.os_migrate.keypair:
     name: "{{ os_migrate_conversion_keypair_name }}"
     state: absent
     cloud: "{{ os_migrate_conversion_cloud }}"
@@ -21,7 +21,7 @@
     client_key: "{{ os_migrate_conversion_client_key | default(omit) }}"
 
 - name: Delete os_migrate conversion security group
-  openstack.cloud.security_group:
+  os_migrate.os_migrate.security_group:
     name: "{{ os_migrate_conversion_secgroup_name }}"
     state: absent
     cloud: "{{ os_migrate_conversion_cloud }}"

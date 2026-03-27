@@ -13,7 +13,7 @@ except ImportError:
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     exc,
     const,
-    resource,
+    osm_resource,
 )
 
 
@@ -24,7 +24,7 @@ def server_volumes(conn, sdk_res):
     return volumes
 
 
-class ServerVolume(resource.Resource):
+class ServerVolume(osm_resource.Resource):
 
     resource_type = const.RES_TYPE_SERVER_VOLUME
     sdk_class = OPENSTACK_SDK_VOLUME

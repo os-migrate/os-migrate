@@ -1,5 +1,5 @@
 - name: remove osm_user_project_role_assignment
-  openstack.cloud.role_assignment:
+  os_migrate.os_migrate.role_assignment:
     auth: "{{ item['auth'] }}"
     project: "{{ item['project'] }}"
     role: "{{ item['role'] }}"
@@ -19,7 +19,7 @@
       user: osmdst_user
 
 - name: create osm_role
-  openstack.cloud.identity_role:
+  os_migrate.os_migrate.identity_role:
     auth: "{{ item['auth'] }}"
     name: osm_role
     state: absent

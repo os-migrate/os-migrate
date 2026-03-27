@@ -27,7 +27,7 @@
 ### IMPORT IDEMPOTENCE ###
 
 - name: look up osm_image dst cloud
-  openstack.cloud.image_info:
+  os_migrate.os_migrate.image_info:
     auth: "{{ os_migrate_dst_auth }}"
     image: osm_image
   register: image_import_idem_before
@@ -37,7 +37,7 @@
     name: os_migrate.os_migrate.import_images
 
 - name: look up osm_image in dst cloud again
-  openstack.cloud.image_info:
+  os_migrate.os_migrate.image_info:
     auth: "{{ os_migrate_dst_auth }}"
     image: osm_image
   register: image_import_idem_after

@@ -12,11 +12,11 @@ except ImportError:
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     const,
-    resource,
+    osm_resource,
 )
 
 
-class Flavor(resource.Resource):
+class Flavor(osm_resource.Resource):
     resource_type = const.RES_TYPE_FLAVOR
     sdk_class = OPENSTACK_SDK_FLAVOR
 

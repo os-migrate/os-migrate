@@ -13,11 +13,11 @@ except ImportError:
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     const,
     reference,
-    resource,
+    osm_resource,
 )
 
 
-class UserProjectRoleAssignment(resource.Resource):
+class UserProjectRoleAssignment(osm_resource.Resource):
     resource_type = const.RES_TYPE_USER_PROJECT_ROLE_ASSIGNMENT
     sdk_class = OPENSTACK_SDK_ROLE_ASSIGNMENT
 

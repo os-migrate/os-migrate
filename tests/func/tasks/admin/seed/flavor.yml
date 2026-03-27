@@ -1,5 +1,5 @@
 - name: create osm_flavor
-  openstack.cloud.compute_flavor:
+  os_migrate.os_migrate.compute_flavor:
     auth: "{{ os_migrate_src_auth }}"
     state: present
     name: osm_flavor
@@ -12,7 +12,7 @@
       os_migrate:other_property: ghij
 
 - name: create osm_flavor_specless
-  openstack.cloud.compute_flavor:
+  os_migrate.os_migrate.compute_flavor:
     auth: "{{ os_migrate_src_auth }}"
     state: present
     name: osm_flavor_specless

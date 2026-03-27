@@ -33,7 +33,7 @@
 ### IMPORT IDEMPOTENCE ###
 
 - name: look up osmdst_flavor dst cloud
-  openstack.cloud.compute_flavor_info:
+  os_migrate.os_migrate.compute_flavor_info:
     auth: "{{ os_migrate_dst_auth }}"
     name: "osmdst_flavor"
   register: flavor_import_idem_before
@@ -43,7 +43,7 @@
     name: os_migrate.os_migrate.import_flavors
 
 - name: look up osmdst_flavor in dst cloud again
-  openstack.cloud.compute_flavor_info:
+  os_migrate.os_migrate.compute_flavor_info:
     auth: "{{ os_migrate_dst_auth }}"
     name: "osmdst_flavor"
   register: flavor_import_idem_after

@@ -1,7 +1,7 @@
 # NOTE: os_image_info doesn't support os_migrate_src_filters, we apply
 # the filters manually below.
 - name: Scan available images
-  openstack.cloud.image_info:
+  os_migrate.os_migrate.image_info:
     cloud: src
     validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
     ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"

@@ -1,5 +1,5 @@
 - name: Scan available subnets
-  openstack.cloud.subnets_info:
+  os_migrate.os_migrate.subnets_info:
     filters: "{{ os_migrate_src_filters }}"
     cloud: src
     validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"

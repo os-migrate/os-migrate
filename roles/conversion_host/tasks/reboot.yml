@@ -1,5 +1,5 @@
 - name: Reboot conversion host if required
-  openstack.cloud.server_action:
+  os_migrate.os_migrate.server_action:
     action: reboot_hard
     server: "{{ os_migrate_conversion_host_name }}"
     wait: true
