@@ -122,6 +122,8 @@ VENDORED_MODULES := auth compute_flavor compute_flavor_info floating_ip identity
 	project_info role_assignment router security_group security_group_rule server \
 	server_action server_info server_volume subnet subnets_info volume volume_info
 
+VENDORED_MODULE_UTILS := openstack ironic resource
+
 .PHONY: vendor-import vendor-links vendor-clean
 
 # Import vendor openstack.cloud collection.
@@ -147,14 +149,17 @@ vendor-links: vendor-import
 	done
 	@# Symlink Module Utils
 	@echo "--- Linking upstream module_utils ---"
-	@find $(UPSTREAM_UTILS) -maxdepth 1 -name "*.py" -exec ln -sf {} plugins/module_utils/ \;
+	@for util in $(VENDORED_MODULE_UTILS); do \
+		ln -sf $(UPSTREAM_UTILS)/$$util.py plugins/module_utils/$$util.py; \
+		echo "Linked module_util: os_migrate.os_migrate.$$util"; \
+	done
 	@# Fix for the specific 'openstack' namespace import
 
 # Clean vender symlinks and module_utils.
 vendor-clean:
 	@echo "--- Removing vendored symlinks ---"
 	@for mod in $(VENDORED_MODULES); do rm -f plugins/modules/$$mod.py; done
-	@find plugins/module_utils/ -maxdepth 1 -name "*.py" -exec rm -f {} \;
+	@for util in $(VENDORED_MODULE_UTILS); do rm -f plugins/module_utils/$$util.py; done
 	@rm -rf plugins/module_utils/openstack/cloud
 
 
