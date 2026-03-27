@@ -5,6 +5,7 @@ SHELL := /bin/bash
 # --- Configuration Variables ---
 # Reuse container content if possible. Set to 'false' to always rebuild.
 USE_CACHE ?= true
+USE_CONTAINER ?= true
 
 # Container and Python Configuration
 CONTAINER_ENGINE ?= podman
@@ -105,7 +106,10 @@ help:
 	@echo "  PYTHON_VERSION   - Python version to use in the container (default: $(PYTHON_VERSION))"
 
 # --- Vendor install ---
-VENDOR_DIR         := plugins/modules/_vendor
+VENDOR_DIR         := $(COLLECTION_ROOT)/plugins/modules/_vendor
+ifeq ($(USE_CONTAINER),true)
+	VENDOR_DIR         := $(CONTAINER_COLLECTION_ROOT)/plugins/modules/_vendor
+endif
 # Latest stable release:
 OS_CLOUD_VERSION   ?= 2.5.0
 UPSTREAM_REPO      := $(VENDOR_DIR)/openstack.cloud
@@ -121,10 +125,10 @@ VENDORED_MODULES := auth compute_flavor compute_flavor_info floating_ip identity
 .PHONY: vendor-import vendor-links vendor-clean
 
 # Import vendor openstack.cloud collection.
-vendor-import:
+vendor-import: vendor-clean
 	@echo "--- Initializing OpenStack upstream submodule at version $(OS_CLOUD_VERSION) ---"
 	@mkdir -p $(VENDOR_DIR)
-	@if [ ! -d "$(UPSTREAM_REPO)/.git" ]; then \
+	@if [ ! -d "$(UPSTREAM_REPO)" ]; then \
 		echo "Adding submodule..."; \
 		git submodule add https://github.com/openstack/ansible-collections-openstack.git $(UPSTREAM_REPO); \
 	fi
@@ -136,10 +140,9 @@ vendor-import:
 # Link vendored modules and module_utils.
 vendor-links: vendor-import
 	@echo "--- Creating symlinks for vendored modules ---"
-	@mkdir -p plugins/module_utils/openstack/cloud
 	@# Symlink Modules
 	@for mod in $(VENDORED_MODULES); do \
-		ln -sf ./_vendor/openstack.cloud/plugins/modules/$$mod.py plugins/modules/$$mod.py; \
+		ln -sf $(UPSTREAM_MODULES)/$$mod.py plugins/modules/$$mod.py; \
 		echo "Linked module: os_migrate.os_migrate.$$mod"; \
 	done
 	@# Symlink Module Utils
@@ -151,16 +154,19 @@ vendor-links: vendor-import
 vendor-clean:
 	@echo "--- Removing vendored symlinks ---"
 	@for mod in $(VENDORED_MODULES); do rm -f plugins/modules/$$mod.py; done
+	@find plugins/module_utils/ -maxdepth 1 -name "*.py" -exec rm -f {} \;
 	@rm -rf plugins/module_utils/openstack/cloud
 
 
 # --- Build Targets ---
 
-build: check-root clean-build install-deps vendor-links
+build: check-root clean-build install-deps
 	@echo "--- Building Ansible collection: $(COLLECTION_TARBALL) ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
+		$(MAKE) vendor-links && \
 		source $(VENV_DIR)/bin/activate; \
 		ansible-galaxy collection build'
+
 
 clean-build:
 	@echo "--- Cleaning built collection ---"
@@ -227,6 +233,7 @@ create-venv: check-python-version
 install-deps: create-venv
 	@echo "--- Installing/updating Python dependencies ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
+		dnf install -y git; \
 		source $(VENV_DIR)/bin/activate; \
 		pip install --root-user-action ignore -q --upgrade pip; \
 		pip install --root-user-action ignore -q -r requirements.txt; \
