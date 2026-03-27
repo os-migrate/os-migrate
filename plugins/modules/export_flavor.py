@@ -70,7 +70,6 @@ changed:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-import openstack
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import filesystem
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import flavor
