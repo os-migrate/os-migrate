@@ -13,14 +13,6 @@ New
 
 Fix
 ~~~
-- Allow os_migrate_src_block_storage_api_version to be a float. [Piotr
-  Czarnik]
-
-  The same applies to os_migrate_dst_block_storage_api_version
-
-  Closes #760
-- Remove the space. [Fernando Diaz]
-- Respect cinder API version in source clouds.yaml. [Fernando Diaz]
 - Fix SSL error when importing VMs and volumes with
   validate_certs=false. [Piotr Czarnik]
 
@@ -33,6 +25,14 @@ Fix
   This commit adds "insecure: true" to src or dst cloud configs in
   clouds.yaml, if the user sets os_migrate_src_validate_certs or
   os_migrate_dst_validate_certs to false.
+- Allow os_migrate_src_block_storage_api_version to be a float. [Piotr
+  Czarnik]
+
+  The same applies to os_migrate_dst_block_storage_api_version
+
+  Closes #760
+- Remove the space. [Fernando Diaz]
+- Respect cinder API version in source clouds.yaml. [Fernando Diaz]
 - Resolve ansible-test sanity failures. [Veronika Vyvleckova]
 
   Add conditional imports for openstack SDK and yaml dependencies to fix
@@ -83,7 +83,11 @@ Fix
 
 Other
 ~~~~~
+- Merge branch 'main' into fix-minor-ansible-lint-errors. [mathieu
+  bultel]
 - Merge branch 'main' into ssl-certificate-verify-failed. [mathieu
+  bultel]
+- Merge branch 'main' into fix-minor-ansible-lint-errors. [mathieu
   bultel]
 - Merge branch 'main' into verbose-lockfile-removal. [mathieu bultel]
 - Merge branch 'main' into block_storage_api_version-
