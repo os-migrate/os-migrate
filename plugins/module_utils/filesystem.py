@@ -2,8 +2,13 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import yaml
 from os import path
+
+try:
+    import yaml
+    HAS_YAML = True
+except ImportError:
+    HAS_YAML = False
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import exc

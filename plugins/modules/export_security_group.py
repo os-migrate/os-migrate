@@ -57,11 +57,6 @@ options:
       - Name of the security group. OS-Migrate requires unique resource names.
     required: true
     type: str
-  availability_zone:
-    description:
-      - Availability zone.
-    required: false
-    type: str
   cloud:
     description:
       - Clouds resource from clouds.yml

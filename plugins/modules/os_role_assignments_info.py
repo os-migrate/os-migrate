@@ -33,13 +33,15 @@ options:
       - List of assignee types to filter the assignments. Supported
          types 'user', 'group'. None means don't filter anything.
     required: false
-    type: str
+    type: list
+    elements: str
   scope_types:
     description:
       - List of scope types to filter the assignments. Supported
          types 'project', 'system', 'domain'. None means don't filter anything.
     required: false
-    type: str
+    type: list
+    elements: str
   auth:
     description:
       - Required if 'cloud' param not used.
@@ -53,11 +55,6 @@ options:
   region_name:
     description:
       - OpenStack region name. Can be omitted if using default region.
-    required: false
-    type: str
-  availability_zone:
-    description:
-      - Availability zone.
     required: false
     type: str
   cloud:
@@ -107,8 +104,8 @@ except ImportError:
 
 def main():
     argument_spec = openstack_full_argument_spec(
-        assignee_types=dict(required=False, type="list", default=None),
-        scope_types=dict(required=False, type="list", default=None),
+        assignee_types=dict(required=False, type="list", elements="str", default=None),
+        scope_types=dict(required=False, type="list", elements="str", default=None),
     )
 
     module = AnsibleModule(

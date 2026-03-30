@@ -53,6 +53,7 @@ options:
       - Options for filtering the migration idempotence lookup, e.g. by project.
     required: false
     type: dict
+    default: {}
   src_conversion_host:
     description:
       - Dictionary with information about the source conversion host (address, status, name, id)
@@ -66,11 +67,6 @@ options:
   log_dir:
     description:
       - Directory for storing log and state files.
-    required: false
-    type: str
-  availability_zone:
-    description:
-      - Availability zone.
     required: false
     type: str
   cloud:

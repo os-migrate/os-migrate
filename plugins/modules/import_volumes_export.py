@@ -13,7 +13,7 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = r"""
 ---
-module: import_volumes_export_volumes
+module: import_volumes_export
 
 short_description: Create NBD exports of OpenStack volumes
 
@@ -53,7 +53,8 @@ options:
     description:
       - Data structure with server parameters as loaded from OS-Migrate volumes YAML file.
     required: true
-    type: dict
+    type: list
+    elements: dict
   ssh_key_path:
     description:
       - Path to an SSH private key authorized on the source cloud.
@@ -64,10 +65,17 @@ options:
       - The SSH user to connect to the conversion hosts.
     required: true
     type: str
+  src_conversion_host_address:
+    description:
+      - Source conversion host address override.
+    required: false
+    type: str
+    default: null
   log_dir:
     description:
       - Complete path for log folder.
-    required: true
+    required: false
+    default: null
     type: str
   timeout:
     description:
@@ -263,9 +271,9 @@ class OpenStackSourceVolume(OpenstackVolumeExport):
 
 def run_module():
     argument_spec = openstack_full_argument_spec(
-        data=dict(type="list", required=True),
+        data=dict(type="list", elements="dict", required=True),
         conversion_host=dict(type="dict", required=True),
-        ssh_key_path=dict(type="str", required=True),
+        ssh_key_path=dict(type="str", required=True, no_log=True),
         ssh_user=dict(type="str", required=True),
         src_conversion_host_address=dict(type="str", default=None),
         log_dir=dict(type="str", default=None),

@@ -2,7 +2,13 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import openstack
+try:
+    import openstack
+    HAS_OPENSTACK = True
+    OPENSTACK_SDK_FLOATING_IP = openstack.network.v2.floating_ip.FloatingIP
+except ImportError:
+    HAS_OPENSTACK = False
+    OPENSTACK_SDK_FLOATING_IP = None
 import time
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
@@ -30,7 +36,7 @@ def server_floating_ips(conn, server_ports):
 class ServerFloatingIP(resource.Resource):
 
     resource_type = const.RES_TYPE_SERVER_FLOATING_IP
-    sdk_class = openstack.network.v2.floating_ip.FloatingIP
+    sdk_class = OPENSTACK_SDK_FLOATING_IP
 
     info_from_sdk = [
         "created_at",
@@ -99,11 +105,7 @@ class ServerFloatingIP(resource.Resource):
     def _attach_existing(self, conn, my_port, sdk_srv, required=False):
         existing = self._find_specified_detached_floating_ip(conn, required=required)
         if existing:
-            conn.compute.add_floating_ip_to_server(
-                sdk_srv,
-                existing["floating_ip_address"],
-                self.params()["fixed_ip_address"],
-            )
+            conn.network.update_ip(existing, port_id=my_port["id"])
             return existing
         return None
 

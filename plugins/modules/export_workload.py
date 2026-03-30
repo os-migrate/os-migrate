@@ -67,11 +67,7 @@ options:
       - Dictionary with parameters for the migration procedure.
     required: false
     type: dict
-  availability_zone:
-    description:
-      - Availability zone.
-    required: false
-    type: str
+    default: {}
   cloud:
     description:
       - Cloud resource from clouds.yml

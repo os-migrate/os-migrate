@@ -2,7 +2,13 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import openstack
+try:
+    import openstack
+    HAS_OPENSTACK = True
+    OPENSTACK_SDK_PORT = openstack.network.v2.port.Port
+except ImportError:
+    HAS_OPENSTACK = False
+    OPENSTACK_SDK_PORT = None
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     exc,
@@ -58,7 +64,7 @@ def _neutron_port_has_fixed_ip(sdk_port, ip):
 class ServerPort(resource.Resource):
 
     resource_type = const.RES_TYPE_SERVER_PORT
-    sdk_class = openstack.network.v2.port.Port
+    sdk_class = OPENSTACK_SDK_PORT
 
     info_from_sdk = [
         "id",
@@ -69,7 +75,7 @@ class ServerPort(resource.Resource):
         "fixed_ips_refs",
         "network_ref",
     ]
-    params_from_sdk = ["binding_profile", "mac_address"]
+    params_from_sdk = ["binding_profile", "binding_vnic_type", "mac_address"]
     sdk_params_from_refs = [
         "fixed_ips",
         "network_id",

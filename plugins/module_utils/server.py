@@ -4,7 +4,13 @@ __metaclass__ = type
 
 from copy import deepcopy
 
-import openstack
+try:
+    import openstack
+    HAS_OPENSTACK = True
+    OPENSTACK_SDK_SERVER = openstack.compute.v2.server.Server
+except ImportError:
+    HAS_OPENSTACK = False
+    OPENSTACK_SDK_SERVER = None
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     const,
@@ -29,7 +35,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils.server_volum
 class Server(resource.Resource):
 
     resource_type = const.RES_TYPE_SERVER
-    sdk_class = openstack.compute.v2.server.Server
+    sdk_class = OPENSTACK_SDK_SERVER
 
     info_from_sdk = [
         "created_at",
@@ -308,8 +314,8 @@ class Server(resource.Resource):
         refs["flavor_id"] = flavor_id
         refs["flavor_ref"] = reference.flavor_ref(conn, flavor_id)
 
-        refs["image_id"] = sdk_res["image"]["id"]
-        refs["image_ref"] = reference.image_ref(conn, sdk_res["image"]["id"])
+        refs["image_id"] = sdk_res["image"].get("id")
+        refs["image_ref"] = reference.image_ref(conn, sdk_res["image"].get("id"))
 
         sec_groups = list(
             conn.compute.fetch_server_security_groups(sdk_res).security_groups

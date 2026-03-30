@@ -2,7 +2,13 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import openstack
+try:
+    import openstack
+    HAS_OPENSTACK = True
+    OPENSTACK_SDK_SECURITY_GROUP = openstack.network.v2.security_group.SecurityGroup
+except ImportError:
+    HAS_OPENSTACK = False
+    OPENSTACK_SDK_SECURITY_GROUP = None
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     const,
@@ -13,7 +19,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
 class SecurityGroup(resource.Resource):
 
     resource_type = const.RES_TYPE_SECURITYGROUP
-    sdk_class = openstack.network.v2.security_group.SecurityGroup
+    sdk_class = OPENSTACK_SDK_SECURITY_GROUP
 
     info_from_sdk = [
         "id",

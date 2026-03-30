@@ -13,7 +13,7 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = r"""
 ---
-module: import_volumes_transfer_volumes
+module: import_volumes_transfer
 
 short_description: Create destination volumes and transfer source data.
 
@@ -246,7 +246,7 @@ class OpenStackDestinationVolume(OpenstackVolumeTransfer):
 def run_module():
     argument_spec = openstack_full_argument_spec(
         conversion_host=dict(type="dict", required=True),
-        ssh_key_path=dict(type="str", required=True),
+        ssh_key_path=dict(type="str", required=True, no_log=True),
         ssh_user=dict(type="str", required=True),
         transfer_uuid=dict(type="str", required=True),
         src_conversion_host_address=dict(type="str", required=True),

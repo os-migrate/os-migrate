@@ -2,7 +2,13 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import openstack
+try:
+    import openstack
+    HAS_OPENSTACK = True
+    OPENSTACK_SDK_ROUTER = openstack.network.v2.router.Router
+except ImportError:
+    HAS_OPENSTACK = False
+    OPENSTACK_SDK_ROUTER = None
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     common,
@@ -15,7 +21,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
 class Router(resource.Resource):
 
     resource_type = const.RES_TYPE_ROUTER
-    sdk_class = openstack.network.v2.router.Router
+    sdk_class = OPENSTACK_SDK_ROUTER
 
     info_from_sdk = [
         "availability_zones",

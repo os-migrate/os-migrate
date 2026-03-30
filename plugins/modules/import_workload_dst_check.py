@@ -48,11 +48,6 @@ options:
       - OpenStack region name. Can be omitted if using default region.
     required: false
     type: str
-  availability_zone:
-    description:
-      - Availability zone.
-    required: false
-    type: str
   data:
     description:
       - Data structure with server parameters as loaded from OS-Migrate workloads YAML file.
@@ -63,6 +58,7 @@ options:
       - Options for filtering the migration idempotence lookup, e.g. by project.
     required: false
     type: dict
+    default: {}
   cloud:
     description:
       - Cloud resource from clouds.yml

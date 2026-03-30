@@ -85,7 +85,7 @@ def use_lock(lock_file):
             finally:
                 try:
                     lock = lock_file + ".lock"
-                    result = self.shell.cmd_out(["sudo", "rm", "-f", lock])
+                    result = self.shell.cmd_out(["sudo", "rm", "-vf", lock])
                     self.log.debug("Released lock: %s", result)
                 except subprocess.CalledProcessError as err:
                     self.log.error("Error releasing lock: %s", str(err))

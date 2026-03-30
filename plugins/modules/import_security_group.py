@@ -53,11 +53,7 @@ options:
       - Options for filtering existing resources to be looked up, e.g. by project.
     required: false
     type: dict
-  availability_zone:
-    description:
-      - Availability zone.
-    required: false
-    type: str
+    default: {}
   cloud:
     description:
       - Clouds resource from clouds.yml

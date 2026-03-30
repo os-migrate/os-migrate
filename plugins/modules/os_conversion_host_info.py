@@ -38,6 +38,7 @@ options:
       - Options for filtering the host, e.g. by project.
     required: false
     type: dict
+    default: {}
   auth:
     description:
       - Required if 'cloud' param not used.
@@ -51,11 +52,6 @@ options:
   region_name:
     description:
       - OpenStack region name. Can be omitted if using default region.
-    required: false
-    type: str
-  availability_zone:
-    description:
-      - Availability zone.
     required: false
     type: str
   cloud:
@@ -123,6 +119,7 @@ def main():
 
     module = AnsibleModule(
         argument_spec=argument_spec,
+        supports_check_mode=True,
     )
 
     srv = module.params["server"]

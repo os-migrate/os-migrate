@@ -2,7 +2,15 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import openstack
+try:
+    import openstack
+    HAS_OPENSTACK = True
+    OPENSTACK_SDK_KEYPAIR = openstack.compute.v2.keypair.Keypair
+    OPENSTACK_BAD_REQUEST = openstack.exceptions.BadRequestException
+except ImportError:
+    HAS_OPENSTACK = False
+    OPENSTACK_SDK_KEYPAIR = None
+    OPENSTACK_BAD_REQUEST = Exception
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     const,
@@ -15,7 +23,7 @@ class Keypair(resource.Resource):
     # according to https://github.com/openstack/openstacksdk/blob/a4a2a7b42ec2ae7e186b44aeb7242fddd84944f7/openstack/cloud/_compute.py#L601
     # keypairs are created with name and public key.  user is not used.
     resource_type = const.RES_TYPE_KEYPAIR
-    sdk_class = openstack.compute.v2.keypair.Keypair
+    sdk_class = OPENSTACK_SDK_KEYPAIR
 
     info_from_sdk = [
         "created_at",
@@ -97,7 +105,7 @@ class Keypair(resource.Resource):
     def _create_sdk_res(conn, sdk_params):
         try:
             return conn.compute.create_keypair(**sdk_params)
-        except openstack.exceptions.BadRequestException:
+        except OPENSTACK_BAD_REQUEST:
             sdk_params_no_type = {k: v for k, v in sdk_params.items() if k != "type"}
             return conn.compute.create_keypair(**sdk_params_no_type)
 

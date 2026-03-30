@@ -52,11 +52,6 @@ options:
       - Name (or ID) of a Network to export.
     required: true
     type: str
-  availability_zone:
-    description:
-      - Availability zone.
-    required: false
-    type: str
   cloud:
     description:
       - Cloud from clouds.yaml to use.

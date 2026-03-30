@@ -13,14 +13,14 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = r"""
 ---
-module: export_network
-short_description: Export OpenStack network
+module: export_detached_volume
+short_description: Export OpenStack detached volume
 extends_documentation_fragment:
   - os_migrate.os_migrate.openstack
 version_added: "2.9.0"
 author: "OpenStack tenant migration tools (@os-migrate)"
 description:
-  - "Export OpenStack network definition into an OS-Migrate YAML"
+  - "Export OpenStack detached volume definition into an OS-Migrate YAML"
 options:
   auth:
     description:
@@ -40,22 +40,17 @@ options:
     type: str
   path:
     description:
-      - Resources YAML file to where network will be serialized.
+      - Resources YAML file to where detached volume will be serialized.
       - In case the resource file already exists, it must match the
         os-migrate version.
       - In case the resource of same type and name exists in the file,
         it will be replaced.
     required: true
     type: str
-  name:
+  volume_id:
     description:
-      - Name (or ID) of a Network to export.
+      - Volume ID of the detached volume to export.
     required: true
-    type: str
-  availability_zone:
-    description:
-      - Availability zone.
-    required: false
     type: str
   cloud:
     description:
@@ -66,10 +61,10 @@ options:
 """
 
 EXAMPLES = r"""
-- name: Export mynetwork into /opt/os-migrate/networks.yml
-  os_migrate.os_migrate.export_network:
-    path: /opt/os-migrate/networks.yml
-    name: mynetwork
+- name: Export mydetachedvolume into /opt/os-migrate/detached_volumes.yml
+  os_migrate.os_migrate.export_detached_volume:
+    path: /opt/os-migrate/detached_volumes.yml
+    volume_id: <some-volume-uuid>
 """
 
 RETURN = r"""

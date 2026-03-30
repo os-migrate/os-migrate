@@ -152,7 +152,7 @@ openstack flavor create --public \
 
 
 ### Create public network
-If your OpenStack environment doesn’t have a public network created yet, you’ll need to create one. The parameters below should work if you’re deploying your OpenStack environment with Infrared Virsh plugin. If you deployed using something else, you may need to adjust the parameters.
+If your OpenStack environment doesn't have a public network created yet, you'll need to create one. The parameters below should work if you're deploying your OpenStack environment with Infrared Virsh plugin. If you deployed using something else, you may need to adjust the parameters.
 
 ```yaml
 openstack network create \
@@ -226,7 +226,7 @@ For more useful information see; optional tags/variables to add to run a migrati
 
 
 ## Contributing
-As an open source project, OS Migrate welcomes contributions from the community at large. The following guide provides information on how to add a new role to the project and where additional testing or documentation artifacts should be added. This isn’t an exhaustive reference and is a living document subject to change as needed when the project formalizes any practice or pattern. See the
+As an open source project, OS Migrate welcomes contributions from the community at large. The following guide provides information on how to add a new role to the project and where additional testing or documentation artifacts should be added. This isn't an exhaustive reference and is a living document subject to change as needed when the project formalizes any practice or pattern. See the
 [OS Migrate developer documentation](https://os-migrate.github.io/os-migrate/devel/README.html).
 
 
