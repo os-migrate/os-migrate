@@ -1,2 +1,2 @@
-openstacksdk==1.5.1
+openstacksdk==4.5.0
 PyYAML==6.0.2
