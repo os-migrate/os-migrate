@@ -83,6 +83,7 @@ Fix
 
 Other
 ~~~~~
+- Bump os-migrate to 1.0.2. [mathieu bultel]
 - Merge branch 'main' into remove-workload_common. [mathieu bultel]
 - Merge branch 'main' into fix-minor-ansible-lint-errors. [mathieu
   bultel]
