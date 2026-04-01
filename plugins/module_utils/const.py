@@ -1,4 +1,4 @@
-OS_MIGRATE_VERSION = "1.0.2"  # updated by build.sh
+OS_MIGRATE_VERSION = "1.0.3"  # updated by build.sh
 
 # Main serialization sections
 RES_PARAMS = "params"
