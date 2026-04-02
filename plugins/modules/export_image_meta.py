@@ -71,25 +71,13 @@ RETURN = r"""
 
 from ansible.module_utils.basic import AnsibleModule
 
-# Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
-try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
-        openstack_full_argument_spec,
-        openstack_cloud_from_module,
-    )
-except ImportError:
-    # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack import (
-        openstack_full_argument_spec,
-        openstack_cloud_from_module,
-    )
-
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import filesystem
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import image
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import os_auth
 
 
 def run_module():
-    argument_spec = openstack_full_argument_spec(
+    argument_spec = os_auth.openstack_full_argument_spec(
         path=dict(type="str", required=True),
         name=dict(type="str", required=True),
     )
@@ -107,7 +95,7 @@ def run_module():
         # supports_check_mode=True,
     )
 
-    sdk, conn = openstack_cloud_from_module(module)
+    conn = os_auth.get_connection(module)
     sdk_image = conn.image.find_image(module.params["name"], ignore_missing=False)
     ser_image = image.Image.from_sdk(conn, sdk_image)
 
