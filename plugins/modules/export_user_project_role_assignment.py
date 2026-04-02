@@ -82,19 +82,7 @@ RETURN = r"""
 
 from ansible.module_utils.basic import AnsibleModule
 
-# Import openstack module utils from ansible_collections.openstack.cloud.plugins as per ansible 3+
-try:
-    from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
-        openstack_full_argument_spec,
-        openstack_cloud_from_module,
-    )
-except ImportError:
-    # If this fails fall back to ansible < 3 imports
-    from ansible.module_utils.openstack import (
-        openstack_full_argument_spec,
-        openstack_cloud_from_module,
-    )
-
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import os_auth
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import filesystem
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     user_project_role_assignment,
@@ -102,7 +90,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
 
 
 def run_module():
-    argument_spec = openstack_full_argument_spec(
+    argument_spec = os_auth.openstack_full_argument_spec(
         path=dict(type="str", required=True),
         user_id=dict(type="str", required=True),
         project_id=dict(type="str", required=True),
@@ -126,7 +114,7 @@ def run_module():
     project_id = module.params["project_id"]
     role_id = module.params["role_id"]
 
-    sdk, conn = openstack_cloud_from_module(module)
+    conn = os_auth.get_connection(module)
     sdk_assignments = list(
         conn.identity.role_assignments(
             user_id=user_id, scope_project_id=project_id, role_id=role_id
