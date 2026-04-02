@@ -1,5 +1,5 @@
 - name: Create the conversion host floating IP with a predefined IP
-  openstack.cloud.floating_ip:
+  os_migrate.os_migrate.floating_ip:
     server: "{{ os_migrate_conversion_host_name }}"
     nat_destination: "{{ os_migrate_conversion_net_name }}"
     network: "{{ os_migrate_conversion_external_network_name }}"
@@ -16,7 +16,7 @@
   when: os_migrate_conversion_floating_ip_address is defined and os_migrate_conversion_floating_ip_address is string
 
 - name: Create the conversion host floating IP with auto IP enabled
-  openstack.cloud.floating_ip:
+  os_migrate.os_migrate.floating_ip:
     server: "{{ os_migrate_conversion_host_name }}"
     network: "{{ os_migrate_conversion_external_network_name }}"
     nat_destination: "{{ os_migrate_conversion_net_name }}"

@@ -13,11 +13,11 @@ except ImportError:
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     const,
     reference,
-    resource,
+    osm_resource,
 )
 
 
-class SecurityGroupRule(resource.Resource):
+class SecurityGroupRule(osm_resource.Resource):
 
     resource_type = const.RES_TYPE_SECURITYGROUPRULE
     sdk_class = OPENSTACK_SDK_SECURITY_GROUP_RULE

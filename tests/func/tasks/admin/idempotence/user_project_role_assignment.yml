@@ -41,7 +41,7 @@
 ### IMPORT IDEMPOTENCE ###
 
 - name: look up osm_role dst cloud
-  openstack.cloud.identity_role:
+  os_migrate.os_migrate.identity_role:
     auth: "{{ os_migrate_dst_auth }}"
     name: osm_role
   register: role_assignment_import_idem_before
@@ -51,7 +51,7 @@
     name: os_migrate.os_migrate.import_user_project_role_assignments
 
 - name: look up osm_role in dst cloud again
-  openstack.cloud.identity_role:
+  os_migrate.os_migrate.identity_role:
     auth: "{{ os_migrate_dst_auth }}"
     name: osm_role
   register: role_assignment_import_idem_after

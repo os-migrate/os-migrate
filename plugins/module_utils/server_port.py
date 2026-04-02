@@ -14,7 +14,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     exc,
     const,
     reference,
-    resource,
+    osm_resource,
 )
 
 SERVER_PORT_ORDER_MAX = 1000
@@ -61,7 +61,7 @@ def _neutron_port_has_fixed_ip(sdk_port, ip):
     return False
 
 
-class ServerPort(resource.Resource):
+class ServerPort(osm_resource.Resource):
 
     resource_type = const.RES_TYPE_SERVER_PORT
     sdk_class = OPENSTACK_SDK_PORT

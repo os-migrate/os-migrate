@@ -1,5 +1,5 @@
 - name: Scan available users
-  openstack.cloud.identity_user_info:
+  os_migrate.os_migrate.identity_user_info:
     cloud: src
     validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
     ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"

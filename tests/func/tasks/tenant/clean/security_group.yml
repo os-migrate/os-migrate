@@ -1,5 +1,5 @@
 - name: remove osm_security_group and security group rules
-  openstack.cloud.security_group:
+  os_migrate.os_migrate.security_group:
     auth: "{{ item }}"
     name: osm_security_group
     state: absent

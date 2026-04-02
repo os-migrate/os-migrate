@@ -15,11 +15,11 @@ except ImportError:
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     const,
     reference,
-    resource,
+    osm_resource,
 )
 
 
-class Keypair(resource.Resource):
+class Keypair(osm_resource.Resource):
     # according to https://github.com/openstack/openstacksdk/blob/a4a2a7b42ec2ae7e186b44aeb7242fddd84944f7/openstack/cloud/_compute.py#L601
     # keypairs are created with name and public key.  user is not used.
     resource_type = const.RES_TYPE_KEYPAIR

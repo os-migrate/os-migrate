@@ -6,7 +6,7 @@
     backup: true
 
 - name: scan image before update test
-  openstack.cloud.image_info:
+  os_migrate.os_migrate.image_info:
     image: osm_image
     auth: "{{ os_migrate_dst_auth }}"
     auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
@@ -27,7 +27,7 @@
     name: os_migrate.os_migrate.import_images
 
 - name: scan available images after update test
-  openstack.cloud.image_info:
+  os_migrate.os_migrate.image_info:
     image: osm_image
     auth: "{{ os_migrate_dst_auth }}"
     auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"

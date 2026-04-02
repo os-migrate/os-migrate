@@ -1,5 +1,5 @@
 - name: get src auth token
-  openstack.cloud.auth:
+  os_migrate.os_migrate.auth:
     auth: "{{ os_migrate_src_auth }}"
   register: auth_token
 

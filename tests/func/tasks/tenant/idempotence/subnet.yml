@@ -27,7 +27,7 @@
 ### IMPORT IDEMPOTENCE ###
 
 - name: look up osm_subnet dst cloud
-  openstack.cloud.subnets_info:
+  os_migrate.os_migrate.subnets_info:
     auth: "{{ os_migrate_dst_auth }}"
     filters:
       name: osm_subnet
@@ -38,7 +38,7 @@
     name: os_migrate.os_migrate.import_subnets
 
 - name: look up osm_subnet in dst cloud again
-  openstack.cloud.subnets_info:
+  os_migrate.os_migrate.subnets_info:
     auth: "{{ os_migrate_dst_auth }}"
     filters:
       name: osm_subnet

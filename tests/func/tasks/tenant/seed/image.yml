@@ -11,7 +11,7 @@
     mode: 0600
 
 - name: create osm_image
-  openstack.cloud.image:
+  os_migrate.os_migrate.image:
     auth: "{{ os_migrate_src_auth }}"
     name: osm_image
     filename: "{{ os_migrate_tests_tmp_dir }}/test_inputs/cirros.img"

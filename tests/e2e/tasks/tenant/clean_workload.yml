@@ -8,7 +8,7 @@
     - workloads.yml
 
 - name: Detach src volumes if still attached
-  openstack.cloud.server_volume:
+  os_migrate.os_migrate.server_volume:
     server: "{{ item.server }}"
     volume: "{{ item.volume }}"
     state: absent
@@ -34,7 +34,7 @@
   failed_when: false
 
 - name: Detach dst volumes if still attached
-  openstack.cloud.server_volume:
+  os_migrate.os_migrate.server_volume:
     server: "{{ item.server }}"
     volume: "{{ item.volume }}"
     state: absent
@@ -63,7 +63,7 @@
     server: osm_server
 
 - name: Remove osm_server
-  openstack.cloud.server:
+  os_migrate.os_migrate.server:
     name: osm_server
     state: absent
     delete_fip: true
@@ -86,7 +86,7 @@
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
 - name: Remove osm_server boot volume
-  openstack.cloud.volume:
+  os_migrate.os_migrate.volume:
     display_name: os-migrate-osm_server
     state: absent
     auth: "{{ item.auth }}"
@@ -107,7 +107,7 @@
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
 - name: Remove osm_volume
-  openstack.cloud.volume:
+  os_migrate.os_migrate.volume:
     display_name: osm_volume
     state: absent
     auth: "{{ item.auth }}"
@@ -128,7 +128,7 @@
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
 - name: Remove extra volumes 1
-  openstack.cloud.volume:
+  os_migrate.os_migrate.volume:
     display_name: osm_volume_one
     state: absent
     auth: "{{ item.auth }}"
@@ -149,7 +149,7 @@
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
 - name: Remove extra volumes 2
-  openstack.cloud.volume:
+  os_migrate.os_migrate.volume:
     display_name: osm_volume_two
     state: absent
     auth: "{{ item.auth }}"
@@ -170,7 +170,7 @@
       client_key: "{{ os_migrate_dst_client_key|default(omit) }}"
 
 - name: Remove detached volume
-  openstack.cloud.volume:
+  os_migrate.os_migrate.volume:
     display_name: osm_detached_volume
     state: absent
     auth: "{{ item.auth }}"

@@ -27,7 +27,7 @@
 ### IMPORT IDEMPOTENCE ###
 
 - name: look up osm_net dst cloud
-  openstack.cloud.networks_info:
+  os_migrate.os_migrate.networks_info:
     auth: "{{ os_migrate_dst_auth }}"
     filters:
       name: osm_net
@@ -38,7 +38,7 @@
     name: os_migrate.os_migrate.import_networks
 
 - name: look up osm_net in dst cloud again
-  openstack.cloud.networks_info:
+  os_migrate.os_migrate.networks_info:
     auth: "{{ os_migrate_dst_auth }}"
     filters:
       name: osm_net

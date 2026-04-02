@@ -14,11 +14,11 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     common,
     const,
     reference,
-    resource,
+    osm_resource,
 )
 
 
-class Network(resource.Resource):
+class Network(osm_resource.Resource):
 
     resource_type = const.RES_TYPE_NETWORK
     sdk_class = OPENSTACK_SDK_NETWORK

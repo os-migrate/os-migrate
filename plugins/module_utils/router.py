@@ -14,11 +14,11 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     common,
     const,
     reference,
-    resource,
+    osm_resource,
 )
 
 
-class Router(resource.Resource):
+class Router(osm_resource.Resource):
 
     resource_type = const.RES_TYPE_ROUTER
     sdk_class = OPENSTACK_SDK_ROUTER

@@ -1,5 +1,5 @@
 - name: remove src/dst domains
-  openstack.cloud.identity_domain:
+  os_migrate.os_migrate.identity_domain:
     auth: "{{ item['auth'] }}"
     name: "{{ item['domain'] }}"
     state: absent

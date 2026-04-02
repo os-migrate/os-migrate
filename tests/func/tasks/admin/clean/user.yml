@@ -1,5 +1,5 @@
 - name: remove osm_user
-  openstack.cloud.identity_user:
+  os_migrate.os_migrate.identity_user:
     auth: "{{ item['auth'] }}"
     name: "{{ item['user'] }}"
     state: absent

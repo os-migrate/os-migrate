@@ -37,7 +37,7 @@
 
     # Stop VM if not stopped and if config set to true
     - name: Perform workload stop if os_migrate_workload_stop_before_migration is true
-      openstack.cloud.server_action:
+      os_migrate.os_migrate.server_action:
         cloud: src
         server: "{{ item['_info']['id'] }}"
         action: stop

@@ -1,5 +1,5 @@
 - name: Create osm_volume
-  openstack.cloud.volume:
+  os_migrate.os_migrate.volume:
     display_name: osm_volume
     size: 1
     auth: "{{ os_migrate_src_auth }}"
@@ -9,7 +9,7 @@
     client_key: "{{ os_migrate_src_client_key|default(omit) }}"
 
 - name: Create osm_server
-  openstack.cloud.server:
+  os_migrate.os_migrate.server:
     name: osm_server
     state: present
     flavor: "{{ os_migrate_src_osm_server_flavor|default(m1.small) }}"

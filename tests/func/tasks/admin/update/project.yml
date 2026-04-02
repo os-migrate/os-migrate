@@ -6,7 +6,7 @@
     backup: true
 
 - name: scan available projects before update test
-  openstack.cloud.project_info:
+  os_migrate.os_migrate.project_info:
     auth: "{{ os_migrate_dst_auth }}"
     filters:
       name: osmdst_project
@@ -23,7 +23,7 @@
     name: os_migrate.os_migrate.import_projects
 
 - name: scan available projects after update test
-  openstack.cloud.project_info:
+  os_migrate.os_migrate.project_info:
     auth: "{{ os_migrate_dst_auth }}"
     filters:
       name: osmdst_project
