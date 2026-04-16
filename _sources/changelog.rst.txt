@@ -4,7 +4,10 @@ Changelog
 
 (unreleased)
 ------------
+- Merge branch 'main' into vendor/test. [mathieu bultel]
 - Merge branch 'main' into os/auth. [mathieu bultel]
+- Add openstack.cloud as vendor collection instead of installing it from
+  galaxy. [mathieu bultel]
 
 
 1.0.3 (2026-04-01)
