@@ -15,7 +15,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     exc,
     const,
     reference,
-    resource,
+    osm_resource,
 )
 
 
@@ -33,7 +33,7 @@ def server_floating_ips(conn, server_ports):
     return sdk_fips
 
 
-class ServerFloatingIP(resource.Resource):
+class ServerFloatingIP(osm_resource.Resource):
 
     resource_type = const.RES_TYPE_SERVER_FLOATING_IP
     sdk_class = OPENSTACK_SDK_FLOATING_IP

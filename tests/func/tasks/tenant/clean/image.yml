@@ -1,5 +1,5 @@
 - name: remove osm_image
-  openstack.cloud.image:
+  os_migrate.os_migrate.image:
     auth: "{{ item }}"
     name: osm_image
     state: absent

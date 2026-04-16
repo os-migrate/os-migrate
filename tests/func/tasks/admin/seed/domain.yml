@@ -1,5 +1,5 @@
 - name: create osm_domain
-  openstack.cloud.identity_domain:
+  os_migrate.os_migrate.identity_domain:
     auth: "{{ os_migrate_src_auth }}"
     state: present
     name: osm_domain

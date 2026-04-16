@@ -1,7 +1,7 @@
 - name: Workload post_workload tasks
   block:
     - name: list osm_server host attributes
-      openstack.cloud.server_info:
+      os_migrate.os_migrate.server_info:
         server: osm_server
         filters:
           vm_state: active

@@ -1,5 +1,5 @@
 - name: create osm_net
-  openstack.cloud.network:
+  os_migrate.os_migrate.network:
     auth: "{{ os_migrate_src_auth }}"
     name: osm_net
     # Apparently description is an unsupported param in Ansible even
@@ -9,7 +9,7 @@
   register: _osm_net
 
 - name: get auth token
-  openstack.cloud.auth:
+  os_migrate.os_migrate.auth:
     auth: "{{ os_migrate_src_auth }}"
   register: auth_token
 

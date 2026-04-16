@@ -14,7 +14,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     exc,
     const,
     reference,
-    resource,
+    osm_resource,
 )
 
 
@@ -36,7 +36,7 @@ def router_ports(conn, sdk_rtr):
     return conn.network.ports(device_id=sdk_rtr["id"])
 
 
-class RouterInterface(resource.Resource):
+class RouterInterface(osm_resource.Resource):
 
     resource_type = const.RES_TYPE_ROUTER_INTERFACE
     sdk_class = OPENSTACK_SDK_PORT

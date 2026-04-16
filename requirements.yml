@@ -5,5 +5,3 @@ collections:
       version: ">=1.4.0"
     - name: community.general
       version: "<5.0.0"
-    - name: openstack.cloud
-      version: ">=2.3.0,<2.4.0"

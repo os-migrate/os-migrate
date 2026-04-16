@@ -13,11 +13,11 @@ except ImportError:
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     const,
     reference,
-    resource,
+    osm_resource,
 )
 
 
-class User(resource.Resource):
+class User(osm_resource.Resource):
     resource_type = const.RES_TYPE_USER
     sdk_class = OPENSTACK_SDK_USER
 

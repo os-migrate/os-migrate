@@ -48,7 +48,7 @@
 ### IMPORT IDEMPOTENCE ###
 
 - name: look up osmdst_user dst cloud
-  openstack.cloud.identity_user_info:
+  os_migrate.os_migrate.identity_user_info:
     auth: "{{ os_migrate_dst_auth }}"
     filters:
       name: osmdst_user

@@ -6,7 +6,7 @@
     backup: true
 
 - name: scan available subnets after before test
-  openstack.cloud.subnets_info:
+  os_migrate.os_migrate.subnets_info:
     filters: "{{ os_migrate_dst_filters }}"
     auth: "{{ os_migrate_dst_auth }}"
     auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"
@@ -28,7 +28,7 @@
     name: os_migrate.os_migrate.import_subnets
 
 - name: scan available subnets after update test
-  openstack.cloud.subnets_info:
+  os_migrate.os_migrate.subnets_info:
     filters: "{{ os_migrate_dst_filters }}"
     auth: "{{ os_migrate_dst_auth }}"
     auth_type: "{{ os_migrate_dst_auth_type|default(omit) }}"

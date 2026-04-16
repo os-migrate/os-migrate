@@ -5,6 +5,7 @@ SHELL := /bin/bash
 # --- Configuration Variables ---
 # Reuse container content if possible. Set to 'false' to always rebuild.
 USE_CACHE ?= true
+USE_CONTAINER ?= true
 
 # Container and Python Configuration
 CONTAINER_ENGINE ?= podman
@@ -94,6 +95,9 @@ help:
 	@echo "  clean-centos-container  - Stop and remove the CentOS container"
 	@echo "  create-venv           - Create the Python virtual environment in the container"
 	@echo "  install-deps          - Install Python dependencies from requirements files"
+	@echo "  vendor-import         - Import the OpenStack upstream collection as a git submodule"
+	@echo "  vendor-links          - Create symlinks for vendored modules and module_utils"
+	@echo "  vendor-clean          - Remove symlinks for vendored modules and module_utils"
 	@echo ""
 	@echo "Customizable variables:"
 	@echo "  USE_CACHE        - Reuse container if it exists (default: $(USE_CACHE))"
@@ -101,13 +105,73 @@ help:
 	@echo "  CONTAINER_IMAGE  - Container image (default: $(CONTAINER_IMAGE))"
 	@echo "  PYTHON_VERSION   - Python version to use in the container (default: $(PYTHON_VERSION))"
 
+# --- Vendor install ---
+VENDOR_DIR         := $(COLLECTION_ROOT)/plugins/modules/_vendor
+ifeq ($(USE_CONTAINER),true)
+	VENDOR_DIR         := $(CONTAINER_COLLECTION_ROOT)/plugins/modules/_vendor
+endif
+# Latest stable release:
+OS_CLOUD_VERSION   ?= 2.5.0
+UPSTREAM_REPO      := $(VENDOR_DIR)/openstack.cloud
+UPSTREAM_MODULES   := $(UPSTREAM_REPO)/plugins/modules
+UPSTREAM_UTILS     := $(UPSTREAM_REPO)/plugins/module_utils
+
+# List of required modules from vendor openstack.cloud collection.
+VENDORED_MODULES := auth compute_flavor compute_flavor_info floating_ip identity_domain identity_role \
+	identity_user identity_user_info image image_info keypair network networks_info port project \
+	project_info role_assignment router security_group security_group_rule server \
+	server_action server_info server_volume subnet subnets_info volume volume_info
+
+VENDORED_MODULE_UTILS := openstack ironic resource
+
+.PHONY: vendor-import vendor-links vendor-clean
+
+# Import vendor openstack.cloud collection.
+vendor-import: vendor-clean
+	@echo "--- Initializing OpenStack upstream submodule at version $(OS_CLOUD_VERSION) ---"
+	@mkdir -p $(VENDOR_DIR)
+	@if [ ! -d "$(UPSTREAM_REPO)" ]; then \
+		echo "Adding submodule..."; \
+		git submodule add https://github.com/openstack/ansible-collections-openstack.git $(UPSTREAM_REPO); \
+	fi
+	@echo "Checking out tag $(OS_CLOUD_VERSION)..."
+	@cd $(UPSTREAM_REPO) && \
+		git fetch --tags && \
+		git checkout $(OS_CLOUD_VERSION)
+
+# Link vendored modules and module_utils.
+vendor-links: vendor-import
+	@echo "--- Creating symlinks for vendored modules ---"
+	@# Symlink Modules
+	@for mod in $(VENDORED_MODULES); do \
+		ln -sf $(UPSTREAM_MODULES)/$$mod.py plugins/modules/$$mod.py; \
+		echo "Linked module: os_migrate.os_migrate.$$mod"; \
+	done
+	@# Symlink Module Utils
+	@echo "--- Linking upstream module_utils ---"
+	@for util in $(VENDORED_MODULE_UTILS); do \
+		ln -sf $(UPSTREAM_UTILS)/$$util.py plugins/module_utils/$$util.py; \
+		echo "Linked module_util: os_migrate.os_migrate.$$util"; \
+	done
+	@# Fix for the specific 'openstack' namespace import
+
+# Clean vender symlinks and module_utils.
+vendor-clean:
+	@echo "--- Removing vendored symlinks ---"
+	@for mod in $(VENDORED_MODULES); do rm -f plugins/modules/$$mod.py; done
+	@for util in $(VENDORED_MODULE_UTILS); do rm -f plugins/module_utils/$$util.py; done
+	@rm -rf plugins/module_utils/openstack/cloud
+
+
 # --- Build Targets ---
 
 build: check-root clean-build install-deps
 	@echo "--- Building Ansible collection: $(COLLECTION_TARBALL) ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
+		$(MAKE) vendor-links && \
 		source $(VENV_DIR)/bin/activate; \
 		ansible-galaxy collection build'
+
 
 clean-build:
 	@echo "--- Cleaning built collection ---"
@@ -174,6 +238,7 @@ create-venv: check-python-version
 install-deps: create-venv
 	@echo "--- Installing/updating Python dependencies ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
+		dnf install -y git; \
 		source $(VENV_DIR)/bin/activate; \
 		pip install --root-user-action ignore -q --upgrade pip; \
 		pip install --root-user-action ignore -q -r requirements.txt; \

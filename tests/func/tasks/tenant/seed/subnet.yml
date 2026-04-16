@@ -1,5 +1,5 @@
 - name: Create subnet
-  openstack.cloud.subnet:
+  os_migrate.os_migrate.subnet:
     auth: "{{ os_migrate_src_auth }}"
     state: present
     network_name: osm_net
@@ -16,7 +16,7 @@
   register: _osm_subnet
 
 - name: Get auth token
-  openstack.cloud.auth:
+  os_migrate.os_migrate.auth:
     auth: "{{ os_migrate_src_auth }}"
   register: auth_token
 
@@ -35,7 +35,7 @@
     OS_PROJECT_DOMAIN_NAME: "{{ os_migrate_src_auth.project_domain_name|default('') }}"
 
 - name: Create a 2nd subnet for router testing
-  openstack.cloud.subnet:
+  os_migrate.os_migrate.subnet:
     auth: "{{ os_migrate_src_auth }}"
     state: present
     network_name: osm_net

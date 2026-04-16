@@ -35,7 +35,7 @@
 ### IMPORT IDEMPOTENCE ###
 
 - name: look up osmdst_project dst cloud
-  openstack.cloud.project_info:
+  os_migrate.os_migrate.project_info:
     auth: "{{ os_migrate_dst_auth }}"
     filters:
       name: osmdst_project
@@ -46,7 +46,7 @@
     name: os_migrate.os_migrate.import_projects
 
 - name: look up osmdst_project in dst cloud again
-  openstack.cloud.project_info:
+  os_migrate.os_migrate.project_info:
     auth: "{{ os_migrate_dst_auth }}"
     filters:
       name: osmdst_project
