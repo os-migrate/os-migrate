@@ -4,6 +4,15 @@ Changelog
 
 (unreleased)
 ------------
+- Fix variable typo. [mathieu bultel]
+- Add missing key name to the seed_pre_workload playbook. [mathieu
+  bultel]
+- Fix variable typo for seed_pre_workload. [mathieu bultel]
+- Move to more recent cipher and make it customizable for
+  conversion_host role. [mathieu bultel]
+- Use shell instead of builtin.user because of CI context. [mathieu
+  bultel]
+- Remove community.crypto dependency. [mathieu bultel]
 - Merge branch 'main' into vendor/test. [mathieu bultel]
 - Merge branch 'main' into os/auth. [mathieu bultel]
 - Add openstack.cloud as vendor collection instead of installing it from
