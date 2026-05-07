@@ -104,10 +104,8 @@
     state: directory
 
 - name: Generate a keypair for the migration
-  # This will not regenerate the key if
-  # it already exists
-  community.crypto.openssh_keypair:
-    path: "{{ '~' | expanduser }}/ssh-ci/id_rsa"
+  ansible.builtin.shell: >
+    ssh-keygen -t ed25519 -f "{{ '~' | expanduser }}/ssh-ci/id_rsa" -N ""
 
 - name: Create new keypair as osm_key
   os_migrate.os_migrate.keypair:

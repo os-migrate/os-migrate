@@ -5,5 +5,9 @@
     mode: '0700'
 
 - name: Generate a keypair for the conversion host
-  community.crypto.openssh_keypair:
-    path: "{{ os_migrate_conversion_keypair_private_path }}"
+  ansible.builtin.shell: >
+    ssh-keygen -t {{ os_migrate_conversion_host_ssh_key_type }}
+    {% if os_migrate_conversion_host_ssh_key_type != 'ed25519' %}-b {{ os_migrate_conversion_host_ssh_key_bits }}{% endif %}
+    -f "{{ os_migrate_conversion_keypair_private_path }}" -N ""
+  args:
+    creates: "{{ os_migrate_conversion_keypair_private_path }}"
