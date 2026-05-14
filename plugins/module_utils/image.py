@@ -7,6 +7,7 @@ import os
 
 try:
     import openstack
+
     HAS_OPENSTACK = True
     OPENSTACK_SDK_IMAGE = openstack.image.v2.image.Image
 except ImportError:
@@ -212,7 +213,7 @@ def export_blob(conn, sdk_res, path):
         return False
 
     chunk_size = 1024 * 1024  # 1 MiB
-    checksum = hashlib.md5()
+    checksum = hashlib.md5(usedforsecurity=False)  # noqa: S324
     try:
         with open(path, "wb") as image_file:
             response = conn.image.download_image(sdk_res, stream=True)
