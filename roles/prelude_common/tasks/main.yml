@@ -15,7 +15,7 @@
 # under the License.
 
 - name: Get the current openstacksdk version
-  ansible.builtin.command: python3 -c "import openstack; print(openstack.__version__)"
+  ansible.builtin.command: python3 -c "import openstack; print(openstack.version.__version__)"
   register: _installed_openstacksdk
   changed_when: false
   failed_when: false # Prevents crashing if openstacksdk isn't installed at all
