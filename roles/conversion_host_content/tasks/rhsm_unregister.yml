@@ -1,10 +1,10 @@
 - name: Unregister RHEL hosts from RHSM
-  community.general.redhat_subscription:
-    state: absent
   vars:
-    # Unregistration gets stuck unless we explicitly run the module as root.
     ansible_become: true
     ansible_become_user: root
+    rhc_state: absent
+  ansible.builtin.include_role:
+    name: redhat.rhel_system_roles.rhc
   when:
     - ansible_distribution is defined
     - ansible_distribution in ['RedHat']

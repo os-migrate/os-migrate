@@ -1,5 +1,5 @@
 ---
 
 collections:
-    - name: community.general
-      version: "<5.0.0"
+    - name: redhat.rhel_system_roles
+      version: "<1.20.5"
