@@ -1,7 +1,5 @@
 ---
 collections:
-  - name: redhat.rhel_system_roles
-    version: "<1.20.5"
   - name: os_migrate.os_migrate
     source: tmp/os_migrate-os_migrate-1.0.3.tar.gz
     type: file
