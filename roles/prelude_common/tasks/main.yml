@@ -16,22 +16,17 @@
 
 - name: Get the current openstacksdk version
   ansible.builtin.command: python3 -c "import openstack; print(openstack.version.__version__)"
-  register: _installed_openstacksdk
+  register: _installed_openstacksdk_cmd
   changed_when: false
 
 - name: Print items for sdk version
   ansible.builtin.debug:
-    msg: "{{ _installed_openstacksdk }}"
+    msg: "{{ _installed_openstacksdk_cmd }}"
 
-- name: Set openstacksdk version for pip
+- name: Set openstacksdk version fact
   ansible.builtin.set_fact:
-    _installed_openstacksdk_versions: "{{ _installed_openstacksdk['packages']['pip']['openstacksdk'] | map(attribute='version') | list | first }}"
-  when: "_installed_openstacksdk['packages']['pip'] is defined"
-
-- name: Set openstacksdk version for pip3
-  ansible.builtin.set_fact:
-    _installed_openstacksdk_versions: "{{ _installed_openstacksdk['packages']['pip3']['openstacksdk'] | map(attribute='version') | list | first }}"
-  when: "_installed_openstacksdk['packages']['pip3'] is defined"
+    # Read the raw string directly from stdout. If python failed, default to '0.0.0'
+    _installed_openstacksdk_versions: "{{ _installed_openstacksdk_cmd.stdout | trim if _installed_openstacksdk_cmd.rc == 0 else '0.0.0' }}"
 
 - name: Print the current installed version of openstacksdk
   ansible.builtin.debug:
@@ -40,10 +35,15 @@
 - name: Fail if the user has an unsupported openstacksdk version
   ansible.builtin.assert:
     that:
+      - _installed_openstacksdk_cmd.rc == 0
       - _installed_openstacksdk_versions is version(prelude_common_minimum_openstacksdk_version, '>=')
     fail_msg: |
+      {% if _installed_openstacksdk_cmd.rc != 0 %}
+      openstacksdk does not appear to be installed in the system Python environment.
+      {% else %}
       The installed openstacksdk version {{ _installed_openstacksdk_versions }}
       must be >= than {{ prelude_common_minimum_openstacksdk_version }}
+      {% endif %}
     success_msg: |
       The installed openstacksdk version {{ _installed_openstacksdk_versions }}
       is >= than {{ prelude_common_minimum_openstacksdk_version }}
