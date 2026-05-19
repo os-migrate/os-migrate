@@ -5,83 +5,30 @@
       os_migrate_conversion_rhsm_username is defined or
       os_migrate_conversion_rhsm_org_id is defined)
   block:
-    - name: Register and configure repositories via RHC system role
+    - name: Execute RHC system role with retries
+      ansible.builtin.include_role:
+        name: redhat.rhel_system_roles.rhc
       vars:
         rhc_state: present
         rhc_organization: "{{ os_migrate_conversion_rhsm_org_id | default(omit) }}"
         rhc_release: "{{ os_migrate_conversion_rhsm_release | default(omit) }}"
         rhc_baseurl: "{{ os_migrate_conversion_rhsm_rhsm_baseurl | default(omit) }}"
-
-        # Mapping repositories: RHC requires an array of dicts with name & state
-        rhc_repositories: >-
-          {% if os_migrate_conversion_rhsm_repositories is defined %}
-          {% set repos = [] %}
-          {% for repo in os_migrate_conversion_rhsm_repositories %}
-          {%   if repos.append({'name': repo, 'state': 'enabled'}) %}{% endif %}
-          {% endfor %}
-          {{ repos }}
-          {% else %}
-          []
-          {% endif %}
-
-        # Authentication
-        rhc_auth: >-
-          {% if os_migrate_conversion_rhsm_activationkey is defined %}
-          {
-            "activation_keys": {
-              "keys": ["{{ os_migrate_conversion_rhsm_activationkey }}"]
-            }
-          }
-          {% elif os_migrate_conversion_rhsm_username is defined %}
-          {
-            "login": {
-              "username": "{{ os_migrate_conversion_rhsm_username }}",
-              "password": "{{ os_migrate_conversion_rhsm_password | default('') }}"
-            }
-          }
-          {% else %}
-          {}
-          {% endif %}
-
-        # Registration server
-        rhc_server: >-
-          {% if os_migrate_conversion_rhsm_server_hostname is defined %}
-          {
-            "hostname": "{{ os_migrate_conversion_rhsm_server_hostname }}",
-            "insecure": {{ os_migrate_conversion_rhsm_server_insecure | default(false) | bool | to_json }}
-          }
-          {% else %}
-          {}
-          {% endif %}
-
-        # Proxy configuration
-        rhc_proxy: >-
-          {% if os_migrate_conversion_rhsm_server_proxy_hostname is defined %}
-          {
-            "hostname": "{{ os_migrate_conversion_rhsm_server_proxy_hostname }}",
-            "port": {{ os_migrate_conversion_rhsm_server_proxy_port | default(443) | int }},
-            "username": "{{ os_migrate_conversion_rhsm_server_proxy_user | default(omit) }}",
-            "password": "{{ os_migrate_conversion_rhsm_server_proxy_password | default(omit) }}"
-          }
-          {% else %}
-          {}
-          {% endif %}
-
-        # Default Insights state is 'present' in the RHC role
-        # so we need to explicitly set it to 'absent' to disable it.
+        rhc_repositories: "{{ os_migrate_conversion_rhsm_repositories | default(omit) }}"
+        rhc_auth:
+          activation_keys: "{{ {'keys': [os_migrate_conversion_rhsm_activationkey]} if os_migrate_conversion_rhsm_activationkey is defined else omit }}"
+          login: "{{ {'username': os_migrate_conversion_rhsm_username, 'password': os_migrate_conversion_rhsm_password | default('')} if os_migrate_conversion_rhsm_username is defined and os_migrate_conversion_rhsm_activationkey is not defined else omit }}"
+        rhc_server: "{{ omit if os_migrate_conversion_rhsm_server_hostname is not defined else {'hostname': os_migrate_conversion_rhsm_server_hostname, 'insecure': os_migrate_conversion_rhsm_server_insecure | default(false) | bool} }}"
+        rhc_proxy: "{{ omit if os_migrate_conversion_rhsm_server_proxy_hostname is not defined else {'hostname': os_migrate_conversion_rhsm_server_proxy_hostname, 'port': os_migrate_conversion_rhsm_server_proxy_port | default(443) | int, 'username': os_migrate_conversion_rhsm_server_proxy_user | default(omit), 'password': os_migrate_conversion_rhsm_server_proxy_password | default(omit)} }}"
+        # Insights configuration
         rhc_insights:
           state: "{{ os_migrate_conversion_insights_enable | default('absent') }}"
-
-      ansible.builtin.include_role:
-        name: redhat.rhel_system_roles.rhc
       register: rhc_role_result
-      until: not rhc_role_result.failed
-      retries: "{{ os_migrate_conversion_rhsm_retries }}"
-      delay: "{{ os_migrate_conversion_rhsm_delay }}"
+      ignore_errors: true
 
-    - name: Log the subscription manager output
-      ansible.builtin.debug:
-        msg: "{{ rhc_role_result }}"
+    - name: Fail if the RHC role execution failed completely
+      ansible.builtin.fail:
+        msg: "The RHC registration role failed to complete successfully."
+      when: rhc_role_result is failed
 
 - name: Update all packages
   ansible.builtin.yum:
