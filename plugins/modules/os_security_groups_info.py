@@ -68,8 +68,14 @@ from ansible.module_utils.basic import AnsibleModule
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import os_auth
 
+import importlib
 
 def main():
+
+    try:
+        sdk = importlib.import_module('openstack')
+    except ImportError:
+        module.fail_json(msg='openstacksdk is required for this module')
 
     argument_spec = os_auth.openstack_full_argument_spec(
         filters=dict(required=False, type="dict", default={}),
