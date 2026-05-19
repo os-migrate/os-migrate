@@ -140,6 +140,14 @@ manager prior the packages install.</p>
 <span class="c1"># configured to set up properly the RHSM</span>
 <span class="c1"># os_migrate_conversion_rhsm_username: username</span>
 <span class="c1"># os_migrate_conversion_rhsm_password: password</span>
+<span class="c1"># or</span>
+<span class="c1"># os_migrate_conversion_rhsm_org_id: org_id</span>
+<span class="c1"># os_migrate_conversion_rhsm_activationkey: activation_key</span>
+
+<span class="c1"># For the repositories you must declare:</span>
+<span class="c1"># os_migrate_conversion_rhsm_repositories:</span>
+<span class="c1">#  - {name: &quot;rhel-9-for-x86_64-appstream-rpms&quot;, state: enabled}</span>
+<span class="c1">#  - {name: &quot;rhel-9-for-x86_64-baseos-rpms&quot;, state: enabled}</span>
 <span class="nt">os_migrate_conversion_rhsm_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
 <span class="nt">os_migrate_conversion_rhsm_delay</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
 

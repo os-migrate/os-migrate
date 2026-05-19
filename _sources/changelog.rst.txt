@@ -4,6 +4,19 @@ Changelog
 
 (unreleased)
 ------------
+- Add documentation variables in the default/main.yml. [mathieu bultel]
+- Remove jinja templating and use classic ansible var setting. [mathieu
+  bultel]
+- Refactor prelude tasks since it relies on pip_package role. [mathieu
+  bultel]
+- Fail if openstack is not installed. [mathieu bultel]
+- Fix get openstack version. [mathieu bultel]
+- Remove redhat.rhel_system_roles from galaxy.yml. [mathieu bultel]
+- Remove redhat.rhel_system_roles from AEE requirements. [mathieu
+  bultel]
+- Update AEE bindep and remove rhel_system_roles from galaxy deps.
+  [mathieu bultel]
+- Remove community.general dependency. [mathieu bultel]
 - Fix variable typo. [mathieu bultel]
 - Add missing key name to the seed_pre_workload playbook. [mathieu
   bultel]
