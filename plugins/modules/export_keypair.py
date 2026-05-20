@@ -80,6 +80,9 @@ from ansible.module_utils.basic import AnsibleModule
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import os_auth
 
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import filesystem
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import keypair
+
 def run_module():
     argument_spec = os_auth.openstack_full_argument_spec(
         path=dict(type="str", required=True),

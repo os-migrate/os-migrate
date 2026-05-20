@@ -8,3 +8,4 @@ python3-devel
 rsync
 gcc
 git-core
+rhel-system-roles

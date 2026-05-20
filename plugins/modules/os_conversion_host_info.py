@@ -99,8 +99,10 @@ from ansible.module_utils.basic import AnsibleModule
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import os_auth
 
+from openstack import exceptions as os_exceptions
 
 def main():
+
     argument_spec = os_auth.openstack_full_argument_spec(
         server=dict(type="str", required=True),
         filters=dict(required=False, type="dict", default={}),
@@ -136,7 +138,7 @@ def main():
         conversion_host["name"] = server.name
         conversion_host["id"] = server.id
 
-    except sdk.exceptions.OpenStackCloudException as e:
+    except os_exceptions.OpenStackCloudException as e:
         module.fail_json(msg=str(e))
 
     module.exit_json(changed=False, openstack_conversion_host=conversion_host)

@@ -14,7 +14,7 @@ dependencies:
   ansible_core:
     package_pip: ansible-core
   python: requirements.txt
-  system: binddep.txt
+  system: bindep.txt
   galaxy: requirements.yml
   python_interpreter:
     package_system: "python3"
