@@ -18,8 +18,6 @@ tags:
   - openstack
   - migrations
   - cloud
-dependencies:
-  openstack.cloud: ">=2.3.0,<2.4.0"
 repository: "https://github.com/os-migrate/os-migrate"
 homepage: "https://github.com/os-migrate/os-migrate"
 issues: "https://github.com/os-migrate/os-migrate/issues"
