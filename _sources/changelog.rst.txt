@@ -4,6 +4,11 @@ Changelog
 
 (unreleased)
 ------------
+- Use import openstack for exception instead. [mathieu bultel]
+- Fix import for sdk exceptions. [mathieu bultel]
+- Add ruff config file. [mathieu bultel]
+- Add pylint, create bindep in root repo and remove useless dep in
+  galaxy.yml. [mathieu bultel]
 - Add documentation variables in the default/main.yml. [mathieu bultel]
 - Remove jinja templating and use classic ansible var setting. [mathieu
   bultel]
