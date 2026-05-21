@@ -136,8 +136,13 @@ vendor-import: vendor-clean
 	fi
 	@echo "Checking out tag $(OS_CLOUD_VERSION)..."
 	@cd $(UPSTREAM_REPO) && \
-		git fetch --tags && \
-		git checkout $(OS_CLOUD_VERSION)
+		git fetch --tags --force && \
+		( \
+			git checkout "$(OS_CLOUD_VERSION)" || \
+			git checkout "v$(OS_CLOUD_VERSION)" || \
+			git checkout "tags/$(OS_CLOUD_VERSION)" || \
+			git checkout "tags/v$(OS_CLOUD_VERSION)" \
+		)
 
 # Link vendored modules and module_utils.
 vendor-links: vendor-import
@@ -167,9 +172,9 @@ vendor-clean:
 
 build: check-root clean-build install-deps
 	@echo "--- Building Ansible collection: $(COLLECTION_TARBALL) ---"
+	@$(MAKE) vendor-links USE_CONTAINER=false
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
-		$(MAKE) vendor-links && \
-		source $(VENV_DIR)/bin/activate; \
+		source $(VENV_DIR)/bin/activate && \
 		ansible-galaxy collection build'
 
 
