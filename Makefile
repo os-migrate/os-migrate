@@ -131,19 +131,13 @@ VENDORED_MODULE_UTILS := openstack ironic
 vendor-import: vendor-clean
 	@echo "--- Initializing OpenStack upstream submodule at version $(OS_CLOUD_VERSION) ---"
 	@mkdir -p $(VENDOR_DIR)
-	@if [ ! -d "$(UPSTREAM_REPO)" ]; then \
-		echo "Adding submodule..."; \
-		git submodule add https://github.com/openstack/ansible-collections-openstack.git $(UPSTREAM_REPO); \
-	fi
+	@rm -rf $(UPSTREAM_REPO)
+	@echo "Cloning vendor repository..."
+	@git clone --no-checkout https://github.com/openstack/ansible-collections-openstack.git $(UPSTREAM_REPO)
 	@echo "Checking out tag $(OS_CLOUD_VERSION)..."
 	@cd $(UPSTREAM_REPO) && \
 		git fetch --tags --force && \
-		( \
-			git checkout "$(OS_CLOUD_VERSION)" || \
-			git checkout "v$(OS_CLOUD_VERSION)" || \
-			git checkout "tags/$(OS_CLOUD_VERSION)" || \
-			git checkout "tags/v$(OS_CLOUD_VERSION)" \
-		)
+		git checkout --detach "refs/tags/$(OS_CLOUD_VERSION)"
 
 # Link vendored modules and module_utils.
 vendor-links: vendor-import
