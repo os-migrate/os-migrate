@@ -112,6 +112,7 @@ ifeq ($(USE_CONTAINER),true)
 endif
 # Latest stable release:
 OS_CLOUD_VERSION   ?= 2.5.0
+OS_CLOUD_VERSION   := $(or $(strip $(OS_CLOUD_VERSION)),2.5.0)
 UPSTREAM_REPO      := $(VENDOR_DIR)/openstack.cloud
 UPSTREAM_MODULES   := $(UPSTREAM_REPO)/plugins/modules
 UPSTREAM_UTILS     := $(UPSTREAM_REPO)/plugins/module_utils
