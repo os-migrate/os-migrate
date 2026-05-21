@@ -1,3 +1,3 @@
-[submodule "/code/plugins/modules/_vendor/openstack.cloud"]
-	path = /code/plugins/modules/_vendor/openstack.cloud
+[submodule "plugins/modules/_vendor/openstack.cloud"]
+	path = plugins/modules/_vendor/openstack.cloud
 	url = https://github.com/openstack/ansible-collections-openstack.git
