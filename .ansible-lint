@@ -12,37 +12,5 @@ exclude_paths:
   - ".venv/"
   - "plugins/modules/_vendor/"
 
-# When vendor symlinks are not materialized in the checkout,
-# ansible-lint cannot resolve these collection modules.
-mock_modules:
-  - os_migrate.os_migrate.auth
-  - os_migrate.os_migrate.compute_flavor
-  - os_migrate.os_migrate.compute_flavor_info
-  - os_migrate.os_migrate.floating_ip
-  - os_migrate.os_migrate.identity_domain
-  - os_migrate.os_migrate.identity_role
-  - os_migrate.os_migrate.identity_user
-  - os_migrate.os_migrate.identity_user_info
-  - os_migrate.os_migrate.image
-  - os_migrate.os_migrate.image_info
-  - os_migrate.os_migrate.keypair
-  - os_migrate.os_migrate.network
-  - os_migrate.os_migrate.networks_info
-  - os_migrate.os_migrate.port
-  - os_migrate.os_migrate.project
-  - os_migrate.os_migrate.project_info
-  - os_migrate.os_migrate.role_assignment
-  - os_migrate.os_migrate.router
-  - os_migrate.os_migrate.security_group
-  - os_migrate.os_migrate.security_group_rule
-  - os_migrate.os_migrate.server
-  - os_migrate.os_migrate.server_action
-  - os_migrate.os_migrate.server_info
-  - os_migrate.os_migrate.server_volume
-  - os_migrate.os_migrate.subnet
-  - os_migrate.os_migrate.subnets_info
-  - os_migrate.os_migrate.volume
-  - os_migrate.os_migrate.volume_info
-
 # This is a workaround, we need to port ansible files to 2.17.x
 profile: 'production'
