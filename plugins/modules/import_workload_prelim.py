@@ -123,39 +123,20 @@ main.yml:
 
 workload.yml:
 
-  - block:
-    - name: preliminary setup for workload import
-      os_migrate.os_migrate.import_workload_prelim:
-        auth:
-          auth_url: https://dest-osp:13000/v3
-          username: migrate
-          password: migrate
-          project_domain_id: default
-          project_name: migration-destination
-          user_domain_id: default
-        validate_certs: false
-        src_conversion_host: "{{ os_src_conversion_host_info.openstack_conversion_host }}"
-        src_auth:
-          auth_url: https://src-osp:13000/v3
-          username: migrate
-          password: migrate
-          project_domain_id: default
-          project_name: migration-source
-          user_domain_id: default
-        src_validate_certs: false
-        data: "{{ item }}"
-        log_dir: "{{ os_migrate_data_dir }}/workload_logs"
-      register: prelim
-
-    - debug:
-        msg:
-          - "{{ prelim.server_name }} log file: {{ prelim.log_file }}"
-          - "{{ prelim.server_name }} progress file: {{ prelim.state_file }}"
-      when: prelim.changed
-
-    rescue:
-      - debug:
-          msg: "Failed to begin import of {{ prelim.server_name }}!"
+  - name: preliminary setup for workload import
+    os_migrate.os_migrate.import_workload_prelim:
+      auth: "{{ os_migrate_dst_auth }}"
+      auth_type: "{{ os_migrate_dst_auth_type | default(omit) }}"
+      region_name: "{{ os_migrate_dst_region_name | default(omit) }}"
+      validate_certs: "{{ os_migrate_dst_validate_certs | default(omit) }}"
+      src_conversion_host: "{{ os_src_conversion_host_info.openstack_conversion_host }}"
+      src_auth: "{{ os_migrate_src_auth }}"
+      src_auth_type: "{{ os_migrate_src_auth_type | default(omit) }}"
+      src_region_name: "{{ os_migrate_src_region_name | default(omit) }}"
+      src_validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+      data: "{{ item }}"
+      log_dir: "{{ os_migrate_data_dir }}/workload_logs"
+    register: prelim
 """
 
 RETURN = r"""

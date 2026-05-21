@@ -122,7 +122,7 @@ VENDORED_MODULES := auth compute_flavor compute_flavor_info floating_ip identity
 	project_info role_assignment router security_group security_group_rule server \
 	server_action server_info server_volume subnet subnets_info volume volume_info
 
-VENDORED_MODULE_UTILS := openstack ironic resource
+VENDORED_MODULE_UTILS := openstack ironic
 
 .PHONY: vendor-import vendor-links vendor-clean
 
@@ -265,7 +265,8 @@ test-ansible-sanity: install-deps install
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
 		source $(VENV_DIR)/bin/activate && \
 		cd /root/.ansible/collections/ansible_collections/$(COLLECTION_NAMESPACE)/$(COLLECTION_NAME) && \
-		ansible-test sanity --python $(PYTHON_VERSION) --requirements'
+		ansible-test sanity --python $(PYTHON_VERSION) --requirements \
+		  --exclude plugins/modules/_vendor/'
 	@if [[ $(USE_CACHE) == false ]]; then $(MAKE) clean-centos-container; fi
 
 test-ansible-units: install-deps install

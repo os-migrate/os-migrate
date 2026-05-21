@@ -82,6 +82,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import files
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import subnet
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import os_auth
 
+
 def run_module():
     argument_spec = os_auth.openstack_full_argument_spec(
         path=dict(type="str", required=True),

@@ -3,26 +3,30 @@ __metaclass__ = type
 
 import importlib
 
+
 def openstack_full_argument_spec(**kwargs):
     """Refined argument spec based on official Ansible OpenStack modules"""
     spec = dict(
         cloud=dict(type='raw'),
-        auth_type=dict(),
+        auth_type=dict(type='str'),
         auth=dict(type='dict', no_log=True),
-        region_name=dict(),
+        region_name=dict(type='str'),
         validate_certs=dict(type='bool', aliases=['verify']),
-        ca_cert=dict(aliases=['cacert']),
-        client_cert=dict(aliases=['cert']),
-        client_key=dict(no_log=True, aliases=['key']),
+        ca_cert=dict(type='str', aliases=['cacert']),
+        client_cert=dict(type='str', aliases=['cert']),
+        client_key=dict(type='str', no_log=True, aliases=['key']),
         wait=dict(default=True, type='bool'),
         timeout=dict(default=180, type='int'),
         api_timeout=dict(type='int'),
         interface=dict(
             default='public', choices=['public', 'internal', 'admin'],
             aliases=['endpoint_type']),
+        sdk_log_path=dict(type='str'),
+        sdk_log_level=dict(type='str', default='INFO', choices=['INFO', 'DEBUG']),
     )
     spec.update(kwargs)
     return spec
+
 
 def get_connection(module):
     """Establishes connection using official Ansible logic (Simplified)"""
@@ -39,7 +43,7 @@ def get_connection(module):
                 "A cloud config dict was provided to the cloud parameter"
                 " but also a value was provided for {param}. If a cloud"
                 " config dict is provided, {param} should be excluded.")
-            for param in ('auth', 'region_name', 'validate_certs', 'ca_cert', 
+            for param in ('auth', 'region_name', 'validate_certs', 'ca_cert',
                           'client_cert', 'client_key', 'api_timeout', 'auth_type'):
                 if module.params.get(param) is not None:
                     module.fail_json(msg=fail_message.format(param=param))

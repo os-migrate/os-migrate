@@ -20,28 +20,13 @@ version_added: "2.9.0"
 description:
   - Export an OpenStack Nova Flavor definition into an OS-Migrate YAML file.
 
+extends_documentation_fragment:
+  - os_migrate.os_migrate.openstack
+
 author:
   - OpenStack tenant migration tools (@os-migrate)
 
 options:
-  cloud:
-    description:
-      - Cloud name from clouds.yaml
-    required: false
-    type: str
-
-  auth:
-    description:
-      - OpenStack authentication dictionary
-    required: false
-    type: dict
-
-  region_name:
-    description:
-      - OpenStack region
-    required: false
-    type: str
-
   path:
     description:
       - Path to YAML resource file
@@ -66,6 +51,7 @@ EXAMPLES = r"""
 RETURN = r"""
 changed:
   description: Whether the file changed
+  returned: always
   type: bool
 """
 
