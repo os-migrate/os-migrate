@@ -1,0 +1,7 @@
+# Default configuration
+target-version = "py311"
+
+# Specific overrides for your Ansible folders
+[per-file-ignores]
+"plugins/modules/*.py" = ["E402"]  # Ignore "import not at top of file" in modules
+"docs/src/conf.py" = ["E402"]      # Fixes your Sphinx documentation config error
