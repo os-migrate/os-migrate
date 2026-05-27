@@ -4,6 +4,8 @@ Changelog
 
 (unreleased)
 ------------
+- [module_utils/image] Mark MD5 usedforsecurity=False for Content-MD5
+  check (#772) [cloudguruab]
 - Use import openstack for exception instead. [mathieu bultel]
 - Fix import for sdk exceptions. [mathieu bultel]
 - Add ruff config file. [mathieu bultel]
