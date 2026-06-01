@@ -22,6 +22,7 @@ Fix
 
 Other
 ~~~~~
+- Remove mention to OCP in the readme (#778) [mathieu bultel]
 - Remove useless artifacts and files. [mathieu bultel]
 - Fix syntax error. [mathieu bultel]
 - Move make vendor-links into the container. [mathieu bultel]
