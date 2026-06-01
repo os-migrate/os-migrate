@@ -112,7 +112,6 @@ ifeq ($(USE_CONTAINER),true)
 endif
 # Latest stable release:
 OS_CLOUD_VERSION   ?= 2.5.0
-OS_CLOUD_VERSION   := $(or $(strip $(OS_CLOUD_VERSION)),2.5.0)
 UPSTREAM_REPO      := $(VENDOR_DIR)/openstack.cloud
 UPSTREAM_MODULES   := $(UPSTREAM_REPO)/plugins/modules
 UPSTREAM_UTILS     := $(UPSTREAM_REPO)/plugins/module_utils
@@ -131,13 +130,15 @@ VENDORED_MODULE_UTILS := openstack ironic
 vendor-import: vendor-clean
 	@echo "--- Initializing OpenStack upstream submodule at version $(OS_CLOUD_VERSION) ---"
 	@mkdir -p $(VENDOR_DIR)
-	@rm -rf $(UPSTREAM_REPO)
-	@echo "Cloning vendor repository..."
-	@git clone --no-checkout https://github.com/openstack/ansible-collections-openstack.git $(UPSTREAM_REPO)
+	@if [ ! -d "$(UPSTREAM_REPO)" ]; then \
+		echo "Adding submodule..."; \
+		git submodule add https://github.com/openstack/ansible-collections-openstack.git $(UPSTREAM_REPO); \
+	fi
+
 	@echo "Checking out tag $(OS_CLOUD_VERSION)..."
 	@cd $(UPSTREAM_REPO) && \
-		git fetch --tags --force && \
-		git checkout --detach "refs/tags/$(OS_CLOUD_VERSION)"
+		git fetch --tags && \
+		git checkout $(OS_CLOUD_VERSION)
 
 # Link vendored modules and module_utils.
 vendor-links: vendor-import
@@ -167,8 +168,8 @@ vendor-clean:
 
 build: check-root clean-build install-deps
 	@echo "--- Building Ansible collection: $(COLLECTION_TARBALL) ---"
-	@$(MAKE) vendor-links USE_CONTAINER=false
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
+		$(MAKE) vendor-links && \
 		source $(VENV_DIR)/bin/activate && \
 		ansible-galaxy collection build'
 
