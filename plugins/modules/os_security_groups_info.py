@@ -68,7 +68,6 @@ from ansible.module_utils.basic import AnsibleModule
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import os_auth
 
-from openstack import exceptions as os_exceptions
 
 def main():
     argument_spec = os_auth.openstack_full_argument_spec(
@@ -89,7 +88,7 @@ def main():
         )
         module.exit_json(changed=False, openstack_security_groups=security_groups)
 
-    except os_exceptions.OpenStackCloudException as e:
+    except Exception as e:
         module.fail_json(msg=str(e))
 
 

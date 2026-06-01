@@ -9,6 +9,8 @@ skip_list:
 exclude_paths:
   - ".ansible/"
   - "tests/"
+  - ".venv/"
+  - "plugins/modules/_vendor/"
 
 # This is a workaround, we need to port ansible files to 2.17.x
 profile: 'production'
