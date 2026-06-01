@@ -1,6 +1,6 @@
-# OpenStack to Openstack/Openshift migration tooling
+# OpenStack to Openstack migration tooling
 OS Migrate is an open source toolbox for parallel cloud migration
-between OpenStack/Openshift clouds.
+between OpenStack and Openshift clouds.
 
 [![consistency-functional](https://github.com/os-migrate/os-migrate/actions/workflows/consistency-functional.yml/badge.svg?branch=main)](https://github.com/os-migrate/os-migrate/actions/workflows/consistency-functional.yml)
 [![container-image-build](https://github.com/os-migrate/os-migrate/actions/workflows/container-image-build.yml/badge.svg?branch=main)](https://github.com/os-migrate/os-migrate/actions/workflows/container-image-build.yml)
@@ -14,7 +14,7 @@ between OpenStack/Openshift clouds.
 ## Description
 
 Parallel cloud migration is a way to
-modernize an OpenStack/Openshift deployment. Instead of upgrading an OpenStack
+modernize an OpenStack deployment. Instead of upgrading an OpenStack
 cluster in place, a second OpenStack cluster is deployed alongside,
 and tenant content is migrated from the original cluster to the new
 one. As hardware resources free up in the original cluster, they can
