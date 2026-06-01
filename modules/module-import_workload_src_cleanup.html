@@ -146,53 +146,35 @@
 <section id="o-p-t-i-o-n-s">
 <h3>Options<a class="headerlink" href="#o-p-t-i-o-n-s" title="Link to this heading"></a></h3>
 <dl class="field-list">
-<dt class="field-odd">auth<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Required if 'cloud' param not used</p>
+<dt class="field-odd">conversion_host<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Information about the source conversion host.</p>
 </dd>
-<dt class="field-even">auth_type<span class="colon">:</span></dt>
-<dd class="field-even"><p>Auth type plugin for destination OpenStack cloud. Can be omitted if using password authentication.</p>
-</dd>
-<dt class="field-odd">region_name<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Destination OpenStack region name. Can be omitted if using default region.</p>
-</dd>
-<dt class="field-even">cloud<span class="colon">:</span></dt>
-<dd class="field-even"><p>Cloud resource from clouds.yml</p>
-<p>Required if 'auth' param not used</p>
-</dd>
-<dt class="field-odd">validate_certs<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Validate HTTPS certificates when logging in to OpenStack.</p>
-</dd>
-<dt class="field-even">conversion_host<span class="colon">:</span></dt>
-<dd class="field-even"><p>Dictionary with information about the source conversion host (address, status, name, id)</p>
-</dd>
-<dt class="field-odd">data<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Data structure with server parameters as loaded from OS-Migrate workloads YAML file.</p>
-</dd>
-<dt class="field-even">log_file<span class="colon">:</span></dt>
-<dd class="field-even"><p>Path to store a log file for this conversion process.</p>
-</dd>
-<dt class="field-odd">state_file<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Path to store a transfer progress file for this conversion process.</p>
-</dd>
-<dt class="field-even">src_conversion_host_address<span class="colon">:</span></dt>
-<dd class="field-even"><p>Optional IP address of the source conversion host. Without this, the plugin will use the 'access_ipv4' property of the conversion host instance.</p>
+<dt class="field-even">data<span class="colon">:</span></dt>
+<dd class="field-even"><p>Server data loaded from OS-Migrate workloads YAML.</p>
 </dd>
 <dt class="field-odd">ssh_key_path<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Path to an SSH private key authorized on the source cloud.</p>
 </dd>
 <dt class="field-even">ssh_user<span class="colon">:</span></dt>
-<dd class="field-even"><p>The SSH user to connect to the conversion hosts.</p>
+<dd class="field-even"><p>SSH user for conversion host access.</p>
 </dd>
 <dt class="field-odd">transfer_uuid<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A UUID used to keep track of this tranfer's resources on the conversion hosts.</p>
-<p>Provided by the import_workloads_export_volumes module.</p>
+<dd class="field-odd"><p>Transfer UUID created by export/transfer modules.</p>
 </dd>
 <dt class="field-even">volume_map<span class="colon">:</span></dt>
-<dd class="field-even"><p>Dictionary providing information about the volumes to transfer.</p>
-<p>Provided by the import_workloads_export_volumes module.</p>
+<dd class="field-even"><p>Mapping structure returned by previous workload transfer steps.</p>
 </dd>
-<dt class="field-odd">timeout<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Timeout for long running operations, in seconds.</p>
+<dt class="field-odd">src_conversion_host_address<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional explicit source conversion host address.</p>
+</dd>
+<dt class="field-even">state_file<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optional state file path.</p>
+</dd>
+<dt class="field-odd">log_file<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional log file path.</p>
+</dd>
+<dt class="field-even">timeout<span class="colon">:</span></dt>
+<dd class="field-even"><p>Timeout for long running operations, in seconds.</p>
 </dd>
 </dl>
 </section>
@@ -207,10 +189,23 @@
 </section>
 <section id="e-x-a-m-p-l-e-t-a-s-k-s">
 <h2>Example Tasks<a class="headerlink" href="#e-x-a-m-p-l-e-t-a-s-k-s" title="Link to this heading"></a></h2>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">main.yml</span>
-</pre></div>
-</div>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">workload.yml</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Clean up source-side temporary migration resources</span>
+<span class="w">  </span><span class="nt">os_migrate.os_migrate.import_workload_src_cleanup</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">auth</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_auth</span><span class="nv"> </span><span class="s">}}&#39;</span>
+<span class="w">    </span><span class="nt">auth_type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_auth_type</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span>
+<span class="w">    </span><span class="nt">region_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_region_name</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span>
+<span class="w">    </span><span class="nt">validate_certs</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_validate_certs</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span>
+<span class="w">    </span><span class="nt">ca_cert</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_ca_cert</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span>
+<span class="w">    </span><span class="nt">client_cert</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_client_cert</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span>
+<span class="w">    </span><span class="nt">client_key</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_src_client_key</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">default(omit)</span><span class="nv"> </span><span class="s">}}&#39;</span>
+<span class="w">    </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">item</span><span class="nv"> </span><span class="s">}}&#39;</span>
+<span class="w">    </span><span class="nt">conversion_host</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_src_conversion_host_info.openstack_conversion_host</span><span class="nv"> </span><span class="s">}}&#39;</span>
+<span class="w">    </span><span class="nt">ssh_key_path</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_conversion_keypair_private_path</span><span class="nv"> </span><span class="s">}}&#39;</span>
+<span class="w">    </span><span class="nt">ssh_user</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_conversion_host_ssh_user</span><span class="nv"> </span><span class="s">}}&#39;</span>
+<span class="w">    </span><span class="nt">transfer_uuid</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">exports.transfer_uuid</span><span class="nv"> </span><span class="s">}}&#39;</span>
+<span class="w">    </span><span class="nt">volume_map</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">exports.volume_map</span><span class="nv"> </span><span class="s">}}&#39;</span>
+<span class="w">    </span><span class="nt">state_file</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_data_dir</span><span class="nv"> </span><span class="s">}}/{{</span><span class="nv"> </span><span class="s">item.params.name</span><span class="nv"> </span><span class="s">}}.state&#39;</span>
+<span class="w">    </span><span class="nt">log_file</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{{</span><span class="nv"> </span><span class="s">os_migrate_data_dir</span><span class="nv"> </span><span class="s">}}/{{</span><span class="nv"> </span><span class="s">item.params.name</span><span class="nv"> </span><span class="s">}}.log&#39;</span>
 </pre></div>
 </div>
 </section>

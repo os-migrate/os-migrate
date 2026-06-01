@@ -4,8 +4,32 @@ Changelog
 
 (unreleased)
 ------------
+
+Fix
+~~~
+- Make sure openstack cloud repo is renewed. [Fernando Diaz]
+- Fallback OS_CLOUD_VERSION to 2.5.0 when env var is empty. [Fernando
+  Diaz]
+- Make vendor import/build robust in containerized pipeline. [Fernando
+  Diaz]
+- Remove the mock_modules since we have the ignore. [Fernando Diaz]
+- Ansible-lint unknown-module failures. [Fernando Diaz]
+- Add vendored modules to the skip list. [Fernando Diaz]
+- Absolute path in the file. [Fernando Diaz]
+- Make tests green by fixing docs, pep8, sanity vendor exclusions and
+  unit imports. [Fernando Diaz]
+- Empty PR. [Fernando Diaz]
+
+Other
+~~~~~
+- Remove useless artifacts and files. [mathieu bultel]
+- Fix syntax error. [mathieu bultel]
+- Move make vendor-links into the container. [mathieu bultel]
+- Revert make file change for submodule. [mathieu bultel]
+- Merge branch 'main' into cert-checks. [mathieu bultel]
 - [module_utils/image] Mark MD5 usedforsecurity=False for Content-MD5
   check (#772) [cloudguruab]
+- Merge branch 'main' into cert-checks. [fdiazbra]
 - Use import openstack for exception instead. [mathieu bultel]
 - Fix import for sdk exceptions. [mathieu bultel]
 - Add ruff config file. [mathieu bultel]
@@ -24,6 +48,7 @@ Changelog
 - Update AEE bindep and remove rhel_system_roles from galaxy deps.
   [mathieu bultel]
 - Remove community.general dependency. [mathieu bultel]
+- Ci: add certification checks workflow. [Fernando Diaz]
 - Fix variable typo. [mathieu bultel]
 - Add missing key name to the seed_pre_workload playbook. [mathieu
   bultel]
