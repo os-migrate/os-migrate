@@ -168,9 +168,9 @@ vendor-clean:
 
 build: check-root clean-build install-deps
 	@echo "--- Building Ansible collection: $(COLLECTION_TARBALL) ---"
-	@$(MAKE) vendor-links USE_CONTAINER=false
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
-		source $(VENV_DIR)/bin/activate && \
+		$(MAKE) vendor-links && \
+		source $(VENV_DIR)/bin/activate; && \
 		ansible-galaxy collection build'
 
 
