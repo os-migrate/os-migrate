@@ -34,42 +34,74 @@ a command fails, you can retry with the same command.
 
 ## Requirements
 
-This section must list the required minimum versions of Ansible and Python, and any Python or external collection dependencies. Include additional information on other prerequisite tasks needed, if applicable.
+- **Ansible**: 2.16.0 or higher
+- **Python**: 3.10 or higher
+- **Python Dependencies**: See `requirements.txt` for runtime dependencies including:
+  - openstacksdk >= 4.5.0
+  - python-openstackclient >= 7.0
+  - passlib >= 1.7.4
+  - PyYAML >= 6.0.2
+- **Binary Dependencies**: See `bindep.txt` for system package requirements
 
 
 ## Installation
 
-Before using this collection, you need to install it with the Ansible Galaxy command-line tool:
+### For Red Hat Customers (Recommended)
 
-```
-ansible-galaxy collection install os_migrate.os_migrate
-```
+This collection is available through Red Hat Automation Hub as certified content for Ansible Automation Platform subscribers. To install from Automation Hub:
 
-You can also include it in a requirements.yml file and install it with ansible-galaxy collection install -r requirements.yml, using the format:
+1. Configure your `ansible.cfg` to use Automation Hub:
+   ```ini
+   [galaxy]
+   server_list = automation_hub
 
+   [galaxy_server.automation_hub]
+   url=https://console.redhat.com/api/automation-hub/content/published/
+   token=<your_token_here>
+   ```
 
+2. Install the collection:
+   ```bash
+   ansible-galaxy collection install os_migrate.os_migrate
+   ```
+
+You can also include it in a `requirements.yml` file:
 ```yaml
 collections:
   - name: os_migrate.os_migrate
 ```
 
-Note that if you install any collections from Ansible Galaxy, they will not be upgraded automatically when you upgrade the Ansible package.
-To upgrade the collection to the latest available version, run the following command:
-
+Then install with:
+```bash
+ansible-galaxy collection install -r requirements.yml
 ```
+
+### For Community Users
+
+Community users can install from Ansible Galaxy:
+
+```bash
+ansible-galaxy collection install os_migrate.os_migrate
+```
+
+To upgrade to the latest version:
+```bash
 ansible-galaxy collection install os_migrate.os_migrate --upgrade
 ```
 
-You can also install a specific version of the collection, for example, if you need to downgrade when something is broken in the latest version (please report an issue in this repository). Use the following syntax to install version 1.0.0:
-
-```
+To install a specific version:
+```bash
 ansible-galaxy collection install os_migrate.os_migrate:==1.0.0
 ```
 
 See [using Ansible collections](https://docs.ansible.com/ansible/devel/user_guide/collections_using.html) for more details.
 
+### Post-Installation Setup
 
-In addition to the above boilerplate, this section should include any additional details specific to your collection, and what to expect at each step and after installation. Be sure to include any information that supports the installation process, such as information about authentication and credentialing.
+After installation, ensure you have:
+- Valid OpenStack credentials for both source and destination environments
+- Network connectivity between your Ansible control node and OpenStack API endpoints
+- Sufficient permissions to create and manage OpenStack resources in both environments
 
 ## Overview
 
