@@ -232,10 +232,38 @@ As an open source project, OS Migrate welcomes contributions from the community 
 
 ## Support
 
-Please report any issues into the
-[GitHub issue tracker](https://github.com/os-migrate/os-migrate/issues).
+This collection is maintained by the Red Hat OpenStack Migration team.
+
+By ensuring correct connectivity, installation, user ACLs, and host setup, most migration issues can be avoided.
+
+### Customer Support
+
+As Red Hat Ansible Certified Content, this collection is entitled to support through the Ansible Automation Platform (AAP) using the **Create issue** button on the top right corner of the [Automation Hub](https://console.redhat.com/ansible/automation-hub/).
+
+### Community Support
+
+If a support case cannot be opened with Red Hat and the collection has been obtained either from Galaxy or GitHub, community help is available through:
+
+- **GitHub Issues**: Open a bug report or feature request at [https://github.com/os-migrate/os-migrate/issues](https://github.com/os-migrate/os-migrate/issues)
+- **Ansible Forum**: Get community assistance at [https://forum.ansible.com/](https://forum.ansible.com/)
 
 
 ## Release Notes and Roadmap
 
-See the [Official Changelog](https://os-migrate.github.io/os-migrate/changelog.html).
+### Red Hat Customers
+
+For Red Hat customers using this collection through Ansible Automation Hub, release information and distributions are available at:
+[https://console.redhat.com/ansible/automation-hub/repo/published/os_migrate/os_migrate/distributions/](https://console.redhat.com/ansible/automation-hub/repo/published/os_migrate/os_migrate/distributions/)
+
+### Community Users
+
+For community users who obtained this collection from Galaxy or GitHub, changelog information is available at:
+[https://github.com/os-migrate/os-migrate/blob/main/CHANGELOG.md](https://github.com/os-migrate/os-migrate/blob/main/CHANGELOG.md)
+
+## Related Information
+
+For detailed guides, prerequisites, and troubleshooting, please see the [OS Migrate Documentation](https://os-migrate.github.io/documentation/).
+
+## License Information
+
+[Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
