@@ -171,6 +171,7 @@ build: check-root clean-build install-deps
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
 		$(MAKE) vendor-links && \
 		source $(VENV_DIR)/bin/activate && \
+		pip install ansible-core && \
 		ansible-galaxy collection build'
 
 
@@ -249,6 +250,7 @@ install: build
 	@echo "--- Installing collection $(COLLECTION_TARBALL) into the container ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
 		source $(VENV_DIR)/bin/activate; \
+		pip install ansible-core && \
 		ansible-galaxy collection install $(COLLECTION_TARBALL) --force-with-deps'
 
 # --- Test Targets ---
@@ -322,7 +324,6 @@ docs: docs-diagrams
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
 		dnf -y install git-core && \
 		source $(VENV_DIR)/bin/activate && \
-		pip ansible-core && \
 		pip install --root-user-action ignore -r requirements-docs.txt && \
 		./scripts/docs-build.sh'
 
