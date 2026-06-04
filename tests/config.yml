@@ -1,0 +1,4 @@
+---
+# Minimum Python version required for this collection
+python:
+  minimum: "3.10"
