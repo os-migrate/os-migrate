@@ -22,6 +22,11 @@ Fix
 
 Other
 ~~~~~
+- Address medium priority for cert checks. [mathieu bultel]
+- Update changelog, ansible-core version and ansible-lint according to
+  certification checks. [mathieu bultel]
+- Make README and requirements.txt compatible with certification
+  workflow. [mathieu bultel]
 - Remove mention to OCP in the readme (#778) [mathieu bultel]
 - Remove useless artifacts and files. [mathieu bultel]
 - Fix syntax error. [mathieu bultel]
