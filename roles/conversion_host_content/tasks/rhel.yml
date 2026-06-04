@@ -53,7 +53,7 @@
 - name: Update all packages
   ansible.builtin.package:
     name: '*'
-    state: latest
+    state: present
   when: do_yum_update|default(false)|bool
 
 - name: Install content
