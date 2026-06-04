@@ -322,6 +322,7 @@ docs: docs-diagrams
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
 		dnf -y install git-core && \
 		source $(VENV_DIR)/bin/activate && \
+		pip ansible-core && \
 		pip install --root-user-action ignore -r requirements-docs.txt && \
 		./scripts/docs-build.sh'
 
