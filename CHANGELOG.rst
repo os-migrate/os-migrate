@@ -3,8 +3,8 @@ Changelog
 
 This project follows a simple changelog to satisfy collection metadata validation.
 
-Unreleased
-----------
+1.0.2
+-----
 
 - Maintenance updates for CI, linting, and sanity checks.
 
