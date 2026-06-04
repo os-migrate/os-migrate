@@ -17,6 +17,10 @@ jobs:
         run: |
           sudo locale-gen en_US.UTF-8
           sudo dpkg-reconfigure locales
+      - name: Install Ansible
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install ansible-core>=2.16.0
       - name: Render the documentation
         run: make USE_CACHE=false docs
       - uses: actions/upload-artifact@v4
