@@ -2,6 +2,11 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+from pprint import pformat
+import re
+
+from ansible import errors
+
 DOCUMENTATION = r'''
 ---
 name: stringfilter
@@ -87,11 +92,6 @@ _value:
   type: list
   elements: raw
 '''
-
-from pprint import pformat
-import re
-
-from ansible import errors
 
 
 def stringfilter(items, queries, attribute=None):
