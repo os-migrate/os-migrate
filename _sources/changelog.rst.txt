@@ -22,13 +22,21 @@ Fix
 
 Other
 ~~~~~
+- Merge branch 'main' into v1.0.4. [mathieu bultel]
 - Address linter errors. [mathieu bultel]
 - Remove prohibide rules. [mathieu bultel]
+- Install ansible-core in the Makefile for CI jobs. [mathieu bultel]
+- Install ansible-core in the Makefile for doc. [mathieu bultel]
+- Install ansible in the docpr workflow. [mathieu bultel]
+- Add missing changelog version, remove ansible and ansible-lint from
+  requirements.txt. [mathieu bultel]
+- Merge branch 'main' into v1.0.4. [mathieu bultel]
 - Address medium priority for cert checks. [mathieu bultel]
 - Update changelog, ansible-core version and ansible-lint according to
   certification checks. [mathieu bultel]
 - Make README and requirements.txt compatible with certification
   workflow. [mathieu bultel]
+- Bump os-migrate to 1.0.4. [mathieu bultel]
 - Remove mention to OCP in the readme (#778) [mathieu bultel]
 - Remove useless artifacts and files. [mathieu bultel]
 - Fix syntax error. [mathieu bultel]
