@@ -5,8 +5,8 @@ between OpenStack clouds.
 [![consistency-functional](https://github.com/os-migrate/os-migrate/actions/workflows/consistency-functional.yml/badge.svg?branch=main)](https://github.com/os-migrate/os-migrate/actions/workflows/consistency-functional.yml)
 [![container-image-build](https://github.com/os-migrate/os-migrate/actions/workflows/container-image-build.yml/badge.svg?branch=main)](https://github.com/os-migrate/os-migrate/actions/workflows/container-image-build.yml)
 [![docs-build](https://github.com/os-migrate/os-migrate/actions/workflows/docs-build.yml/badge.svg?branch=main)](https://github.com/os-migrate/os-migrate/actions/workflows/docs-build.yml)
-<img src="https://img.shields.io/badge/Python-v3.7+-blue.svg">
-<img src="https://img.shields.io/badge/Ansible-v2.9-blue.svg">
+<img src="https://img.shields.io/badge/Python-v3.10+-blue.svg">
+<img src="https://img.shields.io/badge/Ansible-v2.16+-blue.svg">
 <a href="https://opensource.org/licenses/Apache-2.0">
   <img src="https://img.shields.io/badge/License-Apache2.0-blue.svg">
 </a>
@@ -290,7 +290,7 @@ For Red Hat customers using this collection through Ansible Automation Hub, rele
 ### Community Users
 
 For community users who obtained this collection from Galaxy or GitHub, changelog information is available at:
-[https://github.com/os-migrate/os-migrate/blob/main/CHANGELOG.md](https://github.com/os-migrate/os-migrate/blob/main/CHANGELOG.md)
+[https://github.com/os-migrate/os-migrate/blob/main/CHANGELOG.rst](https://github.com/os-migrate/os-migrate/blob/main/CHANGELOG.rst)
 
 ## Related Information
 
