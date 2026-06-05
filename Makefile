@@ -67,7 +67,8 @@ else
 endif
 
 # --- Phony Targets Definition ---
-.PHONY: all help build clean-build tests test-ansible-lint test-ansible-sanity test-ansible-units \
+.PHONY: all help build clean-build container-image container-image-clean \
+        tests test-ansible-lint test-ansible-sanity test-ansible-units \
         create-centos-container clean-centos-container check-root check-python-version \
         create-venv install-deps install generate-auth-files
 
@@ -90,6 +91,9 @@ help:
 	@echo "  test-e2e-tenant       - Launch e2e tenant tests"
 	@echo "  test-e2e-admin        - Launch e2e admin tests"
 	@echo "  generate-auth-files   - Generate auth files for e2e tests"
+	@echo ""
+	@echo "  container-image       - Build the container image from Containerfile"
+	@echo "  container-image-clean - Remove the built container image"
 	@echo ""
 	@echo "  create-centos-container - Create the CentOS container (if needed)"
 	@echo "  clean-centos-container  - Stop and remove the CentOS container"
@@ -189,6 +193,19 @@ clean-build:
 	else \
 		echo "Skipping removal, collection tarball name not determined from galaxy.yml."; \
 	fi
+
+# --- Container Image Build ---
+
+container-image: check-root
+	@echo "--- Building container image: $(CONTAINER_NAME) ---"
+	@$(CONTAINER_ENGINE) build -t $(CONTAINER_NAME) -f Containerfile \
+		--build-arg PYTHON_VERSION=$(PYTHON_VERSION) \
+		--build-arg BASE_IMAGE=$(CONTAINER_IMAGE) \
+		$(COLLECTION_ROOT)
+
+container-image-clean:
+	@echo "--- Removing container image: $(CONTAINER_NAME) ---"
+	@$(CONTAINER_ENGINE) rmi -f $(CONTAINER_NAME) 2>/dev/null || true
 
 # --- Container and Environment Setup Targets ---
 
