@@ -4,6 +4,8 @@ Changelog
 
 (unreleased)
 ------------
+- Add ansible 2.16+ to the README. [mathieu bultel]
+- Bump os-migrate release to 1.0.5. [mathieu bultel]
 - Add galaxy ignore file and fix links in the README. [mathieu bultel]
 - Move import on top the module. [mathieu bultel]
 - Add documentation for stringFilter module. [mathieu bultel]
