@@ -66,6 +66,92 @@ import re
 
 from ansible import errors
 
+DOCUMENTATION = r'''
+---
+name: stringfilter
+short_description: Filter a list of items based on string matching queries
+version_added: "1.0.0"
+description:
+  - Filter a list of items according to a list of queries.
+  - Values from items are kept if they match at least one query.
+  - Supports direct string filtering or filtering dictionaries by attribute.
+  - Supports both exact string matching and regex patterns.
+options:
+  _input:
+    description:
+      - List of items to filter.
+      - Can be a list of strings or a list of dictionaries.
+    type: list
+    elements: raw
+    required: true
+  queries:
+    description:
+      - List of query conditions to match against.
+      - Each query can be a string for exact match or a dict with 'regex' key for pattern matching.
+    type: list
+    elements: raw
+    required: true
+  attribute:
+    description:
+      - When filtering a list of dictionaries, specifies which attribute to test against queries.
+      - Can use dot notation to access nested dictionary values (e.g., 'outer.inner.key').
+      - If not provided, items are treated as strings to be filtered directly.
+    type: str
+    required: false
+author:
+  - os-migrate (@os-migrate)
+notes:
+  - The original items list is untouched but the result list uses the same data (not a deep copy).
+'''
+
+EXAMPLES = r'''
+# Filter a list of strings with exact match
+- name: Filter strings by exact match
+  ansible.builtin.debug:
+    msg: "{{ ['apple', 'banana', 'cherry'] | os_migrate.os_migrate.stringfilter(['banana', 'cherry']) }}"
+  # Returns: ['banana', 'cherry']
+
+# Filter strings with regex pattern
+- name: Filter strings by regex
+  ansible.builtin.debug:
+    msg: "{{ ['test-01', 'prod-02', 'test-03'] | os_migrate.os_migrate.stringfilter([{'regex': '^test-'}]) }}"
+  # Returns: ['test-01', 'test-03']
+
+# Filter list of dicts by attribute
+- name: Filter dicts by name attribute
+  ansible.builtin.debug:
+    msg: "{{ servers | os_migrate.os_migrate.stringfilter(['web-server'], attribute='name') }}"
+  vars:
+    servers:
+      - name: web-server
+        type: frontend
+      - name: db-server
+        type: backend
+  # Returns: [{'name': 'web-server', 'type': 'frontend'}]
+
+# Filter by nested attribute
+- name: Filter by nested dict attribute
+  ansible.builtin.debug:
+    msg: "{{ items | os_migrate.os_migrate.stringfilter(['active'], attribute='status.state') }}"
+  vars:
+    items:
+      - name: server1
+        status:
+          state: active
+      - name: server2
+        status:
+          state: inactive
+  # Returns: [{'name': 'server1', 'status': {'state': 'active'}}]
+'''
+
+RETURN = r'''
+_value:
+  description:
+    - Filtered list containing only items that matched at least one query.
+  type: list
+  elements: raw
+'''
+
 
 def stringfilter(items, queries, attribute=None):
     """Filter a `items` list according to a list of `queries`. Values from
