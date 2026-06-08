@@ -1,5 +1,5 @@
 ---
 collections:
   - name: os_migrate.os_migrate
-    source: tmp/os_migrate-os_migrate-1.0.4.tar.gz
+    source: tmp/os_migrate-os_migrate-1.0.5.tar.gz
     type: file
