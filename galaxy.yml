@@ -27,3 +27,14 @@ build_ignore:
   - .github
   - .vscode
   - .idea
+  - .ansible-lint
+  - .ansible-lint-ignore
+  - aee
+  - scripts
+  - Makefile
+  - CODEOWNERS
+  - requirements-build.txt
+  - requirements-docs.txt
+  - requirements-tests.txt
+  - inventory
+  - media
