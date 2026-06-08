@@ -6,7 +6,7 @@ between OpenStack clouds.
 [![container-image-build](https://github.com/os-migrate/os-migrate/actions/workflows/container-image-build.yml/badge.svg?branch=main)](https://github.com/os-migrate/os-migrate/actions/workflows/container-image-build.yml)
 [![docs-build](https://github.com/os-migrate/os-migrate/actions/workflows/docs-build.yml/badge.svg?branch=main)](https://github.com/os-migrate/os-migrate/actions/workflows/docs-build.yml)
 <img src="https://img.shields.io/badge/Python-v3.10+-blue.svg">
-<img src="https://img.shields.io/badge/Ansible-v2.16-blue.svg">
+<img src="https://img.shields.io/badge/Ansible-v2.16+-blue.svg">
 <a href="https://opensource.org/licenses/Apache-2.0">
   <img src="https://img.shields.io/badge/License-Apache2.0-blue.svg">
 </a>
