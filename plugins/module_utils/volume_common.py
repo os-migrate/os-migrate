@@ -855,6 +855,46 @@ class OpenstackVolumeTransfer(OpenStackVolumeBase):
         """
         raise NotImplementedError("Please Implement this method")
 
+    def _setup_nbdkit_direct_urls(self, nbdkit_socket_uri, nbdkit_export_name):
+        """
+        Set up volume URLs to point directly to an external nbdkit socket.
+        This bypasses the source conversion host entirely.
+        """
+        self.log.info("Setting up direct nbdkit socket URLs...")
+        self.log.info("NBDkit socket URI: %s", nbdkit_socket_uri)
+        self.log.info("NBDkit export name: %s", nbdkit_export_name)
+
+        for path, mapping in self.volume_map.items():
+            # Use the provided nbdkit socket URI directly
+            if nbdkit_export_name:
+                url = f"{nbdkit_socket_uri}/{nbdkit_export_name}"
+            else:
+                url = nbdkit_socket_uri
+            self.volume_map[path]["url"] = url
+            self.log.info("Volume %s will use NBD URL: %s", path, url)
+
+        # Verify connectivity to nbdkit socket
+        self.log.info("Waiting for valid qemu-img info on nbdkit socket...")
+        pending_disks = set(self.volume_map.keys())
+        for second in range(self.timeout):
+            try:
+                for disk in pending_disks.copy():
+                    mapping = self.volume_map[disk]
+                    url = mapping["url"]
+                    cmd = ["qemu-img", "info", url]
+                    image_info = self.shell.cmd_out(cmd)
+                    self.log.info("qemu-img info for %s: %s", disk, image_info)
+                    pending_disks.remove(disk)
+            except subprocess.CalledProcessError as error:
+                self.log.info("Got exception: %s", error)
+                self.log.info("Trying again.")
+                time.sleep(1)
+            else:
+                self.log.info("All volume exports ready.")
+                break
+        else:
+            raise RuntimeError("Timed out connecting to nbdkit socket!")
+
     def _create_forwarding_process(self):
         """
         Find free ports on the destination conversion host and set up SSH

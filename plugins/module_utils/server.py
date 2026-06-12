@@ -94,6 +94,9 @@ class Server(osm_resource.Resource):
                 "uuid": None,
             }
         ],
+        "use_nbdkit_direct": False,
+        "nbdkit_socket_uri": None,
+        "nbdkit_export_name": None,
     }
 
     @classmethod

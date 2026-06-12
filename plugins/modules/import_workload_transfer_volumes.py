@@ -115,6 +115,26 @@ options:
     required: false
     default: 1800
     type: int
+  use_nbdkit_direct:
+    description:
+      - When true, consume volume data directly from an nbdkit socket instead of using source conversion host.
+      - Bypasses SSH forwarding and source conversion host export process.
+    required: false
+    default: false
+    type: bool
+  nbdkit_socket_uri:
+    description:
+      - NBD socket URI to connect to when use_nbdkit_direct is true.
+      - Format can be nbd://host:port or nbd+unix:///path/to/socket or nbd+ssh://user@host/export.
+      - Required when use_nbdkit_direct is true.
+    required: false
+    type: str
+  nbdkit_export_name:
+    description:
+      - NBD export name to use when connecting to the nbdkit socket.
+      - Optional, used when the nbdkit server requires an export name.
+    required: false
+    type: str
 """
 
 EXAMPLES = r"""
@@ -247,6 +267,9 @@ class OpenStackDestinationVolume(OpenstackVolumeTransfer):
         state_file=None,
         log_file=None,
         timeout=DEFAULT_TIMEOUT,
+        use_nbdkit_direct=False,
+        nbdkit_socket_uri=None,
+        nbdkit_export_name=None,
     ):
 
         super().__init__(
@@ -277,16 +300,27 @@ class OpenStackDestinationVolume(OpenstackVolumeTransfer):
 
         self.ser_server = ser_server
 
+        # NBDkit direct socket mode
+        self.use_nbdkit_direct = use_nbdkit_direct
+        self.nbdkit_socket_uri = nbdkit_socket_uri
+        self.nbdkit_export_name = nbdkit_export_name
+
     def transfer_exports(self):
         try:
-            self._create_forwarding_process()
+            if self.use_nbdkit_direct:
+                self.log.info("Using direct nbdkit socket mode")
+                self._setup_nbdkit_direct_urls(self.nbdkit_socket_uri, self.nbdkit_export_name)
+            else:
+                self.log.info("Using SSH forwarding mode")
+                self._create_forwarding_process()
             self._create_destination_volumes()
             self._attach_destination_volumes()
             self._convert_destination_volumes()
             self._detach_destination_volumes()
         finally:
-            self._stop_forwarding_process()
-            self._release_ports()
+            if not self.use_nbdkit_direct:
+                self._stop_forwarding_process()
+                self._release_ports()
 
 
 def run_module():
@@ -302,6 +336,9 @@ def run_module():
         state_file=dict(type="str", default=None),
         log_file=dict(type="str", default=None),
         timeout=dict(type="int", default=DEFAULT_TIMEOUT),
+        use_nbdkit_direct=dict(type="bool", default=False),
+        nbdkit_socket_uri=dict(type="str", default=None),
+        nbdkit_export_name=dict(type="str", default=None),
     )
 
     result = dict(
@@ -332,6 +369,16 @@ def run_module():
     log_file = module.params.get("log_file", None)
     timeout = module.params["timeout"]
 
+    # NBDkit direct socket mode parameters
+    migration_params = ser_server.migration_params()
+    use_nbdkit_direct = module.params.get("use_nbdkit_direct", False) or migration_params.get("use_nbdkit_direct", False)
+    nbdkit_socket_uri = module.params.get("nbdkit_socket_uri") or migration_params.get("nbdkit_socket_uri")
+    nbdkit_export_name = module.params.get("nbdkit_export_name") or migration_params.get("nbdkit_export_name")
+
+    # Validate nbdkit parameters
+    if use_nbdkit_direct and not nbdkit_socket_uri:
+        module.fail_json(msg="nbdkit_socket_uri is required when use_nbdkit_direct is true")
+
     destination_host = OpenStackDestinationVolume(
         conn,
         destination_conversion_host_id,
@@ -345,6 +392,9 @@ def run_module():
         state_file=state_file,
         log_file=log_file,
         timeout=timeout,
+        use_nbdkit_direct=use_nbdkit_direct,
+        nbdkit_socket_uri=nbdkit_socket_uri,
+        nbdkit_export_name=nbdkit_export_name,
     )
     destination_host.transfer_exports()
 

@@ -83,7 +83,7 @@
         cloud: "{{ cloud_vars_src }}"
         boot_volume_prefix: "{{ os_migrate_workload_boot_volume_prefix }}"
         conversion_host:
-          "{{ os_src_conversion_host_info.openstack_conversion_host }}"
+          "{{ os_src_conversion_host_info.openstack_conversion_host | default({'id': 'none'}) }}"
         data: "{{ item }}"
         log_file: "{{ prelim.log_file }}"
         state_file: "{{ prelim.state_file }}"
@@ -109,11 +109,14 @@
         ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
         transfer_uuid: "{{ exports.transfer_uuid }}"
         src_conversion_host_address:
-          "{{ os_src_conversion_host_info.openstack_conversion_host.address }}"
+          "{{ os_src_conversion_host_info.openstack_conversion_host.address | default('') }}"
         volume_map: "{{ exports.volume_map }}"
         log_file: "{{ prelim.log_file }}"
         state_file: "{{ prelim.state_file }}"
         timeout: "{{ os_migrate_timeout }}"
+        use_nbdkit_direct: "{{ item['_migration_params']['use_nbdkit_direct'] | default(false) }}"
+        nbdkit_socket_uri: "{{ item['_migration_params']['nbdkit_socket_uri'] | default(omit) }}"
+        nbdkit_export_name: "{{ item['_migration_params']['nbdkit_export_name'] | default(omit) }}"
       register: transfer
       when:
         - prelim is defined and prelim.changed
@@ -151,6 +154,7 @@
       when:
         - prelim is defined and prelim.changed
         - item["_migration_params"]["data_copy"] | default(true)
+        - not (item["_migration_params"]["use_nbdkit_direct"] | default(false))
 
   rescue:
     - name: Clean up in the source cloud after migration failure
@@ -174,6 +178,7 @@
         - os_migrate_workload_cleanup_on_failure
         - exports is defined and 'volume_map' in exports
         - item["_migration_params"]["data_copy"] | default(true)
+        - not (item["_migration_params"]["use_nbdkit_direct"] | default(false))
 
     - name: Clean up in the destination cloud after migration failure
       os_migrate.os_migrate.import_workload_dst_failure_cleanup:

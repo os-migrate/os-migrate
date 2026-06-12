@@ -284,6 +284,19 @@ class OpenStackSourceVolume(OpenstackVolumeExport):
         self._attach_volumes_to_converter()
         self._export_volumes_from_converter()
 
+    def prepare_exports_nbdkit_direct(self):
+        """
+        Prepare minimal volume map for nbdkit direct mode.
+        This skips all source conversion host operations since data is consumed
+        directly from an external nbdkit socket.
+        """
+        self.log.info("Using nbdkit direct mode - skipping source conversion host operations")
+        self._test_source_vm_shutdown()
+        self._get_root_and_data_volumes()
+        self._validate_volumes_match_data()
+        # Skip detach, attach, and export - volumes stay on source VM
+        self.log.info("Volume map prepared for nbdkit direct mode: %s", self.volume_map)
+
     def _get_root_and_data_volumes(self):
         """
         Volume mapping step one: get the IDs and sizes of all volumes on the
@@ -368,7 +381,16 @@ def run_module():
         boot_volume_prefix=boot_volume_prefix,
         timeout=timeout,
     )
-    source_host.prepare_exports()
+
+    # Check if using nbdkit direct mode
+    migration_params = ser_server.migration_params()
+    use_nbdkit_direct = migration_params.get("use_nbdkit_direct", False)
+
+    if use_nbdkit_direct:
+        source_host.prepare_exports_nbdkit_direct()
+    else:
+        source_host.prepare_exports()
+
     result["transfer_uuid"] = source_host.transfer_uuid
     result["volume_map"] = source_host.volume_map
 
