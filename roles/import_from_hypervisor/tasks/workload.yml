@@ -1,0 +1,191 @@
+---
+# Process individual workload - spawn nbdkit on its hypervisor
+
+- name: Get workload details
+  ansible.builtin.set_fact:
+    instance_id: "{{ workload_item._info.id }}"
+    instance_name: "{{ workload_item.params.name }}"
+    instance_status: "{{ workload_item._info.status }}"
+    hypervisor_hostname: "{{ workload_item._info.hypervisor_hostname | default('') }}"
+
+- name: Fail if instance is not SHUTOFF
+  ansible.builtin.fail:
+    msg: "Instance {{ instance_name }} ({{ instance_id }}) must be SHUTOFF. Current status: {{ instance_status }}"
+  when: instance_status != "SHUTOFF"
+
+- name: Fail if hypervisor hostname not in workload data
+  ansible.builtin.fail:
+    msg: "Hypervisor hostname not found in workload data for {{ instance_name }}. Run export_workloads first."
+  when: hypervisor_hostname == ''
+
+- name: Display workload info
+  ansible.builtin.debug:
+    msg:
+      - "Processing: {{ instance_name }}"
+      - "Instance ID: {{ instance_id }}"
+      - "Hypervisor: {{ hypervisor_hostname }}"
+      - "Status: {{ instance_status }}"
+
+- name: Find instance disk on hypervisor
+  ansible.builtin.raw: |
+    find {{ os_migrate_nbdkit_nova_instances_dir }}/{{ instance_id }} -name 'disk*' -type f | head -1
+  delegate_to: "{{ hypervisor_hostname }}"
+  register: disk_path_result
+  changed_when: false
+
+- name: Set disk path
+  ansible.builtin.set_fact:
+    instance_disk_path: "{{ disk_path_result.stdout | trim }}"
+
+- name: Fail if disk not found
+  ansible.builtin.fail:
+    msg: "Disk not found for instance {{ instance_id }} on hypervisor {{ hypervisor_hostname }}"
+  when: instance_disk_path == ""
+
+- name: Inspect disk with qemu-img info
+  ansible.builtin.raw: |
+    qemu-img info {{ instance_disk_path }}
+  delegate_to: "{{ hypervisor_hostname }}"
+  register: qemu_img_info
+  changed_when: false
+
+- name: Display disk info
+  ansible.builtin.debug:
+    msg: "{{ qemu_img_info.stdout }}"
+
+- name: Parse disk format
+  ansible.builtin.set_fact:
+    disk_format_match: "{{ qemu_img_info.stdout | regex_search('file format: (\\w+)', '\\1') }}"
+    backing_file_match: "{{ qemu_img_info.stdout | regex_search('backing file: ([^\\r\\n]+)', '\\1') }}"
+
+- name: Set disk format and backing file
+  ansible.builtin.set_fact:
+    disk_format: "{{ disk_format_match | first | trim if disk_format_match else 'unknown' }}"
+    backing_file: "{{ backing_file_match | first | trim if backing_file_match else '' }}"
+
+- name: Fail if disk format not detected
+  ansible.builtin.fail:
+    msg: "Unable to detect disk format from qemu-img info output"
+  when: disk_format == 'unknown'
+
+- name: Determine nbdkit plugin and source file
+  ansible.builtin.set_fact:
+    nbdkit_plugin: "{{ 'qcow2' if disk_format == 'qcow2' else 'file' }}"
+    nbdkit_source: "{{ backing_file if (disk_format == 'qcow2' and backing_file != '') else instance_disk_path }}"
+
+- name: Display nbdkit configuration
+  ansible.builtin.debug:
+    msg:
+      - "Disk format: {{ disk_format }}"
+      - "NBDkit plugin: {{ nbdkit_plugin }}"
+      - "NBDkit source: {{ nbdkit_source }}"
+      - "Backing file: {{ backing_file | default('N/A') }}"
+
+- name: Set nbdkit port for this workload
+  ansible.builtin.set_fact:
+    nbdkit_port: "{{ workload_item._migration_params.nbdkit_port | default(os_migrate_nbdkit_port) }}"
+
+- name: Build nbdkit command
+  ansible.builtin.set_fact:
+    nbdkit_cmd: >-
+      sudo nbdkit
+      -p {{ nbdkit_port }}
+      {{ nbdkit_plugin }}
+      {% if nbdkit_plugin == 'file' %}file={{ nbdkit_source }}{% else %}{{ nbdkit_source }}{% endif %}
+      {% if os_migrate_nbdkit_readonly %}--readonly{% endif %}
+      {% if os_migrate_nbdkit_ip_allow is defined and os_migrate_nbdkit_ip_allow %}--filter=ip ip-allow={{ os_migrate_nbdkit_ip_allow }}{% endif %}
+
+- name: Display nbdkit command
+  ansible.builtin.debug:
+    msg: "NBDkit command: {{ nbdkit_cmd }}"
+
+- name: Check if nbdkit is already running on port {{ nbdkit_port }}
+  ansible.builtin.raw: |
+    sudo netstat -tlnp | grep :{{ nbdkit_port }} || true
+  delegate_to: "{{ hypervisor_hostname }}"
+  register: port_check
+  changed_when: false
+
+- name: Stop existing nbdkit if running
+  ansible.builtin.raw: |
+    sudo pkill -f "nbdkit.*{{ nbdkit_port }}" || true
+  delegate_to: "{{ hypervisor_hostname }}"
+  when: port_check.stdout != ""
+  changed_when: false
+
+- name: Wait for port to be released
+  ansible.builtin.raw: |
+    for i in {1..30}; do
+      if ! sudo netstat -tlnp | grep -q :{{ nbdkit_port }}; then
+        echo "Port released"
+        exit 0
+      fi
+      sleep 1
+    done
+    echo "Port still in use (continuing anyway)"
+    exit 0
+  delegate_to: "{{ hypervisor_hostname }}"
+  when: port_check.stdout != ""
+  changed_when: false
+
+- name: Start nbdkit on hypervisor
+  ansible.builtin.raw: |
+    {{ nbdkit_cmd }} &
+    sleep 2
+  delegate_to: "{{ hypervisor_hostname }}"
+  async: "{{ os_migrate_nbdkit_timeout }}"
+  poll: 0
+  register: nbdkit_job
+
+- name: Wait for nbdkit to be ready
+  ansible.builtin.raw: |
+    for i in {1..30}; do
+      if sudo netstat -tlnp | grep -q :{{ nbdkit_port }}; then
+        echo "Port ready"
+        exit 0
+      fi
+      sleep 1
+    done
+    echo "Timeout waiting for port"
+    exit 1
+  delegate_to: "{{ hypervisor_hostname }}"
+  register: wait_result
+  changed_when: false
+
+- name: Verify nbdkit is listening
+  ansible.builtin.raw: |
+    sudo netstat -tlnp | grep :{{ nbdkit_port }}
+  delegate_to: "{{ hypervisor_hostname }}"
+  register: nbdkit_verify
+  changed_when: false
+
+- name: Display nbdkit status
+  ansible.builtin.debug:
+    msg: "NBDkit is running: {{ nbdkit_verify.stdout }}"
+
+- name: Build nbdkit URI
+  ansible.builtin.set_fact:
+    nbdkit_uri: >-
+      {% if os_migrate_nbdkit_protocol == 'ssh' -%}
+      nbd+ssh://{{ os_migrate_nbdkit_ssh_user }}@{{ hypervisor_hostname }}:{{ nbdkit_port }}/{{ nbdkit_source }}
+      {%- else -%}
+      nbd://{{ hypervisor_hostname }}:{{ nbdkit_port }}
+      {%- endif %}
+
+- name: Display nbdkit URI
+  ansible.builtin.debug:
+    msg: "NBDkit URI: {{ nbdkit_uri }}"
+
+- name: Update workload with nbdkit URI
+  os_migrate.os_migrate.update_workload_nbdkit_uri:
+    path: "{{ os_migrate_data_dir }}/workloads.yml"
+    instance_id: "{{ instance_id }}"
+    nbdkit_socket_uri: "{{ nbdkit_uri }}"
+    nbdkit_port: "{{ nbdkit_port }}"
+
+- name: Success message
+  ansible.builtin.debug:
+    msg:
+      - "Successfully spawned nbdkit for {{ instance_name }}"
+      - "URI: {{ nbdkit_uri }}"
+      - "Port: {{ nbdkit_port }}"

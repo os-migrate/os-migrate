@@ -45,6 +45,7 @@ class Server(osm_resource.Resource):
         "status",
         "updated_at",
         "user_id",
+        "hypervisor_hostname",
     ]
     info_from_refs = [
         "flavor_id",
