@@ -130,12 +130,12 @@
 
 - name: Start nbdkit on hypervisor
   ansible.builtin.raw: |
-    {{ nbdkit_cmd }} &
+    nohup {{ nbdkit_cmd }} > /dev/null 2>&1 &
     sleep 2
+    echo "NBDkit started in background"
   delegate_to: "{{ hypervisor_hostname }}"
-  async: "{{ os_migrate_nbdkit_timeout }}"
-  poll: 0
   register: nbdkit_job
+  changed_when: true
 
 - name: Wait for nbdkit to be ready
   ansible.builtin.raw: |
