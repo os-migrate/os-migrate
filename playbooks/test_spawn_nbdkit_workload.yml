@@ -1,0 +1,40 @@
+---
+# Task file for processing individual workload with nbdkit
+# Called from test_spawn_nbdkit.yml
+
+- name: Get instance info from source cloud
+  os_migrate.os_migrate.os_server_info:
+    cloud: src
+    validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+    ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+    client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+    client_key: "{{ os_migrate_src_client_key | default(omit) }}"
+    server_id: "{{ workload_item._info.id }}"
+  register: server_info
+
+- name: Get hypervisor hostname from instance
+  ansible.builtin.set_fact:
+    instance_hypervisor: "{{ server_info.openstack_server['OS-EXT-SRV-ATTR:hypervisor_hostname'] }}"
+  when: hypervisor_host == ''
+
+- name: Use specified hypervisor or detected one
+  ansible.builtin.set_fact:
+    target_hypervisor: "{{ hypervisor_host if hypervisor_host != '' else instance_hypervisor }}"
+
+- name: Display hypervisor info
+  ansible.builtin.debug:
+    msg:
+      - "Workload: {{ workload_item.params.name }}"
+      - "Instance ID: {{ workload_item._info.id }}"
+      - "Hypervisor: {{ target_hypervisor }}"
+      - "Status: {{ server_info.openstack_server.status }}"
+
+- name: Spawn nbdkit on hypervisor
+  ansible.builtin.include_role:
+    name: os_migrate.os_migrate.import_from_hypervisor
+  vars:
+    workload_data: "{{ workload_item }}"
+    hypervisor_host: "{{ target_hypervisor }}"
+    test_nbdkit_export_file: "{{ workload_file_path }}"
+    test_nbdkit_ip_allow: "{{ dest_ip }}"
+    test_nbdkit_port: "{{ workload_item._migration_params.nbdkit_port | default(10809) }}"

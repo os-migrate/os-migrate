@@ -1,0 +1,211 @@
+---
+- name: Validate required variables
+  ansible.builtin.assert:
+    that:
+      - workload_data is defined
+      - hypervisor_host is defined
+      - test_nbdkit_export_file is defined
+    fail_msg: "Required variables not defined. Need: workload_data, hypervisor_host, test_nbdkit_export_file"
+
+- name: Get workload instance ID
+  ansible.builtin.set_fact:
+    instance_id: "{{ workload_data._info.id }}"
+    instance_name: "{{ workload_data.params.name }}"
+
+- name: Check if nbdkit direct mode is enabled
+  ansible.builtin.set_fact:
+    use_nbdkit_direct: "{{ workload_data._migration_params.use_nbdkit_direct | default(false) }}"
+
+- name: Display mode
+  ansible.builtin.debug:
+    msg: "NBDkit direct mode: {{ use_nbdkit_direct }}"
+
+- name: Process workload when nbdkit direct mode is enabled
+  when: use_nbdkit_direct | bool
+  block:
+    - name: Verify instance is shutdown on source cloud
+      os_migrate.os_migrate.os_server_info:
+        cloud: src
+        validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+        ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+        client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+        client_key: "{{ os_migrate_src_client_key | default(omit) }}"
+        server_id: "{{ instance_id }}"
+      register: instance_info
+
+    - name: Fail if instance is not shutdown
+      ansible.builtin.fail:
+        msg: "Instance {{ instance_name }} ({{ instance_id }}) must be SHUTOFF before running nbdkit. Current status: {{ instance_info.openstack_server.status }}"
+      when: instance_info.openstack_server.status != "SHUTOFF"
+
+    - name: Get hypervisor hostname from instance
+      ansible.builtin.set_fact:
+        instance_hypervisor: "{{ instance_info.openstack_server['OS-EXT-SRV-ATTR:hypervisor_hostname'] }}"
+
+    - name: Display hypervisor info
+      ansible.builtin.debug:
+        msg: "Instance {{ instance_name }} is on hypervisor: {{ instance_hypervisor }}"
+
+    - name: Find instance disk on hypervisor
+      ansible.builtin.shell: |
+        find {{ test_nbdkit_nova_instances_dir }}/{{ instance_id }} -name 'disk*' -type f | head -1
+      delegate_to: "{{ hypervisor_host }}"
+      register: disk_path_result
+
+    - name: Set disk path
+      ansible.builtin.set_fact:
+        instance_disk_path: "{{ disk_path_result.stdout }}"
+
+    - name: Fail if disk not found
+      ansible.builtin.fail:
+        msg: "Disk not found for instance {{ instance_id }} on hypervisor {{ hypervisor_host }}"
+      when: instance_disk_path == ""
+
+    - name: Inspect disk with qemu-img info
+      ansible.builtin.command:
+        cmd: qemu-img info {{ instance_disk_path }}
+      delegate_to: "{{ hypervisor_host }}"
+      register: qemu_img_info
+
+    - name: Display disk info
+      ansible.builtin.debug:
+        var: qemu_img_info.stdout_lines
+
+    - name: Parse disk format
+      ansible.builtin.set_fact:
+        disk_format: "{{ qemu_img_info.stdout | regex_search('file format: (\\w+)', '\\1') | first }}"
+        backing_file: "{{ qemu_img_info.stdout | regex_search('backing file: (.+)', '\\1') | first | default('') }}"
+
+    - name: Determine nbdkit plugin and source file
+      ansible.builtin.set_fact:
+        nbdkit_plugin: "{{ 'qcow2' if disk_format == 'qcow2' else 'file' }}"
+        nbdkit_source: "{{ backing_file if (disk_format == 'qcow2' and backing_file != '') else instance_disk_path }}"
+
+    - name: Display nbdkit configuration
+      ansible.builtin.debug:
+        msg:
+          - "Disk format: {{ disk_format }}"
+          - "NBDkit plugin: {{ nbdkit_plugin }}"
+          - "NBDkit source: {{ nbdkit_source }}"
+          - "Backing file: {{ backing_file | default('N/A') }}"
+
+    - name: Build nbdkit command
+      ansible.builtin.set_fact:
+        nbdkit_cmd: >-
+          sudo nbdkit
+          -p {{ test_nbdkit_port }}
+          {{ nbdkit_plugin }}
+          {% if nbdkit_plugin == 'file' %}file={{ nbdkit_source }}{% else %}{{ nbdkit_source }}{% endif %}
+          {% if test_nbdkit_readonly %}--readonly{% endif %}
+          {% if test_nbdkit_ip_allow is defined and test_nbdkit_ip_allow %}--filter=ip ip-allow={{ test_nbdkit_ip_allow }}{% endif %}
+          {% if test_nbdkit_foreground %}--foreground{% endif %}
+
+    - name: Display nbdkit command
+      ansible.builtin.debug:
+        msg: "NBDkit command: {{ nbdkit_cmd }}"
+
+    - name: Check if nbdkit is already running on port {{ test_nbdkit_port }}
+      ansible.builtin.shell: |
+        sudo netstat -tlnp | grep :{{ test_nbdkit_port }} || true
+      delegate_to: "{{ hypervisor_host }}"
+      register: port_check
+      changed_when: false
+
+    - name: Stop existing nbdkit if running
+      ansible.builtin.shell: |
+        sudo pkill -f "nbdkit.*{{ test_nbdkit_port }}" || true
+      delegate_to: "{{ hypervisor_host }}"
+      when: port_check.stdout != ""
+
+    - name: Wait for port to be released
+      ansible.builtin.wait_for:
+        port: "{{ test_nbdkit_port }}"
+        state: stopped
+        timeout: 30
+      delegate_to: "{{ hypervisor_host }}"
+      when: port_check.stdout != ""
+      ignore_errors: true
+
+    - name: Start nbdkit on hypervisor
+      ansible.builtin.shell: |
+        {{ nbdkit_cmd }} &
+        sleep 2
+      delegate_to: "{{ hypervisor_host }}"
+      async: "{{ test_nbdkit_timeout }}"
+      poll: 0
+      register: nbdkit_job
+
+    - name: Wait for nbdkit to be ready
+      ansible.builtin.wait_for:
+        port: "{{ test_nbdkit_port }}"
+        state: started
+        timeout: 30
+      delegate_to: "{{ hypervisor_host }}"
+
+    - name: Verify nbdkit is listening
+      ansible.builtin.shell: |
+        sudo netstat -tlnp | grep :{{ test_nbdkit_port }}
+      delegate_to: "{{ hypervisor_host }}"
+      register: nbdkit_verify
+
+    - name: Display nbdkit status
+      ansible.builtin.debug:
+        msg: "NBDkit is running: {{ nbdkit_verify.stdout }}"
+
+    - name: Build nbdkit URI
+      ansible.builtin.set_fact:
+        nbdkit_uri: >-
+          {% if test_nbdkit_protocol == 'ssh' -%}
+          nbd+ssh://{{ test_nbdkit_hypervisor_ssh_user }}@{{ hypervisor_host }}:{{ test_nbdkit_port }}/{{ nbdkit_source }}
+          {%- else -%}
+          nbd://{{ hypervisor_host }}:{{ test_nbdkit_port }}
+          {%- endif %}
+
+    - name: Display nbdkit URI
+      ansible.builtin.debug:
+        msg: "NBDkit URI: {{ nbdkit_uri }}"
+
+    - name: Read current export file
+      ansible.builtin.slurp:
+        src: "{{ test_nbdkit_export_file }}"
+      register: export_file_content
+      delegate_to: localhost
+
+    - name: Parse export file YAML
+      ansible.builtin.set_fact:
+        export_data: "{{ export_file_content.content | b64decode | from_yaml }}"
+
+    - name: Update export data with nbdkit URI
+      ansible.builtin.set_fact:
+        updated_export_data: >-
+          {{
+            export_data | combine({
+              '_migration_params': export_data._migration_params | default({}) | combine({
+                'nbdkit_socket_uri': nbdkit_uri,
+                'nbdkit_port': test_nbdkit_port
+              })
+            }, recursive=True)
+          }}
+
+    - name: Write updated export file
+      ansible.builtin.copy:
+        content: "{{ updated_export_data | to_nice_yaml }}"
+        dest: "{{ test_nbdkit_export_file }}"
+      delegate_to: localhost
+
+    - name: Display success message
+      ansible.builtin.debug:
+        msg:
+          - "Successfully started nbdkit on {{ hypervisor_host }}:{{ test_nbdkit_port }}"
+          - "NBDkit URI: {{ nbdkit_uri }}"
+          - "Export file updated: {{ test_nbdkit_export_file }}"
+          - ""
+          - "To test connectivity from destination conversion host, run:"
+          - "  nbdinfo {{ nbdkit_uri }}"
+          - ""
+          - "To perform migration, run import_workloads playbook"
+
+- name: Skip nbdkit setup when not in direct mode
+  ansible.builtin.debug:
+    msg: "NBDkit direct mode is not enabled for this workload. Skipping nbdkit setup."
+  when: not (use_nbdkit_direct | bool)

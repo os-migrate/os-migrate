@@ -308,14 +308,20 @@ class OpenStackDestinationVolume(OpenstackVolumeTransfer):
     def transfer_exports(self):
         try:
             if self.use_nbdkit_direct:
-                self.log.info("Using direct nbdkit socket mode")
+                self.log.info("Using direct nbdkit socket mode with nbdcopy")
                 self._setup_nbdkit_direct_urls(self.nbdkit_socket_uri, self.nbdkit_export_name)
             else:
-                self.log.info("Using SSH forwarding mode")
+                self.log.info("Using SSH forwarding mode with qemu-img convert")
                 self._create_forwarding_process()
             self._create_destination_volumes()
             self._attach_destination_volumes()
-            self._convert_destination_volumes()
+
+            # Use nbdcopy for nbdkit direct mode, qemu-img convert otherwise
+            if self.use_nbdkit_direct:
+                self._convert_destination_volumes_nbdcopy()
+            else:
+                self._convert_destination_volumes()
+
             self._detach_destination_volumes()
         finally:
             if not self.use_nbdkit_direct:

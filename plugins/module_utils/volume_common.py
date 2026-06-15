@@ -1024,6 +1024,70 @@ class OpenstackVolumeTransfer(OpenStackVolumeBase):
             (self._converter, self.shell.cmd_out, update_dest, volume_id),
         )
 
+    def _convert_destination_volumes_nbdcopy(self):
+        """
+        Use nbdcopy to transfer data from nbdkit socket to destination volumes.
+        This is used in nbdkit direct mode.
+        """
+        self.log.info("Converting volumes with nbdcopy...")
+        for path, mapping in self.volume_map.items():
+            self.log.info("Copying source VM's %s: %s", path, str(mapping))
+            url = mapping["url"]
+            dest_dev = mapping["dest_dev"]
+
+            self.log.info("Using nbdcopy from %s to %s", url, dest_dev)
+            cmd = [
+                "sudo",
+                "nbdcopy",
+                url,
+                dest_dev,
+                "--progress",
+            ]
+
+            self.log.info("Starting nbdcopy: %s", " ".join(cmd))
+            # nbdcopy outputs progress to stderr
+            nbd_sub = self.shell.cmd_sub(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                stdin=DEVNULL,
+                universal_newlines=True,
+            )
+
+            # Monitor progress from stderr
+            while nbd_sub.poll() is None:
+                try:
+                    line = nbd_sub.stderr.readline()
+                    if line:
+                        self.log.info("nbdcopy: %s", line.strip())
+                        # nbdcopy progress format: "[ 12.5% ] 1.2 GiB / 10 GiB"
+                        if '%' in line:
+                            try:
+                                # Extract percentage from output
+                                pct_str = line.split('%')[0].split('[')[-1].strip()
+                                progress = float(pct_str)
+                                self._update_progress(path, progress)
+                            except (ValueError, IndexError):
+                                pass
+                except Exception as err:
+                    self.log.debug("Error reading nbdcopy output: %s", str(err))
+                    time.sleep(1)
+
+            # Get final output
+            stdout, stderr = nbd_sub.communicate()
+            if stdout:
+                self.log.info("nbdcopy stdout: %s", stdout)
+            if stderr:
+                self.log.info("nbdcopy stderr: %s", stderr)
+
+            self.log.info("nbdcopy return code: %d", nbd_sub.returncode)
+            if nbd_sub.returncode != 0:
+                raise RuntimeError(f"Failed to copy volume with nbdcopy! Return code: {nbd_sub.returncode}")
+
+            # Mark as 100% complete
+            self._update_progress(path, 100.0)
+            self.log.info("Successfully copied %s", path)
+
     def _convert_destination_volumes(self):
         """
         Finally run the commands to copy the exported source volumes to the

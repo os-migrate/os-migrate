@@ -1,0 +1,36 @@
+---
+# NBDkit port to use
+test_nbdkit_port: 10809
+
+# NBDkit protocol: 'tcp' or 'ssh'
+# tcp: nbd://hypervisor-ip:port
+# ssh: nbd+ssh://user@hypervisor/path
+test_nbdkit_protocol: tcp
+
+# IP restriction for nbdkit (optional)
+# If set, only this IP will be allowed to connect
+test_nbdkit_ip_allow: null
+
+# SSH user for hypervisor access
+test_nbdkit_hypervisor_ssh_user: root
+
+# SSH key for hypervisor access
+test_nbdkit_hypervisor_ssh_key: "{{ ansible_env.HOME }}/.ssh/id_rsa"
+
+# Nova instance directory on hypervisor
+test_nbdkit_nova_instances_dir: /var/lib/nova/instances
+
+# Nova base images directory
+test_nbdkit_nova_base_dir: /var/lib/nova/instances/_base
+
+# Whether to run nbdkit in foreground (for testing/debugging)
+test_nbdkit_foreground: false
+
+# Whether to make nbdkit read-only (recommended)
+test_nbdkit_readonly: true
+
+# Timeout for operations (seconds)
+test_nbdkit_timeout: 300
+
+# Export file to update with nbdkit URIs
+test_nbdkit_export_file: null
