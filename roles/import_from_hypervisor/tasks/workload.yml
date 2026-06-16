@@ -113,41 +113,27 @@
   when: port_check.stdout != ""
   changed_when: false
 
-- name: Wait for port to be released
-  ansible.builtin.raw: |
-    for i in {1..30}; do
-      if ! sudo netstat -tlnp | grep -q :{{ nbdkit_port }}; then
-        echo "Port released"
-        exit 0
-      fi
-      sleep 1
-    done
-    echo "Port still in use (continuing anyway)"
-    exit 0
-  delegate_to: "{{ hypervisor_hostname }}"
-  when: port_check.stdout != ""
-  changed_when: false
-
 - name: Start nbdkit on hypervisor
   ansible.builtin.raw: |
-    nohup {{ nbdkit_cmd }} > /dev/null 2>&1 &
+    setsid {{ nbdkit_cmd }} > /tmp/nbdkit-{{ nbdkit_port }}.log 2>&1 < /dev/null &
     sleep 2
-    echo "NBDkit started in background"
   delegate_to: "{{ hypervisor_hostname }}"
   register: nbdkit_job
   changed_when: true
 
+- name: Display nbdkit start output
+  ansible.builtin.debug:
+    var: nbdkit_job.stdout_lines
+
 - name: Wait for nbdkit to be ready
   ansible.builtin.raw: |
-    for i in {1..30}; do
+    for i in {1..60}; do
       if sudo netstat -tlnp | grep -q :{{ nbdkit_port }}; then
-        echo "Port ready"
+        echo "Port {{ nbdkit_port }} is ready"
         exit 0
       fi
       sleep 1
     done
-    echo "Timeout waiting for port"
-    exit 1
   delegate_to: "{{ hypervisor_hostname }}"
   register: wait_result
   changed_when: false

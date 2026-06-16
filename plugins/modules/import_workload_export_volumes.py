@@ -194,20 +194,6 @@ volume_map:
               "url": "nbd://localhost:49164/f544092c-6bb8-4e3e-b509-d59b1520540d"
           }
      }
-nbdkit_socket_uri:
-  description:
-    - Placeholder for nbdkit socket URI when using nbdkit direct mode.
-    - This field is returned as null when not in nbdkit direct mode.
-    - When in nbdkit direct mode, this field should be populated by the test role or manually.
-  returned: Always
-  type: str
-  sample: "nbd://192.168.24.1:10809"
-use_nbdkit_direct:
-  description:
-    - Whether nbdkit direct mode is enabled for this workload.
-  returned: Always
-  type: bool
-  sample: false
 """
 
 from ansible.module_utils.basic import AnsibleModule
@@ -298,19 +284,6 @@ class OpenStackSourceVolume(OpenstackVolumeExport):
         self._attach_volumes_to_converter()
         self._export_volumes_from_converter()
 
-    def prepare_exports_nbdkit_direct(self):
-        """
-        Prepare minimal volume map for nbdkit direct mode.
-        This skips all source conversion host operations since data is consumed
-        directly from an external nbdkit socket.
-        """
-        self.log.info("Using nbdkit direct mode - skipping source conversion host operations")
-        self._test_source_vm_shutdown()
-        self._get_root_and_data_volumes()
-        self._validate_volumes_match_data()
-        # Skip detach, attach, and export - volumes stay on source VM
-        self.log.info("Volume map prepared for nbdkit direct mode: %s", self.volume_map)
-
     def _get_root_and_data_volumes(self):
         """
         Volume mapping step one: get the IDs and sizes of all volumes on the
@@ -396,21 +369,11 @@ def run_module():
         timeout=timeout,
     )
 
-    # Check if using nbdkit direct mode
-    migration_params = ser_server.migration_params()
-    use_nbdkit_direct = migration_params.get("use_nbdkit_direct", False)
-    nbdkit_socket_uri = migration_params.get("nbdkit_socket_uri")
-
-    if use_nbdkit_direct:
-        source_host.prepare_exports_nbdkit_direct()
-    else:
-        source_host.prepare_exports()
+    source_host.prepare_exports()
 
     result["transfer_uuid"] = source_host.transfer_uuid
     result["volume_map"] = source_host.volume_map
-    result["use_nbdkit_direct"] = use_nbdkit_direct
-    result["nbdkit_socket_uri"] = nbdkit_socket_uri
-
+    
     module.exit_json(**result)
 
 

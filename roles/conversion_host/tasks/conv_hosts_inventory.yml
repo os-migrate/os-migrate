@@ -28,6 +28,32 @@
       os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key | default(omit) }}"
   when:
     - item["_migration_params"]["data_copy"]|default(true)
+    - not item["_migration_params"]["use_nbdkit_direct"]|default(false)
+
+# When we consume data directly from an nbdkit socket, we don't need to add the source conversion host to the inventory.
+- name: Add only dst conversion host to inventory
+  ansible.builtin.include_tasks: conv_host_inventory.yml
+  vars:
+    inventory_name: "{{ item.inventory_name }}"
+    inventory_group: "{{ item.inventory_group }}"
+    os_migrate_conversion_host_name: "{{ item.os_migrate_conversion_host_name }}"
+    os_migrate_conversion_cloud: "{{ item.os_migrate_conversion_cloud }}"
+    os_migrate_conversion_validate_certs: "{{ item.os_migrate_conversion_validate_certs }}"
+    os_migrate_conversion_ca_cert: "{{ item.os_migrate_conversion_ca_cert }}"
+    os_migrate_conversion_client_cert: "{{ item.os_migrate_conversion_client_cert }}"
+    os_migrate_conversion_client_key: "{{ item.os_migrate_conversion_client_key }}"
+  loop:
+    - inventory_name: os_migrate_conv_dst
+      inventory_group: conversion_hosts_dst
+      os_migrate_conversion_host_name: "{{ os_migrate_dst_conversion_host_name }}"
+      os_migrate_conversion_cloud: dst
+      os_migrate_conversion_validate_certs: "{{ os_migrate_dst_validate_certs | default(omit) }}"
+      os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert | default(omit) }}"
+      os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert | default(omit) }}"
+      os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key | default(omit) }}"
+  when:
+    - item["_migration_params"]["data_copy"]|default(true)
+    - item["_migration_params"]["use_nbdkit_direct"]|default(false)
 
 # If conversion hosts are added succesfully to each group, show them all.
 - name: List src conversion hosts
@@ -37,6 +63,7 @@
   when:
     - "'conversion_hosts_src' in groups"
     - item["_migration_params"]["data_copy"]|default(true)
+    - not item["_migration_params"]["use_nbdkit_direct"]|default(false)
 
 - name: List dst conversion hosts
   ansible.builtin.debug:
@@ -45,6 +72,7 @@
   when:
     - "'conversion_hosts_dst' in groups"
     - item["_migration_params"]["data_copy"]|default(true)
+    - not item["_migration_params"]["use_nbdkit_direct"]|default(false)
 
 - name: List all conversion hosts
   ansible.builtin.debug:

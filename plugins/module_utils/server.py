@@ -232,6 +232,9 @@ class Server(osm_resource.Resource):
         sdk_params["block_device_mapping"] = deepcopy(block_device_mapping)
         # shadowing to make sure we don't modify the function argument
         block_device_mapping = sdk_params["block_device_mapping"]
+        # if direct nbdkit then we force boot_disk_copy
+        if migration_params["use_nbdkit_direct"]:
+            migration_params["boot_disk_copy"] = True
 
         has_boot_volume = (
             len(
