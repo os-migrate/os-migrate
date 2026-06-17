@@ -445,10 +445,12 @@ def run_module():
     use_nbdkit_direct = module.params.get("use_nbdkit_direct", False) or migration_params.get("use_nbdkit_direct", False)
     nbdkit_socket_uri = module.params.get("nbdkit_socket_uri") or migration_params.get("nbdkit_socket_uri")
     nbdkit_export_name = module.params.get("nbdkit_export_name") or migration_params.get("nbdkit_export_name")
+    nbdkit_disks = migration_params.get("nbdkit_disks")
 
     # Validate nbdkit parameters
-    if use_nbdkit_direct and not nbdkit_socket_uri:
-        module.fail_json(msg="nbdkit_socket_uri is required when use_nbdkit_direct is true")
+    # Either nbdkit_disks (multi-disk mode) or nbdkit_socket_uri (legacy single-disk) is required
+    if use_nbdkit_direct and not nbdkit_disks and not nbdkit_socket_uri:
+        module.fail_json(msg="nbdkit_disks or nbdkit_socket_uri is required when use_nbdkit_direct is true")
 
     destination_host = OpenStackDestinationVolume(
         conn,

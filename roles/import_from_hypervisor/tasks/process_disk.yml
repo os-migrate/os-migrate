@@ -31,7 +31,9 @@
 
 - name: Determine nbdkit source for this disk
   ansible.builtin.set_fact:
-    disk_nbdkit_plugin: "{{ 'qcow2' if disk_format == 'qcow2' else 'file' }}"
+    #disk_nbdkit_plugin: "{{ 'qemu' if disk_format == 'qcow2' else 'file' }}"
+    # The _base file are always raw. Change this logic later.
+    disk_nbdkit_plugin: "file"
     disk_nbdkit_source: "{{ disk_backing_file if (disk_format == 'qcow2' and disk_backing_file != '') else disk_item }}"
 
 - name: Display disk nbdkit configuration
@@ -54,7 +56,7 @@
       sudo nbdkit
       -p {{ disk_nbdkit_port }}
       {{ disk_nbdkit_plugin }}
-      {% if disk_nbdkit_plugin == 'file' %}file={{ disk_nbdkit_source }}{% else %}{{ disk_nbdkit_source }}{% endif %}
+      {% if disk_nbdkit_plugin == 'file' %} {{ disk_nbdkit_source }}{% else %}{{ disk_nbdkit_source }}{% endif %}
       {% if os_migrate_nbdkit_readonly %}--readonly{% endif %}
       {% if os_migrate_nbdkit_ip_allow is defined and os_migrate_nbdkit_ip_allow %}--filter=ip ip-allow={{ os_migrate_nbdkit_ip_allow }}{% endif %}
 
@@ -62,45 +64,10 @@
   ansible.builtin.debug:
     msg: "NBDkit command for {{ disk_filename }}: {{ disk_nbdkit_cmd }}"
 
-- name: Check if nbdkit is already running on port {{ disk_nbdkit_port }}
-  ansible.builtin.raw: |
-    sudo netstat -tlnp | grep :{{ disk_nbdkit_port }} || true
-  delegate_to: "{{ hypervisor_hostname }}"
-  register: disk_port_check
-  changed_when: false
-
-- name: Stop existing nbdkit if running on port {{ disk_nbdkit_port }}
-  ansible.builtin.raw: |
-    sudo pkill -f "nbdkit.*{{ disk_nbdkit_port }}" || true
-  delegate_to: "{{ hypervisor_hostname }}"
-  when: disk_port_check.stdout != ""
-  changed_when: false
-
-- name: Wait for port {{ disk_nbdkit_port }} to be released
-  ansible.builtin.raw: |
-    for i in {1..10}; do
-      if ! sudo netstat -tlnp | grep -q :{{ disk_nbdkit_port }}; then
-        exit 0
-      fi
-      sleep 1
-    done
-    exit 0
-  delegate_to: "{{ hypervisor_hostname }}"
-  when: disk_port_check.stdout != ""
-  changed_when: false
-
 - name: Start nbdkit for {{ disk_filename }} on port {{ disk_nbdkit_port }}
   ansible.builtin.raw: |
     setsid {{ disk_nbdkit_cmd }} > /tmp/nbdkit-{{ disk_nbdkit_port }}.log 2>&1 < /dev/null &
-    NBDKIT_PID=$!
-    sleep 2
-    if kill -0 $NBDKIT_PID 2>/dev/null; then
-      echo "NBDkit started for {{ disk_filename }} with PID $NBDKIT_PID"
-    else
-      echo "NBDkit failed to start for {{ disk_filename }}"
-      cat /tmp/nbdkit-{{ disk_nbdkit_port }}.log
-      exit 1
-    fi
+    sleep 2  # Give nbdkit a moment to start
   delegate_to: "{{ hypervisor_hostname }}"
   register: disk_nbdkit_start
   changed_when: true
