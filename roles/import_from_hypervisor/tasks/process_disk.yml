@@ -1,0 +1,151 @@
+---
+# Process individual disk - inspect and spawn nbdkit
+
+- name: Get disk filename
+  ansible.builtin.set_fact:
+    disk_filename: "{{ disk_item | basename }}"
+    disk_index: "{{ disk_loop_index }}"
+
+- name: Inspect disk with qemu-img info
+  ansible.builtin.raw: |
+    qemu-img info {{ disk_item }}
+  delegate_to: "{{ hypervisor_hostname }}"
+  register: qemu_img_info
+  changed_when: false
+
+- name: Display disk info
+  ansible.builtin.debug:
+    msg: "{{ disk_filename }}: {{ qemu_img_info.stdout }}"
+
+- name: Parse disk format and backing file
+  ansible.builtin.set_fact:
+    disk_format_match: "{{ qemu_img_info.stdout | regex_search('file format: (\\w+)', '\\1') }}"
+    disk_backing_file_match: "{{ qemu_img_info.stdout | regex_search('backing file: ([^\\r\\n]+)', '\\1') }}"
+    disk_size_match: "{{ qemu_img_info.stdout | regex_search('virtual size: ([0-9]+) GiB', '\\1') }}"
+
+- name: Set disk properties
+  ansible.builtin.set_fact:
+    disk_format: "{{ disk_format_match | first | trim if disk_format_match else 'unknown' }}"
+    disk_backing_file: "{{ disk_backing_file_match | first | trim if disk_backing_file_match else '' }}"
+    disk_size_gb: "{{ disk_size_match | first | int if disk_size_match else 0 }}"
+
+- name: Determine nbdkit source for this disk
+  ansible.builtin.set_fact:
+    disk_nbdkit_plugin: "{{ 'qcow2' if disk_format == 'qcow2' else 'file' }}"
+    disk_nbdkit_source: "{{ disk_backing_file if (disk_format == 'qcow2' and disk_backing_file != '') else disk_item }}"
+
+- name: Display disk nbdkit configuration
+  ansible.builtin.debug:
+    msg:
+      - "Disk: {{ disk_filename }}"
+      - "Format: {{ disk_format }}"
+      - "Size: {{ disk_size_gb }} GB"
+      - "NBDkit plugin: {{ disk_nbdkit_plugin }}"
+      - "NBDkit source: {{ disk_nbdkit_source }}"
+      - "Backing file: {{ disk_backing_file | default('N/A') }}"
+
+- name: Calculate nbdkit port for this disk
+  ansible.builtin.set_fact:
+    disk_nbdkit_port: "{{ nbdkit_base_port | int + disk_index | int }}"
+
+- name: Build nbdkit command for this disk
+  ansible.builtin.set_fact:
+    disk_nbdkit_cmd: >-
+      sudo nbdkit
+      -p {{ disk_nbdkit_port }}
+      {{ disk_nbdkit_plugin }}
+      {% if disk_nbdkit_plugin == 'file' %}file={{ disk_nbdkit_source }}{% else %}{{ disk_nbdkit_source }}{% endif %}
+      {% if os_migrate_nbdkit_readonly %}--readonly{% endif %}
+      {% if os_migrate_nbdkit_ip_allow is defined and os_migrate_nbdkit_ip_allow %}--filter=ip ip-allow={{ os_migrate_nbdkit_ip_allow }}{% endif %}
+
+- name: Display nbdkit command for this disk
+  ansible.builtin.debug:
+    msg: "NBDkit command for {{ disk_filename }}: {{ disk_nbdkit_cmd }}"
+
+- name: Check if nbdkit is already running on port {{ disk_nbdkit_port }}
+  ansible.builtin.raw: |
+    sudo netstat -tlnp | grep :{{ disk_nbdkit_port }} || true
+  delegate_to: "{{ hypervisor_hostname }}"
+  register: disk_port_check
+  changed_when: false
+
+- name: Stop existing nbdkit if running on port {{ disk_nbdkit_port }}
+  ansible.builtin.raw: |
+    sudo pkill -f "nbdkit.*{{ disk_nbdkit_port }}" || true
+  delegate_to: "{{ hypervisor_hostname }}"
+  when: disk_port_check.stdout != ""
+  changed_when: false
+
+- name: Wait for port {{ disk_nbdkit_port }} to be released
+  ansible.builtin.raw: |
+    for i in {1..10}; do
+      if ! sudo netstat -tlnp | grep -q :{{ disk_nbdkit_port }}; then
+        exit 0
+      fi
+      sleep 1
+    done
+    exit 0
+  delegate_to: "{{ hypervisor_hostname }}"
+  when: disk_port_check.stdout != ""
+  changed_when: false
+
+- name: Start nbdkit for {{ disk_filename }} on port {{ disk_nbdkit_port }}
+  ansible.builtin.raw: |
+    setsid {{ disk_nbdkit_cmd }} > /tmp/nbdkit-{{ disk_nbdkit_port }}.log 2>&1 < /dev/null &
+    NBDKIT_PID=$!
+    sleep 2
+    if kill -0 $NBDKIT_PID 2>/dev/null; then
+      echo "NBDkit started for {{ disk_filename }} with PID $NBDKIT_PID"
+    else
+      echo "NBDkit failed to start for {{ disk_filename }}"
+      cat /tmp/nbdkit-{{ disk_nbdkit_port }}.log
+      exit 1
+    fi
+  delegate_to: "{{ hypervisor_hostname }}"
+  register: disk_nbdkit_start
+  changed_when: true
+
+- name: Wait for nbdkit to be ready on port {{ disk_nbdkit_port }}
+  ansible.builtin.raw: |
+    for i in {1..30}; do
+      if sudo netstat -tlnp | grep -q :{{ disk_nbdkit_port }}; then
+        echo "Port {{ disk_nbdkit_port }} is ready"
+        exit 0
+      fi
+      sleep 1
+    done
+    echo "Timeout waiting for port {{ disk_nbdkit_port }}"
+    exit 1
+  delegate_to: "{{ hypervisor_hostname }}"
+  register: disk_wait_result
+  changed_when: false
+
+- name: Build nbdkit URI for this disk
+  ansible.builtin.set_fact:
+    disk_nbdkit_uri: >-
+      {% if os_migrate_nbdkit_protocol == 'ssh' -%}
+      nbd+ssh://{{ os_migrate_nbdkit_ssh_user }}@{{ hypervisor_hostname }}:{{ disk_nbdkit_port }}/{{ disk_nbdkit_source }}
+      {%- else -%}
+      nbd://{{ hypervisor_hostname }}:{{ disk_nbdkit_port }}
+      {%- endif %}
+
+- name: Add disk info to nbdkit_uris list
+  ansible.builtin.set_fact:
+    nbdkit_disk_info: "{{ nbdkit_disk_info | default([]) + [{
+      'disk_path': disk_item,
+      'disk_name': disk_filename,
+      'device': disk_device_name,
+      'uri': disk_nbdkit_uri,
+      'port': disk_nbdkit_port | int,
+      'size': disk_size_gb | int,
+      'bootable': disk_is_bootable
+    }] }}"
+
+- name: Display disk nbdkit info
+  ansible.builtin.debug:
+    msg:
+      - "Started nbdkit for {{ disk_filename }}"
+      - "Device: {{ disk_device_name }}"
+      - "URI: {{ disk_nbdkit_uri }}"
+      - "Port: {{ disk_nbdkit_port }}"
+      - "Size: {{ disk_size_gb }} GB"

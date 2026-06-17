@@ -154,12 +154,12 @@ def build_volume_map_from_ephemeral(conn, ser_server):
         else:
             return volume_map
 
-    # Calculate total ephemeral size
+    # Calculate ephemeral disks (ESTIMATION - actual sizes come from qemu-img info)
+    # Nova typically creates ephemeral disks in 10GB chunks
+    # This is a fallback when nbdkit_disks is not available
     ephemeral_gb = getattr(flavor, "ephemeral", 0)
-    num_ephemeral = 1  # Default to 1 ephemeral disk
+    num_ephemeral_disks = ephemeral_gb // 10 if ephemeral_gb > 0 else 0
 
-    # Check for extra specs that might indicate multiple ephemeral disks
-    # This is a simplified approach - actual logic may vary by deployment
     if ephemeral_gb > 0:
         # Create boot volume entry
         boot_size = getattr(flavor, "disk", 10)  # Root disk size
@@ -179,21 +179,25 @@ def build_volume_map_from_ephemeral(conn, ser_server):
             "url": None,
         }
 
-        # Create ephemeral volume entry with total size
-        volume_map["/dev/vdb"] = {
-            "bootable": False,
-            "dest_dev": None,
-            "dest_id": None,
-            "image_id": None,
-            "name": f"{params.get('name', 'vm')}-ephemeral",
-            "port": None,
-            "progress": 0.0,
-            "size": ephemeral_gb,  # Total ephemeral size
-            "snap_id": None,
-            "source_dev": None,
-            "source_id": None,
-            "url": None,
-        }
+        # Create separate ephemeral volume entries (DO NOT merge sizes!)
+        # ESTIMATION: Assumes 10GB per disk (actual sizes from qemu-img via nbdkit_disks)
+        for i in range(num_ephemeral_disks):
+            # Device names: /dev/vdb, /dev/vdc, /dev/vdd, etc.
+            device = f"/dev/vd{chr(ord('b') + i)}"
+            volume_map[device] = {
+                "bootable": False,
+                "dest_dev": None,
+                "dest_id": None,
+                "image_id": None,
+                "name": f"{params.get('name', 'vm')}-ephemeral{i}",
+                "port": None,
+                "progress": 0.0,
+                "size": 10,  # ESTIMATE: 10GB per disk (overridden by nbdkit_disks)
+                "snap_id": None,
+                "source_dev": None,
+                "source_id": None,
+                "url": None,
+            }
     else:
         # Just boot disk, no ephemeral
         boot_size = getattr(flavor, "disk", 10)
@@ -216,6 +220,36 @@ def build_volume_map_from_ephemeral(conn, ser_server):
     return volume_map
 
 
+def build_volume_map_from_nbdkit_disks(ser_server):
+    """Build volume map from nbdkit_disks (uses actual sizes from qemu-img info)."""
+    volume_map = {}
+    migration_params = ser_server.migration_params()
+    nbdkit_disks = migration_params.get("nbdkit_disks", [])
+    params = ser_server.params()
+
+    for disk in nbdkit_disks:
+        device = disk["device"]
+        size = disk["size"]  # Actual size from qemu-img info
+        bootable = disk.get("bootable", False)
+
+        volume_map[device] = {
+            "bootable": bootable,
+            "dest_dev": None,
+            "dest_id": None,
+            "image_id": None,
+            "name": f"{params.get('name', 'vm')}-{device.split('/')[-1]}",
+            "port": disk.get("port"),
+            "progress": 0.0,
+            "size": size,  # Real size from hypervisor
+            "snap_id": None,
+            "source_dev": None,
+            "source_id": None,
+            "url": disk.get("uri"),
+        }
+
+    return volume_map
+
+
 def run_module():
     argument_spec = os_auth.openstack_full_argument_spec(
         data=dict(type="dict", required=True),
@@ -232,18 +266,24 @@ def run_module():
     conn = os_auth.get_connection(module)
     ser_server = server.Server.from_data(module.params["data"])
     params = ser_server.params()
+    migration_params = ser_server.migration_params()
 
     # Generate transfer UUID
     transfer_uuid = str(uuid.uuid4())
 
     # Build volume map
+    # Priority: nbdkit_disks (actual sizes) > volumes > ephemeral (flavor-based)
+    nbdkit_disks = migration_params.get("nbdkit_disks")
     volumes = params.get("volumes", [])
 
-    if volumes:
+    if nbdkit_disks:
+        # Use actual disk sizes from nbdkit_disks (populated by import_from_hypervisor)
+        volume_map = build_volume_map_from_nbdkit_disks(ser_server)
+    elif volumes:
         # Instance has attached volumes
         volume_map = build_volume_map_from_volumes(ser_server)
     else:
-        # Instance uses ephemeral disks or boot from image
+        # Instance uses ephemeral disks - estimate from flavor
         volume_map = build_volume_map_from_ephemeral(conn, ser_server)
 
     result["transfer_uuid"] = transfer_uuid

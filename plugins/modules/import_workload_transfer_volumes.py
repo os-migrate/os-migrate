@@ -305,11 +305,76 @@ class OpenStackDestinationVolume(OpenstackVolumeTransfer):
         self.nbdkit_socket_uri = nbdkit_socket_uri
         self.nbdkit_export_name = nbdkit_export_name
 
+    def _setup_nbdkit_disks_urls(self, nbdkit_disks):
+        """
+        Set up volume URLs from nbdkit_disks list (multi-disk support).
+        Each disk has its own nbdkit process and URI.
+        """
+        self.log.info("Setting up multi-disk nbdkit URLs...")
+        self.log.info("Number of disks: %d", len(nbdkit_disks))
+
+        # Build volume_map from nbdkit_disks
+        for disk in nbdkit_disks:
+            device = disk["device"]
+            uri = disk["uri"]
+            size = disk["size"]
+            bootable = disk.get("bootable", False)
+            port = disk["port"]
+
+            self.log.info("Disk %s: URI=%s, size=%dGB, bootable=%s", device, uri, size, bootable)
+
+            # Update existing volume_map entry or create new one
+            if device in self.volume_map:
+                self.volume_map[device]["url"] = uri
+                self.volume_map[device]["port"] = port
+                self.volume_map[device]["size"] = size
+                self.volume_map[device]["bootable"] = bootable
+            else:
+                # Create new entry if not in volume_map
+                self.volume_map[device] = {
+                    "url": uri,
+                    "port": port,
+                    "size": size,
+                    "bootable": bootable,
+                    "dest_dev": None,
+                    "dest_id": None,
+                    "image_id": None,
+                    "name": f"{self.ser_server.params()['name']}-{device.split('/')[-1]}",
+                    "progress": 0.0,
+                    "snap_id": None,
+                    "source_dev": None,
+                    "source_id": None,
+                }
+
+        # Verify connectivity to all nbdkit sockets
+        self.log.info("Verifying connectivity to all nbdkit sockets...")
+        for device, mapping in self.volume_map.items():
+            url = mapping["url"]
+            try:
+                cmd = ["qemu-img", "info", url]
+                image_info = self.shell.cmd_out(cmd)
+                self.log.info("qemu-img info for %s: %s", device, image_info[:200])
+            except Exception as error:
+                self.log.error("Failed to connect to %s at %s: %s", device, url, error)
+                raise RuntimeError(f"Cannot connect to nbdkit socket for {device} at {url}")
+
     def transfer_exports(self):
         try:
             if self.use_nbdkit_direct:
                 self.log.info("Using direct nbdkit socket mode with nbdcopy")
-                self._setup_nbdkit_direct_urls(self.nbdkit_socket_uri, self.nbdkit_export_name)
+
+                # Check if using multi-disk mode (nbdkit_disks list)
+                migration_params = self.ser_server.migration_params()
+                nbdkit_disks = migration_params.get("nbdkit_disks")
+
+                if nbdkit_disks:
+                    # Multi-disk mode: use nbdkit_disks list
+                    self.log.info("Multi-disk mode: %d disks", len(nbdkit_disks))
+                    self._setup_nbdkit_disks_urls(nbdkit_disks)
+                else:
+                    # Legacy single-disk mode
+                    self.log.info("Single-disk mode (legacy)")
+                    self._setup_nbdkit_direct_urls(self.nbdkit_socket_uri, self.nbdkit_export_name)
             else:
                 self.log.info("Using SSH forwarding mode with qemu-img convert")
                 self._create_forwarding_process()
