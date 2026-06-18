@@ -33,8 +33,8 @@ plugins/modules/import_workload_create_instance.py validate-modules:missing-gplv
 plugins/modules/import_workload_dst_check.py validate-modules:missing-gplv3-license
 plugins/modules/import_workload_dst_failure_cleanup.py validate-modules:missing-gplv3-license
 plugins/modules/import_workload_export_volumes.py validate-modules:missing-gplv3-license
-plugins/modules/import_workload_export_volume_map.py:missing-gplv3-license
-plugins/modules/update_workload_nbdkit_uris.py:missing-gplv3-license
+plugins/modules/import_workload_export_volume_map.py validate-modules:missing-gplv3-license
+plugins/modules/update_workload_nbdkit_uris.py validate-modules:missing-gplv3-license
 plugins/modules/import_workload_prelim.py validate-modules:missing-gplv3-license
 plugins/modules/import_workload_src_check.py validate-modules:missing-gplv3-license
 plugins/modules/import_workload_src_cleanup.py validate-modules:missing-gplv3-license

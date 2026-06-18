@@ -373,7 +373,6 @@ def run_module():
 
     result["transfer_uuid"] = source_host.transfer_uuid
     result["volume_map"] = source_host.volume_map
-    
     module.exit_json(**result)
 
 
