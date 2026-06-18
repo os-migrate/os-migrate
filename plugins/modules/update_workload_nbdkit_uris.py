@@ -68,8 +68,9 @@ RETURN = r"""
 from ansible.module_utils.basic import AnsibleModule
 try:
     import yaml
+    HAS_YAML = True
 except ImportError:
-    raise AnsibleError("PyYAML is required. Install with: pip install PyYAML")
+    HAS_YAML = False
 
 
 def run_module():
