@@ -74,6 +74,7 @@
       {%- endif -%}
     disk_is_bootable: "{{ (disk_item | basename) == 'disk' }}"
 
+
 - name: Update workload with multiple nbdkit URIs
   os_migrate.os_migrate.update_workload_nbdkit_uris:
     path: "{{ os_migrate_data_dir }}/workloads.yml"

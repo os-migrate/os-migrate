@@ -65,7 +65,7 @@
   when: disk_port_check.stdout != ""
   changed_when: false
 
-- name: Wait for port {{ disk_nbd_port }} to be released
+- name: "Wait for port to be released: {{ disk_nbd_port }}"
   ansible.builtin.raw: |
     for i in {1..10}; do
       if ! sudo netstat -tlnp | grep -q :{{ disk_nbd_port }}; then
@@ -78,7 +78,7 @@
   when: disk_port_check.stdout != ""
   changed_when: false
 
-- name: Start qemu-nbd for {{ disk_filename }} on port {{ disk_nbd_port }}
+- name: "Start qemu-nbd: {{ disk_filename }} on port {{ disk_nbd_port }}"
   ansible.builtin.raw: |
     setsid {{ disk_qemu_nbd_cmd }} > /tmp/qemu-nbd-{{ disk_nbd_port }}.log 2>&1 < /dev/null &
     QEMU_NBD_PID=$!
@@ -120,15 +120,7 @@
 
 - name: Add disk info to nbdkit_disk_info list
   ansible.builtin.set_fact:
-    nbdkit_disk_info: "{{ nbdkit_disk_info | default([]) + [{
-      'disk_path': disk_item,
-      'disk_name': disk_filename,
-      'device': disk_device_name,
-      'uri': disk_nbd_uri,
-      'port': disk_nbd_port | int,
-      'size': disk_size_gb | int,
-      'bootable': disk_is_bootable
-    }] }}"
+    nbdkit_disk_info: "{{ nbdkit_disk_info | default([]) + [{'disk_path': disk_item, 'disk_name': disk_filename, 'device': disk_device_name, 'uri': disk_nbd_uri, 'port': disk_nbd_port | int, 'size': disk_size_gb | int, 'bootable': disk_is_bootable}] }}"
 
 - name: Display disk qemu-nbd info
   ansible.builtin.debug:
