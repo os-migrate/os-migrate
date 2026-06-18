@@ -374,7 +374,6 @@ class OpenStackDestinationVolume(OpenstackVolumeTransfer):
                 self._convert_destination_volumes_nbdcopy()
             else:
                 self._convert_destination_volumes()
-
             self._detach_destination_volumes()
         finally:
             if not self.use_nbdkit_direct:
