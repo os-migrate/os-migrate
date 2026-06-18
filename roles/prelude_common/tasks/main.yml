@@ -15,7 +15,7 @@
 # under the License.
 
 - name: Get the current openstacksdk version
-  ansible.builtin.command: python3 -c "import openstack; print(openstack.version.__version__)"
+  ansible.builtin.command: python3 -c "import importlib.metadata; print(importlib.metadata.version('openstacksdk'))"
   register: _installed_openstacksdk_cmd
   changed_when: false
 
