@@ -4,6 +4,16 @@ Changelog
 
 (unreleased)
 ------------
+
+Fix
+~~~
+- Update openstacksdk module version check. [Piotr Czarnik]
+
+  After openstack.version.__version__ was removed in openstacksdk 4.15.0
+
+
+1.0.5 (2026-06-08)
+------------------
 - Add ansible 2.16+ to the README. [mathieu bultel]
 - Bump os-migrate release to 1.0.5. [mathieu bultel]
 - Add galaxy ignore file and fix links in the README. [mathieu bultel]
