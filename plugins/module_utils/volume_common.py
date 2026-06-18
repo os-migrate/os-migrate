@@ -1054,25 +1054,30 @@ class OpenstackVolumeTransfer(OpenStackVolumeBase):
                 universal_newlines=True,
             )
 
-            # Monitor progress from stderr
+            progress = 0.0
             while nbd_sub.poll() is None:
                 try:
+                    rc = nbd_sub.poll()
                     line = nbd_sub.stderr.readline()
                     if line:
                         self.log.info("nbdcopy: %s", line.strip())
-                        # nbdcopy progress format: "[ 12.5% ] 1.2 GiB / 10 GiB"
-                        if '%' in line:
+                        if "%" in line:
                             try:
-                                # Extract percentage from output
-                                pct_str = line.split('%')[0].split('[')[-1].strip()
-                                progress = float(pct_str)
+                                pct = (
+                                    line.split("%")[0]
+                                    .split("[")[-1]
+                                    .strip()
+                                )
+                                progress = float(pct)
+                                self.log.info("Progress: %f%%", progress)
                                 self._update_progress(path, progress)
                             except (ValueError, IndexError):
                                 pass
+                    if rc is not None:
+                        raise RuntimeError(f"nbdcopy exited unexpectedly with return code {rc}!")
                 except Exception as err:
                     self.log.debug("Error reading nbdcopy output: %s", str(err))
                     time.sleep(1)
-
             # Get final output
             stdout, stderr = nbd_sub.communicate()
             if stdout:

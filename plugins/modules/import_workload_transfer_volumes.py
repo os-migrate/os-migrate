@@ -346,18 +346,6 @@ class OpenStackDestinationVolume(OpenstackVolumeTransfer):
                     "source_id": None,
                 }
 
-        # Verify connectivity to all nbdkit sockets
-        self.log.info("Verifying connectivity to all nbdkit sockets...")
-        for device, mapping in self.volume_map.items():
-            url = mapping["url"]
-            try:
-                cmd = ["qemu-img", "info", url]
-                image_info = self.shell.cmd_out(cmd)
-                self.log.info("qemu-img info for %s: %s", device, image_info[:200])
-            except Exception as error:
-                self.log.error("Failed to connect to %s at %s: %s", device, url, error)
-                raise RuntimeError(f"Cannot connect to nbdkit socket for {device} at {url}")
-
     def transfer_exports(self):
         try:
             if self.use_nbdkit_direct:
