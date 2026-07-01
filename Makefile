@@ -148,13 +148,17 @@ vendor-links: vendor-import
 		ln -sf $(UPSTREAM_MODULES)/$$mod.py plugins/modules/$$mod.py; \
 		echo "Linked module: os_migrate.os_migrate.$$mod"; \
 	done
+	@# Fix for the specific 'openstack' namespace import
+	@echo "--- Fixing openstack namespace imports in modules ---"
+	@for mod in $(VENDORED_MODULES); do \
+		sed -i 's/ansible_collections\.openstack\.cloud\.plugins\.module_utils\.openstack/ansible_collections.os_migrate.os_migrate.plugins.module_utils.openstack/g' plugins/modules/$$mod.py; \
+	done
 	@# Symlink Module Utils
 	@echo "--- Linking upstream module_utils ---"
 	@for util in $(VENDORED_MODULE_UTILS); do \
 		ln -sf $(UPSTREAM_UTILS)/$$util.py plugins/module_utils/$$util.py; \
 		echo "Linked module_util: os_migrate.os_migrate.$$util"; \
 	done
-	@# Fix for the specific 'openstack' namespace import
 
 # Clean vender symlinks and module_utils.
 vendor-clean:

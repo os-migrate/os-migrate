@@ -45,6 +45,7 @@ class Server(osm_resource.Resource):
         "status",
         "updated_at",
         "user_id",
+        "hypervisor_hostname",
     ]
     info_from_refs = [
         "flavor_id",
@@ -94,6 +95,9 @@ class Server(osm_resource.Resource):
                 "uuid": None,
             }
         ],
+        "use_nbdkit_direct": False,
+        "nbdkit_socket_uri": None,
+        "nbdkit_export_name": None,
     }
 
     @classmethod
@@ -228,6 +232,9 @@ class Server(osm_resource.Resource):
         sdk_params["block_device_mapping"] = deepcopy(block_device_mapping)
         # shadowing to make sure we don't modify the function argument
         block_device_mapping = sdk_params["block_device_mapping"]
+        # if direct nbdkit then we force boot_disk_copy
+        if migration_params["use_nbdkit_direct"]:
+            migration_params["boot_disk_copy"] = True
 
         has_boot_volume = (
             len(

@@ -1,0 +1,142 @@
+---
+# Process individual disk - inspect and spawn qemu-nbd
+
+- name: Get disk filename
+  ansible.builtin.set_fact:
+    disk_filename: "{{ disk_item | basename }}"
+    disk_index: "{{ disk_loop_index }}"
+
+- name: Inspect disk with qemu-img info
+  ansible.builtin.raw: |
+    qemu-img info {{ disk_item }}
+  delegate_to: "{{ hypervisor_hostname }}"
+  register: qemu_img_info
+  changed_when: false
+
+- name: Display disk info
+  ansible.builtin.debug:
+    msg: "{{ disk_filename }}: {{ qemu_img_info.stdout }}"
+
+- name: Parse disk format and size
+  ansible.builtin.set_fact:
+    disk_format_match: "{{ qemu_img_info.stdout | regex_search('file format: (\\w+)', '\\1') }}"
+    disk_size_match: "{{ qemu_img_info.stdout | regex_search('virtual size: ([0-9]+) GiB', '\\1') }}"
+
+- name: Set disk properties
+  ansible.builtin.set_fact:
+    disk_format: "{{ disk_format_match | first | trim if disk_format_match else 'qcow2' }}"
+    disk_size_gb: "{{ disk_size_match | first | int if disk_size_match else 0 }}"
+
+- name: Display disk configuration
+  ansible.builtin.debug:
+    msg:
+      - "Disk: {{ disk_filename }}"
+      - "Path: {{ disk_item }}"
+      - "Format: {{ disk_format }}"
+      - "Size: {{ disk_size_gb }} GB"
+
+- name: Calculate NBD port for this disk
+  ansible.builtin.set_fact:
+    disk_nbd_port: "{{ nbdkit_base_port | int + disk_index | int }}"
+
+- name: Build qemu-nbd command for this disk
+  ansible.builtin.set_fact:
+    disk_qemu_nbd_cmd: >-
+      sudo qemu-nbd
+      -f {{ disk_format }}
+      -p {{ disk_nbd_port }}
+      {{ disk_item }}
+
+- name: Display qemu-nbd command for this disk
+  ansible.builtin.debug:
+    msg: "qemu-nbd command for {{ disk_filename }}: {{ disk_qemu_nbd_cmd }}"
+
+- name: Check if qemu-nbd is already running on port {{ disk_nbd_port }}
+  ansible.builtin.raw: |
+    sudo netstat -tlnp | grep :{{ disk_nbd_port }} || true
+  delegate_to: "{{ hypervisor_hostname }}"
+  register: disk_port_check
+  changed_when: false
+
+- name: Stop existing qemu-nbd if running on port {{ disk_nbd_port }}
+  ansible.builtin.raw: |
+    sudo pkill -f "qemu-nbd.*{{ disk_nbd_port }}" || true
+  delegate_to: "{{ hypervisor_hostname }}"
+  when: disk_port_check.stdout != ""
+  changed_when: false
+
+- name: "Wait for port to be released: {{ disk_nbd_port }}"
+  ansible.builtin.raw: |
+    for i in {1..10}; do
+      if ! sudo netstat -tlnp | grep -q :{{ disk_nbd_port }}; then
+        exit 0
+      fi
+      sleep 1
+    done
+    exit 0
+  delegate_to: "{{ hypervisor_hostname }}"
+  when: disk_port_check.stdout != ""
+  changed_when: false
+
+- name: "Start qemu-nbd: {{ disk_filename }}"
+  ansible.builtin.raw: |
+    setsid {{ disk_qemu_nbd_cmd }} > /tmp/qemu-nbd-{{ disk_nbd_port }}.log 2>&1 < /dev/null &
+    QEMU_NBD_PID=$!
+    sleep 2
+    if ps -p $QEMU_NBD_PID > /dev/null 2>&1; then
+      echo "qemu-nbd started for {{ disk_filename }} with PID $QEMU_NBD_PID"
+    else
+      echo "qemu-nbd failed to start for {{ disk_filename }}"
+      cat /tmp/qemu-nbd-{{ disk_nbd_port }}.log
+      exit 1
+    fi
+  delegate_to: "{{ hypervisor_hostname }}"
+  register: disk_qemu_nbd_start
+  changed_when: true
+
+- name: Wait for qemu-nbd to be ready on port {{ disk_nbd_port }}
+  ansible.builtin.raw: |
+    for i in {1..30}; do
+      if sudo netstat -tlnp | grep -q :{{ disk_nbd_port }}; then
+        echo "Port {{ disk_nbd_port }} is ready"
+        exit 0
+      fi
+      sleep 1
+    done
+    echo "Timeout waiting for port {{ disk_nbd_port }}"
+    exit 1
+  delegate_to: "{{ hypervisor_hostname }}"
+  register: disk_wait_result
+  changed_when: false
+
+- name: Build NBD URI for this disk
+  ansible.builtin.set_fact:
+    disk_nbd_uri: >-
+      {% if os_migrate_nbdkit_protocol == 'ssh' -%}
+      nbd+ssh://{{ os_migrate_nbdkit_ssh_user }}@{{ hypervisor_hostname }}:{{ disk_nbd_port }}
+      {%- else -%}
+      nbd://{{ hypervisor_hostname }}:{{ disk_nbd_port }}
+      {%- endif %}
+
+- name: Add disk info to nbdkit_disk_info list
+  ansible.builtin.set_fact:
+    nbdkit_disk_info: >-
+      {{ nbdkit_disk_info | default([]) + [disk_info] }}
+  vars:
+    disk_info:
+      disk_path: "{{ disk_item }}"
+      disk_name: "{{ disk_filename }}"
+      device: "{{ disk_device_name }}"
+      uri: "{{ disk_nbd_uri }}"
+      port: "{{ disk_nbd_port | int }}"
+      size: "{{ disk_size_gb | int }}"
+      bootable: "{{ disk_is_bootable }}"
+
+- name: Display disk qemu-nbd info
+  ansible.builtin.debug:
+    msg:
+      - "Started qemu-nbd for {{ disk_filename }}"
+      - "Device: {{ disk_device_name }}"
+      - "URI: {{ disk_nbd_uri }}"
+      - "Port: {{ disk_nbd_port }}"
+      - "Size: {{ disk_size_gb }} GB"

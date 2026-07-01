@@ -1,0 +1,89 @@
+---
+# Process individual workload - spawn nbdkit on its hypervisor
+
+- name: Get workload details
+  ansible.builtin.set_fact:
+    instance_id: "{{ workload_item._info.id }}"
+    instance_name: "{{ workload_item.params.name }}"
+    instance_status: "{{ workload_item._info.status }}"
+    hypervisor_hostname: "{{ workload_item._info.hypervisor_hostname | default('') }}"
+
+- name: Fail if instance is not SHUTOFF
+  ansible.builtin.fail:
+    msg: "Instance {{ instance_name }} ({{ instance_id }}) must be SHUTOFF. Current status: {{ instance_status }}"
+  when: instance_status != "SHUTOFF"
+
+- name: Fail if hypervisor hostname not in workload data
+  ansible.builtin.fail:
+    msg: "Hypervisor hostname not found in workload data for {{ instance_name }}. Run export_workloads first."
+  when: hypervisor_hostname == ''
+
+- name: Display workload info
+  ansible.builtin.debug:
+    msg:
+      - "Processing: {{ instance_name }}"
+      - "Instance ID: {{ instance_id }}"
+      - "Hypervisor: {{ hypervisor_hostname }}"
+      - "Status: {{ instance_status }}"
+
+- name: Find all instance disks on hypervisor
+  ansible.builtin.raw: |
+    # Find disk, disk.eph0, disk.eph1, etc. but exclude disk.info
+    find {{ os_migrate_nbdkit_nova_instances_dir }}/{{ instance_id }} -name 'disk*' -type f ! -name '*.info' | sort
+  delegate_to: "{{ hypervisor_hostname }}"
+  register: disk_paths_result
+  changed_when: false
+
+- name: Parse disk paths
+  ansible.builtin.set_fact:
+    instance_disk_paths: "{{ disk_paths_result.stdout_lines | select('match', '.*disk.*') | reject('search', 'disk.info') | list }}"
+
+- name: Fail if no disks found
+  ansible.builtin.fail:
+    msg: "No disks found for instance {{ instance_id }} on hypervisor {{ hypervisor_hostname }}"
+  when: instance_disk_paths | length == 0
+
+- name: Display found disks
+  ansible.builtin.debug:
+    msg: "Found {{ instance_disk_paths | length }} disk(s): {{ instance_disk_paths }}"
+
+- name: Initialize nbdkit disk info list
+  ansible.builtin.set_fact:
+    nbdkit_disk_info: []
+
+- name: Set base port for nbdkit
+  ansible.builtin.set_fact:
+    nbdkit_base_port: "{{ workload_item._migration_params.nbdkit_port | default(os_migrate_nbdkit_port) }}"
+
+- name: Process each disk
+  ansible.builtin.include_tasks: process_disk.yml
+  loop: "{{ instance_disk_paths }}"
+  loop_control:
+    loop_var: disk_item
+    index_var: disk_loop_index
+    label: "{{ disk_item | basename }}"
+  vars:
+    disk_device_name: >-
+      {%- set disk_basename = disk_item | basename -%}
+      {%- if disk_basename == 'disk' -%}
+      /dev/vda
+      {%- elif 'disk.eph' in disk_basename -%}
+      /dev/vd{{ 'bcdefghijklmnopqrstuvwxyz'[disk_loop_index - 1] }}
+      {%- else -%}
+      /dev/vd{{ 'bcdefghijklmnopqrstuvwxyz'[disk_loop_index] }}
+      {%- endif -%}
+    disk_is_bootable: "{{ (disk_item | basename) == 'disk' }}"
+
+
+- name: Update workload with multiple nbdkit URIs
+  os_migrate.os_migrate.update_workload_nbdkit_uris:
+    path: "{{ os_migrate_data_dir }}/workloads.yml"
+    instance_id: "{{ instance_id }}"
+    nbdkit_disks: "{{ nbdkit_disk_info }}"
+
+- name: Success message
+  ansible.builtin.debug:
+    msg:
+      - "Successfully spawned {{ nbdkit_disk_info | length }} nbdkit process(es) for {{ instance_name }}"
+      - "Disks: {{ nbdkit_disk_info | map(attribute='disk_name') | list }}"
+      - "Ports: {{ nbdkit_disk_info | map(attribute='port') | list }}"

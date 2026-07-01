@@ -1,0 +1,9 @@
+---
+# Spawn nbdkit on hypervisors for workloads with use_nbdkit_direct enabled
+# This should be run AFTER export_workloads and BEFORE import_workloads
+- name: Import from hypervisor
+  hosts: migrator
+  environment:
+    OS_CLIENT_CONFIG_FILE: "{{ os_migrate_clouds_path | default(os_migrate_data_dir ~ '/clouds.yaml') }}"
+  roles:
+    - os_migrate.os_migrate.import_from_hypervisor

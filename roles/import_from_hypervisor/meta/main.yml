@@ -1,0 +1,19 @@
+---
+galaxy_info:
+  author: OpenStack tenant migration tools
+  description: Test role to spawn nbdkit on hypervisor for workload migration testing
+  company: Red Hat
+  license: Apache-2.0
+  min_ansible_version: "2.9"
+  platforms:
+    - name: EL
+      versions:
+        - "8"
+        - "9"
+  galaxy_tags:
+    - openstack
+    - migration
+    - testing
+    - nbdkit
+
+dependencies: []
