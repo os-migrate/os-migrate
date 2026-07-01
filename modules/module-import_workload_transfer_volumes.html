@@ -199,6 +199,19 @@
 <dt class="field-even">timeout<span class="colon">:</span></dt>
 <dd class="field-even"><p>Timeout for long running operations, in seconds.</p>
 </dd>
+<dt class="field-odd">use_nbdkit_direct<span class="colon">:</span></dt>
+<dd class="field-odd"><p>When true, consume volume data directly from an nbdkit socket instead of using source conversion host.</p>
+<p>Bypasses SSH forwarding and source conversion host export process.</p>
+</dd>
+<dt class="field-even">nbdkit_socket_uri<span class="colon">:</span></dt>
+<dd class="field-even"><p>NBD socket URI to connect to when use_nbdkit_direct is true.</p>
+<p>Format can be nbd://host:port or nbd+unix:///path/to/socket or nbd+ssh://user&#64;host/export.</p>
+<p>Required when use_nbdkit_direct is true.</p>
+</dd>
+<dt class="field-odd">nbdkit_export_name<span class="colon">:</span></dt>
+<dd class="field-odd"><p>NBD export name to use when connecting to the nbdkit socket.</p>
+<p>Optional, used when the nbdkit server requires an export name.</p>
+</dd>
 </dl>
 </section>
 <section id="a-u-t-h-o-r-s">

@@ -11,6 +11,34 @@ Fix
 
   After openstack.version.__version__ was removed in openstacksdk 4.15.0
 
+Other
+~~~~~
+- Use 4.5.0 for openstacksdk only, since 4.16 breaks CI. [mathieu
+  bultel]
+- Fix openstack modules import. [mathieu bultel]
+- Merge branch 'main' into source/nbd. [mathieu bultel]
+- Remove stdout_callback yaml which is deprecated. [mathieu bultel]
+- Add documentation for the new role and the nbd feature. [mathieu
+  bultel]
+- Handle import yaml error. [mathieu bultel]
+- Fix trailing spaces, wrong syntax in ignore sanity tests and python
+  import. [mathieu bultel]
+- Fix minor linting issues. [mathieu bultel]
+- Add sanity test ignore licence for new modules. [mathieu bultel]
+- Fix linters. [mathieu bultel]
+- Correct syntax warnings. [mathieu bultel]
+- Do not check uri with qemu-nbd. [mathieu bultel]
+- Spawn qemu-nbd instead of nbdkit. [mathieu bultel]
+- Get uri from disk list instead. [mathieu bultel]
+- Handle multi ephemeral disk from hypervisor. [mathieu bultel]
+- Create a specific module to handle volume_map with direct nbdkit.
+  [mathieu bultel]
+- Remove use less playbooks. [mathieu bultel]
+- Make test role import_from_hypoervisor compliant with os-migrate
+  export/import roles. [mathieu bultel]
+- Add import from hypervisor role for testing. [mathieu bultel]
+- Add KVM as a source for os-migrate. [mathieu bultel]
+
 
 1.0.5 (2026-06-08)
 ------------------

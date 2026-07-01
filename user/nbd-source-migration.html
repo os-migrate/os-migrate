@@ -1,0 +1,384 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NBD Source Migration &mdash; os-migrate  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fe63c2af" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            os-migrate
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">OS Migrate User Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../roles.html">Documented roles in os-migrate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Documented modules in os-migrate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devel/README.html">OS Migrate Developer Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">os-migrate</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">NBD Source Migration</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/user/nbd-source-migration.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="nbd-source-migration">
+<h1>NBD Source Migration<a class="headerlink" href="#nbd-source-migration" title="Link to this heading"></a></h1>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p>The NBD source migration feature allows workload migration to consume volume data directly from the source hypervisor using the NBD protocol and qemu-nbd. Instead of routing data through a source conversion host, the migration connects directly to the compute node where the instance lives, reducing network hops and improving transfer performance.</p>
+<p>This approach is useful when you have direct network access to your hypervisors and want to bypass the traditional conversion host architecture. The feature supports multiple disks per instance, including boot volumes and ephemeral disks.</p>
+</section>
+<section id="how-it-works">
+<h2>How it works<a class="headerlink" href="#how-it-works" title="Link to this heading"></a></h2>
+<p>Traditional migration path:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Source</span> <span class="n">VM</span> <span class="o">-&gt;</span> <span class="n">Source</span> <span class="n">Conv</span> <span class="n">Host</span> <span class="p">(</span><span class="n">SSH</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Destination</span> <span class="n">Conv</span> <span class="n">Host</span> <span class="o">-&gt;</span> <span class="n">Destination</span> <span class="n">Volumes</span>
+</pre></div>
+</div>
+<p>NBD direct path:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Source</span> <span class="n">VM</span> <span class="p">(</span><span class="n">on</span> <span class="n">Hypervisor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">qemu</span><span class="o">-</span><span class="n">nbd</span> <span class="n">on</span> <span class="n">Hypervisor</span> <span class="o">-&gt;</span> <span class="n">Destination</span> <span class="n">Conv</span> <span class="n">Host</span> <span class="o">-&gt;</span> <span class="n">Destination</span> <span class="n">Volumes</span>
+</pre></div>
+</div>
+<p>The data flows directly from the hypervisor to the destination conversion host using nbdcopy, eliminating the intermediate source conversion host step.</p>
+</section>
+<section id="enabling-the-feature">
+<h2>Enabling the feature<a class="headerlink" href="#enabling-the-feature" title="Link to this heading"></a></h2>
+<p>To enable NBD direct mode for a workload, add the <code class="docutils literal notranslate"><span class="pre">use_nbdkit_direct</span></code> flag to the workload definition in your <code class="docutils literal notranslate"><span class="pre">workloads.yml</span></code> file:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">_info</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">abc-123-def-456</span>
+<span class="w">    </span><span class="nt">hypervisor_hostname</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">compute-01.example.com</span>
+<span class="w">    </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SHUTOFF</span>
+<span class="w">  </span><span class="nt">params</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-instance</span>
+<span class="w">  </span><span class="nt">_migration_params</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">use_nbdkit_direct</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+<p>You can enable this flag manually after running export_workloads, or set it in your workload definitions before export.</p>
+</section>
+<section id="the-import-from-hypervisor-role">
+<h2>The import_from_hypervisor role<a class="headerlink" href="#the-import-from-hypervisor-role" title="Link to this heading"></a></h2>
+<p>The import_from_hypervisor role spawns qemu-nbd processes on the source hypervisors. This role should be run after exporting workloads and before importing them.</p>
+<section id="running-the-role">
+<h3>Running the role<a class="headerlink" href="#running-the-role" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ansible-playbook<span class="w"> </span>-i<span class="w"> </span>inventory.yml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>os_migrate.os_migrate.playbooks.import_from_hypervisor.yml
+</pre></div>
+</div>
+<p>Or from the playbooks directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ansible-playbook<span class="w"> </span>-i<span class="w"> </span>inventory.yml<span class="w"> </span>playbooks/import_from_hypervisor.yml
+</pre></div>
+</div>
+</section>
+<section id="what-the-role-does">
+<h3>What the role does<a class="headerlink" href="#what-the-role-does" title="Link to this heading"></a></h3>
+<p>For each workload marked with <code class="docutils literal notranslate"><span class="pre">use_nbdkit_direct:</span> <span class="pre">true</span></code>, the role:</p>
+<ol class="arabic simple">
+<li><p>Verifies the instance is in SHUTOFF state</p></li>
+<li><p>Connects to the hypervisor via SSH</p></li>
+<li><p>Discovers all disk files in <code class="docutils literal notranslate"><span class="pre">/var/lib/nova/instances/&lt;uuid&gt;/</span></code> (disk, disk.eph0, disk.eph1, etc.)</p></li>
+<li><p>Inspects each disk with qemu-img info to detect format and size</p></li>
+<li><p>Spawns one qemu-nbd process per disk on sequential ports starting from 10809</p></li>
+<li><p>Updates the workloads.yml file with the nbdkit_disks list</p></li>
+</ol>
+</section>
+<section id="the-nbdkit-disks-field">
+<h3>The nbdkit_disks field<a class="headerlink" href="#the-nbdkit-disks-field" title="Link to this heading"></a></h3>
+<p>After running import_from_hypervisor, your workload definition will be updated with a <code class="docutils literal notranslate"><span class="pre">nbdkit_disks</span></code> list:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">_info</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">abc-123-def-456</span>
+<span class="w">    </span><span class="nt">hypervisor_hostname</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">compute-01.example.com</span>
+<span class="w">  </span><span class="nt">params</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-instance</span>
+<span class="w">  </span><span class="nt">_migration_params</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">use_nbdkit_direct</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">nbdkit_disks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/dev/vda&quot;</span>
+<span class="w">        </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;nbd://compute-01.example.com:10809&quot;</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10809</span>
+<span class="w">        </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">        </span><span class="nt">bootable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/dev/vdb&quot;</span>
+<span class="w">        </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;nbd://compute-01.example.com:10810&quot;</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10810</span>
+<span class="w">        </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">        </span><span class="nt">bootable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</pre></div>
+</div>
+<p>Each entry in the list represents one disk with:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">device</span></code>: The device name on the destination instance</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">uri</span></code>: The NBD URI to connect to</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">port</span></code>: The qemu-nbd port number</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">size</span></code>: Disk size in GB (detected from qemu-img info)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bootable</span></code>: Whether this is the boot disk</p></li>
+</ul>
+</section>
+<section id="role-configuration">
+<h3>Role configuration<a class="headerlink" href="#role-configuration" title="Link to this heading"></a></h3>
+<p>You can customize the role behavior using these variables in your playbook or inventory:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Base port for qemu-nbd (increments for each disk)</span>
+<span class="nt">os_migrate_nbdkit_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10809</span>
+
+<span class="c1"># Protocol: &#39;tcp&#39; or &#39;ssh&#39;</span>
+<span class="nt">os_migrate_nbdkit_protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tcp</span>
+
+<span class="c1"># SSH user (only for ssh protocol)</span>
+<span class="nt">os_migrate_nbdkit_ssh_user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stack</span>
+
+<span class="c1"># Read-only mode (recommended to keep true)</span>
+<span class="nt">os_migrate_nbdkit_readonly</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="c1"># Nova instances directory on hypervisor</span>
+<span class="nt">os_migrate_nbdkit_nova_instances_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/var/lib/nova/instances</span>
+</pre></div>
+</div>
+</section>
+<section id="manual-hypervisor-preparation">
+<h3>Manual hypervisor preparation<a class="headerlink" href="#manual-hypervisor-preparation" title="Link to this heading"></a></h3>
+<p>If you want to skip the import_from_hypervisor role and prepare the hypervisor manually, follow these steps:</p>
+<ol class="arabic">
+<li><p>Find the instance UUID and locate its directory on the hypervisor:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/var/lib/nova/instances/&lt;uuid&gt;/
+├── disk          # Boot disk
+├── disk.eph0     # Ephemeral disk 0 (if present)
+├── disk.eph1     # Ephemeral disk 1 (if present)
+└── disk.info     # Metadata file (not used)
+</pre></div>
+</div>
+</li>
+<li><p>Inspect the disk format:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>qemu-img<span class="w"> </span>info<span class="w"> </span>/var/lib/nova/instances/&lt;uuid&gt;/disk
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Start qemu-nbd for each disk:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Boot disk on port 10809</span>
+sudo<span class="w"> </span>qemu-nbd<span class="w"> </span>-f<span class="w"> </span>qcow2<span class="w"> </span>-p<span class="w"> </span><span class="m">10809</span><span class="w"> </span>--read-only<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>/var/lib/nova/instances/&lt;uuid&gt;/disk
+
+<span class="c1"># First ephemeral disk on port 10810 (if present)</span>
+sudo<span class="w"> </span>qemu-nbd<span class="w"> </span>-f<span class="w"> </span>qcow2<span class="w"> </span>-p<span class="w"> </span><span class="m">10810</span><span class="w"> </span>--read-only<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>/var/lib/nova/instances/&lt;uuid&gt;/disk.eph0
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>Manually update your workloads.yml with the nbdkit_disks structure shown above.</p></li>
+</ol>
+</section>
+</section>
+<section id="the-import-workloads-role-with-nbd-direct-mode">
+<h2>The import_workloads role with NBD direct mode<a class="headerlink" href="#the-import-workloads-role-with-nbd-direct-mode" title="Link to this heading"></a></h2>
+<p>When import_workloads detects <code class="docutils literal notranslate"><span class="pre">use_nbdkit_direct:</span> <span class="pre">true</span></code> in a workload definition, it changes the migration workflow.</p>
+<section id="standard-workflow-use-nbdkit-direct-false">
+<h3>Standard workflow (use_nbdkit_direct: false)<a class="headerlink" href="#standard-workflow-use-nbdkit-direct-false" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Attach source volumes to source conversion host</p></li>
+<li><p>Spawn nbdkit on source conversion host</p></li>
+<li><p>Create SSH tunnel from destination to source conversion host</p></li>
+<li><p>Transfer data using qemu-img convert</p></li>
+<li><p>Detach source volumes</p></li>
+</ol>
+</section>
+<section id="nbd-direct-workflow-use-nbdkit-direct-true">
+<h3>NBD direct workflow (use_nbdkit_direct: true)<a class="headerlink" href="#nbd-direct-workflow-use-nbdkit-direct-true" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Skip source conversion host operations entirely</p></li>
+<li><p>Read nbdkit_disks from workload definition</p></li>
+<li><p>Create destination volumes (one per disk in nbdkit_disks)</p></li>
+<li><p>Attach destination volumes to destination conversion host</p></li>
+<li><p>Use nbdcopy to transfer each disk from the NBD URI to its destination volume</p></li>
+<li><p>Detach destination volumes</p></li>
+<li><p>Create instance with the new volumes</p></li>
+</ol>
+<p>The key differences:</p>
+<ul class="simple">
+<li><p>No source conversion host needed</p></li>
+<li><p>Direct connection from hypervisor to destination</p></li>
+<li><p>Uses nbdcopy instead of qemu-img convert</p></li>
+<li><p>Handles multiple disks independently</p></li>
+</ul>
+</section>
+<section id="transfer-process">
+<h3>Transfer process<a class="headerlink" href="#transfer-process" title="Link to this heading"></a></h3>
+<p>Each disk is transferred in parallel using nbdcopy:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Boot disk transfer</span>
+nbdcopy<span class="w"> </span>nbd://compute-01:10809<span class="w"> </span>/dev/vde<span class="w"> </span>--progress
+
+<span class="c1"># Ephemeral disk transfer</span>
+nbdcopy<span class="w"> </span>nbd://compute-01:10810<span class="w"> </span>/dev/vdf<span class="w"> </span>--progress
+</pre></div>
+</div>
+<p>Progress is tracked in the state file for each workload, allowing you to monitor the transfer.</p>
+</section>
+</section>
+<section id="security-considerations">
+<h2>Security considerations<a class="headerlink" href="#security-considerations" title="Link to this heading"></a></h2>
+<p>When using NBD direct mode:</p>
+<ol class="arabic">
+<li><p>Ensure the instance is SHUTOFF before starting qemu-nbd. The role enforces this check.</p></li>
+<li><p>Always use read-only mode for qemu-nbd to prevent accidental writes to source disks:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_nbdkit_readonly</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+</li>
+<li><p>Consider using SSH protocol for encrypted transfers over untrusted networks:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_nbdkit_protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ssh</span>
+<span class="nt">os_migrate_nbdkit_ssh_user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stack</span>
+</pre></div>
+</div>
+</li>
+<li><p>Ensure firewall rules allow the destination conversion host to connect to ports 10809+ on your hypervisors.</p></li>
+<li><p>qemu-nbd binds to all interfaces by default. Use firewall rules to restrict access to only the destination conversion host.</p></li>
+</ol>
+</section>
+<section id="complete-workflow-example">
+<h2>Complete workflow example<a class="headerlink" href="#complete-workflow-example" title="Link to this heading"></a></h2>
+<p>Here’s a complete migration using NBD direct mode:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. Export workloads from source (standard)</span>
+ansible-playbook<span class="w"> </span>-i<span class="w"> </span>inventory.yml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>os_migrate.os_migrate.export_workloads.yml
+
+<span class="c1"># 2. Edit workloads.yml to enable NBD direct mode</span>
+<span class="c1"># Add use_nbdkit_direct: true to _migration_params</span>
+
+<span class="c1"># 3. Spawn qemu-nbd on hypervisors</span>
+ansible-playbook<span class="w"> </span>-i<span class="w"> </span>inventory.yml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>playbooks/import_from_hypervisor.yml
+
+<span class="c1"># 4. Verify the nbdkit_disks were added to workloads.yml</span>
+cat<span class="w"> </span>os-migrate-data/workloads.yml
+
+<span class="c1"># 5. Import workloads (uses NBD URIs)</span>
+ansible-playbook<span class="w"> </span>-i<span class="w"> </span>inventory.yml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>os_migrate.os_migrate.import_workloads.yml
+</pre></div>
+</div>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h2>
+<section id="qemu-nbd-process-not-starting">
+<h3>qemu-nbd process not starting<a class="headerlink" href="#qemu-nbd-process-not-starting" title="Link to this heading"></a></h3>
+<p>Check if the port is already in use:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>netstat<span class="w"> </span>-tlnp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">10809</span>
+</pre></div>
+</div>
+<p>The role automatically stops existing qemu-nbd processes on the same port before starting new ones.</p>
+</section>
+<section id="cannot-connect-to-nbd-from-destination">
+<h3>Cannot connect to NBD from destination<a class="headerlink" href="#cannot-connect-to-nbd-from-destination" title="Link to this heading"></a></h3>
+<p>Test connectivity:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># From destination conversion host</span>
+qemu-img<span class="w"> </span>info<span class="w"> </span>nbd://hypervisor-hostname:10809
+</pre></div>
+</div>
+<p>Check firewall rules on the hypervisor and verify qemu-nbd is listening:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># On hypervisor</span>
+sudo<span class="w"> </span>netstat<span class="w"> </span>-tlnp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>qemu-nbd
+</pre></div>
+</div>
+</section>
+<section id="instance-not-in-shutoff-state">
+<h3>Instance not in SHUTOFF state<a class="headerlink" href="#instance-not-in-shutoff-state" title="Link to this heading"></a></h3>
+<p>The role requires instances to be SHUTOFF before spawning qemu-nbd. Either manually shut down the instance or use:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_workload_stop_before_migration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+</section>
+<section id="missing-hypervisor-hostname">
+<h3>Missing hypervisor_hostname<a class="headerlink" href="#missing-hypervisor-hostname" title="Link to this heading"></a></h3>
+<p>The hypervisor_hostname field is populated by export_workloads. Make sure you’ve run the export step and that the source cloud API provides this information.</p>
+</section>
+</section>
+<section id="limitations">
+<h2>Limitations<a class="headerlink" href="#limitations" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Only works with instances in SHUTOFF state</p></li>
+<li><p>Requires direct network connectivity from destination conversion host to source hypervisors</p></li>
+<li><p>qemu-nbd processes remain running after migration (you may want to clean them up manually)</p></li>
+<li><p>Currently uses variable names with “nbdkit” prefix for backward compatibility, even though the implementation uses qemu-nbd</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, os-migrate.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
