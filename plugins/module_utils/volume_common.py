@@ -855,6 +855,46 @@ class OpenstackVolumeTransfer(OpenStackVolumeBase):
         """
         raise NotImplementedError("Please Implement this method")
 
+    def _setup_nbdkit_direct_urls(self, nbdkit_socket_uri, nbdkit_export_name):
+        """
+        Set up volume URLs to point directly to an external nbdkit socket.
+        This bypasses the source conversion host entirely.
+        """
+        self.log.info("Setting up direct nbdkit socket URLs...")
+        self.log.info("NBDkit socket URI: %s", nbdkit_socket_uri)
+        self.log.info("NBDkit export name: %s", nbdkit_export_name)
+
+        for path, mapping in self.volume_map.items():
+            # Use the provided nbdkit socket URI directly
+            if nbdkit_export_name:
+                url = f"{nbdkit_socket_uri}/{nbdkit_export_name}"
+            else:
+                url = nbdkit_socket_uri
+            self.volume_map[path]["url"] = url
+            self.log.info("Volume %s will use NBD URL: %s", path, url)
+
+        # Verify connectivity to nbdkit socket
+        self.log.info("Waiting for valid qemu-img info on nbdkit socket...")
+        pending_disks = set(self.volume_map.keys())
+        for second in range(self.timeout):
+            try:
+                for disk in pending_disks.copy():
+                    mapping = self.volume_map[disk]
+                    url = mapping["url"]
+                    cmd = ["qemu-img", "info", url]
+                    image_info = self.shell.cmd_out(cmd)
+                    self.log.info("qemu-img info for %s: %s", disk, image_info)
+                    pending_disks.remove(disk)
+            except subprocess.CalledProcessError as error:
+                self.log.info("Got exception: %s", error)
+                self.log.info("Trying again.")
+                time.sleep(1)
+            else:
+                self.log.info("All volume exports ready.")
+                break
+        else:
+            raise RuntimeError("Timed out connecting to nbdkit socket!")
+
     def _create_forwarding_process(self):
         """
         Find free ports on the destination conversion host and set up SSH
@@ -983,6 +1023,75 @@ class OpenstackVolumeTransfer(OpenStackVolumeBase):
             "destination",
             (self._converter, self.shell.cmd_out, update_dest, volume_id),
         )
+
+    def _convert_destination_volumes_nbdcopy(self):
+        """
+        Use nbdcopy to transfer data from nbdkit socket to destination volumes.
+        This is used in nbdkit direct mode.
+        """
+        self.log.info("Converting volumes with nbdcopy...")
+        for path, mapping in self.volume_map.items():
+            self.log.info("Copying source VM's %s: %s", path, str(mapping))
+            url = mapping["url"]
+            dest_dev = mapping["dest_dev"]
+
+            self.log.info("Using nbdcopy from %s to %s", url, dest_dev)
+            cmd = [
+                "sudo",
+                "nbdcopy",
+                url,
+                dest_dev,
+                "--progress",
+            ]
+
+            self.log.info("Starting nbdcopy: %s", " ".join(cmd))
+            # nbdcopy outputs progress to stderr
+            nbd_sub = self.shell.cmd_sub(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                stdin=DEVNULL,
+                universal_newlines=True,
+            )
+
+            progress = 0.0
+            while nbd_sub.poll() is None:
+                try:
+                    rc = nbd_sub.poll()
+                    line = nbd_sub.stderr.readline()
+                    if line:
+                        self.log.info("nbdcopy: %s", line.strip())
+                        if "%" in line:
+                            try:
+                                pct = (
+                                    line.split("%")[0]
+                                    .split("[")[-1]
+                                    .strip()
+                                )
+                                progress = float(pct)
+                                self.log.info("Progress: %f%%", progress)
+                                self._update_progress(path, progress)
+                            except (ValueError, IndexError):
+                                pass
+                    if rc is not None:
+                        raise RuntimeError(f"nbdcopy exited unexpectedly with return code {rc}!")
+                except Exception as err:
+                    self.log.debug("Error reading nbdcopy output: %s", str(err))
+                    time.sleep(1)
+            # Get final output
+            stdout, stderr = nbd_sub.communicate()
+            if stdout:
+                self.log.info("nbdcopy stdout: %s", stdout)
+            if stderr:
+                self.log.info("nbdcopy stderr: %s", stderr)
+
+            self.log.info("nbdcopy return code: %d", nbd_sub.returncode)
+            if nbd_sub.returncode != 0:
+                raise RuntimeError(f"Failed to copy volume with nbdcopy! Return code: {nbd_sub.returncode}")
+
+            # Mark as 100% complete
+            self._update_progress(path, 100.0)
+            self.log.info("Successfully copied %s", path)
 
     def _convert_destination_volumes(self):
         """

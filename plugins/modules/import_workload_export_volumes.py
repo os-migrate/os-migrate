@@ -368,10 +368,11 @@ def run_module():
         boot_volume_prefix=boot_volume_prefix,
         timeout=timeout,
     )
+
     source_host.prepare_exports()
+
     result["transfer_uuid"] = source_host.transfer_uuid
     result["volume_map"] = source_host.volume_map
-
     module.exit_json(**result)
 
 

@@ -12,6 +12,7 @@
       register: os_src_conversion_host_info
       when:
         - item["_migration_params"]["data_copy"] | default(true)
+        - not item["_migration_params"]["use_nbdkit_direct"]|default(false)
 
     - name: Fail if source conversion host is not active
       ansible.builtin.fail:
@@ -21,6 +22,7 @@
         - os_src_conversion_host_info.openstack_conversion_host is defined
         - os_src_conversion_host_info.openstack_conversion_host.status != "ACTIVE"
         - item["_migration_params"]["data_copy"] | default(true)
+        - not item["_migration_params"]["use_nbdkit_direct"]|default(false)
 
     - name: Get destination conversion host address
       os_migrate.os_migrate.os_conversion_host_info:
@@ -67,3 +69,4 @@
         timeout: 600
       when:
         - item["_migration_params"]["data_copy"] | default(true)
+        - not item["_migration_params"]["use_nbdkit_direct"]|default(false)

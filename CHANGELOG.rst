@@ -22,3 +22,10 @@ This project follows a simple changelog to satisfy collection metadata validatio
 - Remove community.general dependency
 - Cert checks
 - update checksum to usedforsecurity=false
+
+1.0.5
+-----
+
+- Add documentation for stringFilter module
+- Add galaxy ignore file and fix links in the README
+- Move import on top the module

@@ -1,0 +1,15 @@
+---
+# Defaults for import_from_hypervisor role
+
+# NBDkit configuration
+os_migrate_nbdkit_port: 10809
+os_migrate_nbdkit_protocol: tcp  # 'tcp' or 'ssh'
+os_migrate_nbdkit_ssh_user: stack
+os_migrate_nbdkit_readonly: true
+os_migrate_nbdkit_timeout: 300
+
+# IP restriction (optional) - set to destination conversion host IP
+os_migrate_nbdkit_ip_allow: null
+
+# Nova directories on hypervisor
+os_migrate_nbdkit_nova_instances_dir: /var/lib/nova/instances
