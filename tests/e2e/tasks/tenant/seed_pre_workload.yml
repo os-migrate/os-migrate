@@ -9,10 +9,10 @@
     mtu: "{{
       omit if os_migrate_src_release | int == 10
       else 1400 }}"
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
+    validate_certs: "{{ item.validate_certs | default(omit) }}"
+    ca_cert: "{{ item.ca_cert | default(omit) }}"
+    client_cert: "{{ item.client_cert | default(omit) }}"
+    client_key: "{{ item.client_key | default(omit) }}"
   loop:
     - auth: "{{ os_migrate_src_auth }}"
       validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
@@ -32,10 +32,10 @@
     host_routes:
       - destination: 192.168.20.0/24
         nexthop: 192.168.20.1
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
+    validate_certs: "{{ item.validate_certs | default(omit) }}"
+    ca_cert: "{{ item.ca_cert | default(omit) }}"
+    client_cert: "{{ item.client_cert | default(omit) }}"
+    client_key: "{{ item.client_key | default(omit) }}"
   loop:
     - auth: "{{ os_migrate_src_auth }}"
       validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
@@ -49,10 +49,10 @@
     state: present
     name: osm_security_group
     description: OSM security group
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
+    validate_certs: "{{ item.validate_certs | default(omit) }}"
+    ca_cert: "{{ item.ca_cert | default(omit) }}"
+    client_cert: "{{ item.client_cert | default(omit) }}"
+    client_key: "{{ item.client_key | default(omit) }}"
   loop:
     - auth: "{{ os_migrate_src_auth }}"
       validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
@@ -65,10 +65,10 @@
     auth: "{{ item.auth }}"
     security_group: osm_security_group
     remote_ip_prefix: 0.0.0.0/0
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
+    validate_certs: "{{ item.validate_certs | default(omit) }}"
+    ca_cert: "{{ item.ca_cert | default(omit) }}"
+    client_cert: "{{ item.client_cert | default(omit) }}"
+    client_key: "{{ item.client_key | default(omit) }}"
   loop:
     - auth: "{{ os_migrate_src_auth }}"
       validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
@@ -86,10 +86,10 @@
       - net: osm_net
         subnet: osm_subnet
         portip: 192.168.20.1
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
+    validate_certs: "{{ item.validate_certs | default(omit) }}"
+    ca_cert: "{{ item.ca_cert | default(omit) }}"
+    client_cert: "{{ item.client_cert | default(omit) }}"
+    client_key: "{{ item.client_key | default(omit) }}"
   loop:
     - auth: "{{ os_migrate_src_auth }}"
       validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
@@ -113,10 +113,10 @@
     state: present
     name: osm_key
     public_key_file: "{{ '~' | expanduser }}/ssh-ci/id_rsa.pub"
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
+    validate_certs: "{{ item.validate_certs | default(omit) }}"
+    ca_cert: "{{ item.ca_cert | default(omit) }}"
+    client_cert: "{{ item.client_cert | default(omit) }}"
+    client_key: "{{ item.client_key | default(omit) }}"
   loop:
     - auth: "{{ os_migrate_src_auth }}"
       validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"

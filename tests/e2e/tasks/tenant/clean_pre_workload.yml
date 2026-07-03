@@ -16,10 +16,10 @@
     auth: "{{ item.auth }}"
     name: osm_image
     state: absent
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
+    validate_certs: "{{ item.validate_certs | default(omit) }}"
+    ca_cert: "{{ item.ca_cert | default(omit) }}"
+    client_cert: "{{ item.client_cert | default(omit) }}"
+    client_key: "{{ item.client_key | default(omit) }}"
   loop:
     - auth: "{{ os_migrate_src_auth }}"
       validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
@@ -37,10 +37,10 @@
     auth: "{{ item.auth }}"
     state: absent
     name: osm_key
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
+    validate_certs: "{{ item.validate_certs | default(omit) }}"
+    ca_cert: "{{ item.ca_cert | default(omit) }}"
+    client_cert: "{{ item.client_cert | default(omit) }}"
+    client_key: "{{ item.client_key | default(omit) }}"
   loop:
     - auth: "{{ os_migrate_src_auth }}"
       validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
@@ -58,10 +58,10 @@
     auth: "{{ item.auth }}"
     name: osm_router
     state: absent
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
+    validate_certs: "{{ item.validate_certs | default(omit) }}"
+    ca_cert: "{{ item.ca_cert | default(omit) }}"
+    client_cert: "{{ item.client_cert | default(omit) }}"
+    client_key: "{{ item.client_key | default(omit) }}"
     wait: true
   loop:
     - auth: "{{ os_migrate_src_auth }}"
@@ -82,10 +82,10 @@
     name: osm_server_port_0
     network: osm_net
     state: absent
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
+    validate_certs: "{{ item.validate_certs | default(omit) }}"
+    ca_cert: "{{ item.ca_cert | default(omit) }}"
+    client_cert: "{{ item.client_cert | default(omit) }}"
+    client_key: "{{ item.client_key | default(omit) }}"
   loop:
     - auth: "{{ os_migrate_src_auth }}"
       validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
@@ -103,10 +103,10 @@
     auth: "{{ item.auth }}"
     name: osm_subnet
     state: absent
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
+    validate_certs: "{{ item.validate_certs | default(omit) }}"
+    ca_cert: "{{ item.ca_cert | default(omit) }}"
+    client_cert: "{{ item.client_cert | default(omit) }}"
+    client_key: "{{ item.client_key | default(omit) }}"
   loop:
     - auth: "{{ os_migrate_src_auth }}"
       validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
@@ -124,10 +124,10 @@
     auth: "{{ item.auth }}"
     name: osm_net
     state: absent
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
+    validate_certs: "{{ item.validate_certs | default(omit) }}"
+    ca_cert: "{{ item.ca_cert | default(omit) }}"
+    client_cert: "{{ item.client_cert | default(omit) }}"
+    client_key: "{{ item.client_key | default(omit) }}"
   loop:
     - auth: "{{ os_migrate_src_auth }}"
       validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
@@ -145,10 +145,10 @@
     auth: "{{ item.auth }}"
     name: osm_security_group
     state: absent
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
+    validate_certs: "{{ item.validate_certs | default(omit) }}"
+    ca_cert: "{{ item.ca_cert | default(omit) }}"
+    client_cert: "{{ item.client_cert | default(omit) }}"
+    client_key: "{{ item.client_key | default(omit) }}"
   loop:
     - auth: "{{ os_migrate_src_auth }}"
       validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
@@ -167,10 +167,10 @@
     auth: "{{ item.auth }}"
     security_group: osm_security_group
     state: absent
-    validate_certs: "{{ item.validate_certs }}"
-    ca_cert: "{{ item.ca_cert }}"
-    client_cert: "{{ item.client_cert }}"
-    client_key: "{{ item.client_key }}"
+    validate_certs: "{{ item.validate_certs | default(omit) }}"
+    ca_cert: "{{ item.ca_cert | default(omit) }}"
+    client_cert: "{{ item.client_cert | default(omit) }}"
+    client_key: "{{ item.client_key | default(omit) }}"
   loop:
     - auth: "{{ os_migrate_src_auth }}"
       validate_certs: "{{ os_migrate_src_validate_certs|default(omit) }}"
