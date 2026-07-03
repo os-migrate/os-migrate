@@ -20,7 +20,7 @@
 - name: get original description
   ansible.builtin.set_fact:
     original_desc: |-
-      {{ dst_networks_info_before['networks'] | os_migrate.os_migrate.os_migrate.os_migrate.json_query(
+      {{ dst_networks_info_before['networks'] | os_migrate.os_migrate.json_query(
         "[?name=='osm_net'].description") }}
 
 - name: import networks
@@ -42,7 +42,7 @@
 - name: get changed description
   ansible.builtin.set_fact:
     changed_desc: |-
-      {{ dst_networks_info_after['networks'] | os_migrate.os_migrate.os_migrate.os_migrate.json_query(
+      {{ dst_networks_info_after['networks'] | os_migrate.os_migrate.json_query(
         "[?name=='osm_net'].description") }}
 
 - name: ensure description for osm_net changed

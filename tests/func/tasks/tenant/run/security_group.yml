@@ -45,7 +45,7 @@
 - name: ensure imported osm_security_group has no rules
   ansible.builtin.assert:
     that:
-      - dst_sg_after_create['openstack_security_groups'] | os_migrate.os_migrate.os_migrate.os_migrate.json_query(
+      - dst_sg_after_create['openstack_security_groups'] | os_migrate.os_migrate.json_query(
         "[?name=='osm_security_group'].security_group_rules[0]") | length == 0
     fail_msg: >-
       Expected osm_security_group to have no rules, but found:
