@@ -60,7 +60,7 @@
     - name: verify data contents
       ansible.builtin.assert:
         that:
-          - ( item | json_query('params.name') == 'osm_server' )
+          - ( item | os_migrate.os_migrate.json_query('params.name') == 'osm_server' )
       loop: "{{ resources }}"
 
     - name: import detached volumes

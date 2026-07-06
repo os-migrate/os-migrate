@@ -29,7 +29,7 @@
   ansible.builtin.assert:
     that:
       - (project_resources |
-        json_query("[?params.name ==
+        os_migrate.os_migrate.json_query("[?params.name ==
         'osmdst_project'].params.name")
         == ['osmdst_project'])
 

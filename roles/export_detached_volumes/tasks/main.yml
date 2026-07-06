@@ -12,7 +12,7 @@
     src_detached_volumes_info: "{{ (src_volumes_info.volumes
       | from_yaml
       | os_migrate.os_migrate.stringfilter(os_migrate_volumes_filter, attribute='name')
-      | selectattr('status', '!=', 'in-use') | json_query('[*].{name: name, id: id}')
+      | selectattr('status', '!=', 'in-use') | os_migrate.os_migrate.json_query('[*].{name: name, id: id}')
       | sort(attribute='id')) }}"
 
 - name: Export detached volumes
