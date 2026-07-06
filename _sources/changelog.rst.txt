@@ -13,6 +13,17 @@ Fix
 
 Other
 ~~~~~
+- Export volume map for nbdkit in a dedicated var. [mathieu bultel]
+- Force bool for os_migrate_workload_stop_before_migration. [mathieu
+  bultel]
+- Fix module name in tests/ [mathieu bultel]
+- Update name for json_query to tests directory as well. [mathieu
+  bultel]
+- Update json_query filter to resolv to os_migrate filter. [mathieu
+  bultel]
+- Add json_query filter. [mathieu bultel]
+- Add jmespath to the requirements. [mathieu bultel]
+- Add default(omit) to test workloads. [mathieu bultel]
 - Use 4.5.0 for openstacksdk only, since 4.16 breaks CI. [mathieu
   bultel]
 - Fix openstack modules import. [mathieu bultel]
