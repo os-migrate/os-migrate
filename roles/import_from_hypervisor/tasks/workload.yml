@@ -63,15 +63,7 @@
     index_var: disk_loop_index
     label: "{{ disk_item | basename }}"
   vars:
-    disk_device_name: >-
-      {%- set disk_basename = disk_item | basename -%}
-      {%- if disk_basename == 'disk' -%}
-      /dev/vda
-      {%- elif 'disk.eph' in disk_basename -%}
-      /dev/vd{{ 'bcdefghijklmnopqrstuvwxyz'[disk_loop_index - 1] }}
-      {%- else -%}
-      /dev/vd{{ 'bcdefghijklmnopqrstuvwxyz'[disk_loop_index] }}
-      {%- endif -%}
+    disk_device_name: "{%- set disk_basename = disk_item | basename -%} {%- if disk_basename == 'disk' -%} /dev/vda{%- elif 'disk.eph' in disk_basename -%} /dev/vd{{ 'bcdefghijklmnopqrstuvwxyz'[disk_loop_index - 1] }}{%- else -%} /dev/vd{{ 'bcdefghijklmnopqrstuvwxyz'[disk_loop_index] }}{%- endif -%}"
     disk_is_bootable: "{{ (disk_item | basename) == 'disk' }}"
 
 

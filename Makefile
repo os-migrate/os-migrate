@@ -15,7 +15,7 @@ PYTHON_VERSION   ?= 3.12
 
 # Directory and Mount Structure
 COLLECTION_ROOT         := $(CURDIR)
-CONTAINER_COLLECTION_ROOT := /code
+CONTAINER_COLLECTION_ROOT := /ansible_collections/os_migrate/os_migrate
 MOUNT_PATH                := $(COLLECTION_ROOT):$(CONTAINER_COLLECTION_ROOT)
 VENV_DIR                  := $(CONTAINER_COLLECTION_ROOT)/.venv
 
@@ -47,6 +47,10 @@ ifneq ($(wildcard $(GALAXY_YML)),)
 else
     COLLECTION_TARBALL   :=
 endif
+
+# Collection install path (project-local, excluded from build via build_ignore)
+COLLECTIONS_PATH       := $(CONTAINER_COLLECTION_ROOT)/.ansible/collections
+COLLECTION_INSTALL_DIR := $(COLLECTIONS_PATH)/ansible_collections/$(COLLECTION_NAMESPACE)/$(COLLECTION_NAME)
 
 # --- Core Logic for Container Creation ---
 
@@ -106,15 +110,16 @@ help:
 	@echo "  PYTHON_VERSION   - Python version to use in the container (default: $(PYTHON_VERSION))"
 
 # --- Vendor install ---
-VENDOR_DIR         := $(COLLECTION_ROOT)/plugins/modules/_vendor
-ifeq ($(USE_CONTAINER),true)
-	VENDOR_DIR         := $(CONTAINER_COLLECTION_ROOT)/plugins/modules/_vendor
-endif
-# Latest stable release:
-OS_CLOUD_VERSION   ?= 2.5.0
+VENDOR_DIR         := plugins/modules/_vendor
 UPSTREAM_REPO      := $(VENDOR_DIR)/openstack.cloud
 UPSTREAM_MODULES   := $(UPSTREAM_REPO)/plugins/modules
 UPSTREAM_UTILS     := $(UPSTREAM_REPO)/plugins/module_utils
+# Symlink targets must be relative to the link location (plugins/modules/ or plugins/module_utils/).
+VENDOR_MODULE_LINK_SRC := _vendor/openstack.cloud/plugins/modules
+VENDOR_UTIL_LINK_SRC   := ../modules/_vendor/openstack.cloud/plugins/module_utils
+
+# Latest stable release:
+OS_CLOUD_VERSION   ?= 2.5.0
 
 # List of required modules from vendor openstack.cloud collection.
 VENDORED_MODULES := auth compute_flavor compute_flavor_info floating_ip identity_domain identity_role \
@@ -123,6 +128,19 @@ VENDORED_MODULES := auth compute_flavor compute_flavor_info floating_ip identity
 	server_action server_info server_volume subnet subnets_info volume volume_info
 
 VENDORED_MODULE_UTILS := openstack ironic
+
+# Sanity test excludes for vendored OpenStack modules and upstream sources.
+VENDORED_SANITY_EXCLUDES := \
+	--exclude plugins/modules/_vendor/ \
+	$(foreach mod,$(VENDORED_MODULES),--exclude plugins/modules/$(mod).py ) \
+	$(foreach util,$(VENDORED_MODULE_UTILS),--exclude plugins/module_utils/$(util).py )
+
+# Ansible-lint CLI excludes for the same vendored content (exclude_paths in
+# .ansible-lint does not reliably skip Python module files in ansible-lint 24+).
+ANSIBLE_LINT_VENDORED_EXCLUDES := \
+	--exclude .ansible/collections/ \
+	$(foreach mod,$(VENDORED_MODULES),--exclude plugins/modules/$(mod).py ) \
+	$(foreach util,$(VENDORED_MODULE_UTILS),--exclude plugins/module_utils/$(util).py )
 
 .PHONY: vendor-import vendor-links vendor-clean
 
@@ -145,7 +163,7 @@ vendor-links: vendor-import
 	@echo "--- Creating symlinks for vendored modules ---"
 	@# Symlink Modules
 	@for mod in $(VENDORED_MODULES); do \
-		ln -sf $(UPSTREAM_MODULES)/$$mod.py plugins/modules/$$mod.py; \
+		ln -sf $(VENDOR_MODULE_LINK_SRC)/$$mod.py plugins/modules/$$mod.py; \
 		echo "Linked module: os_migrate.os_migrate.$$mod"; \
 	done
 	@# Fix for the specific 'openstack' namespace import
@@ -156,7 +174,7 @@ vendor-links: vendor-import
 	@# Symlink Module Utils
 	@echo "--- Linking upstream module_utils ---"
 	@for util in $(VENDORED_MODULE_UTILS); do \
-		ln -sf $(UPSTREAM_UTILS)/$$util.py plugins/module_utils/$$util.py; \
+		ln -sf $(VENDOR_UTIL_LINK_SRC)/$$util.py plugins/module_utils/$$util.py; \
 		echo "Linked module_util: os_migrate.os_migrate.$$util"; \
 	done
 
@@ -176,7 +194,7 @@ build: check-root clean-build install-deps
 		$(MAKE) vendor-links && \
 		source $(VENV_DIR)/bin/activate && \
 		pip install ansible-core && \
-		ansible-galaxy collection build'
+		ansible-galaxy collection build --force'
 
 
 clean-build:
@@ -254,33 +272,38 @@ install: build
 	@echo "--- Installing collection $(COLLECTION_TARBALL) into the container ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
 		source $(VENV_DIR)/bin/activate; \
+		rm -rf "$(COLLECTION_INSTALL_DIR)"; \
+		export ANSIBLE_COLLECTIONS_PATH="$(COLLECTIONS_PATH)"; \
 		pip install ansible-core && \
-		ansible-galaxy collection install $(COLLECTION_TARBALL) --force-with-deps'
+		ansible-galaxy collection install $(COLLECTION_TARBALL) \
+		  --collections-path "$(COLLECTIONS_PATH)" --force-with-deps'
 
 # --- Test Targets ---
 
 tests: test-ansible-lint test-ansible-sanity test-ansible-units
 
-test-ansible-lint: install-deps install
+test-ansible-lint: install-deps
 	@echo "--- Launching ansible-lint ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
-		source $(VENV_DIR)/bin/activate && ansible-lint'
+		$(MAKE) vendor-links && \
+		source $(VENV_DIR)/bin/activate && \
+		ansible-lint $(ANSIBLE_LINT_VENDORED_EXCLUDES)'
 	@if [[ $(USE_CACHE) == false ]]; then $(MAKE) clean-centos-container; fi
 
-test-ansible-sanity: install-deps install
+test-ansible-sanity: install-deps
 	@echo "--- Running Ansible sanity tests ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
+		$(MAKE) vendor-links && \
 		source $(VENV_DIR)/bin/activate && \
-		cd /root/.ansible/collections/ansible_collections/$(COLLECTION_NAMESPACE)/$(COLLECTION_NAME) && \
 		ansible-test sanity --python $(PYTHON_VERSION) --requirements \
-		  --exclude plugins/modules/_vendor/'
+		  $(VENDORED_SANITY_EXCLUDES)'
 	@if [[ $(USE_CACHE) == false ]]; then $(MAKE) clean-centos-container; fi
 
-test-ansible-units: install-deps install
+test-ansible-units: install-deps
 	@echo "--- Running Ansible unit tests ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
+		$(MAKE) vendor-links && \
 		source $(VENV_DIR)/bin/activate && \
-		cd /root/.ansible/collections/ansible_collections/$(COLLECTION_NAMESPACE)/$(COLLECTION_NAME) && \
 		ansible-test units --python $(PYTHON_VERSION) --local'
 	@if [[ $(USE_CACHE) == false ]]; then $(MAKE) clean-centos-container; fi
 

@@ -111,12 +111,7 @@
 
 - name: Build NBD URI for this disk
   ansible.builtin.set_fact:
-    disk_nbd_uri: >-
-      {% if os_migrate_nbdkit_protocol == 'ssh' -%}
-      nbd+ssh://{{ os_migrate_nbdkit_ssh_user }}@{{ hypervisor_hostname }}:{{ disk_nbd_port }}
-      {%- else -%}
-      nbd://{{ hypervisor_hostname }}:{{ disk_nbd_port }}
-      {%- endif %}
+    disk_nbd_uri: "{%- if os_migrate_nbdkit_protocol == 'ssh' -%} nbd+ssh://{{ os_migrate_nbdkit_ssh_user }}@{{ hypervisor_hostname }}:{{ disk_nbd_port }}{%- else -%} nbd://{{ hypervisor_hostname }}:{{ disk_nbd_port }}{%- endif %}"
 
 - name: Add disk info to nbdkit_disk_info list
   ansible.builtin.set_fact:
