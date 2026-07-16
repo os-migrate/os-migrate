@@ -1,6 +1,6 @@
 # OpenStack to Openstack migration tooling
 OS Migrate is an open source toolbox for parallel cloud migration
-between OpenStack clouds.
+between OpenStack clouds
 
 [![consistency-functional](https://github.com/os-migrate/os-migrate/actions/workflows/consistency-functional.yml/badge.svg?branch=main)](https://github.com/os-migrate/os-migrate/actions/workflows/consistency-functional.yml)
 [![container-image-build](https://github.com/os-migrate/os-migrate/actions/workflows/container-image-build.yml/badge.svg?branch=main)](https://github.com/os-migrate/os-migrate/actions/workflows/container-image-build.yml)
