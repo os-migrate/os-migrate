@@ -55,3 +55,52 @@ class TestValidation(unittest.TestCase):
             ["openstack.Minimal::id-minimal: Missing params.name."],
             validation.get_errors_in_file_structs([file_struct], self.resrc_map),
         )
+
+    def test_get_errors_in_file_structs_empty_resources(self):
+        file_struct = {
+            "os_migrate_version": const.OS_MIGRATE_VERSION,
+            "resources": [],
+        }
+        self.assertEqual(
+            [],
+            validation.get_errors_in_file_structs([file_struct], self.resrc_map),
+        )
+
+    def test_get_errors_in_file_structs_unknown_type(self):
+        file_struct = {
+            "os_migrate_version": const.OS_MIGRATE_VERSION,
+            "resources": [{"type": "openstack.DoesNotExist", "params": {}, "_info": {}}],
+        }
+        errors = validation.get_errors_in_file_structs([file_struct], self.resrc_map)
+        self.assertEqual(len(errors), 1)
+        self.assertIn("Unknown resource type", errors[0])
+
+    def test_get_errors_in_file_structs_missing_type(self):
+        file_struct = {
+            "os_migrate_version": const.OS_MIGRATE_VERSION,
+            "resources": [{"params": {"name": "x"}, "_info": {}}],
+        }
+        errors = validation.get_errors_in_file_structs([file_struct], self.resrc_map)
+        self.assertEqual(len(errors), 1)
+        self.assertIn("missing 'type'", errors[0])
+
+    def test_duplicate_names_different_types_ok(self):
+        """Same name on different resource types is not a duplication error."""
+        file_struct = fixtures.minimal_resource_file_struct()
+        other = fixtures.minimal_resource()
+        other[const.RES_TYPE] = "openstack.OtherMinimal"
+        other[const.RES_INFO]["id"] = "uuid-other"
+        # Use a second map entry with same import identity style via MinimalResource
+        # but different type string — import_id includes type, so no conflict.
+        class OtherMinimal(fixtures.MinimalResource):
+            resource_type = "openstack.OtherMinimal"
+
+        resrc_map = {
+            "openstack.Minimal": fixtures.MinimalResource,
+            "openstack.OtherMinimal": OtherMinimal,
+        }
+        file_struct["resources"].append(other)
+        self.assertEqual(
+            [],
+            validation.get_errors_in_file_structs([file_struct], resrc_map),
+        )

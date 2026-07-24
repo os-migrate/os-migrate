@@ -9,6 +9,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import exc
 import json
 import logging
 import os
+import re
 import subprocess
 import time
 import fcntl
@@ -847,6 +848,29 @@ class OpenstackVolumeExport(OpenStackVolumeBase):
             self.log.info("Volume map so far: %s", self.volume_map)
 
 
+def nbdkit_direct_url(socket_uri, export_name=None):
+    """Build an NBD URL for direct nbdkit socket access."""
+    if export_name:
+        return f"{socket_uri}/{export_name}"
+    return socket_uri
+
+
+# Match for qemu-img convert progress percentage, e.g. "(12.5/100%)"
+QEMU_PROGRESS_RE = re.compile(r"\((\d+\.\d+)/100%\)")
+
+
+def parse_qemu_img_progress(text, progress_re=None):
+    """Parse a qemu-img progress percentage from output text.
+
+    Returns: float progress, or None if no match.
+    """
+    matcher = progress_re if progress_re is not None else QEMU_PROGRESS_RE
+    matches = matcher.search(text)
+    if matches is None:
+        return None
+    return float(matches.group(1))
+
+
 class OpenstackVolumeTransfer(OpenStackVolumeBase):
 
     def transfer_exports(self):
@@ -867,10 +891,7 @@ class OpenstackVolumeTransfer(OpenStackVolumeBase):
 
         for path, mapping in self.volume_map.items():
             # Use the provided nbdkit socket URI directly
-            if nbdkit_export_name:
-                url = f"{nbdkit_socket_uri}/{nbdkit_export_name}"
-            else:
-                url = nbdkit_socket_uri
+            url = nbdkit_direct_url(nbdkit_socket_uri, nbdkit_export_name)
             self.volume_map[path]["url"] = url
             self.log.info("Volume %s will use NBD URL: %s", path, url)
 
@@ -1144,9 +1165,10 @@ class OpenstackVolumeTransfer(OpenStackVolumeBase):
                         continue
                     if buf:
                         try:
-                            matches = self.qemu_progress_re.search(buf.decode())
-                            if matches is not None:
-                                progress = float(matches.group(1))
+                            progress = parse_qemu_img_progress(
+                                buf.decode(), self.qemu_progress_re
+                            )
+                            if progress is not None:
                                 self._update_progress(path, progress)
                                 buf = b""
                         except ValueError:

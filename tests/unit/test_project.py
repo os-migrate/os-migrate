@@ -13,6 +13,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
 
 def sdk_project():
     return openstack.identity.v3.project.Project(
+        id="uuid-test-project",
         domain_id="uuid-test-domain",
         is_enabled=True,
         parent_id="uuid-test-parent-project",
@@ -41,6 +42,7 @@ def serialized_project():
             },
         },
         const.RES_INFO: {
+            "id": "uuid-test-project",
             "domain_id": "uuid-test-domain",
             "parent_id": "uuid-test-parent-project",
         },
@@ -56,7 +58,7 @@ def project_refs():
             "name": "test-domain",
             "project_name": None,
         },
-        "project_id": "uuid-test-parent-project",
+        "parent_id": "uuid-test-parent-project",
         "parent_ref": {
             "domain_name": "test-domain",
             "name": "test-parent-project",
@@ -108,6 +110,7 @@ class TestProject(unittest.TestCase):
 
         self.assertEqual(info["domain_id"], "uuid-test-domain")
         self.assertEqual(info["parent_id"], "uuid-test-parent-project")
+        self.assertEqual(info["id"], "uuid-test-project")
 
     def test_project_sdk_params(self):
         proj = Project.from_data(serialized_project())
@@ -117,3 +120,16 @@ class TestProject(unittest.TestCase):
         self.assertEqual(sdk_params["is_domain"], False)
         self.assertEqual(sdk_params["is_enabled"], True)
         self.assertEqual(sdk_params["name"], "test-project")
+        self.assertEqual(sdk_params["domain_id"], "uuid-test-domain")
+        self.assertEqual(sdk_params["parent_id"], "uuid-test-parent-project")
+        # info-only / ref fields must not appear as create kwargs aliases
+        self.assertNotIn("domain_ref", sdk_params)
+        self.assertNotIn("parent_ref", sdk_params)
+
+    def test_needs_update(self):
+        proj1 = Project.from_data(serialized_project())
+        proj2 = Project.from_data(serialized_project())
+        proj2.info()["domain_id"] = "other-domain"
+        self.assertFalse(proj1._needs_update(proj2))
+        proj2.params()["description"] = "changed"
+        self.assertTrue(proj1._needs_update(proj2))

@@ -22,10 +22,6 @@ def sdk_flavor():
         rxtx_factor=1.5,
         swap=64,
         vcpus=2,
-        links=[
-            {"rel": "self", "href": "http://192.168.122.85/compute/v2.1/flavors/d1"},
-            {"rel": "bookmark", "href": "http://192.168.122.85/compute/flavors/d1"},
-        ],
     )
 
 
@@ -37,13 +33,6 @@ def serialized_flavor():
             "ephemeral": 1,
             "extra_specs": {},
             "is_public": True,
-            "links": [
-                {
-                    "rel": "self",
-                    "href": "http://192.168.122.85/compute/v2.1/flavors/d1",
-                },
-                {"rel": "bookmark", "href": "http://192.168.122.85/compute/flavors/d1"},
-            ],
             "name": "test-flavor",
             "ram": 128,
             "rxtx_factor": 1.5,
@@ -61,8 +50,8 @@ def serialized_flavor():
 class TestFlavor(unittest.TestCase):
 
     def test_serialize_flavor(self):
-        sdk_net = sdk_flavor()
-        flv = flavor.Flavor.from_sdk(None, sdk_net)  # conn=None
+        sdk_flv = sdk_flavor()
+        flv = flavor.Flavor.from_sdk(None, sdk_flv)  # conn=None
         params, info = flv.params_and_info()
 
         self.assertEqual(flv.type(), const.RES_TYPE_FLAVOR)
@@ -97,3 +86,19 @@ class TestFlavor(unittest.TestCase):
         # disallowed params when creating a flavor
         self.assertNotIn("id", sdk_params)
         self.assertNotIn("is_disabled", sdk_params)
+        # extra_specs applied via hook, not create kwargs
+        self.assertNotIn("extra_specs", sdk_params)
+
+    def test_needs_update(self):
+        flv1 = flavor.Flavor.from_data(serialized_flavor())
+        flv2 = flavor.Flavor.from_data(serialized_flavor())
+        flv2.info()["is_disabled"] = True
+        self.assertFalse(flv1._needs_update(flv2))
+        flv2.params()["ram"] = 256
+        self.assertTrue(flv1._needs_update(flv2))
+
+    def test_swap_empty_string_normalized_from_sdk(self):
+        sdk = sdk_flavor()
+        sdk["swap"] = ""
+        flv = flavor.Flavor.from_sdk(None, sdk)
+        self.assertEqual(flv.params()["swap"], 0)
