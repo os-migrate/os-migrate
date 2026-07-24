@@ -92,6 +92,13 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import os_au
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import server
 
 
+def prerequisite_error_message(errors):
+    """Join prerequisite errors into one message, or return None if empty."""
+    if errors:
+        return " ".join(errors)
+    return None
+
+
 def run_module():
     argument_spec = os_auth.openstack_full_argument_spec(
         data=dict(type="dict", required=True),
@@ -113,8 +120,8 @@ def run_module():
     ser_server = server.Server.from_data(module.params["data"])
     errors = ser_server.dst_prerequisites_errors(conn, module.params["dst_filters"])
 
-    if errors:
-        error_msg = " ".join(errors)
+    error_msg = prerequisite_error_message(errors)
+    if error_msg:
         module.fail_json(msg=error_msg, **result)
 
     module.exit_json(**result)

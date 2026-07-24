@@ -27,7 +27,6 @@ build_ignore:
   - .github
   - .vscode
   - .idea
-  - .ansible-lint
   - .ansible-lint-ignore
   - aee
   - scripts

@@ -165,6 +165,24 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import serve
 import os
 
 
+def is_source_conversion_host(server_id, conversion_host_id):
+    """True when the workload being migrated is the conversion host itself."""
+    return server_id == conversion_host_id
+
+
+def destination_server_exists(existing_count):
+    """True when destination already has a server with the same name."""
+    return existing_count > 0
+
+
+def migration_log_paths(log_dir, server_name):
+    """Build log and state file paths for a migrating server."""
+    return {
+        "log_file": os.path.join(log_dir, server_name) + ".log",
+        "state_file": os.path.join(log_dir, server_name) + ".state",
+    }
+
+
 def run_module():
     argument_spec = os_auth.openstack_full_argument_spec(
         dst_filters=dict(type="dict", required=False, default={}),
@@ -190,7 +208,7 @@ def run_module():
     log_dir = module.params["log_dir"]
 
     # Do not convert source conversion host!
-    if info["id"] == module.params["src_conversion_host"]["id"]:
+    if is_source_conversion_host(info["id"], module.params["src_conversion_host"]["id"]):
         module.exit_json(
             skipped=True, skip_reason="Skipping conversion host.", **result
         )
@@ -198,24 +216,21 @@ def run_module():
     # Assume an existing VM with the same name means it was already migrated.
     # With Nova, the 'name' parameter for list request is a regular expression.
     server_name_regex = f"^{server_name}$"
-    if (
-        len(
-            list(
-                conn.compute.servers(
-                    details=False,
-                    name=server_name_regex,
-                    **module.params["dst_filters"],
-                )
-            )
+    existing = list(
+        conn.compute.servers(
+            details=False,
+            name=server_name_regex,
+            **module.params["dst_filters"],
         )
-        > 0
-    ):
+    )
+    if destination_server_exists(len(existing)):
         module.exit_json(
             msg=f"VM '{server_name}' already exists on destination, skipping.", **result
         )
 
-    result["log_file"] = os.path.join(log_dir, server_name) + ".log"
-    result["state_file"] = os.path.join(log_dir, server_name) + ".state"
+    paths = migration_log_paths(log_dir, server_name)
+    result["log_file"] = paths["log_file"]
+    result["state_file"] = paths["state_file"]
     result["changed"] = True
 
     module.exit_json(**result)

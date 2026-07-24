@@ -1,7 +1,19 @@
 # Default configuration
 target-version = "py311"
 
-# Specific overrides for your Ansible folders
-[per-file-ignores]
-"plugins/modules/*.py" = ["E402"]  # Ignore "import not at top of file" in modules
-"docs/src/conf.py" = ["E402"]      # Fixes your Sphinx documentation config error
+exclude = [
+    ".venv",
+    "ansible_collections",
+    "plugins/modules/_vendor",
+]
+
+[lint]
+# Keep the classic pyflakes/pycodestyle set. Enabling pyupgrade/Ruff-specific
+# rules (UP*, RUF*, SIM*, …) would require a repo-wide cleanup of Ansible
+# boilerplate (__future__, __metaclass__, shebangs, Resource class attrs).
+select = ["E4", "E7", "E9", "F"]
+
+[lint.per-file-ignores]
+# Ansible modules put DOCUMENTATION/EXAMPLES before imports.
+"plugins/modules/*.py" = ["E402"]
+"docs/src/conf.py" = ["E402"]

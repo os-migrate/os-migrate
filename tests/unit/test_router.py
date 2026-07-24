@@ -5,7 +5,10 @@ __metaclass__ = type
 import openstack
 import unittest
 
-from ansible_collections.os_migrate.os_migrate.plugins.module_utils import router
+from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
+    const,
+    router,
+)
 
 
 def sdk_router():
@@ -26,7 +29,7 @@ def sdk_router():
             "enable_snat": True,
         },
         flavor_id="uuid-test-network-flavor",
-        id="uuid-test-net",
+        id="uuid-test-router",
         is_admin_state_up=True,
         is_distributed=True,
         is_ha=True,
@@ -90,7 +93,40 @@ def router_refs():
     }
 
 
-# "Disconnected" variant of Network resource where we make sure not to
+def serialized_router():
+    refs = router_refs()
+    return {
+        const.RES_PARAMS: {
+            "availability_zone_hints": ["nova", "zone2"],
+            "description": "test router",
+            "is_admin_state_up": True,
+            "is_distributed": True,
+            "is_ha": True,
+            "name": "test-router",
+            "tags": [],
+            "external_gateway_refinfo": refs["external_gateway_refinfo"],
+            "flavor_ref": refs["flavor_ref"],
+        },
+        const.RES_INFO: {
+            "availability_zones": ["nova", "zone3"],
+            "created_at": "2020-02-26T15:50:55Z",
+            "external_gateway_info": refs["external_gateway_info"],
+            "flavor_id": "uuid-test-network-flavor",
+            "id": "uuid-test-router",
+            "project_id": "uuid-test-project",
+            "revision_number": 3,
+            "routes": [
+                {"destination": "192.168.50.0/24", "nexthop": "10.0.0.50"},
+                {"destination": "192.168.50.0/24", "nexthop": "10.0.0.51"},
+            ],
+            "status": "ACTIVE",
+            "updated_at": "2020-02-26T15:51:00Z",
+        },
+        const.RES_TYPE: "openstack.network.Router",
+    }
+
+
+# "Disconnected" variant of Router resource where we make sure not to
 # make requests using `conn`.
 class Router(router.Router):
 
@@ -178,3 +214,40 @@ class TestRouter(unittest.TestCase):
         )
         self.assertEqual(info["status"], "ACTIVE")
         self.assertEqual(info["updated_at"], "2020-02-26T15:51:00Z")
+
+    def test_router_sdk_params(self):
+        rtr = Router.from_data(serialized_router())
+        sdk_params = rtr._to_sdk_params(rtr._refs_from_ser(None))
+
+        self.assertEqual(sdk_params["name"], "test-router")
+        self.assertEqual(sdk_params["description"], "test router")
+        self.assertEqual(sdk_params["is_admin_state_up"], True)
+        self.assertEqual(sdk_params["is_distributed"], True)
+        self.assertEqual(sdk_params["is_ha"], True)
+        self.assertEqual(sdk_params["availability_zone_hints"], ["nova", "zone2"])
+        self.assertEqual(sdk_params["flavor_id"], "uuid-test-network-flavor")
+        self.assertEqual(
+            sdk_params["external_gateway_info"],
+            router_refs()["external_gateway_info"],
+        )
+        # tags are applied via hook, not create/update kwargs
+        self.assertNotIn("tags", sdk_params)
+        # info-only fields must not be sent to the API
+        self.assertNotIn("status", sdk_params)
+        self.assertNotIn("revision_number", sdk_params)
+        self.assertNotIn("routes", sdk_params)
+
+    def test_router_skip_falsey_availability_zone_hints(self):
+        data = serialized_router()
+        data[const.RES_PARAMS]["availability_zone_hints"] = []
+        rtr = Router.from_data(data)
+        sdk_params = rtr._to_sdk_params(rtr._refs_from_ser(None))
+        self.assertNotIn("availability_zone_hints", sdk_params)
+
+    def test_needs_update(self):
+        rtr1 = Router.from_data(serialized_router())
+        rtr2 = Router.from_data(serialized_router())
+        rtr2.info()["status"] = "DOWN"
+        self.assertFalse(rtr1._needs_update(rtr2))
+        rtr2.params()["description"] = "changed"
+        self.assertTrue(rtr1._needs_update(rtr2))

@@ -28,20 +28,21 @@ def serialized_keypair():
     return {
         const.RES_PARAMS: {
             "name": "test-keypair",
-            "is_deleted": False,
-            "fingerprint": "TqiTXPRs4cBksWa5pnMTmbEXjgd7bfvuSX7y4sHeMo4",
             "public_key": "AAAAB3NzaC1yc2EAAAADAQABAAACAQDDnUe1aHYyJFK8vSw9qTgbZCHa==",
             "type": "ssh",
             "user_ref": {
                 "domain_name": "%auth%",
                 "name": "%auth%",
-                "project_name": "%auth%",
+                "project_name": None,
             },
         },
         const.RES_INFO: {
             "created_at": "2020-01-06T15:50:55Z",
-            "id": "uuid-test-keypair",
+            # openstacksdk sets keypair id to the name
+            "id": "test-keypair",
             "user_id": "uuid-test-user",
+            "is_deleted": False,
+            "fingerprint": "TqiTXPRs4cBksWa5pnMTmbEXjgd7bfvuSX7y4sHeMo4",
         },
         const.RES_TYPE: "openstack.compute.Keypair",
     }
@@ -53,7 +54,7 @@ def keypair_refs_from_sdk():
         "user_ref": {
             "domain_name": "%auth%",
             "name": "%auth%",
-            "project_name": "%auth%",
+            "project_name": None,
         },
     }
 
@@ -64,7 +65,7 @@ def keypair_refs_from_ser():
         "user_ref": {
             "domain_name": "%auth%",
             "name": "%auth%",
-            "project_name": "%auth%",
+            "project_name": None,
         },
     }
 
@@ -97,7 +98,7 @@ class TestKeypair(unittest.TestCase):
             {
                 "domain_name": "%auth%",
                 "name": "%auth%",
-                "project_name": "%auth%",
+                "project_name": None,
             },
         )
 
@@ -127,3 +128,34 @@ class TestKeypair(unittest.TestCase):
 
         # not used with '%auth%'
         self.assertNotIn("user_id", sdk_params)
+
+    def test_needs_update(self):
+        kp1 = Keypair.from_data(serialized_keypair())
+        kp2 = Keypair.from_data(serialized_keypair())
+        kp2.info()["fingerprint"] = "changed-fingerprint"
+        self.assertFalse(kp1._needs_update(kp2))
+        kp2.params()["public_key"] = "changed-key"
+        self.assertTrue(kp1._needs_update(kp2))
+
+    def test_import_id(self):
+        kp = Keypair.from_data(serialized_keypair())
+        self.assertEqual(
+            kp.import_id(),
+            "openstack.compute.Keypair:test-keypair:%auth%:%auth%",
+        )
+
+    def test_is_same_resource(self):
+        kp1 = Keypair.from_data(serialized_keypair())
+        kp2 = Keypair.from_data(serialized_keypair())
+        self.assertTrue(kp1.is_same_resource(kp2))
+
+        kp2.info()["id"] = "other-keypair"
+        self.assertFalse(kp1.is_same_resource(kp2))
+
+        kp2 = Keypair.from_data(serialized_keypair())
+        kp2.params()["user_ref"] = {
+            "domain_name": "other-domain",
+            "name": "other-user",
+            "project_name": None,
+        }
+        self.assertFalse(kp1.is_same_resource(kp2))
