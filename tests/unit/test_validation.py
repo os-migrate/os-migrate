@@ -92,6 +92,7 @@ class TestValidation(unittest.TestCase):
         other[const.RES_INFO]["id"] = "uuid-other"
         # Use a second map entry with same import identity style via MinimalResource
         # but different type string — import_id includes type, so no conflict.
+
         class OtherMinimal(fixtures.MinimalResource):
             resource_type = "openstack.OtherMinimal"
 

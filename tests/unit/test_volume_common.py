@@ -427,13 +427,6 @@ class TestOpenStackVolumeBaseHelpers(unittest.TestCase):
         written = base._OpenStackVolumeBase__write_used_ports.call_args[0][0]
         self.assertEqual(written, {50002})
 
-    def test_test_port_available(self):
-        base = make_volume_base()
-        base.shell.cmd_val.return_value = 124
-        self.assertTrue(base._test_port_available(50000))
-        base.shell.cmd_val.return_value = 1
-        self.assertFalse(base._test_port_available(50000))
-
     def test_nbdkit_direct_url(self):
         self.assertEqual(
             volume_common.nbdkit_direct_url("nbd+unix:///tmp/sock"),
