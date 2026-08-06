@@ -265,6 +265,7 @@ volume_map:
             "dest_dev": "/dev/vdc",
             "dest_id": "3b7a57d7-8210-47f9-b592-a6627ae52d13",
             "image_id": null,
+            "image_metadata": {"hw_firmware_type": "uefi", "hw_machine_type": "q35"},
             "name": "migration-vm-boot",
             "port": 49196,
             "progress": 100.0,
@@ -447,6 +448,35 @@ class OpenStackDestinationHost(OpenStackHostBase):
             sdk_params.pop('volume_type', None)
             new_volume = self.conn.create_volume(**sdk_params)
             self.volume_map[path]['dest_id'] = new_volume.id
+            self._copy_volume_image_metadata(mapping, new_volume)
+
+    def _copy_volume_image_metadata(self, mapping, new_volume):
+        """
+        Copy the source volume's Cinder volume_image_metadata onto the freshly
+        created destination volume.
+
+        Cinder does not accept volume_image_metadata as a create_volume
+        parameter, so it has to be set afterwards. Without this, properties
+        such as hw_firmware_type=uefi and hw_machine_type=q35 are lost and
+        Nova builds the destination domain with SeaBIOS/i440fx. A UEFI guest
+        (any Windows Server 2016+, or a GPT/ESP Linux) then fails to boot with
+        "No bootable device", even though the disk contents transferred fine.
+        """
+        image_metadata = mapping.get('image_metadata') or {}
+        if not image_metadata:
+            return
+        self.log.info('Copying volume image metadata to destination volume '
+                      '%s: %s', new_volume.id, image_metadata)
+        try:
+            self.conn.block_storage.set_volume_image_metadata(
+                new_volume, **image_metadata)
+        except Exception as err:  # pylint: disable=broad-except
+            # Not fatal on its own, but the guest will likely not boot, so
+            # make the reason loud rather than failing mysteriously later.
+            self.log.warning(
+                'Failed to set volume image metadata on destination volume '
+                '%s: %s. The destination instance may fail to boot if the '
+                'source used UEFI firmware.', new_volume.id, str(err))
 
     @use_lock(ATTACH_LOCK_FILE_DESTINATION)
     def _attach_destination_volumes(self):

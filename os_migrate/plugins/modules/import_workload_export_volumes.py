@@ -225,6 +225,7 @@ volume_map:
               "dest_dev": null,
               "dest_id": null,
               "image_id": null,
+              "image_metadata": {"hw_firmware_type": "uefi", "hw_machine_type": "q35"},
               "name": "migration-vm-boot",
               "port": 49164,
               "progress": 0.0,
@@ -307,6 +308,9 @@ class OpenStackSourceHost(OpenStackHostBase):
         #   url:         Final NBD export on destination conversion host
         #   progress:    Transfer progress percentage
         #   bootable:    Boolean flag for boot disks
+        #   image_metadata: Cinder volume_image_metadata of the source volume,
+        #                   carries hw_firmware_type/hw_machine_type etc. which
+        #                   Nova needs to build the destination domain XML
         self.volume_map = {}
 
         self.ser_server = ser_server
@@ -354,7 +358,8 @@ class OpenStackSourceHost(OpenStackHostBase):
                 source_dev=None, source_id=volume['id'], dest_dev=None,
                 dest_id=None, snap_id=None, image_id=None, name=volume['name'],
                 size=volume['size'], port=None, url=None, progress=None,
-                bootable=volume['bootable'])
+                bootable=volume['bootable'],
+                image_metadata=dict(volume.get('volume_image_metadata') or {}))
             self._update_progress(dev_path, 0.0)
 
     def _validate_volumes_match_data(self):
@@ -423,7 +428,8 @@ class OpenStackSourceHost(OpenStackHostBase):
                 source_dev=None, source_id=volume['id'], dest_dev=None,
                 dest_id=None, snap_id=None, image_id=image.id, name=volume['name'],
                 size=volume['size'], port=None, url=None, progress=None,
-                bootable=volume['bootable'])
+                bootable=volume['bootable'],
+                image_metadata=dict(volume.get('volume_image_metadata') or {}))
             self._update_progress('/dev/vda', 0.0)
         elif sourcevm.image and not self.ser_server.migration_params()['boot_disk_copy']:
             self.log.info('Image-based instance, boot_disk_copy disabled: skipping boot volume')
