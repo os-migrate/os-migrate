@@ -132,7 +132,7 @@ container like so:</p>
 <p>Alternatively, you can run each development-related command in an
 ephemeral container using the provided wrapper, if you provide the
 command as parameter(s) to the <cite>./toolbox/run</cite> script:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">echo</span> <span class="s2">&quot;Hello from os-migrate toolbox.&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">echo</span> <span class="s2">"Hello from os-migrate toolbox."</span>
 </pre></div>
 </div>
 </section>
@@ -236,12 +236,12 @@ Vagrant+Devstack instance:</p>
 </div>
 <p>To run functional tests for just the resource you’re working on, run
 e.g.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">OS_MIGRATE_FUNC_TEST_ARGS</span><span class="o">=</span><span class="s1">&#39;--tags test_network,test_subnet&#39;</span> <span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span><span class="o">-</span><span class="n">func</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">OS_MIGRATE_FUNC_TEST_ARGS</span><span class="o">=</span><span class="s1">'--tags test_network,test_subnet'</span> <span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span><span class="o">-</span><span class="n">func</span>
 </pre></div>
 </div>
 <p>To explore imported resources, skip the after-test cleanup of resources,
 e.g.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">OS_MIGRATE_FUNC_TEST_ARGS</span><span class="o">=</span><span class="s1">&#39;--tags test_network,test_subnet --skip-tags test_clean_after&#39;</span> <span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span><span class="o">-</span><span class="n">func</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">OS_MIGRATE_FUNC_TEST_ARGS</span><span class="o">=</span><span class="s1">'--tags test_network,test_subnet --skip-tags test_clean_after'</span> <span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span><span class="o">-</span><span class="n">func</span>
 </pre></div>
 </div>
 </section>
@@ -274,13 +274,13 @@ resources from one project to another.</p>
 </section>
 <section id="create-source-environment-and-destination-environment-projects-and-users">
 <h3>Create source environment and destination environment projects and users<a class="headerlink" href="#create-source-environment-and-destination-environment-projects-and-users" title="Link to this heading"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create the src user in the default domain with password &#39;redhat&#39;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create the src user in the default domain with password 'redhat'</span>
 <span class="n">openstack</span> <span class="n">user</span> <span class="n">create</span> <span class="o">--</span><span class="n">domain</span> <span class="n">default</span> <span class="o">--</span><span class="n">password</span> <span class="n">redhat</span> <span class="n">src</span>
 
 <span class="c1"># Create the src project</span>
 <span class="n">openstack</span> <span class="n">project</span> <span class="n">create</span> <span class="o">--</span><span class="n">domain</span> <span class="n">default</span> <span class="n">src</span>
 
-<span class="c1"># Assign src user a &#39;member&#39; role in the src project</span>
+<span class="c1"># Assign src user a 'member' role in the src project</span>
 <span class="n">openstack</span> <span class="n">role</span> <span class="n">add</span> \
 <span class="o">--</span><span class="n">user</span> <span class="n">src</span> <span class="o">--</span><span class="n">user</span><span class="o">-</span><span class="n">domain</span> <span class="n">default</span> \
 <span class="o">--</span><span class="n">project</span> <span class="n">src</span> <span class="o">--</span><span class="n">project</span><span class="o">-</span><span class="n">domain</span> <span class="n">default</span> <span class="n">member</span>
@@ -288,13 +288,13 @@ resources from one project to another.</p>
 <span class="c1"># Confirm role assignment was successful</span>
 <span class="n">openstack</span> <span class="n">role</span> <span class="n">assignment</span> <span class="nb">list</span> <span class="o">--</span><span class="n">project</span> <span class="n">src</span>
 
-<span class="c1"># Create the dst user in the default domain with password &#39;redhat&#39;</span>
+<span class="c1"># Create the dst user in the default domain with password 'redhat'</span>
 <span class="n">openstack</span> <span class="n">user</span> <span class="n">create</span> <span class="o">--</span><span class="n">domain</span> <span class="n">default</span> <span class="o">--</span><span class="n">password</span> <span class="n">redhat</span> <span class="n">dst</span>
 
 <span class="c1"># Create the dst project</span>
 <span class="n">openstack</span> <span class="n">project</span> <span class="n">create</span> <span class="o">--</span><span class="n">domain</span> <span class="n">default</span> <span class="n">dst</span>
 
-<span class="c1"># Assign dst user a &#39;member&#39; role in the src project</span>
+<span class="c1"># Assign dst user a 'member' role in the src project</span>
 <span class="n">openstack</span> <span class="n">role</span> <span class="n">add</span> \
 <span class="o">--</span><span class="n">user</span> <span class="n">dst</span> <span class="o">--</span><span class="n">user</span><span class="o">-</span><span class="n">domain</span> <span class="n">default</span> \
 <span class="o">--</span><span class="n">project</span> <span class="n">dst</span> <span class="o">--</span><span class="n">project</span><span class="o">-</span><span class="n">domain</span> <span class="n">default</span> <span class="n">member</span>
@@ -398,7 +398,7 @@ the parameters.</p>
 <h3>Run e2e test using the OS Migrate toolbox and the above config<a class="headerlink" href="#run-e2e-test-using-the-os-migrate-toolbox-and-the-above-config" title="Link to this heading"></a></h3>
 <p>Copy the above config to file <cite>custom-config.yaml</cite> in the <cite>local</cite> directory of your local <cite>os-migrate</cite> source.</p>
 <p>Run the full test suite using the above config.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">OS_MIGRATE_E2E_TEST_ARGS</span><span class="o">=</span><span class="s1">&#39;-e @/root//local/custom-config.yaml&#39;</span> <span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span><span class="o">-</span><span class="n">e2e</span><span class="o">-</span><span class="n">tenant</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">OS_MIGRATE_E2E_TEST_ARGS</span><span class="o">=</span><span class="s1">'-e @/root//local/custom-config.yaml'</span> <span class="o">./</span><span class="n">toolbox</span><span class="o">/</span><span class="n">run</span> <span class="n">make</span> <span class="n">test</span><span class="o">-</span><span class="n">e2e</span><span class="o">-</span><span class="n">tenant</span>
 </pre></div>
 </div>
 </section>

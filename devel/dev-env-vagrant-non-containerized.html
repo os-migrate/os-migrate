@@ -93,7 +93,7 @@ instructions.</p>
 <span class="n">vagrant</span> <span class="o">--</span><span class="n">version</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">virsh</span> <span class="n">pool</span><span class="o">-</span><span class="n">define</span><span class="o">-</span><span class="k">as</span> <span class="n">vagrant</span> <span class="nb">dir</span> <span class="o">-</span> <span class="o">-</span> <span class="o">-</span> <span class="o">-</span> <span class="s2">&quot;/var/lib/libvirt/images/vagrant&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">virsh</span> <span class="n">pool</span><span class="o">-</span><span class="n">define</span><span class="o">-</span><span class="k">as</span> <span class="n">vagrant</span> <span class="nb">dir</span> <span class="o">-</span> <span class="o">-</span> <span class="o">-</span> <span class="o">-</span> <span class="s2">"/var/lib/libvirt/images/vagrant"</span>
 <span class="n">virsh</span> <span class="n">pool</span><span class="o">-</span><span class="nb">list</span> <span class="o">--</span><span class="nb">all</span>
 <span class="n">virsh</span> <span class="n">pool</span><span class="o">-</span><span class="n">build</span> <span class="n">vagrant</span>
 <span class="n">virsh</span> <span class="n">pool</span><span class="o">-</span><span class="n">start</span> <span class="n">vagrant</span>
@@ -102,7 +102,7 @@ instructions.</p>
 </pre></div>
 </div>
 <p>We need to install the libvirt provider</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">yum</span> <span class="n">groupinstall</span> <span class="s2">&quot;Virtualization Host&quot;</span> <span class="o">-</span><span class="n">y</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">yum</span> <span class="n">groupinstall</span> <span class="s2">"Virtualization Host"</span> <span class="o">-</span><span class="n">y</span>
 <span class="n">yum</span> <span class="n">install</span> <span class="n">libvirt</span><span class="o">-</span><span class="n">devel</span> <span class="o">-</span><span class="n">y</span>
 <span class="n">vagrant</span> <span class="n">plugin</span> <span class="n">install</span> <span class="n">vagrant</span><span class="o">-</span><span class="n">libvirt</span>
 <span class="n">systemctl</span> <span class="n">restart</span> <span class="n">libvirtd</span>

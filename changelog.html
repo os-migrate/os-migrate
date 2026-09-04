@@ -228,7 +228,12 @@
 </section>
 <section id="other">
 <h3>Other<a class="headerlink" href="#other" title="Link to this heading"></a></h3>
-<ul class="simple">
+<ul>
+<li><p>Fix malformed application credential clouds.yaml. [Cyril Lopez]</p>
+<p>When using application credentials for SRC or DST OpenStack, the
+clouds.yaml file is malformed as follows:</p>
+<p>auth_type: v3applicationcredential    region_name: MySuperRegion</p>
+</li>
 <li><p>Export volume map for nbdkit in a dedicated var. [mathieu bultel]</p></li>
 <li><p>Force bool for os_migrate_workload_stop_before_migration. [mathieu
 bultel]</p></li>

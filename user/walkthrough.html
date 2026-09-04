@@ -240,7 +240,7 @@ to the Keystone v2 endpoint.</p>
 command with the following arguments routinely, so let’s save them as
 variables in the shell:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">OSM_DIR</span><span class="o">=</span>/home/migrator/.ansible/collections/ansible_collections/os_migrate/os_migrate
-<span class="nb">export</span><span class="w"> </span><span class="nv">OSM_CMD</span><span class="o">=</span><span class="s2">&quot;ansible-playbook -v -i </span><span class="nv">$OSM_DIR</span><span class="s2">/localhost_inventory.yml -e @os-migrate-vars.yml&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">OSM_CMD</span><span class="o">=</span><span class="s2">"ansible-playbook -v -i </span><span class="nv">$OSM_DIR</span><span class="s2">/localhost_inventory.yml -e @os-migrate-vars.yml"</span>
 </pre></div>
 </div>
 </section>
@@ -269,7 +269,7 @@ this:</p>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">_info</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">availability_zones</span><span class="p">:</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nova</span>
-<span class="w">      </span><span class="nt">created_at</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-04-07T14:08:30Z&#39;</span>
+<span class="w">      </span><span class="nt">created_at</span><span class="p">:</span><span class="w"> </span><span class="s">'2020-04-07T14:08:30Z'</span>
 <span class="w">      </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">a1eb31f6-2cdc-4896-b582-8950dafa34aa</span>
 <span class="w">      </span><span class="nt">project_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2f444c71265048f7a9d21f81db6f21a4</span>
 <span class="w">      </span><span class="nt">qos_policy_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
@@ -278,10 +278,10 @@ this:</p>
 <span class="w">      </span><span class="nt">subnet_ids</span><span class="p">:</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">a5052e10-5e00-432b-a826-29695677aca0</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">d450ffd0-972e-4398-ab49-6ba9e29e2499</span>
-<span class="w">      </span><span class="nt">updated_at</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-04-07T14:08:34Z&#39;</span>
+<span class="w">      </span><span class="nt">updated_at</span><span class="p">:</span><span class="w"> </span><span class="s">'2020-04-07T14:08:34Z'</span>
 <span class="w">    </span><span class="nt">params</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">availability_zone_hints</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
-<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">''</span>
 <span class="w">      </span><span class="nt">dns_domain</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
 <span class="w">      </span><span class="nt">is_admin_state_up</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">      </span><span class="nt">is_default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
@@ -521,14 +521,14 @@ host server.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">os_migrate_version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.17.0</span>
 <span class="nt">resources</span><span class="p">:</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">_info</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">created_at</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-11-12T17:55:40Z&#39;</span>
+<span class="w">    </span><span class="nt">created_at</span><span class="p">:</span><span class="w"> </span><span class="s">'2020-11-12T17:55:40Z'</span>
 <span class="w">    </span><span class="nt">flavor_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cd6258f9-c34b-4a9c-a1e2-8cb81826781e</span>
 <span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">af615f8c-378a-4a2e-be6a-b4d38a954242</span>
-<span class="w">    </span><span class="nt">launched_at</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-11-12T17:56:00.000000&#39;</span>
+<span class="w">    </span><span class="nt">launched_at</span><span class="p">:</span><span class="w"> </span><span class="s">'2020-11-12T17:56:00.000000'</span>
 <span class="w">    </span><span class="nt">security_group_ids</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1359ec88-4873-40d2-aa0b-18ad0588f107</span>
 <span class="w">    </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SHUTOFF</span>
-<span class="w">    </span><span class="nt">updated_at</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-11-12T17:56:30Z&#39;</span>
+<span class="w">    </span><span class="nt">updated_at</span><span class="p">:</span><span class="w"> </span><span class="s">'2020-11-12T17:56:30Z'</span>
 <span class="w">    </span><span class="nt">user_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">48be0a2e86a84682b8e4992a65d39e3e</span>
 <span class="w">  </span><span class="nt">_migration_params</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">boot_disk_copy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -558,19 +558,19 @@ host server.</p>
 <span class="w">        </span><span class="nt">fixed_ips_refs</span><span class="p">:</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ip_address</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.20.7</span>
 <span class="w">          </span><span class="nt">subnet_ref</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;%auth%&#39;</span>
+<span class="w">            </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="s">'%auth%'</span>
 <span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">osm_subnet</span>
-<span class="w">            </span><span class="nt">project_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;%auth%&#39;</span>
+<span class="w">            </span><span class="nt">project_name</span><span class="p">:</span><span class="w"> </span><span class="s">'%auth%'</span>
 <span class="w">        </span><span class="nt">network_ref</span><span class="p">:</span>
-<span class="w">          </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;%auth%&#39;</span>
+<span class="w">          </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="s">'%auth%'</span>
 <span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">osm_net</span>
-<span class="w">          </span><span class="nt">project_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;%auth%&#39;</span>
+<span class="w">          </span><span class="nt">project_name</span><span class="p">:</span><span class="w"> </span><span class="s">'%auth%'</span>
 <span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">openstack.network.ServerPort</span>
 <span class="w">    </span><span class="nt">scheduler_hints</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
 <span class="w">    </span><span class="nt">security_group_refs</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;%auth%&#39;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="s">'%auth%'</span>
 <span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">osm_security_group</span>
-<span class="w">      </span><span class="nt">project_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;%auth%&#39;</span>
+<span class="w">      </span><span class="nt">project_name</span><span class="p">:</span><span class="w"> </span><span class="s">'%auth%'</span>
 <span class="w">    </span><span class="nt">tags</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 <span class="w">    </span><span class="nt">user_data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
 <span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">openstack.compute.Server</span>
