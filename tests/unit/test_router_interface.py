@@ -6,6 +6,8 @@ import openstack
 import unittest
 
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
+    const,
+    exc,
     router_interface,
 )
 
@@ -88,7 +90,7 @@ def router_interface_refs():
     }
 
 
-# "Disconnected" variant of Network resource where we make sure not to
+# "Disconnected" variant of RouterInterface resource where we make sure not to
 # make requests using `conn`.
 class RouterInterface(router_interface.RouterInterface):
 
@@ -151,3 +153,66 @@ class TestRouterInterface(unittest.TestCase):
         self.assertEqual(params["network_ref"]["name"], "test-net")
 
         self.assertEqual(info["id"], "uuid-test-router-interface")
+
+    def test_unexpected_device_owner(self):
+        sdk_rtr = sdk_router_interface()
+        sdk_rtr["device_owner"] = "compute:nova"
+        with self.assertRaises(exc.UnexpectedChoice):
+            RouterInterface.from_sdk(None, sdk_rtr)
+
+    def test_router_interface_sdk_params(self):
+        data = {
+            const.RES_TYPE: "openstack.network.RouterInterface",
+            const.RES_PARAMS: {
+                "device_owner": "network:router_interface",
+                "device_ref": router_interface_refs()["device_ref"],
+                "fixed_ips_refs": router_interface_refs()["fixed_ips_refs"],
+                "network_ref": router_interface_refs()["network_ref"],
+            },
+            const.RES_INFO: {
+                "id": "uuid-test-router-interface",
+            },
+        }
+        rtr = RouterInterface.from_data(data)
+        sdk_params = rtr._to_sdk_params(rtr._refs_from_ser(None))
+        self.assertEqual(sdk_params["network_id"], "uuid-test-net")
+        self.assertEqual(
+            sdk_params["fixed_ips"],
+            [
+                {
+                    "subnet_id": "uuid-test-subnet",
+                    "ip_address": "192.168.0.10",
+                },
+            ],
+        )
+        self.assertNotIn("device_owner", sdk_params)
+        self.assertNotIn("device_ref", sdk_params)
+
+    def test_needs_update(self):
+        data = {
+            const.RES_TYPE: "openstack.network.RouterInterface",
+            const.RES_PARAMS: {
+                "device_owner": "network:router_interface",
+                "device_ref": router_interface_refs()["device_ref"],
+                "fixed_ips_refs": router_interface_refs()["fixed_ips_refs"],
+                "network_ref": router_interface_refs()["network_ref"],
+            },
+            const.RES_INFO: {"id": "uuid-test-router-interface"},
+        }
+        r1 = RouterInterface.from_data(data)
+        r2 = RouterInterface.from_data(
+            {
+                const.RES_TYPE: "openstack.network.RouterInterface",
+                const.RES_PARAMS: {
+                    "device_owner": "network:router_interface",
+                    "device_ref": router_interface_refs()["device_ref"],
+                    "fixed_ips_refs": router_interface_refs()["fixed_ips_refs"],
+                    "network_ref": router_interface_refs()["network_ref"],
+                },
+                const.RES_INFO: {"id": "uuid-test-router-interface"},
+            }
+        )
+        r2.info()["id"] = "other-id"
+        self.assertFalse(r1._needs_update(r2))
+        r2.params()["device_owner"] = "network:router_interface_distributed"
+        self.assertTrue(r1._needs_update(r2))

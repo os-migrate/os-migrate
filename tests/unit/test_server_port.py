@@ -108,7 +108,7 @@ def server_port_refs(**kwargs):
     return refs
 
 
-# "Disconnected" variant of Network resource where we make sure not to
+# "Disconnected" variant of ServerPort resource where we make sure not to
 # make requests using `conn`.
 class ServerPort(server_port.ServerPort):
 
@@ -205,4 +205,46 @@ class TestServerPort(unittest.TestCase):
                 "uuid-test-server-port-2",
                 "uuid-test-server-port-3",
             ],
+        )
+
+    def test_needs_update(self):
+        sp1 = ServerPort.from_sdk(None, sdk_server_port())
+        sp2 = ServerPort.from_sdk(None, sdk_server_port())
+        sp2.info()["device_id"] = "other-server"
+        self.assertFalse(sp1._needs_update(sp2))
+        sp2.params()["mac_address"] = "aa:bb:cc:dd:ee:ff"
+        self.assertTrue(sp1._needs_update(sp2))
+
+    def test_nova_fixed_ips_sorted_skips_floating(self):
+        sdk_ser = {
+            "addresses": {
+                "net-1": [
+                    {"OS-EXT-IPS:type": "floating", "addr": "10.0.0.1"},
+                    {"OS-EXT-IPS:type": "fixed", "addr": "192.168.1.10"},
+                    {"OS-EXT-IPS:type": "fixed", "addr": "192.168.1.11"},
+                ]
+            }
+        }
+        self.assertEqual(
+            server_port._nova_fixed_ips_sorted(sdk_ser),
+            ["192.168.1.10", "192.168.1.11"],
+        )
+
+    def test_nova_fixed_ips_sorted_empty(self):
+        self.assertEqual(
+            server_port._nova_fixed_ips_sorted({"addresses": {}}),
+            [],
+        )
+
+    def test_neutron_port_has_fixed_ip(self):
+        port = {
+            "fixed_ips": [
+                {"ip_address": "192.168.1.10"},
+                {"ip_address": "192.168.1.11"},
+            ]
+        }
+        self.assertTrue(server_port._neutron_port_has_fixed_ip(port, "192.168.1.11"))
+        self.assertFalse(server_port._neutron_port_has_fixed_ip(port, "10.0.0.1"))
+        self.assertFalse(
+            server_port._neutron_port_has_fixed_ip({"fixed_ips": []}, "192.168.1.10")
         )

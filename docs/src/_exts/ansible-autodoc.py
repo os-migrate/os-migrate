@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
 """
@@ -19,15 +18,13 @@ under the License.
 
 import os
 import sys
+from typing import ClassVar
 
-from docutils import core
-from docutils import nodes
+import markdown
+from docutils import core, nodes
 from docutils.parsers import rst
 from docutils.parsers.rst import Directive
 from docutils.writers.html4css1 import Writer
-
-import markdown
-
 from ruamel.yaml import YAML as RYAML
 
 try:
@@ -36,9 +33,9 @@ try:
 
     StringIO = io.StringIO
 except ImportError:
-    from io import StringIO
-    import importlib.util
     import importlib.machinery
+    import importlib.util
+    from io import StringIO
 
     # Python 3.11+
     def load_source(modname, filename):
@@ -89,7 +86,7 @@ class AnsibleAutoPluginDirective(Directive):
 
     directive_name = "ansibleautoplugin"
     has_content = True
-    option_spec = {
+    option_spec: ClassVar[dict] = {
         "module": rst.directives.unchanged,
         "role": rst.directives.unchanged,
         "documentation": rst.directives.unchanged,
@@ -150,8 +147,8 @@ class AnsibleAutoPluginDirective(Directive):
         docs = DOCYAML.load(module.DOCUMENTATION)
         doc_data = {}
         doc_data["docs"] = docs["description"]
-        doc_data["author"] = docs.get("author", list())
-        doc_data["options"] = docs.get("options", dict())
+        doc_data["author"] = docs.get("author", [])
+        doc_data["options"] = docs.get("options", {})
         return doc_data
 
     @staticmethod
@@ -236,8 +233,8 @@ class AnsibleAutoPluginDirective(Directive):
                     to_yaml_data=role_defaults,
                     section_title="Role Defaults",
                     section_text="This section highlights all of the defaults"
-                    ' and variables set within the "{}"'
-                    " role.".format(os.path.basename(role)),
+                    f' and variables set within the "{os.path.basename(role)}"'
+                    " role.",
                 )
             )
         vars_path = os.path.join(role, "vars")
@@ -250,23 +247,23 @@ class AnsibleAutoPluginDirective(Directive):
                     section.append(
                         self._yaml_section(
                             to_yaml_data=vars_values,
-                            section_title="Role Variables: {}".format(v_file),
+                            section_title=f"Role Variables: {v_file}",
                         )
                     )
 
         test_list = nodes.field_list()
         test_section = self._section_block(
             title="Molecule Scenarios",
-            text='Molecule is being used to test the "{}" role. The'
+            text=f'Molecule is being used to test the "{os.path.basename(role)}" role. The'
             " following section highlights the drivers in service"
             " and provides an example playbook showing how the role"
-            " is leveraged.".format(os.path.basename(role)),
+            " is leveraged.",
         )
         molecule_path = os.path.join(role, "molecule")
         if os.path.exists(molecule_path):
             for test in os.listdir(molecule_path):
                 molecule_section = self._section_block(
-                    title="Scenario: {}".format(test)
+                    title=f"Scenario: {test}"
                 )
                 molecule_file = os.path.join(molecule_path, test, "molecule.yml")
                 if not os.path.exists(molecule_file):
@@ -312,7 +309,7 @@ class AnsibleAutoPluginDirective(Directive):
                 molecule_section.append(
                     self._yaml_section(
                         to_yaml_data=molecule_playbook,
-                        section_title="Example {} playbook".format(test),
+                        section_title=f"Example {test} playbook",
                     )
                 )
                 test_list.append(molecule_section)
@@ -333,7 +330,7 @@ class AnsibleAutoPluginDirective(Directive):
                         module=self.load_module(
                             filename=os.path.join(library_path, lib)
                         ),
-                        module_title="Embedded module: {}".format(lib),
+                        module_title=f"Embedded module: {lib}",
                         example_title="Examples for embedded module",
                     )
 

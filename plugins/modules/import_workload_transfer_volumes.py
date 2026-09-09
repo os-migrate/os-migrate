@@ -247,9 +247,52 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import serve
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils.volume_common import (
     OpenstackVolumeTransfer,
     DEFAULT_TIMEOUT,
+    QEMU_PROGRESS_RE,
 )
 
-import re
+
+def apply_nbdkit_disks_to_volume_map(volume_map, nbdkit_disks, server_name, log=None):
+    """
+    Update or create volume_map entries from an nbdkit_disks list.
+    Returns the updated volume_map (mutates in place).
+    """
+    for disk in nbdkit_disks:
+        device = disk["device"]
+        uri = disk["uri"]
+        size = disk["size"]
+        bootable = disk.get("bootable", False)
+        port = disk["port"]
+
+        if log is not None:
+            log.info(
+                "Disk %s: URI=%s, size=%dGB, bootable=%s",
+                device,
+                uri,
+                size,
+                bootable,
+            )
+
+        if device in volume_map:
+            volume_map[device]["url"] = uri
+            volume_map[device]["port"] = port
+            volume_map[device]["size"] = size
+            volume_map[device]["bootable"] = bootable
+        else:
+            volume_map[device] = {
+                "url": uri,
+                "port": port,
+                "size": size,
+                "bootable": bootable,
+                "dest_dev": None,
+                "dest_id": None,
+                "image_id": None,
+                "name": f"{server_name}-{device.split('/')[-1]}",
+                "progress": 0.0,
+                "snap_id": None,
+                "source_dev": None,
+                "source_id": None,
+            }
+    return volume_map
 
 
 class OpenStackDestinationVolume(OpenstackVolumeTransfer):
@@ -292,7 +335,7 @@ class OpenStackDestinationVolume(OpenstackVolumeTransfer):
         self.volume_map = volume_map
 
         # Match for qemu_img progress percentage
-        self.qemu_progress_re = re.compile(r"\((\d+\.\d+)/100%\)")
+        self.qemu_progress_re = QEMU_PROGRESS_RE
 
         # SSH tunnel process
         self.forwarding_process = None
@@ -312,39 +355,10 @@ class OpenStackDestinationVolume(OpenstackVolumeTransfer):
         """
         self.log.info("Setting up multi-disk nbdkit URLs...")
         self.log.info("Number of disks: %d", len(nbdkit_disks))
-
-        # Build volume_map from nbdkit_disks
-        for disk in nbdkit_disks:
-            device = disk["device"]
-            uri = disk["uri"]
-            size = disk["size"]
-            bootable = disk.get("bootable", False)
-            port = disk["port"]
-
-            self.log.info("Disk %s: URI=%s, size=%dGB, bootable=%s", device, uri, size, bootable)
-
-            # Update existing volume_map entry or create new one
-            if device in self.volume_map:
-                self.volume_map[device]["url"] = uri
-                self.volume_map[device]["port"] = port
-                self.volume_map[device]["size"] = size
-                self.volume_map[device]["bootable"] = bootable
-            else:
-                # Create new entry if not in volume_map
-                self.volume_map[device] = {
-                    "url": uri,
-                    "port": port,
-                    "size": size,
-                    "bootable": bootable,
-                    "dest_dev": None,
-                    "dest_id": None,
-                    "image_id": None,
-                    "name": f"{self.ser_server.params()['name']}-{device.split('/')[-1]}",
-                    "progress": 0.0,
-                    "snap_id": None,
-                    "source_dev": None,
-                    "source_id": None,
-                }
+        server_name = self.ser_server.params()["name"]
+        self.volume_map = apply_nbdkit_disks_to_volume_map(
+            self.volume_map, nbdkit_disks, server_name, log=self.log
+        )
 
     def transfer_exports(self):
         try:

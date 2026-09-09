@@ -50,10 +50,11 @@ def serialized_subnet():
             ],
             "cidr": "10.10.10.0/24",
             "description": "test-subnet",
-            "dns_nameservers": None,
+            "dns_nameservers": [],
             "gateway_ip": "10.10.10.1",
             "host_routes": [
                 {"destination": "0.0.0.0/0", "nexthop": "12.34.56.78"},
+                {"destination": "192.168.10.0/24", "nexthop": "87.65.43.21"},
             ],
             "ip_version": 4,
             "ipv6_address_mode": None,
@@ -117,7 +118,7 @@ def subnet_refs():
     }
 
 
-# "Disconnected" variant of Network resource where we make sure not to
+# "Disconnected" variant of Subnet resource where we make sure not to
 # make requests using `conn`.
 class Subnet(subnet.Subnet):
 
@@ -197,10 +198,27 @@ class TestSubnet(unittest.TestCase):
         )
         self.assertEqual(sdk_params["cidr"], "10.10.10.0/24")
         self.assertEqual(sdk_params["description"], "test-subnet")
+        self.assertEqual(sdk_params["dns_nameservers"], [])
         self.assertEqual(sdk_params["gateway_ip"], "10.10.10.1")
+        self.assertEqual(
+            sdk_params["host_routes"],
+            [
+                {"destination": "0.0.0.0/0", "nexthop": "12.34.56.78"},
+                {"destination": "192.168.10.0/24", "nexthop": "87.65.43.21"},
+            ],
+        )
         self.assertEqual(sdk_params["ip_version"], 4)
         self.assertEqual(sdk_params["is_dhcp_enabled"], True)
         self.assertEqual(sdk_params["name"], "test-subnet1")
         self.assertEqual(sdk_params["network_id"], "uuid-test-net")
         self.assertEqual(sdk_params["segment_id"], "uuid-test-segment")
         self.assertEqual(sdk_params["subnet_pool_id"], "uuid-test-subnet-pool")
+
+    def test_needs_update(self):
+        sub1 = Subnet.from_sdk(None, sdk_subnet())
+        sub2 = Subnet.from_sdk(None, sdk_subnet())
+        self.assertFalse(sub1._needs_update(sub2))
+        sub2.info()["id"] = "other-uuid"
+        self.assertFalse(sub1._needs_update(sub2))
+        sub2.params()["description"] = "changed"
+        self.assertTrue(sub1._needs_update(sub2))

@@ -56,7 +56,6 @@ def serialized_network():
             "is_vlan_transparent": False,
             "mtu": 1400,
             "name": "test-net",
-            "project_name": "test-project",
             "provider_network_type": "vxlan",
             "provider_physical_network": "physnet",
             "provider_segmentation_id": "456",
@@ -71,6 +70,7 @@ def serialized_network():
         const.RES_INFO: {
             "availability_zones": ["nova", "zone3"],
             "created_at": "2020-01-06T15:50:55Z",
+            "id": "uuid-test-net",
             "project_id": "uuid-test-project",
             "revision_number": 3,
             "status": "ACTIVE",
@@ -174,3 +174,11 @@ class TestNetwork(unittest.TestCase):
         sdk_params = net._to_sdk_params(refs)
 
         self.assertNotIn("dns_domain", sdk_params)
+
+    def test_needs_update(self):
+        net1 = Network.from_data(serialized_network())
+        net2 = Network.from_data(serialized_network())
+        net2.info()["status"] = "DOWN"
+        self.assertFalse(net1._needs_update(net2))
+        net2.params()["mtu"] = 1500
+        self.assertTrue(net1._needs_update(net2))

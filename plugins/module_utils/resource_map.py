@@ -18,6 +18,7 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import (
     server_volume,
     subnet,
     user,
+    user_project_role_assignment,
 )
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import const
 
@@ -37,4 +38,7 @@ RESOURCE_MAP = {
     const.RES_TYPE_SERVER_VOLUME: server_volume.ServerVolume,
     const.RES_TYPE_SUBNET: subnet.Subnet,
     const.RES_TYPE_USER: user.User,
+    const.RES_TYPE_USER_PROJECT_ROLE_ASSIGNMENT: (
+        user_project_role_assignment.UserProjectRoleAssignment
+    ),
 }
