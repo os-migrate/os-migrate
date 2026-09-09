@@ -30,7 +30,7 @@
   ansible.builtin.assert:
     that:
       - (user_resources |
-        json_query("[?params.name ==
+        os_migrate.os_migrate.json_query("[?params.name ==
         'osmdst_user'].params.name")
         == ['osmdst_user'])
 

@@ -12,13 +12,13 @@
 - name: Create id-name pairs of images to export
   ansible.builtin.set_fact:
     export_images_ids_names: "{{ (src_images_info.image | default(src_images_info.images)
-      | json_query('[*].{name: name, id: id, owner: owner}')
+      | os_migrate.os_migrate.json_query('[*].{name: name, id: id, owner: owner}')
         | sort(attribute='id')) }}"
 
 - name: Filter images to export by project
   ansible.builtin.set_fact:
     export_images_ids_names: "{{ (export_images_ids_names
-      | json_query(\"[?owner=='\" + os_migrate_src_filters['project_id'] + \"']\")
+      | os_migrate.os_migrate.json_query(\"[?owner=='\" + os_migrate_src_filters['project_id'] + \"']\")
         | sort(attribute='id')) }}"
   when:
     - os_migrate_src_filters is defined

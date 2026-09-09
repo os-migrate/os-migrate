@@ -22,7 +22,7 @@
   ansible.builtin.assert:
     that:
       - (security_group_rule_resources |
-        json_query("[?params.security_group_ref.name ==
+        os_migrate.os_migrate.json_query("[?params.security_group_ref.name ==
         'osm_security_group'].params.protocol")
         == ['tcp'])
 

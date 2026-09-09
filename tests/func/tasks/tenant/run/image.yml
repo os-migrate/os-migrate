@@ -21,7 +21,7 @@
   ansible.builtin.assert:
     that:
       - (image_resources |
-        json_query("[?params.name ==
+        os_migrate.os_migrate.json_query("[?params.name ==
         'osm_image'].params.min_ram")
         == [128])
 

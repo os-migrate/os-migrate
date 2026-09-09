@@ -49,7 +49,7 @@
         client_key: "{{ os_migrate_src_client_key | default(omit) }}"
       when:
         - prelim is defined and prelim.changed
-        - os_migrate_workload_stop_before_migration
+        - os_migrate_workload_stop_before_migration | bool
         - item["_migration_params"]["data_copy"] | default(true)
 
     - name: Perform required checks to ensure source workload is ready
@@ -100,7 +100,15 @@
       os_migrate.os_migrate.import_workload_export_volume_map:
         cloud: "{{ cloud_vars_src }}"
         data: "{{ item }}"
-      register: exports
+      register: exports_nbd
+      when:
+        - prelim is defined and prelim.changed
+        - item["_migration_params"]["data_copy"] | default(true)
+        - item['_migration_params']['use_nbdkit_direct'] | default(false)
+
+    - name: Set exports from nbdkit volume map
+      ansible.builtin.set_fact:
+        exports: "{{ exports_nbd }}"
       when:
         - prelim is defined and prelim.changed
         - item["_migration_params"]["data_copy"] | default(true)

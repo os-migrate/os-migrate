@@ -28,7 +28,7 @@
       ansible.builtin.assert:
         that:
           - (resources |
-            json_query("[?params.name ==
+            os_migrate.os_migrate.json_query("[?params.name ==
             'osm_net'].params.name")
             == ['osm_net'])
 
@@ -60,7 +60,7 @@
       ansible.builtin.assert:
         that:
           - (subnet_resources |
-            json_query("[?params.name ==
+            os_migrate.os_migrate.json_query("[?params.name ==
             'osm_subnet'].params.cidr")
             == ['192.168.20.0/24'])
 
@@ -89,7 +89,7 @@
       ansible.builtin.assert:
         that:
           - (security_group_resources |
-            json_query("[?params.name ==
+            os_migrate.os_migrate.json_query("[?params.name ==
             'osm_security_group'].params.description")
             == ['OSM security group'])
 
@@ -118,7 +118,7 @@
       ansible.builtin.assert:
         that:
           - (security_group_rule_resources |
-            json_query("[?params.security_group_ref.name ==
+            os_migrate.os_migrate.json_query("[?params.security_group_ref.name ==
             'osm_security_group'].params.remote_ip_prefix")
             == ['0.0.0.0/0'])
 
@@ -150,7 +150,7 @@
       ansible.builtin.assert:
         that:
           - "(router_resources |
-              json_query(\"[?params.name ==
+              os_migrate.os_migrate.json_query(\"[?params.name ==
               'osm_router'].params.external_gateway_refinfo.network_ref.name\")) ==
               [os_migrate_src_osm_router_external_network | default('public')]"
 
@@ -182,7 +182,7 @@
       ansible.builtin.assert:
         that:
           - "(router_interface_resources |
-              json_query(\"[?params.device_ref.name ==
+              os_migrate.os_migrate.json_query(\"[?params.device_ref.name ==
               'osm_router'].params.fixed_ips_refs[].subnet_ref.name\")) | sort ==
               ['osm_subnet']"
 
@@ -210,7 +210,7 @@
       ansible.builtin.assert:
         that:
           - (resources |
-            json_query("[?params.name ==
+            os_migrate.os_migrate.json_query("[?params.name ==
             'osm_image'].params.min_ram")
             == [128])
 

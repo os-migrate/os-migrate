@@ -11,7 +11,7 @@
 - name: Create id-name pairs of routers to export
   ansible.builtin.set_fact:
     export_routers_ids_names: "{{ (src_routers_info.openstack_routers
-      | json_query('[*].{name: name, id: id}') | sort(attribute='id')) }}"
+      | os_migrate.os_migrate.json_query('[*].{name: name, id: id}') | sort(attribute='id')) }}"
 
 - name: Filter names of routers to export
   ansible.builtin.set_fact:

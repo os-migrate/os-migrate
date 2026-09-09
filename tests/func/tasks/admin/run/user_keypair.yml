@@ -29,9 +29,9 @@
 - name: verify data contents
   ansible.builtin.assert:
     that:
-      - (users_keypairs_resources | json_query("[?params.name ==
+      - (users_keypairs_resources | os_migrate.os_migrate.json_query("[?params.name ==
                             'osmdst_user_keypair'].params.type") == ['ssh'])
-      - (users_keypairs_resources | json_query("[?params.name ==
+      - (users_keypairs_resources | os_migrate.os_migrate.json_query("[?params.name ==
                             'osmdst_user_keypair'].params.user_ref.name") == ['osmdst_user'])
 
 - name: import users keypairs

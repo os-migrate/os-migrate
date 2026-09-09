@@ -22,7 +22,7 @@
   ansible.builtin.assert:
     that:
       - (flavor_resources |
-        json_query("[?params.name ==
+        os_migrate.os_migrate.json_query("[?params.name ==
         'osmdst_flavor'].params.ram")
         == [1024])
 
