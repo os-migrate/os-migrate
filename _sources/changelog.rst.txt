@@ -13,6 +13,9 @@ Fix
 
 Other
 ~~~~~
+- Add ignore 2.20 for sanity tests. [mathieu bultel]
+- Pin ruff version to 0.16.8. [mathieu bultel]
+- Move certification workflow to main. [mathieu bultel]
 - Fix malformed application credential clouds.yaml. [Cyril Lopez]
 
   When using application credentials for SRC or DST OpenStack, the
