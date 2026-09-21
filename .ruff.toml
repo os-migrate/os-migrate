@@ -1,7 +1,16 @@
 # Default configuration
 target-version = "py311"
 
-# Specific overrides for your Ansible folders
-[per-file-ignores]
+[lint]
+# Restore the classic Ruff default rule set (pyflakes + a subset of
+# pycodestyle). Recent Ruff releases broadened the implicit default to include
+# many opinionated rules (UP, C4, I, RUF, SIM, ...) that conflict with Ansible
+# collection conventions (e.g. `from __future__` / `__metaclass__` boilerplate,
+# non-executable module files carrying a `#!/usr/bin/python` shebang). Pinning
+# the selection here keeps CI stable regardless of the Ruff version installed.
+select = ["E4", "E7", "E9", "F"]
+
+# Specific overrides for the Ansible folders
+[lint.per-file-ignores]
 "plugins/modules/*.py" = ["E402"]  # Ignore "import not at top of file" in modules
-"docs/src/conf.py" = ["E402"]      # Fixes your Sphinx documentation config error
+"docs/src/conf.py" = ["E402"]      # Fixes the Sphinx documentation config error
