@@ -533,7 +533,8 @@ class OpenStackVolumeBase:
         return result == 124
 
 
-class RemoteShell:
+class RemoteShell:  # pylint: disable=ansible-bad-function
+    """Run SSH/SCP commands on a remote conversion host via subprocess."""
     def __init__(self, address, ssh_user, key_path=None):
         self.address = address
         self.ssh_user = ssh_user
