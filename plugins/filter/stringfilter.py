@@ -2,6 +2,65 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+DOCUMENTATION = r"""
+name: stringfilter
+short_description: Filter a list of strings or dicts by match queries
+version_added: "1.0.0"
+description:
+  - Filter a list of items according to a list of queries.
+  - Values from the input list are kept if they match at least one query.
+  - Supports exact string matching and regex matching.
+  - When I(attribute) is provided, items are treated as dicts and
+    the query is tested against the value at the given key path.
+positional: _input
+options:
+  _input:
+    description: The list of strings or dicts to filter.
+    type: list
+    elements: raw
+    required: true
+  queries:
+    description:
+      - A list of match queries. Each query can be a plain string
+        (exact match) or a dict with a single C(regex) key whose
+        value is a Python regular expression.
+    type: list
+    elements: raw
+    required: true
+  attribute:
+    description:
+      - Dot-separated key path into each dict item.
+      - When provided, the query is tested against the value found
+        at this path rather than the item itself.
+    type: str
+"""
+
+EXAMPLES = r"""
+- name: Keep only networks whose name matches
+  ansible.builtin.set_fact:
+    filtered: "{{ networks | os_migrate.os_migrate.stringfilter(queries) }}"
+  vars:
+    queries:
+      - my-network
+      - regex: '^test-.*'
+
+- name: Filter dicts by a nested attribute
+  ansible.builtin.set_fact:
+    filtered: >-
+      {{ items | os_migrate.os_migrate.stringfilter(queries,
+         attribute='params.name') }}
+  vars:
+    queries:
+      - target-name
+"""
+
+RETURN = r"""
+_value:
+  description: The filtered subset of the input list.
+  type: list
+  elements: raw
+"""
+
 from pprint import pformat
 import re
 
