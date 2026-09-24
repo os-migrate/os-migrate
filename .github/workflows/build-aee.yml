@@ -38,8 +38,13 @@ jobs:
           source venv/bin/activate
       - name: Install build requirements
         run: pip install -r requirements-build.txt
-      - name: Build collection
-        run: ansible-galaxy collection build --force --output-path .
+      - name: Build the collection
+        # Use the Makefile build target so the openstack.cloud modules are
+        # vendored (make vendor-links) and symlinked into the collection before
+        # `ansible-galaxy collection build` runs. Building with a bare
+        # `ansible-galaxy collection build` would skip vendoring and produce a
+        # tarball missing the vendored modules (image_info, image, keypair, ...).
+        run: make build
       - name: Build and tag the image
         working-directory: ./aee
         run: |
