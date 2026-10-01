@@ -9,7 +9,16 @@ USE_CONTAINER ?= true
 
 # Container and Python Configuration
 CONTAINER_ENGINE ?= podman
+# Pre-built builder image (see builder/Containerfile and the build-builder.yml
+# workflow). It ships the toolchain (python3.12 + devel, gcc, git, make) so the
+# check-python-version / install-deps steps become no-ops and builds are faster.
+# Set BUILDER_NAMESPACE to match your quay namespace, or override CONTAINER_IMAGE
+# entirely to fall back to the plain base, e.g.:
+#   make build CONTAINER_IMAGE=quay.io/centos/centos:stream10
+BUILDER_NAMESPACE ?= os-migrate
+# @TODO: switch to os-migrate-builder once the 1st build will be trigger
 CONTAINER_IMAGE  ?= quay.io/centos/centos:stream10
+#CONTAINER_IMAGE  ?= quay.io/$(BUILDER_NAMESPACE)/os-migrate-builder:latest
 CONTAINER_NAME   ?= os-migrate
 PYTHON_VERSION   ?= 3.12
 
@@ -148,9 +157,17 @@ ANSIBLE_LINT_VENDORED_EXCLUDES := \
 vendor-import: vendor-clean
 	@echo "--- Initializing OpenStack upstream submodule at version $(OS_CLOUD_VERSION) ---"
 	@mkdir -p $(VENDOR_DIR)
-	@if [ ! -d "$(UPSTREAM_REPO)" ]; then \
-		echo "Adding submodule..."; \
-		git submodule add https://github.com/openstack/ansible-collections-openstack.git $(UPSTREAM_REPO); \
+	@# Check for an actual git repo, not just the directory: an uninitialized
+	@# submodule leaves the path present-but-empty, which would make a plain
+	@# "[ ! -d ]" guard skip setup and then run git against the parent repo.
+	@if [ ! -e "$(UPSTREAM_REPO)/.git" ]; then \
+		if git config --file .gitmodules --get submodule.$(UPSTREAM_REPO).url >/dev/null 2>&1; then \
+			echo "Initializing registered submodule..."; \
+			git submodule update --init $(UPSTREAM_REPO); \
+		else \
+			echo "Adding submodule..."; \
+			git submodule add https://github.com/openstack/ansible-collections-openstack.git $(UPSTREAM_REPO); \
+		fi \
 	fi
 
 	@echo "Checking out tag $(OS_CLOUD_VERSION)..."
@@ -191,7 +208,7 @@ vendor-clean:
 build: check-root clean-build install-deps
 	@echo "--- Building Ansible collection: $(COLLECTION_TARBALL) ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
-		$(MAKE) vendor-links && \
+		make vendor-links && \
 		source $(VENV_DIR)/bin/activate && \
 		pip install ansible-core && \
 		ansible-galaxy collection build --force'
@@ -285,7 +302,7 @@ tests: test-ansible-lint test-ansible-sanity test-ansible-units
 test-ansible-lint: install-deps
 	@echo "--- Launching ansible-lint ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
-		$(MAKE) vendor-links && \
+		make vendor-links && \
 		source $(VENV_DIR)/bin/activate && \
 		ansible-lint $(ANSIBLE_LINT_VENDORED_EXCLUDES)'
 	@if [[ $(USE_CACHE) == false ]]; then $(MAKE) clean-centos-container; fi
@@ -293,7 +310,7 @@ test-ansible-lint: install-deps
 test-ansible-sanity: install-deps
 	@echo "--- Running Ansible sanity tests ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
-		$(MAKE) vendor-links && \
+		make vendor-links && \
 		source $(VENV_DIR)/bin/activate && \
 		ansible-test sanity --python $(PYTHON_VERSION) --requirements \
 		  $(VENDORED_SANITY_EXCLUDES)'
@@ -302,7 +319,7 @@ test-ansible-sanity: install-deps
 test-ansible-units: install-deps
 	@echo "--- Running Ansible unit tests ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
-		$(MAKE) vendor-links && \
+		make vendor-links && \
 		source $(VENV_DIR)/bin/activate && \
 		ansible-test units --python $(PYTHON_VERSION) --local'
 	@if [[ $(USE_CACHE) == false ]]; then $(MAKE) clean-centos-container; fi
