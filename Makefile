@@ -9,7 +9,16 @@ USE_CONTAINER ?= true
 
 # Container and Python Configuration
 CONTAINER_ENGINE ?= podman
+# Pre-built builder image (see builder/Containerfile and the build-builder.yml
+# workflow). It ships the toolchain (python3.12 + devel, gcc, git, make) so the
+# check-python-version / install-deps steps become no-ops and builds are faster.
+# Set BUILDER_NAMESPACE to match your quay namespace, or override CONTAINER_IMAGE
+# entirely to fall back to the plain base, e.g.:
+#   make build CONTAINER_IMAGE=quay.io/centos/centos:stream10
+BUILDER_NAMESPACE ?= os-migrate
+# @TODO: switch to os-migrate-builder once the 1st build will be trigger
 CONTAINER_IMAGE  ?= quay.io/centos/centos:stream10
+#CONTAINER_IMAGE  ?= quay.io/$(BUILDER_NAMESPACE)/os-migrate-builder:latest
 CONTAINER_NAME   ?= os-migrate
 PYTHON_VERSION   ?= 3.12
 
