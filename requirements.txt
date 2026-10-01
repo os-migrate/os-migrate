@@ -1,4 +1,7 @@
-openstacksdk==4.5.0
+# Pinned to the merged fix for https://bugs.launchpad.net/openstacksdk/+bug/2046838
+# ('Image' object has no attribute 'owner_seen'), not yet in a released tag.
+# Revert to a version pin (e.g. openstacksdk==4.6.0) once the fix ships.
+openstacksdk @ git+https://opendev.org/openstack/openstacksdk@55def8e1e4527bc09e6bcb870091e95de12900b4
 python-openstackclient>=7.0
 passlib>=1.7.4
 PyYAML>=6.0.2
