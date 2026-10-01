@@ -81,6 +81,9 @@ def run_module():
         sdk_flavor = conn.compute.find_flavor(
             module.params["name"], ignore_missing=False
         )
+        # extra_specs are only inline from Nova microversion >= 2.61 (Rocky);
+        # on older clouds (Queens maxes at 2.60) they must be fetched separately.
+        sdk_flavor = conn.compute.fetch_flavor_extra_specs(sdk_flavor)
     except Exception as e:
         module.fail_json(msg=f"Failed to fetch flavor: {str(e)}")
 
