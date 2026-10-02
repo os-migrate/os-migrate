@@ -1,6 +1,10 @@
-# Pinned to the merged fix for https://bugs.launchpad.net/openstacksdk/+bug/2046838
-# ('Image' object has no attribute 'owner_seen'), not yet in a released tag.
-# Revert to a version pin (e.g. openstacksdk==4.6.0) once the fix ships.
-openstacksdk @ git+https://opendev.org/openstack/openstacksdk@55def8e1e4527bc09e6bcb870091e95de12900b4
+# os-migrate fork = openstacksdk 4.5.0 + the merged owner_seen fix
+# (resource: Fix re-entrant alias resolution, Closes-Bug #2046838 ->
+# https://bugs.launchpad.net/openstacksdk/+bug/2046838), which is not yet in any
+# upstream release. Pinning upstream master breaks the vendored openstack.cloud
+# 2.5.0 modules (openstack.version no longer imported transitively), so we pin a
+# 4.5.1 tag on the fork instead; this keeps pbr/StrictVersion reporting a real
+# version. Revert to an upstream version pin once the fix ships in a release.
+openstacksdk @ git+https://github.com/os-migrate/openstacksdk.git@4.5.1
 PyYAML==6.0.2
 jmespath>=1.0.0
