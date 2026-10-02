@@ -349,6 +349,7 @@ test-e2e-tenant: install-deps install generate-auth-files
 		fi && \
 		source $(VENV_DIR)/bin/activate && \
 		cd tests/e2e; \
+		export ANSIBLE_COLLECTIONS_PATH="$(COLLECTIONS_PATH)"; \
 		ansible-playbook \
 			-v \
 			-i $(CONTAINER_COLLECTION_ROOT)/inventory/localhost.yml \
