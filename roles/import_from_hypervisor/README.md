@@ -24,6 +24,18 @@ This role is part of the nbdkit direct mode migration workflow. It:
 3. import_workloads.yml       # Migrates using nbdkit URIs
 ```
 
+## Hypervisor connection
+
+The role delegates the `qemu-img` / `qemu-nbd` tasks to the hypervisor using
+`delegate_to: "{{ hypervisor_hostname }}"`, so the SSH user and other connection
+settings are taken from the hypervisor's **inventory** entry (`ansible_user` /
+`ansible_ssh_user`). Make sure the compute node reported by nova as
+`hypervisor_hostname` is present in your inventory with the right credentials.
+
+If you cannot (or do not want to) add the hypervisor to the inventory, set
+`os_migrate_hypervisor_ssh_user` to override the SSH user used for the delegated
+tasks (e.g. `root` or `stack`). Leaving it empty keeps the inventory settings.
+
 ## Usage
 
 ```bash
