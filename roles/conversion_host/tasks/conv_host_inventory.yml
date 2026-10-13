@@ -18,7 +18,7 @@
     - not ignore_missing_conversion_hosts|default(false)|bool
     # Tolerate a missing *source* conversion host when it is intentionally
     # disabled (e.g. nbdkit direct mode needs no source conversion host).
-    - not (os_migrate_disable_src_conversion_host|default(false)|bool and os_migrate_conversion_cloud == 'src')
+    - (os_migrate_requires_src_conversion_host|default(false)|bool and not os_migrate_conversion_cloud == 'src')
 
 - name: Add conversion host to inventory
   ansible.builtin.add_host:

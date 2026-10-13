@@ -1,5 +1,5 @@
 # Add the source and destination conversion hosts to the inventory. The source
-# conversion host is optional: when os_migrate_disable_src_conversion_host is true
+# conversion host is optional: when os_migrate_requires_src_conversion_host is false
 # (e.g. nbdkit direct mode, which streams disks from the hypervisor qemu-nbd), a
 # missing source conversion host is tolerated (see conv_host_inventory.yml) and
 # simply not added to the inventory.
