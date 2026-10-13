@@ -23,6 +23,7 @@
     sleep: 5
     timeout: 600
   retries: 10
+  when: "'os_migrate_conv_src' in (groups['conversion_hosts'] | default([]))"
 
 - name: Wait for dst conversion host reachability
   ansible.builtin.wait_for:
@@ -32,3 +33,4 @@
     sleep: 5
     timeout: 600
   retries: 10
+  when: "'os_migrate_conv_dst' in (groups['conversion_hosts'] | default([]))"
