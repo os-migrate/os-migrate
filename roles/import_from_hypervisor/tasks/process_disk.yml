@@ -75,7 +75,7 @@
 
 - name: Stop existing qemu-nbd if running on port {{ disk_nbd_port }}
   ansible.builtin.raw: |
-    sudo pkill -f "qemu-nbd.*{{ disk_nbd_port }}" || true
+    sudo fuser -k {{ disk_nbd_port }}/tcp 2>/dev/null || true
   delegate_to: "{{ hypervisor_hostname }}"
   when: disk_port_check.stdout != ""
   changed_when: false
