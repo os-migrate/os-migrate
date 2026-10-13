@@ -1,35 +1,84 @@
-- name: Discover conversion host
-  os_migrate.os_migrate.server_info:
-    server: "{{ os_migrate_conversion_host_name }}*"
-    cloud: "{{ os_migrate_conversion_cloud }}"
-    validate_certs: "{{ os_migrate_conversion_validate_certs | default(omit) }}"
-    ca_cert: "{{ os_migrate_conversion_ca_cert | default(omit) }}"
-    client_cert: "{{ os_migrate_conversion_client_cert | default(omit) }}"
-    client_key: "{{ os_migrate_conversion_client_key | default(omit) }}"
-  register: _server_info
+# Decide whether a *source* conversion host is needed. Workloads migrated with
+# nbdkit direct mode (_migration_params.use_nbdkit_direct: true) stream their
+# disks straight from the hypervisor qemu-nbd, so they need no source conversion
+# host. The source conversion host is required only if at least one workload is
+# NOT nbdkit-direct. (Computed here so this file is correct regardless of caller.)
+- name: Determine whether the source conversion host is required
+  ansible.builtin.set_fact:
+    os_migrate_requires_src_conversion_host: >-
+      {{ (workloads_resources | length) >
+         (workloads_resources
+          | selectattr('_migration_params.use_nbdkit_direct', 'defined')
+          | selectattr('_migration_params.use_nbdkit_direct', 'equalto', true)
+          | list | length) }}
+  vars:
+    workloads_resources: >-
+      {{ (lookup('file', os_migrate_data_dir ~ '/workloads.yml')
+          | from_yaml).resources | default([]) }}
+  when: os_migrate_requires_src_conversion_host is not defined
 
-- name: Fail when conversion host was not found
-  ansible.builtin.fail:
-    msg: >-
-      Nova server of name '{{ os_migrate_conversion_host_name }}' not
-      found, it was meant to be used as {{ inventory_name }}
-  when:
-    - _server_info.servers|length == 0
-    - not ignore_missing_conversion_hosts|default(false)|bool
+- name: Add conversion hosts to inventory (src + dst)
+  ansible.builtin.include_tasks: conv_host_inventory.yml
+  vars:
+    inventory_name: "{{ item.inventory_name }}"
+    inventory_group: "{{ item.inventory_group }}"
+    os_migrate_conversion_host_name: "{{ item.os_migrate_conversion_host_name }}"
+    os_migrate_conversion_cloud: "{{ item.os_migrate_conversion_cloud }}"
+    os_migrate_conversion_validate_certs: "{{ item.os_migrate_conversion_validate_certs }}"
+    os_migrate_conversion_ca_cert: "{{ item.os_migrate_conversion_ca_cert }}"
+    os_migrate_conversion_client_cert: "{{ item.os_migrate_conversion_client_cert }}"
+    os_migrate_conversion_client_key: "{{ item.os_migrate_conversion_client_key }}"
+  loop:
+    - inventory_name: os_migrate_conv_src
+      inventory_group: conversion_hosts_src
+      os_migrate_conversion_host_name: "{{ os_migrate_src_conversion_host_name }}"
+      os_migrate_conversion_cloud: src
+      os_migrate_conversion_validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+      os_migrate_conversion_ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+      os_migrate_conversion_client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+      os_migrate_conversion_client_key: "{{ os_migrate_src_client_key | default(omit) }}"
+    - inventory_name: os_migrate_conv_dst
+      inventory_group: conversion_hosts_dst
+      os_migrate_conversion_host_name: "{{ os_migrate_dst_conversion_host_name }}"
+      os_migrate_conversion_cloud: dst
+      os_migrate_conversion_validate_certs: "{{ os_migrate_dst_validate_certs | default(omit) }}"
+      os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert | default(omit) }}"
+      os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert | default(omit) }}"
+      os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key | default(omit) }}"
+  when: os_migrate_requires_src_conversion_host | bool
 
-- name: Add conversion host to inventory
-  ansible.builtin.add_host:
-    name: "{{ inventory_name }}"
-    groups:
-      - conversion_hosts
-      - "{{ inventory_group }}"
-    os_migrate_conversion_host_name: "{{ os_migrate_conversion_host_name }}"
-    ansible_ssh_host: "{{ _server_info.servers[0].access_ipv4 }}"
-    ansible_ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
-    ansible_ssh_private_key_file: "{{ os_migrate_conversion_keypair_private_path }}"
-    ansible_ssh_extra_args: '-o StrictHostKeyChecking=no'
-    # Generally conversion hosts act as centos, not as
-    # root. E.g. link ssh keys need to be added to centos.
-    ansible_become: false
-  when:
-    - _server_info.servers|length > 0
+# nbdkit direct: consume disks from the hypervisor, so only the dst conversion
+# host is required.
+- name: Add only dst conversion host to inventory
+  ansible.builtin.include_tasks: conv_host_inventory.yml
+  vars:
+    inventory_name: "{{ item.inventory_name }}"
+    inventory_group: "{{ item.inventory_group }}"
+    os_migrate_conversion_host_name: "{{ item.os_migrate_conversion_host_name }}"
+    os_migrate_conversion_cloud: "{{ item.os_migrate_conversion_cloud }}"
+    os_migrate_conversion_validate_certs: "{{ item.os_migrate_conversion_validate_certs }}"
+    os_migrate_conversion_ca_cert: "{{ item.os_migrate_conversion_ca_cert }}"
+    os_migrate_conversion_client_cert: "{{ item.os_migrate_conversion_client_cert }}"
+    os_migrate_conversion_client_key: "{{ item.os_migrate_conversion_client_key }}"
+  loop:
+    - inventory_name: os_migrate_conv_dst
+      inventory_group: conversion_hosts_dst
+      os_migrate_conversion_host_name: "{{ os_migrate_dst_conversion_host_name }}"
+      os_migrate_conversion_cloud: dst
+      os_migrate_conversion_validate_certs: "{{ os_migrate_dst_validate_certs | default(omit) }}"
+      os_migrate_conversion_ca_cert: "{{ os_migrate_dst_ca_cert | default(omit) }}"
+      os_migrate_conversion_client_cert: "{{ os_migrate_dst_client_cert | default(omit) }}"
+      os_migrate_conversion_client_key: "{{ os_migrate_dst_client_key | default(omit) }}"
+  when: not (os_migrate_requires_src_conversion_host | bool)
+
+- name: List src conversion hosts
+  ansible.builtin.debug:
+    msg: "Source conversion host: {{ item }}"
+  with_items: "{{ groups['conversion_hosts_src'] | default([]) }}"
+  when: "'conversion_hosts_src' in groups"
+
+- name: List dst conversion hosts
+  ansible.builtin.debug:
+    msg: "Destination conversion host: {{ item }}"
+  with_items: "{{ groups['conversion_hosts_dst'] | default([]) }}"
+  when: "'conversion_hosts_dst' in groups"

@@ -50,14 +50,20 @@
       - "Format: {{ disk_format }}"
       - "Size: {{ disk_size_gb }} GB"
 
-- name: Calculate NBD port for this disk
+- name: Calculate NBD port for this disk (global running counter)
   ansible.builtin.set_fact:
-    disk_nbd_port: "{{ nbdkit_base_port | int + disk_index | int }}"
+    disk_nbd_port: "{{ om_nbd_next_port | int }}"
+
+- name: Advance global NBD port counter
+  ansible.builtin.set_fact:
+    om_nbd_next_port: "{{ om_nbd_next_port | int + 1 }}"
 
 - name: Build qemu-nbd command for this disk
   ansible.builtin.set_fact:
     disk_qemu_nbd_cmd: >-
       sudo qemu-nbd
+      -t
+      -r
       -f {{ disk_format }}
       -p {{ disk_nbd_port }}
       {{ disk_item }}
