@@ -25,6 +25,10 @@
   ansible.builtin.debug:
     msg: "Found {{ nbdkit_workloads | length }} workload(s) with use_nbdkit_direct enabled"
 
+- name: Initialize global NBD port counter (unique ports across all workloads)
+  ansible.builtin.set_fact:
+    om_nbd_next_port: "{{ os_migrate_nbdkit_port | default(10809) | int }}"
+
 - name: Process each workload with nbdkit direct mode
   ansible.builtin.include_tasks: workload.yml
   loop: "{{ nbdkit_workloads }}"

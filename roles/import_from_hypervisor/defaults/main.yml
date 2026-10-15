@@ -1,6 +1,12 @@
 ---
 # Defaults for import_from_hypervisor role
 
+# SSH user for connecting to the source hypervisor(s).
+# Leave empty (default) to use the connection settings defined for the
+# hypervisor host in your inventory (recommended). Set it to override the SSH
+# user used for the delegated qemu-img / qemu-nbd tasks (e.g. 'root', 'stack').
+os_migrate_hypervisor_ssh_user: ""
+
 # NBDkit configuration
 os_migrate_nbdkit_port: 10809
 os_migrate_nbdkit_protocol: tcp  # 'tcp' or 'ssh'

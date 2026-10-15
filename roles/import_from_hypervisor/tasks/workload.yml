@@ -18,6 +18,16 @@
     msg: "Hypervisor hostname not found in workload data for {{ instance_name }}. Run export_workloads first."
   when: hypervisor_hostname == ''
 
+# By default the delegated tasks below reuse the connection settings defined for
+# the hypervisor in the inventory. Only override the SSH user when the operator
+# explicitly set os_migrate_hypervisor_ssh_user.
+- name: Override hypervisor SSH connection user
+  ansible.builtin.add_host:
+    name: "{{ hypervisor_hostname }}"
+    ansible_ssh_user: "{{ os_migrate_hypervisor_ssh_user }}"
+  changed_when: false
+  when: os_migrate_hypervisor_ssh_user | length > 0
+
 - name: Display workload info
   ansible.builtin.debug:
     msg:
