@@ -35,9 +35,12 @@ DST_URL="http://127.0.0.1:${DST_PORT}"
 mkdir -p "$WORKDIR"
 
 pids=()
+# shellcheck disable=SC2329  # invoked indirectly via 'trap cleanup EXIT'
 cleanup() {
   for pid in "${pids[@]:-}"; do
-    [ -n "$pid" ] && kill "$pid" 2>/dev/null || true
+    if [ -n "$pid" ]; then
+      kill "$pid" 2>/dev/null || true
+    fi
   done
 }
 trap cleanup EXIT
