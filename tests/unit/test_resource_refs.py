@@ -105,7 +105,7 @@ class TestSdkWrappers(unittest.TestCase):
         self.assertEqual(result, "KP")
         self.assertEqual(conn.compute.create_keypair.call_count, 2)
         # second call drops the unsupported "type" kwarg
-        _, kwargs = conn.compute.create_keypair.call_args
+        kwargs = conn.compute.create_keypair.call_args.kwargs
         self.assertNotIn("type", kwargs)
 
 
