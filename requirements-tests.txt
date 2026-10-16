@@ -2,3 +2,6 @@ ansible-lint>=24.0.0
 pytest==8.4.0
 pytest-mock==3.14.1
 pytest-xdist==3.7.0
+# Functional tests (tests/func, run against gostack) shell out to the nova CLI
+# to delete per-user keypairs (see tasks/admin/clean/user_keypair.yml).
+python-novaclient>=18.0.0,<19
