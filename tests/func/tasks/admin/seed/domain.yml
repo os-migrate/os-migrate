@@ -1,5 +1,10 @@
+# Domains are not migrated by os-migrate (the target domain must pre-exist),
+# so seed osm_domain on both the source and destination clouds.
 - name: create osm_domain
   os_migrate.os_migrate.identity_domain:
-    auth: "{{ os_migrate_src_auth }}"
+    auth: "{{ item }}"
     state: present
     name: osm_domain
+  loop:
+    - "{{ os_migrate_src_auth }}"
+    - "{{ os_migrate_dst_auth }}"
