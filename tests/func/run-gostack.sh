@@ -35,7 +35,10 @@ DST_URL="http://127.0.0.1:${DST_PORT}"
 mkdir -p "$WORKDIR"
 
 pids=()
-# shellcheck disable=SC2329  # invoked indirectly via 'trap cleanup EXIT'
+# cleanup is invoked indirectly via 'trap ... EXIT', which shellcheck cannot
+# see, so it warns the function is unused (SC2329) and its body unreachable
+# (SC2317); suppress both for the whole function.
+# shellcheck disable=SC2317,SC2329
 cleanup() {
   for pid in "${pids[@]:-}"; do
     if [ -n "$pid" ]; then
