@@ -468,8 +468,17 @@ class OpenStackDestinationHost(OpenStackHostBase):
         self.log.info('Copying volume image metadata to destination volume '
                       '%s: %s', new_volume.id, image_metadata)
         try:
-            self.conn.block_storage.set_volume_image_metadata(
-                new_volume, **image_metadata)
+            # Post the Cinder volume action directly instead of using
+            # conn.block_storage.set_volume_image_metadata(). openstacksdk
+            # older than 4.7.0 builds the request body without the required
+            # 'metadata' wrapper, which Cinder rejects with "400 Malformed
+            # request body". Passing metadata= explicitly would fix older SDKs
+            # but double-wrap the body on 4.7.0+. Building the body ourselves
+            # works with every SDK version.
+            body = {'os-set_image_metadata': {'metadata': image_metadata}}
+            response = self.conn.block_storage.post(
+                'volumes/{0}/action'.format(new_volume.id), json=body)
+            response.raise_for_status()
         except Exception as err:  # pylint: disable=broad-except
             # Not fatal on its own, but the guest will likely not boot, so
             # make the reason loud rather than failing mysteriously later.
