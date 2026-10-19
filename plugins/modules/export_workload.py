@@ -99,7 +99,7 @@ def run_module():
         name=dict(type="str", required=True),
         migration_params=dict(type="dict", required=False, default={}),
     )
-    # TODO: check the del
+    # TODO: check the del argument_spec
     # del argument_spec['cloud']
 
     result = dict(
