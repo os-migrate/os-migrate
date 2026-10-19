@@ -20,26 +20,19 @@ jobs:
   # * Import the container image on each job
   build:
     if: github.repository_owner == 'os-migrate'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.7]
         ansible-version: ['latest']
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v1
-        with:
-          python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
           sudo locale-gen en_US.UTF-8
           sudo dpkg-reconfigure locales
-          sudo python -m pip install --upgrade pip
-          sudo pip install tox
           sudo apt install software-properties-common build-essential findutils -y
       - name: Print podman version
         run: |
@@ -103,11 +96,11 @@ jobs:
 
   functional:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.7]
+        python-version: ['3.10']
         ansible-version: ['latest']
     services:
       rabbitmq:
