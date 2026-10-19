@@ -226,6 +226,7 @@ volume_map:
             "dest_dev": "/dev/vdc",
             "dest_id": "3b7a57d7-8210-47f9-b592-a6627ae52d13",
             "image_id": null,
+            "image_metadata": {"hw_firmware_type": "uefi", "hw_machine_type": "q35"},
             "name": "migration-vm-boot",
             "port": 49196,
             "progress": 100.0,
