@@ -25,3 +25,13 @@ os_migrate_src_release: 13
 os_migrate_dst_release: 13
 
 os_migrate_workload_stop_before_migration: true
+
+# Source hypervisor connection for the nbdkit-direct scenario
+# (test_nbdkit_workload). The nbdkit tasks delegate to the compute node by its
+# Nova hypervisor hostname, which the migrator container cannot resolve/SSH to,
+# so the scenario registers it in the in-memory inventory using these values.
+# Override per environment (the address must be reachable from the migrator and
+# the key must be able to log in as os_migrate_hypervisor_ssh_user).
+os_migrate_hypervisor_ssh_user: root
+os_migrate_hypervisor_address: ""
+os_migrate_hypervisor_ssh_private_key: ""

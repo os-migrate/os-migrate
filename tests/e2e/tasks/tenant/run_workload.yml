@@ -109,6 +109,22 @@
         client_key: "{{ os_migrate_src_client_key | default(omit) }}"
       when: set_nbdkit_direct|default(false)|bool
 
+    # import_from_hypervisor delegates to the Nova hypervisor by its hostname,
+    # which the migrator (here the e2e container) usually cannot resolve or SSH
+    # to. Register it in the in-memory inventory with a reachable address + SSH
+    # credentials so delegate_to connects. Set os_migrate_hypervisor_address /
+    # os_migrate_hypervisor_ssh_user / os_migrate_hypervisor_ssh_private_key for
+    # your environment (scenario_variables.yml).
+    - name: register the source hypervisor for nbdkit delegation
+      ansible.builtin.add_host:
+        name: "{{ resources[0]['_info']['hypervisor_hostname'] }}"
+        ansible_host: "{{ os_migrate_hypervisor_address }}"
+        ansible_user: "{{ os_migrate_hypervisor_ssh_user }}"
+        ansible_ssh_private_key_file: "{{ os_migrate_hypervisor_ssh_private_key | default(omit, true) }}"
+        ansible_ssh_common_args: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+      changed_when: false
+      when: set_nbdkit_direct|default(false)|bool
+
     # Spawn qemu-nbd on the source hypervisor for every local disk of the
     # nbdkit-direct workloads. Must run after export (so use_nbdkit_direct is
     # set in workloads.yml) and before import_workloads (which consumes the
