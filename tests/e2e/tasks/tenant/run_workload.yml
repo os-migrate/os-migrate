@@ -75,6 +75,22 @@
         name: os_migrate.os_migrate.import_detached_volumes
       when: test_detached_volumes|default(false)|bool
 
+    # nbdkit reads the instance's local disks with qemu-nbd, which requires the
+    # source instance to be SHUTOFF. The stop inside import_workloads runs too
+    # late (after import_from_hypervisor), so stop it explicitly here first.
+    - name: stop the source instance before nbdkit-direct transfer
+      os_migrate.os_migrate.server_action:
+        server: "{{ resources[0]['_info']['id'] }}"
+        action: stop
+        wait: true
+        timeout: "{{ os_migrate_timeout | default(1800) }}"
+        auth: "{{ os_migrate_src_auth }}"
+        validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+        ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+        client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+        client_key: "{{ os_migrate_src_client_key | default(omit) }}"
+      when: set_nbdkit_direct|default(false)|bool
+
     # Spawn qemu-nbd on the source hypervisor for every local disk of the
     # nbdkit-direct workloads. Must run after export (so use_nbdkit_direct is
     # set in workloads.yml) and before import_workloads (which consumes the
