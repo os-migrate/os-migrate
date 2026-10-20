@@ -159,6 +159,19 @@
         - workload_use_nbdkit_direct | bool
         - workload_has_attached_volumes | bool
 
+    # Preserve the conversion-host-only export (before merging in the nbdkit
+    # local disks) so the source cleanup can act on just the Cinder volumes that
+    # were attached to the source conversion host. The nbdkit local disks are
+    # served by qemu-nbd on the hypervisor and must not be touched by it.
+    - name: Preserve conversion-host volume map for source cleanup
+      ansible.builtin.set_fact:
+        workload_src_cleanup_exports: "{{ exports }}"
+      when:
+        - prelim is defined and prelim.changed
+        - item["_migration_params"]["data_copy"] | default(true)
+        - workload_use_nbdkit_direct | bool
+        - workload_has_attached_volumes | bool
+
     # Mixed workload: keep the conversion-host transfer_uuid (needed for the SSH
     # forwarding of the Cinder volumes) and merge the nbdkit local-disk entries
     # into the conversion-host volume map. Device paths do not overlap, so a
@@ -226,14 +239,20 @@
         ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
         ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
         transfer_uuid: "{{ exports.transfer_uuid }}"
-        volume_map: "{{ exports.volume_map }}"
+        # In mixed mode only the conversion-host (Cinder) volumes were attached
+        # to the source conversion host; use that map so the nbdkit local disks
+        # (served by qemu-nbd on the hypervisor) are left untouched.
+        volume_map: "{{ (workload_src_cleanup_exports | default(exports)).volume_map }}"
         log_file: "{{ prelim.log_file }}"
         state_file: "{{ prelim.state_file }}"
         timeout: "{{ os_migrate_timeout }}"
       when:
         - prelim is defined and prelim.changed
         - item["_migration_params"]["data_copy"] | default(true)
-        - not item["_migration_params"]["use_nbdkit_direct"]|default(false)
+        # Run whenever volumes went through the conversion host: classic
+        # (non-nbdkit) migrations, or mixed nbdkit migrations with attached
+        # Cinder volumes.
+        - (not workload_use_nbdkit_direct | bool) or (workload_has_attached_volumes | bool)
 
   rescue:
     - name: Clean up in the source cloud after migration failure
@@ -248,7 +267,9 @@
         ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
         ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
         transfer_uuid: "{{ exports.transfer_uuid }}"
-        volume_map: "{{ exports.volume_map }}"
+        # Mixed mode: clean up only the conversion-host (Cinder) volumes; the
+        # nbdkit local disks were never attached to the source conversion host.
+        volume_map: "{{ (workload_src_cleanup_exports | default(exports)).volume_map }}"
         log_file: "{{ prelim.log_file }}"
         state_file: "{{ prelim.state_file }}"
         timeout: "{{ os_migrate_timeout }}"
@@ -257,7 +278,10 @@
         - os_migrate_workload_cleanup_on_failure
         - exports is defined and 'volume_map' in exports
         - item["_migration_params"]["data_copy"] | default(true)
-        - not item["_migration_params"]["use_nbdkit_direct"]|default(false)
+        # Run whenever volumes went through the conversion host: classic
+        # (non-nbdkit) migrations, or mixed nbdkit migrations with attached
+        # Cinder volumes.
+        - (not workload_use_nbdkit_direct | bool) or (workload_has_attached_volumes | bool)
 
     - name: Clean up in the destination cloud after migration failure
       os_migrate.os_migrate.import_workload_dst_failure_cleanup:
