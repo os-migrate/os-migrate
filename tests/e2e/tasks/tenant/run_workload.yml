@@ -125,10 +125,7 @@
         ansible_host: "{{ os_migrate_hypervisor_address }}"
         ansible_user: "{{ os_migrate_hypervisor_ssh_user }}"
         ansible_ssh_private_key_file: "{{ os_migrate_hypervisor_ssh_private_key | default(omit, true) }}"
-<<<<<<< HEAD
-=======
         ansible_password: "{{ os_migrate_hypervisor_ssh_password | default(omit, true) }}"
->>>>>>> f9ebe37 (test: coverage for single-run mixed volume migration)
         ansible_ssh_common_args: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
       changed_when: false
       when: set_nbdkit_direct|default(false)|bool
