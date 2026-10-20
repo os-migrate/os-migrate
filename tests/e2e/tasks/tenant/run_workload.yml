@@ -6,6 +6,24 @@
 
 - name: Workloads tasks
   block:
+    # nbdkit reads the instance's local disks with qemu-nbd, which requires the
+    # source instance to be SHUTOFF. It must be stopped BEFORE export, because
+    # import_from_hypervisor checks the _info.status recorded in workloads.yml
+    # (captured at export time), not the live state -- stopping after export
+    # would still leave ACTIVE in the exported data.
+    - name: stop the source instance before nbdkit-direct export
+      os_migrate.os_migrate.server_action:
+        server: osm_server
+        action: stop
+        wait: true
+        timeout: "{{ os_migrate_timeout | default(1800) }}"
+        auth: "{{ os_migrate_src_auth }}"
+        validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+        ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+        client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+        client_key: "{{ os_migrate_src_client_key | default(omit) }}"
+      when: set_nbdkit_direct|default(false)|bool
+
     - name: export workloads
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.export_workloads
