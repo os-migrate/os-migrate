@@ -95,7 +95,17 @@
         boot_volume_prefix: "{{ os_migrate_workload_boot_volume_prefix }}"
         conversion_host:
           "{{ os_src_conversion_host_info.openstack_conversion_host | default({'id': 'none'}) }}"
-        data: "{{ item }}"
+        # In mixed mode (nbdkit local disks + attached Cinder volumes), nbdkit
+        # owns the boot/ephemeral disks. Force boot_disk_copy=false for this
+        # conversion-host export so it does NOT synthesize a /dev/vda boot volume
+        # that would collide with nbdkit's boot disk; only the real attached data
+        # volumes are exposed through the conversion host.
+        data: >-
+          {{ (item | combine({'_migration_params':
+                (item['_migration_params'] | combine({'boot_disk_copy': false}))},
+                recursive=true))
+             if (workload_use_nbdkit_direct | bool and workload_has_attached_volumes | bool)
+             else item }}
         log_file: "{{ prelim.log_file }}"
         state_file: "{{ prelim.state_file }}"
         ssh_key_path: "{{ os_migrate_conversion_keypair_private_path }}"
