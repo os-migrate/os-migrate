@@ -46,6 +46,13 @@
         replace: "port_creation_mode: neutron"
       when: port_creation_mode|default("nova") == 'neutron'
 
+    - name: set use_nbdkit_direct
+      ansible.builtin.replace:
+        path: "{{ os_migrate_data_dir }}/workloads.yml"
+        regexp: "use_nbdkit_direct: false"
+        replace: "use_nbdkit_direct: true"
+      when: set_nbdkit_direct|default(false)|bool
+
     - name: create and set existing FIP
       ansible.builtin.include_tasks: run_workload_existing_fip.yml
       when: set_floating_ip_mode|default('') == 'existing'
@@ -67,6 +74,16 @@
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.import_detached_volumes
       when: test_detached_volumes|default(false)|bool
+
+    # Spawn qemu-nbd on the source hypervisor for every local disk of the
+    # nbdkit-direct workloads. Must run after export (so use_nbdkit_direct is
+    # set in workloads.yml) and before import_workloads (which consumes the
+    # nbdkit URIs). In a mixed workload the attached Cinder volumes are still
+    # transferred through the conversion host by import_workloads.
+    - name: spawn nbdkit on the source hypervisor
+      ansible.builtin.include_role:
+        name: os_migrate.os_migrate.import_from_hypervisor
+      when: set_nbdkit_direct|default(false)|bool
 
     - name: import workloads
       ansible.builtin.include_role:
