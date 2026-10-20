@@ -23,6 +23,53 @@ def volume_transfer():
     return transfer
 
 
+class TestEntriesByMethod(unittest.TestCase):
+    def _transfer(self, volume_map):
+        transfer = volume_transfer()
+        transfer.volume_map = volume_map
+        return transfer
+
+    def test_splits_mixed_map_by_transfer_method(self):
+        volume_map = {
+            "/dev/vda": {"transfer_method": "nbdcopy"},
+            "/dev/vdc": {"transfer_method": "nbdcopy"},
+            "/dev/vdb": {"source_id": "cinder-vol-id"},
+        }
+        transfer = self._transfer(volume_map)
+
+        nbdcopy = transfer._entries_by_method("nbdcopy")
+        convhost = transfer._entries_by_method("qemu")
+
+        self.assertEqual(set(nbdcopy), {"/dev/vda", "/dev/vdc"})
+        self.assertEqual(set(convhost), {"/dev/vdb"})
+
+    def test_untagged_entries_default_to_conversion_host(self):
+        # Entries produced by the conversion-host export (and detached volumes)
+        # carry no transfer_method and must keep the previous qemu-img behaviour.
+        volume_map = {"/dev/vda": {"source_id": "x"}, "/dev/vdb": {"source_id": "y"}}
+        transfer = self._transfer(volume_map)
+
+        self.assertEqual(transfer._entries_by_method("nbdcopy"), {})
+        self.assertEqual(set(transfer._entries_by_method("qemu")), {"/dev/vda", "/dev/vdb"})
+
+    def test_pure_nbdkit_map_has_no_conversion_host_entries(self):
+        volume_map = {"/dev/vda": {"transfer_method": "nbdcopy"}}
+        transfer = self._transfer(volume_map)
+
+        self.assertEqual(set(transfer._entries_by_method("nbdcopy")), {"/dev/vda"})
+        self.assertEqual(transfer._entries_by_method("qemu"), {})
+
+    def test_returned_entries_share_mapping_objects(self):
+        # Fields filled in later must propagate back to the original map.
+        volume_map = {"/dev/vda": {"transfer_method": "nbdcopy"}}
+        transfer = self._transfer(volume_map)
+
+        subset = transfer._entries_by_method("nbdcopy")
+        subset["/dev/vda"]["dest_id"] = "new-dest-id"
+
+        self.assertEqual(volume_map["/dev/vda"]["dest_id"], "new-dest-id")
+
+
 class TestCopyVolumeImageMetadata(unittest.TestCase):
     def test_posts_cinder_action_with_metadata_wrapper(self):
         transfer = volume_transfer()

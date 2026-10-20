@@ -857,6 +857,30 @@ class OpenstackVolumeTransfer(OpenStackVolumeBase):
         """
         raise NotImplementedError("Please Implement this method")
 
+    def _entries_by_method(self, method):
+        """Return the subset of ``volume_map`` entries routed through `method`.
+
+        Disks exported by the nbdkit-direct path (local hypervisor disks) are
+        tagged ``transfer_method == "nbdcopy"`` and copied with nbdcopy. Every
+        other entry -- attached Cinder volumes, boot-from-volume, detached
+        volumes -- has no tag, defaults to ``"qemu"`` and is copied through the
+        source conversion host with qemu-img convert. This lets a single
+        workload mix both transfer methods. The returned dict shares the same
+        mapping objects as ``self.volume_map`` so fields filled in later
+        (dest_id, url, ...) propagate back to the full map.
+        """
+        if method == "nbdcopy":
+            return {
+                path: mapping
+                for path, mapping in self.volume_map.items()
+                if mapping.get("transfer_method") == "nbdcopy"
+            }
+        return {
+            path: mapping
+            for path, mapping in self.volume_map.items()
+            if mapping.get("transfer_method", "qemu") != "nbdcopy"
+        }
+
     def _setup_nbdkit_direct_urls(self, nbdkit_socket_uri, nbdkit_export_name):
         """
         Set up volume URLs to point directly to an external nbdkit socket.

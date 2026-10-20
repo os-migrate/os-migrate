@@ -78,6 +78,17 @@
         - prelim is defined and prelim.changed
         - item["_migration_params"]["data_copy"] | default(true)
 
+    # Local hypervisor disks (boot/ephemeral/config drive) are transferred with
+    # nbdkit direct, while attached Cinder volumes are transferred through the
+    # source conversion host. An instance can have both, so detect each kind and
+    # run both export paths when needed; the transfer step routes per disk.
+    - name: Determine disk transfer paths for this workload
+      ansible.builtin.set_fact:
+        workload_use_nbdkit_direct: "{{ item['_migration_params']['use_nbdkit_direct'] | default(false) }}"
+        workload_has_attached_volumes: "{{ (item['params']['volumes'] | default([])) | length > 0 }}"
+      when:
+        - prelim is defined and prelim.changed
+
     - name: Expose source volumes
       os_migrate.os_migrate.import_workload_export_volumes:
         cloud: "{{ cloud_vars_src }}"
@@ -94,7 +105,10 @@
       when:
         - prelim is defined and prelim.changed
         - item["_migration_params"]["data_copy"] | default(true)
-        - not item['_migration_params']['use_nbdkit_direct'] | default(false)
+        # Run whenever volumes must go through the conversion host: either a
+        # classic (non-nbdkit) migration, or an nbdkit migration that also has
+        # attached Cinder volumes to copy.
+        - (not workload_use_nbdkit_direct | bool) or (workload_has_attached_volumes | bool)
 
     - name: Export volume map for nbdkit direct
       os_migrate.os_migrate.import_workload_export_volume_map:
@@ -104,7 +118,7 @@
       when:
         - prelim is defined and prelim.changed
         - item["_migration_params"]["data_copy"] | default(true)
-        - item['_migration_params']['use_nbdkit_direct'] | default(false)
+        - workload_use_nbdkit_direct | bool
 
     - name: Set exports from nbdkit volume map
       ansible.builtin.set_fact:
@@ -112,7 +126,43 @@
       when:
         - prelim is defined and prelim.changed
         - item["_migration_params"]["data_copy"] | default(true)
-        - item['_migration_params']['use_nbdkit_direct'] | default(false)
+        - workload_use_nbdkit_direct | bool
+        - not (workload_has_attached_volumes | bool)
+
+    # Each disk keeps its original device path: Cinder volumes from their real
+    # source attachment (e.g. /dev/vdb), local disks from import_from_hypervisor.
+    # Refuse to merge if the two sets claim the same device path, since combine()
+    # would silently drop the overwritten disk rather than reorder it.
+    - name: Fail on device-path collision between local disks and attached volumes
+      ansible.builtin.assert:
+        that:
+          - "((exports.volume_map.keys() | list) | intersect(exports_nbd.volume_map.keys() | list)) | length == 0"
+        fail_msg: >-
+          Device path collision between nbdkit local disks and attached Cinder
+          volumes for {{ item['params']['name'] }}:
+          {{ (exports.volume_map.keys() | list) | intersect(exports_nbd.volume_map.keys() | list) }}.
+          Migrate the attached volume(s) separately with the detached_volumes
+          workflow instead.
+      when:
+        - prelim is defined and prelim.changed
+        - item["_migration_params"]["data_copy"] | default(true)
+        - workload_use_nbdkit_direct | bool
+        - workload_has_attached_volumes | bool
+
+    # Mixed workload: keep the conversion-host transfer_uuid (needed for the SSH
+    # forwarding of the Cinder volumes) and merge the nbdkit local-disk entries
+    # into the conversion-host volume map. Device paths do not overlap, so a
+    # plain combine yields the full set of disks for the transfer step.
+    - name: Combine nbdkit and conversion-host volume maps
+      ansible.builtin.set_fact:
+        exports:
+          transfer_uuid: "{{ exports.transfer_uuid }}"
+          volume_map: "{{ exports.volume_map | combine(exports_nbd.volume_map) }}"
+      when:
+        - prelim is defined and prelim.changed
+        - item["_migration_params"]["data_copy"] | default(true)
+        - workload_use_nbdkit_direct | bool
+        - workload_has_attached_volumes | bool
 
     - name: Transfer volumes to destination
       os_migrate.os_migrate.import_workload_transfer_volumes:
