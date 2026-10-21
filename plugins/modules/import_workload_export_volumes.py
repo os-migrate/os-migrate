@@ -184,6 +184,7 @@ volume_map:
               "dest_dev": null,
               "dest_id": null,
               "image_id": null,
+              "image_metadata": {"hw_firmware_type": "uefi", "hw_machine_type": "q35"},
               "name": "migration-vm-boot",
               "port": 49164,
               "progress": 0.0,
@@ -268,6 +269,9 @@ class OpenStackSourceVolume(OpenstackVolumeExport):
         #   url:         Final NBD export on destination conversion host
         #   progress:    Transfer progress percentage
         #   bootable:    Boolean flag for boot disks
+        #   image_metadata: Cinder volume_image_metadata of the source volume,
+        #                   carries hw_firmware_type/hw_machine_type etc. which
+        #                   Nova needs to build the destination domain XML
         self.volume_map = {}
 
         self.ser_server = ser_server
@@ -311,6 +315,7 @@ class OpenStackSourceVolume(OpenstackVolumeExport):
                 url=None,
                 progress=None,
                 bootable=volume["bootable"],
+                image_metadata=dict(volume.get("volume_image_metadata") or {}),
             )
             self._update_progress(dev_path, 0.0)
 

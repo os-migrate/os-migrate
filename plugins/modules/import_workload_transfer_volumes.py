@@ -226,6 +226,7 @@ volume_map:
             "dest_dev": "/dev/vdc",
             "dest_id": "3b7a57d7-8210-47f9-b592-a6627ae52d13",
             "image_id": null,
+            "image_metadata": {"hw_firmware_type": "uefi", "hw_machine_type": "q35"},
             "name": "migration-vm-boot",
             "port": 49196,
             "progress": 100.0,
@@ -361,36 +362,66 @@ class OpenStackDestinationVolume(OpenstackVolumeTransfer):
         )
 
     def transfer_exports(self):
-        try:
-            if self.use_nbdkit_direct:
-                self.log.info("Using direct nbdkit socket mode with nbdcopy")
+        # A single workload can carry both local hypervisor disks (nbdcopy) and
+        # attached Cinder volumes (conversion host / qemu-img convert). Route
+        # each disk through its own transfer method, falling back transparently
+        # to the previous single-method behaviour when only one kind is present.
+        full_volume_map = self.volume_map
+        nbdcopy_entries = self._entries_by_method("nbdcopy")
+        convhost_entries = self._entries_by_method("qemu")
 
-                # Check if using multi-disk mode (nbdkit_disks list)
+        self.log.info(
+            "Transferring %d disk(s) via nbdcopy (nbdkit direct) and %d disk(s) "
+            "via the conversion host (qemu-img convert).",
+            len(nbdcopy_entries),
+            len(convhost_entries),
+        )
+
+        forwarding_started = False
+        try:
+            # 1. Prepare source-side NBD URLs for each transfer method.
+            if nbdcopy_entries:
+                self.volume_map = nbdcopy_entries
                 migration_params = self.ser_server.migration_params()
                 nbdkit_disks = migration_params.get("nbdkit_disks")
-
                 if nbdkit_disks:
-                    # Multi-disk mode: use nbdkit_disks list
-                    self.log.info("Multi-disk mode: %d disks", len(nbdkit_disks))
+                    self.log.info("Multi-disk nbdkit mode: %d disks", len(nbdkit_disks))
                     self._setup_nbdkit_disks_urls(nbdkit_disks)
                 else:
-                    # Legacy single-disk mode
-                    self.log.info("Single-disk mode (legacy)")
-                    self._setup_nbdkit_direct_urls(self.nbdkit_socket_uri, self.nbdkit_export_name)
-            else:
+                    self.log.info("Single-disk nbdkit mode (legacy)")
+                    self._setup_nbdkit_direct_urls(
+                        self.nbdkit_socket_uri, self.nbdkit_export_name
+                    )
+                self.volume_map = full_volume_map
+
+            if convhost_entries:
                 self.log.info("Using SSH forwarding mode with qemu-img convert")
+                self.volume_map = convhost_entries
                 self._create_forwarding_process()
+                forwarding_started = True
+                self.volume_map = full_volume_map
+
+            # 2. Create and attach the destination volumes for every disk.
             self._create_destination_volumes()
             self._attach_destination_volumes()
 
-            # Use nbdcopy for nbdkit direct mode, qemu-img convert otherwise
-            if self.use_nbdkit_direct:
+            # 3. Copy the data using the right tool per disk.
+            if nbdcopy_entries:
+                self.volume_map = nbdcopy_entries
                 self._convert_destination_volumes_nbdcopy()
-            else:
+                self.volume_map = full_volume_map
+            if convhost_entries:
+                self.volume_map = convhost_entries
                 self._convert_destination_volumes()
+                self.volume_map = full_volume_map
+
+            # 4. Detach all destination volumes from the conversion host.
             self._detach_destination_volumes()
         finally:
-            if not self.use_nbdkit_direct:
+            # Always restore the full map so the caller builds the block device
+            # mapping from every disk, then tear down any SSH forwarding.
+            self.volume_map = full_volume_map
+            if forwarding_started:
                 self._stop_forwarding_process()
                 self._release_ports()
 

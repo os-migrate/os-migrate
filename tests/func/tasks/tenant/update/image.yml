@@ -46,8 +46,8 @@
 - name: ensure min_disk for osm_image changed
   ansible.builtin.assert:
     that:
-      - original_desc == "1"
-      - changed_desc == "2"
+      - (original_desc | trim | int) == 1
+      - (changed_desc | trim | int) == 2
     fail_msg: |
       dst_images_info_before min_disk:
       {{ original_desc }}

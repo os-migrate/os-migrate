@@ -29,5 +29,8 @@ jobs:
       - name: Run Ruff Lint and Format check
         uses: astral-sh/ruff-action@v3
         with:
+          # Pin the Ruff version so its default rule set cannot silently change
+          # between releases and break CI without a code change.
+          version: "0.16.8"
           # This runs both the linter and format verification
           args: "check --output-format=github ."

@@ -1,23 +1,23 @@
 - name: validate valid dir
   ansible.builtin.shell: |
-    OS_MIGRATE="$HOME/.ansible/collections/ansible_collections/os_migrate/os_migrate"
+    OS_MIGRATE="{{ playbook_dir }}/../.."
     OS_MIGRATE_DATA="{{ playbook_dir }}/tasks/tenant/data/validate_data_dir/valid"
     ansible-playbook -v \
-        -i $OS_MIGRATE/localhost_inventory.yml \
+        -i "$OS_MIGRATE/inventory/localhost.yml" \
         -e "os_migrate_data_dir=$OS_MIGRATE_DATA" \
-        $OS_MIGRATE/playbooks/validate_data_dir.yml
+        "$OS_MIGRATE/playbooks/validate_data_dir.yml"
   args:
     executable: /bin/bash
   changed_when: true
 
 - name: validate invalid dir
   ansible.builtin.shell: |
-    OS_MIGRATE="$HOME/.ansible/collections/ansible_collections/os_migrate/os_migrate"
+    OS_MIGRATE="{{ playbook_dir }}/../.."
     OS_MIGRATE_DATA="{{ playbook_dir }}/tasks/tenant/data/validate_data_dir/invalid"
     ansible-playbook -v \
-        -i $OS_MIGRATE/localhost_inventory.yml \
+        -i "$OS_MIGRATE/inventory/localhost.yml" \
         -e "os_migrate_data_dir=$OS_MIGRATE_DATA" \
-        $OS_MIGRATE/playbooks/validate_data_dir.yml
+        "$OS_MIGRATE/playbooks/validate_data_dir.yml"
   args:
     executable: /bin/bash
   changed_when: true

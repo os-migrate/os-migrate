@@ -1,0 +1,19 @@
+# Builder image for os-migrate collection builds.
+#
+# Pre-bakes the toolchain the Makefile otherwise installs at build time
+# (see check-python-version / install-deps): Python 3.12, headers, a C
+# compiler, git and make. Using this image as CONTAINER_IMAGE lets
+# `make build` skip the slow `dnf upgrade` / package-install steps.
+FROM quay.io/centos/centos:stream10
+
+RUN dnf -y upgrade --refresh --skip-broken --nobest && \
+    dnf -y install \
+        gcc \
+        git \
+        make \
+        python3.12 \
+        python3.12-devel \
+        python3.12-pip && \
+    dnf clean all
+
+WORKDIR /ansible_collections/os_migrate/os_migrate

@@ -16,6 +16,9 @@
   when:
     - _server_info.servers|length == 0
     - not ignore_missing_conversion_hosts|default(false)|bool
+    # Tolerate a missing *source* conversion host when it is intentionally
+    # disabled (e.g. nbdkit direct mode needs no source conversion host).
+    - (os_migrate_requires_src_conversion_host|default(false)|bool and not os_migrate_conversion_cloud == 'src')
 
 - name: Add conversion host to inventory
   ansible.builtin.add_host:
@@ -28,8 +31,7 @@
     ansible_ssh_user: "{{ os_migrate_conversion_host_ssh_user }}"
     ansible_ssh_private_key_file: "{{ os_migrate_conversion_keypair_private_path }}"
     ansible_ssh_extra_args: '-o StrictHostKeyChecking=no'
-    # Generally conversion hosts act as centos, not as
-    # root. E.g. link ssh keys need to be added to centos.
+    # Generally conversion hosts act as centos, not as root.
     ansible_become: false
   when:
     - _server_info.servers|length > 0

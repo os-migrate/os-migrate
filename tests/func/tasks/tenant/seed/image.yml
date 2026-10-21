@@ -4,11 +4,24 @@
     state: directory
     mode: 0700
 
+# When os_migrate_func_image_url is set (e.g. real-cloud runs) download that
+# image; otherwise (default, used against the gostack fake cloud) generate a
+# small local blob so the test has no external network dependency.
 - name: fetch cirros image
   ansible.builtin.get_url:
-    url: https://download.cirros-cloud.net/0.6.3/cirros-0.6.3-x86_64-disk.img
+    url: "{{ os_migrate_func_image_url }}"
     dest: "{{ os_migrate_tests_tmp_dir }}/test_inputs/cirros.img"
     mode: 0600
+  when: os_migrate_func_image_url | default('') | length > 0
+
+- name: generate a small fake image blob
+  ansible.builtin.command:
+    cmd: >-
+      dd if=/dev/urandom
+      of={{ os_migrate_tests_tmp_dir }}/test_inputs/cirros.img
+      bs=1024 count=256
+    creates: "{{ os_migrate_tests_tmp_dir }}/test_inputs/cirros.img"
+  when: os_migrate_func_image_url | default('') | length == 0
 
 - name: create osm_image
   os_migrate.os_migrate.image:

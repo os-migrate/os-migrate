@@ -23,6 +23,7 @@ homepage: "https://github.com/os-migrate/os-migrate"
 issues: "https://github.com/os-migrate/os-migrate/issues"
 build_ignore:
   - .venv
+  - venv
   - .ansible
   - .github
   - .vscode

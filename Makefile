@@ -9,7 +9,14 @@ USE_CONTAINER ?= true
 
 # Container and Python Configuration
 CONTAINER_ENGINE ?= podman
-CONTAINER_IMAGE  ?= quay.io/centos/centos:stream10
+# Pre-built builder image (see builder/Containerfile and the build-builder.yml
+# workflow). It ships the toolchain (python3.12 + devel, gcc, git, make) so the
+# check-python-version / install-deps steps become no-ops and builds are faster.
+# Set BUILDER_NAMESPACE to match your quay namespace, or override CONTAINER_IMAGE
+# entirely to fall back to the plain base, e.g.:
+#   make build CONTAINER_IMAGE=quay.io/centos/centos:stream10
+BUILDER_NAMESPACE ?= os-migrate
+CONTAINER_IMAGE  ?= quay.io/$(BUILDER_NAMESPACE)/os-migrate-builder:latest
 CONTAINER_NAME   ?= os-migrate
 PYTHON_VERSION   ?= 3.12
 
@@ -72,7 +79,7 @@ endif
 
 # --- Phony Targets Definition ---
 .PHONY: all help build clean-build tests test-ansible-lint test-ansible-sanity test-ansible-units \
-        create-centos-container clean-centos-container check-root check-python-version \
+        test-func create-centos-container clean-centos-container check-root check-python-version \
         create-venv install-deps install generate-auth-files
 
 # --- Main User-Facing Targets ---
@@ -91,6 +98,7 @@ help:
 	@echo "  test-ansible-lint     - Launch ansible-lint tests"
 	@echo "  test-ansible-sanity   - Launch ansible-sanity tests"
 	@echo "  test-ansible-units    - Launch ansible-test unit tests"
+	@echo "  test-func             - Launch functional tests against gostack (in container)"
 	@echo "  test-e2e-tenant       - Launch e2e tenant tests"
 	@echo "  test-e2e-admin        - Launch e2e admin tests"
 	@echo "  generate-auth-files   - Generate auth files for e2e tests"
@@ -148,9 +156,17 @@ ANSIBLE_LINT_VENDORED_EXCLUDES := \
 vendor-import: vendor-clean
 	@echo "--- Initializing OpenStack upstream submodule at version $(OS_CLOUD_VERSION) ---"
 	@mkdir -p $(VENDOR_DIR)
-	@if [ ! -d "$(UPSTREAM_REPO)" ]; then \
-		echo "Adding submodule..."; \
-		git submodule add https://github.com/openstack/ansible-collections-openstack.git $(UPSTREAM_REPO); \
+	@# Check for an actual git repo, not just the directory: an uninitialized
+	@# submodule leaves the path present-but-empty, which would make a plain
+	@# "[ ! -d ]" guard skip setup and then run git against the parent repo.
+	@if [ ! -e "$(UPSTREAM_REPO)/.git" ]; then \
+		if git config --file .gitmodules --get submodule.$(UPSTREAM_REPO).url >/dev/null 2>&1; then \
+			echo "Initializing registered submodule..."; \
+			git submodule update --init $(UPSTREAM_REPO); \
+		else \
+			echo "Adding submodule..."; \
+			git submodule add https://github.com/openstack/ansible-collections-openstack.git $(UPSTREAM_REPO); \
+		fi \
 	fi
 
 	@echo "Checking out tag $(OS_CLOUD_VERSION)..."
@@ -191,7 +207,7 @@ vendor-clean:
 build: check-root clean-build install-deps
 	@echo "--- Building Ansible collection: $(COLLECTION_TARBALL) ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
-		$(MAKE) vendor-links && \
+		make vendor-links && \
 		source $(VENV_DIR)/bin/activate && \
 		pip install ansible-core && \
 		ansible-galaxy collection build --force'
@@ -285,7 +301,7 @@ tests: test-ansible-lint test-ansible-sanity test-ansible-units
 test-ansible-lint: install-deps
 	@echo "--- Launching ansible-lint ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
-		$(MAKE) vendor-links && \
+		make vendor-links && \
 		source $(VENV_DIR)/bin/activate && \
 		ansible-lint $(ANSIBLE_LINT_VENDORED_EXCLUDES)'
 	@if [[ $(USE_CACHE) == false ]]; then $(MAKE) clean-centos-container; fi
@@ -293,7 +309,7 @@ test-ansible-lint: install-deps
 test-ansible-sanity: install-deps
 	@echo "--- Running Ansible sanity tests ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
-		$(MAKE) vendor-links && \
+		make vendor-links && \
 		source $(VENV_DIR)/bin/activate && \
 		ansible-test sanity --python $(PYTHON_VERSION) --requirements \
 		  $(VENDORED_SANITY_EXCLUDES)'
@@ -302,9 +318,45 @@ test-ansible-sanity: install-deps
 test-ansible-units: install-deps
 	@echo "--- Running Ansible unit tests ---"
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
-		$(MAKE) vendor-links && \
+		make vendor-links && \
 		source $(VENV_DIR)/bin/activate && \
 		ansible-test units --python $(PYTHON_VERSION) --local'
+	@if [[ $(USE_CACHE) == false ]]; then $(MAKE) clean-centos-container; fi
+
+# --- Functional tests (gostack) ---
+# gostack repo/ref to build the fake OpenStack server from.
+GOSTACK_REPO ?= https://github.com/os-migrate/gostack.git
+GOSTACK_REF  ?= main
+
+# Run tests/func against two gostack fake-OpenStack instances (a source and a
+# destination cloud), entirely inside the build container. Builds gostack from
+# $(GOSTACK_REF) (override with: make test-func GOSTACK_REF=my-branch). The
+# vendored openstack.cloud symlinks are removed again on exit, so the working
+# tree is left clean.
+#
+# NOTE: the default builder image is amd64-only. On a non-amd64 host (e.g. Apple
+# silicon) it runs under emulation and the compiled gostack binary segfaults;
+# use a multi-arch base image there, e.g.:
+#   make test-func CONTAINER_IMAGE=quay.io/centos/centos:stream9
+# (if you switch CONTAINER_IMAGE architecture, run 'rm -rf .venv' first, since
+# an existing venv is reused and its wheels are arch-specific).
+test-func: install-deps
+	@echo "--- Running functional tests against gostack (in container) ---"
+	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
+		set -e; \
+		if ! command -v go >/dev/null 2>&1 || ! command -v curl >/dev/null 2>&1; then dnf clean all -q; fi; \
+		command -v go >/dev/null 2>&1 || dnf install -y -q golang git; \
+		command -v curl >/dev/null 2>&1 || dnf install -y -q --allowerasing curl; \
+		rm -rf /tmp/gostack && git clone --depth 1 --branch $(GOSTACK_REF) $(GOSTACK_REPO) /tmp/gostack; \
+		( cd /tmp/gostack && go build -o bin/fake-openstack ./cmd/fake-openstack ); \
+		make vendor-links; \
+		trap "make vendor-clean >/dev/null 2>&1 || true" EXIT; \
+		source $(VENV_DIR)/bin/activate; \
+		export ANSIBLE_COLLECTIONS_PATH="/:$(COLLECTIONS_PATH)"; \
+		ansible-galaxy collection install \
+			$(CONTAINER_COLLECTION_ROOT)/plugins/modules/_vendor/openstack.cloud \
+			-p "$(COLLECTIONS_PATH)" --force; \
+		GOSTACK_BIN=/tmp/gostack/bin/fake-openstack bash tests/func/run-gostack.sh'
 	@if [[ $(USE_CACHE) == false ]]; then $(MAKE) clean-centos-container; fi
 
 
@@ -334,6 +386,7 @@ test-e2e-tenant: install-deps install generate-auth-files
 		fi && \
 		source $(VENV_DIR)/bin/activate && \
 		cd tests/e2e; \
+		export ANSIBLE_COLLECTIONS_PATH="$(COLLECTIONS_PATH)"; \
 		ansible-playbook \
 			-v \
 			-i $(CONTAINER_COLLECTION_ROOT)/inventory/localhost.yml \

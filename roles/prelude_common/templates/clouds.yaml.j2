@@ -6,7 +6,7 @@ clouds:
 {%- endif %}
 {% if os_migrate_src_auth_type is defined and os_migrate_src_auth_type is not none %}
     auth_type: {{os_migrate_src_auth_type}}
-{%- endif %}
+{% endif %}
 {% if os_migrate_src_ca_cert is defined and os_migrate_src_ca_cert is not none and os_migrate_src_ca_cert|length %}
     cacert: {{os_migrate_src_ca_cert}}
 {% endif %}
@@ -26,7 +26,7 @@ clouds:
 {%- endif %}
 {% if os_migrate_dst_auth_type is defined and os_migrate_dst_auth_type is not none %}
     auth_type: {{os_migrate_dst_auth_type}}
-{%- endif %}
+{% endif %}
 {% if os_migrate_dst_ca_cert is defined and os_migrate_dst_ca_cert is not none and os_migrate_dst_ca_cert|length %}
     cacert: {{os_migrate_dst_ca_cert}}
 {% endif %}

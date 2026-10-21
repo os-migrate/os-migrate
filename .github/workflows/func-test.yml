@@ -1,0 +1,72 @@
+name: Functional tests (gostack)
+
+# Runs the tests/func suite against two gostack fake-OpenStack instances
+# (a source and a destination cloud). gostack is built from its main branch.
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  func:
+    name: tests/func against gostack
+    runs-on: ubuntu-24.04
+    env:
+      # Checking the collection out under ansible_collections/os_migrate/os_migrate
+      # lets Ansible import it as os_migrate.os_migrate with no extra install.
+      ANSIBLE_COLLECTIONS_PATH: ${{ github.workspace }}
+    steps:
+      - name: Check out os-migrate (as a collection)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          path: ansible_collections/os_migrate/os_migrate
+
+      - name: Check out gostack (main)
+        uses: actions/checkout@v4
+        with:
+          repository: os-migrate/gostack
+          ref: main
+          path: gostack
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: gostack/go.mod
+
+      - name: Build gostack
+        working-directory: gostack
+        run: go build -v -o bin/fake-openstack ./cmd/fake-openstack
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        working-directory: ansible_collections/os_migrate/os_migrate
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-tests.txt
+          pip install ansible-core
+
+      - name: Link vendored openstack.cloud modules
+        working-directory: ansible_collections/os_migrate/os_migrate
+        run: make vendor-links
+
+      - name: Install openstack.cloud collection (vendored version)
+        working-directory: ansible_collections/os_migrate/os_migrate
+        run: |
+          ansible-galaxy collection install \
+            plugins/modules/_vendor/openstack.cloud \
+            -p "${ANSIBLE_COLLECTIONS_PATH}" --force
+
+      - name: Run functional tests
+        working-directory: ansible_collections/os_migrate/os_migrate
+        env:
+          GOSTACK_BIN: ${{ github.workspace }}/gostack/bin/fake-openstack
+        run: bash tests/func/run-gostack.sh
