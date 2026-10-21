@@ -286,6 +286,14 @@ def run_module():
         # Instance uses ephemeral disks - estimate from flavor
         volume_map = build_volume_map_from_ephemeral(conn, ser_server)
 
+    # Every disk produced here is served by an nbdkit export on the hypervisor
+    # and must be copied with nbdcopy. Tagging each entry lets the transfer step
+    # mix these local disks with Cinder volumes exported through the source
+    # conversion host (which default to the qemu-img/conversion-host path) in a
+    # single workload migration.
+    for mapping in volume_map.values():
+        mapping["transfer_method"] = "nbdcopy"
+
     result["transfer_uuid"] = transfer_uuid
     result["volume_map"] = volume_map
 

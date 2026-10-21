@@ -6,9 +6,13 @@
     disk_filename: "{{ disk_item | basename }}"
     disk_index: "{{ disk_loop_index }}"
 
+# Use JSON output so parsing is independent of the qemu-img version / locale.
+# RHEL/CentOS 7 ships an older qemu-img that prints "virtual size: N G" while
+# newer versions print "N GiB", which breaks text regex parsing. JSON reports
+# virtual-size in bytes as a stable field.
 - name: Inspect disk with qemu-img info
   ansible.builtin.raw: |
-    qemu-img info {{ disk_item }}
+    qemu-img info --output json {{ disk_item }}
   delegate_to: "{{ hypervisor_hostname }}"
   register: qemu_img_info
   changed_when: false
@@ -17,15 +21,26 @@
   ansible.builtin.debug:
     msg: "{{ disk_filename }}: {{ qemu_img_info.stdout }}"
 
-- name: Parse disk format and size
+- name: Parse qemu-img JSON output
   ansible.builtin.set_fact:
-    disk_format_match: "{{ qemu_img_info.stdout | regex_search('file format: (\\w+)', '\\1') }}"
-    disk_size_match: "{{ qemu_img_info.stdout | regex_search('virtual size: ([0-9]+) GiB', '\\1') }}"
+    qemu_img_json: "{{ (qemu_img_info.stdout | regex_search('(?s)\\{.*\\}')) | from_json }}"
 
 - name: Set disk properties
   ansible.builtin.set_fact:
-    disk_format: "{{ disk_format_match | first | trim if disk_format_match else 'qcow2' }}"
-    disk_size_gb: "{{ disk_size_match | first | int if disk_size_match else 0 }}"
+    disk_format: "{{ qemu_img_json.format | default('qcow2') }}"
+    disk_virtual_size_bytes: "{{ qemu_img_json['virtual-size'] | default(0) | int }}"
+    disk_size_gb: "{{ (qemu_img_json['virtual-size'] | default(0) | int / (1024 * 1024 * 1024)) | round(0, 'ceil') | int }}"
+
+# A virtual size of 0 almost always means the instance is still running (or the
+# image is otherwise locked), which makes qemu-img report an empty image. Fail
+# early with a clear message instead of migrating a 0-sized disk.
+- name: Fail if disk virtual size is zero (instance may still be running)
+  ansible.builtin.fail:
+    msg: >-
+      qemu-img reported a virtual size of 0 for {{ disk_filename }} ({{ disk_item }}).
+      This usually means the instance is still running on the hypervisor or the
+      disk image is locked. Ensure the instance is fully shut off before migrating.
+  when: disk_virtual_size_bytes | int == 0
 
 - name: Display disk configuration
   ansible.builtin.debug:
@@ -35,14 +50,20 @@
       - "Format: {{ disk_format }}"
       - "Size: {{ disk_size_gb }} GB"
 
-- name: Calculate NBD port for this disk
+- name: Calculate NBD port for this disk (global running counter)
   ansible.builtin.set_fact:
-    disk_nbd_port: "{{ nbdkit_base_port | int + disk_index | int }}"
+    disk_nbd_port: "{{ om_nbd_next_port | int }}"
+
+- name: Advance global NBD port counter
+  ansible.builtin.set_fact:
+    om_nbd_next_port: "{{ om_nbd_next_port | int + 1 }}"
 
 - name: Build qemu-nbd command for this disk
   ansible.builtin.set_fact:
     disk_qemu_nbd_cmd: >-
       sudo qemu-nbd
+      -t
+      -r
       -f {{ disk_format }}
       -p {{ disk_nbd_port }}
       {{ disk_item }}
@@ -60,7 +81,7 @@
 
 - name: Stop existing qemu-nbd if running on port {{ disk_nbd_port }}
   ansible.builtin.raw: |
-    sudo pkill -f "qemu-nbd.*{{ disk_nbd_port }}" || true
+    sudo fuser -k {{ disk_nbd_port }}/tcp 2>/dev/null || true
   delegate_to: "{{ hypervisor_hostname }}"
   when: disk_port_check.stdout != ""
   changed_when: false

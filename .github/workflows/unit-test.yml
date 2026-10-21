@@ -1,0 +1,41 @@
+name: Unit tests (pytest)
+
+# Fast pytest run of tests/unit. These import the collection's module_utils and
+# openstacksdk directly (no OpenStack / gostack needed), so they run in seconds.
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  unit:
+    name: tests/unit
+    runs-on: ubuntu-24.04
+    env:
+      # Checking the collection out under ansible_collections/os_migrate/os_migrate
+      # lets the tests import ansible_collections.os_migrate.os_migrate.* .
+      PYTHONPATH: ${{ github.workspace }}
+    steps:
+      - name: Check out os-migrate (as a collection)
+        uses: actions/checkout@v4
+        with:
+          path: ansible_collections/os_migrate/os_migrate
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        working-directory: ansible_collections/os_migrate/os_migrate
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-tests.txt
+
+      - name: Run unit tests
+        working-directory: ansible_collections/os_migrate/os_migrate
+        run: python -m pytest tests/unit -v
