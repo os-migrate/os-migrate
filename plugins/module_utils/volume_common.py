@@ -717,6 +717,7 @@ class OpenstackVolumeExport(OpenStackVolumeBase):
                 url=None,
                 progress=None,
                 bootable=volume["bootable"],
+                image_metadata=dict(volume.get("volume_image_metadata") or {}),
             )
             self._update_progress("/dev/vda", 0.0)
         elif (
@@ -855,6 +856,30 @@ class OpenstackVolumeTransfer(OpenStackVolumeBase):
         class that transfers the VM or the list of detached volumes
         """
         raise NotImplementedError("Please Implement this method")
+
+    def _entries_by_method(self, method):
+        """Return the subset of ``volume_map`` entries routed through `method`.
+
+        Disks exported by the nbdkit-direct path (local hypervisor disks) are
+        tagged ``transfer_method == "nbdcopy"`` and copied with nbdcopy. Every
+        other entry -- attached Cinder volumes, boot-from-volume, detached
+        volumes -- has no tag, defaults to ``"qemu"`` and is copied through the
+        source conversion host with qemu-img convert. This lets a single
+        workload mix both transfer methods. The returned dict shares the same
+        mapping objects as ``self.volume_map`` so fields filled in later
+        (dest_id, url, ...) propagate back to the full map.
+        """
+        if method == "nbdcopy":
+            return {
+                path: mapping
+                for path, mapping in self.volume_map.items()
+                if mapping.get("transfer_method") == "nbdcopy"
+            }
+        return {
+            path: mapping
+            for path, mapping in self.volume_map.items()
+            if mapping.get("transfer_method", "qemu") != "nbdcopy"
+        }
 
     def _setup_nbdkit_direct_urls(self, nbdkit_socket_uri, nbdkit_export_name):
         """
@@ -1004,6 +1029,51 @@ class OpenstackVolumeTransfer(OpenStackVolumeBase):
             sdk_params.pop("volume_type", None)
             new_volume = self.conn.create_volume(**sdk_params)
             self.volume_map[path]["dest_id"] = new_volume.id
+            self._copy_volume_image_metadata(mapping, new_volume)
+
+    def _copy_volume_image_metadata(self, mapping, new_volume):
+        """
+        Copy the source volume's Cinder volume_image_metadata onto the freshly
+        created destination volume.
+
+        Cinder does not accept volume_image_metadata as a create_volume
+        parameter, so it has to be set afterwards. Without this, properties
+        such as hw_firmware_type=uefi and hw_machine_type=q35 are lost and
+        Nova builds the destination domain with SeaBIOS/i440fx. A UEFI guest
+        (any Windows Server 2016+, or a GPT/ESP Linux) then fails to boot with
+        "No bootable device", even though the disk contents transferred fine.
+        """
+        image_metadata = mapping.get("image_metadata") or {}
+        if not image_metadata:
+            return
+        self.log.info(
+            "Copying volume image metadata to destination volume %s: %s",
+            new_volume.id,
+            image_metadata,
+        )
+        try:
+            # Post the Cinder volume action directly instead of using
+            # conn.block_storage.set_volume_image_metadata(). openstacksdk
+            # older than 4.7.0 builds the request body without the required
+            # 'metadata' wrapper, which Cinder rejects with "400 Malformed
+            # request body". Passing metadata= explicitly would fix older SDKs
+            # but double-wrap the body on 4.7.0+. Building the body ourselves
+            # works with every SDK version.
+            body = {"os-set_image_metadata": {"metadata": image_metadata}}
+            response = self.conn.block_storage.post(
+                f"volumes/{new_volume.id}/action", json=body
+            )
+            response.raise_for_status()
+        except Exception as err:  # pylint: disable=broad-except
+            # Not fatal on its own, but the guest will likely not boot, so
+            # make the reason loud rather than failing mysteriously later.
+            self.log.warning(
+                "Failed to set volume image metadata on destination volume "
+                "%s: %s. The destination instance may fail to boot if the "
+                "source used UEFI firmware.",
+                new_volume.id,
+                str(err),
+            )
 
     @use_lock(ATTACH_LOCK_FILE_DESTINATION)
     def _attach_destination_volumes(self):

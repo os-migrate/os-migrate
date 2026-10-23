@@ -127,7 +127,7 @@ VENDOR_MODULE_LINK_SRC := _vendor/openstack.cloud/plugins/modules
 VENDOR_UTIL_LINK_SRC   := ../modules/_vendor/openstack.cloud/plugins/module_utils
 
 # Latest stable release:
-OS_CLOUD_VERSION   ?= 2.5.0
+OS_CLOUD_VERSION   ?= 2.6.0
 
 # List of required modules from vendor openstack.cloud collection.
 VENDORED_MODULES := auth compute_flavor compute_flavor_info floating_ip identity_domain identity_role \
