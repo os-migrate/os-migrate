@@ -17,6 +17,7 @@ def sdk_server_volume():
         "name": "test-volume",
         "size": 1,
         "volume_type": "tripleo",
+        "volume_image_metadata": {"image_id": "uuid-test-image"},
     }
     return openstack.block_storage.v3.volume.Volume(**sdk_params)
 
@@ -40,7 +41,13 @@ class TestServerVolume(unittest.TestCase):
         self.assertEqual(params["description"], "test volume description")
         self.assertEqual(params["name"], "test-volume")
         self.assertEqual(params["volume_type"], "tripleo")
+        self.assertEqual(
+            params["volume_image_metadata"],
+            {"image_id": "uuid-test-image"},
+        )
         self.assertEqual(info["id"], "uuid-test-volume")
+        self.assertEqual(info["is_bootable"], False)
+        self.assertEqual(info["size"], 1)
 
     def test_sdk_params(self):
         sv = ServerVolume.from_sdk(None, sdk_server_volume())
@@ -51,5 +58,15 @@ class TestServerVolume(unittest.TestCase):
                 "description": "test volume description",
                 "name": "test-volume",
                 "volume_type": "tripleo",
+                "volume_image_metadata": {"image_id": "uuid-test-image"},
             },
         )
+
+    def test_needs_update(self):
+        sv1 = ServerVolume.from_sdk(None, sdk_server_volume())
+        sv2 = ServerVolume.from_sdk(None, sdk_server_volume())
+        self.assertFalse(sv1._needs_update(sv2))
+        sv2.info()["id"] = "other-uuid"
+        self.assertFalse(sv1._needs_update(sv2))
+        sv2.params()["description"] = "changed description"
+        self.assertTrue(sv1._needs_update(sv2))

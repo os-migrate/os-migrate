@@ -117,6 +117,7 @@ class RoleAssignment(unittest.TestCase):
 
         self.assertEqual(info["project_id"], "uuid-test-project")
         self.assertEqual(info["role_id"], "uuid-test-role")
+        self.assertEqual(info["user_id"], "uuid-test-user")
 
     def test_assignment_sdk_params(self):
         assignment = Assignment.from_data(serialized_role_assignment())
@@ -126,3 +127,15 @@ class RoleAssignment(unittest.TestCase):
         self.assertEqual(sdk_params["project_id"], "uuid-test-project")
         self.assertEqual(sdk_params["role_id"], "uuid-test-role")
         self.assertEqual(sdk_params["user_id"], "uuid-test-user")
+
+    def test_needs_update(self):
+        a1 = Assignment.from_data(serialized_role_assignment())
+        a2 = Assignment.from_data(serialized_role_assignment())
+        a2.info()["id"] = "other-id"
+        self.assertFalse(a1._needs_update(a2))
+        a2.params()["role_ref"] = {
+            "name": "other-role",
+            "project_name": None,
+            "domain_name": "test-domain",
+        }
+        self.assertTrue(a1._needs_update(a2))

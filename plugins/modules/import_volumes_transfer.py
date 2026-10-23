@@ -172,9 +172,8 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import os_au
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils.volume_common import (
     OpenstackVolumeTransfer,
     DEFAULT_TIMEOUT,
+    QEMU_PROGRESS_RE,
 )
-
-import re
 
 
 class OpenStackDestinationVolume(OpenstackVolumeTransfer):
@@ -213,7 +212,7 @@ class OpenStackDestinationVolume(OpenstackVolumeTransfer):
         self.volume_map = volume_map
 
         # Match for qemu_img progress percentage
-        self.qemu_progress_re = re.compile(r"\((\d+\.\d+)/100%\)")
+        self.qemu_progress_re = QEMU_PROGRESS_RE
 
         # SSH tunnel process
         self.forwarding_process = None

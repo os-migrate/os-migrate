@@ -31,19 +31,19 @@ def security_group_rule_refs():
 def sdk_security_group_rule():
     return openstack.network.v2.security_group_rule.SecurityGroupRule(
         id="uuid",
-        security_group_id="uuid-sec-group",
-        security_group_name="default",
-        remote_group_id="uuid-group",
-        remote_group_name="default",
+        security_group_id="uuid-test-default-secgroup",
+        security_group_name="test-default-secgroup",
+        remote_group_id="uuid-test-remote-secgroup",
+        remote_group_name="test-remote-secgroup",
         project_id="uuid-project",
         created_at="2020-01-30T14:49:06Z",
         updated_at="2020-01-30T14:49:06Z",
-        revision_number="0",
+        revision_number=0,
         description="null",
         direction="ingress",
         ether_type="IPv4",
-        port_range_max="100",
-        port_range_min="10",
+        port_range_max=100,
+        port_range_min=10,
         protocol="null",
         remote_ip_prefix="null",
     )
@@ -55,8 +55,8 @@ def serialized_security_group_rule():
             "description": "null",
             "direction": "ingress",
             "ether_type": "IPv4",
-            "port_range_max": "100",
-            "port_range_min": "10",
+            "port_range_max": 100,
+            "port_range_min": 10,
             "protocol": "null",
             "remote_group_ref": {
                 "name": "test-remote-secgroup",
@@ -76,7 +76,7 @@ def serialized_security_group_rule():
             "created_at": "2020-01-30T14:49:06Z",
             "updated_at": "2020-01-30T14:49:06Z",
             "remote_group_id": "uuid-test-remote-secgroup",
-            "revision_number": "0",
+            "revision_number": 0,
             "security_group_id": "uuid-test-default-secgroup",
         },
         const.RES_TYPE: "openstack.network.SecurityGroupRule",
@@ -116,8 +116,8 @@ class TestSecurityGroupRule(unittest.TestCase):
         self.assertEqual(info["created_at"], "2020-01-30T14:49:06Z")
         self.assertEqual(info["id"], "uuid")
         self.assertEqual(info["project_id"], "uuid-project")
-        self.assertEqual(info["remote_group_id"], "uuid-group")
-        self.assertEqual(info["security_group_id"], "uuid-sec-group")
+        self.assertEqual(info["remote_group_id"], "uuid-test-remote-secgroup")
+        self.assertEqual(info["security_group_id"], "uuid-test-default-secgroup")
         self.assertEqual(info["updated_at"], "2020-01-30T14:49:06Z")
         self.assertEqual(info["revision_number"], 0)
 
@@ -130,7 +130,22 @@ class TestSecurityGroupRule(unittest.TestCase):
         self.assertEqual(sdk_params["description"], "null")
         self.assertEqual(sdk_params["direction"], "ingress")
         self.assertEqual(sdk_params["ether_type"], "IPv4")
-        self.assertEqual(sdk_params["port_range_max"], "100")
-        self.assertEqual(sdk_params["port_range_min"], "10")
+        self.assertEqual(sdk_params["port_range_max"], 100)
+        self.assertEqual(sdk_params["port_range_min"], 10)
         self.assertEqual(sdk_params["protocol"], "null")
         self.assertEqual(sdk_params["remote_ip_prefix"], "null")
+        self.assertEqual(
+            sdk_params["security_group_id"], "uuid-test-default-secgroup"
+        )
+        self.assertEqual(
+            sdk_params["remote_group_id"], "uuid-test-remote-secgroup"
+        )
+
+    def test_needs_update(self):
+        rule1 = SecurityGroupRule.from_sdk(None, sdk_security_group_rule())
+        rule2 = SecurityGroupRule.from_sdk(None, sdk_security_group_rule())
+        self.assertFalse(rule1._needs_update(rule2))
+        rule2.info()["id"] = "other-uuid"
+        self.assertFalse(rule1._needs_update(rule2))
+        rule2.params()["description"] = "changed"
+        self.assertTrue(rule1._needs_update(rule2))
