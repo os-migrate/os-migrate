@@ -198,6 +198,51 @@
         set_floating_ip_mode: 'existing'
         port_creation_mode: nova
 
+    # Mixed workload migration scenario (single import_workloads run):
+    #
+    # * Image-backed instance (local boot + ephemeral disks) copied directly
+    #   from the source hypervisor via nbdkit (use_nbdkit_direct: true)
+    #
+    # * Attached Cinder volume copied through the conversion host
+    #
+    # * boot_disk_copy: true
+    #
+    # * port_creation_mode: nova
+    #
+    # Requires a reachable source hypervisor (for import_from_hypervisor) and a
+    # source + destination conversion host linked together (for the Cinder half).
+    - name: seed the nbdkit-direct workload
+      ansible.builtin.include_tasks: tasks/tenant/seed_workload.yml
+      args:
+        apply:
+          tags:
+            - test_nbdkit_workload
+      tags: always
+      vars:
+        workload_image: "{{ os_migrate_src_osm_server_image }}"
+
+    - name: run the nbdkit-direct workload
+      ansible.builtin.include_tasks: tasks/tenant/run_workload.yml
+      args:
+        apply:
+          tags:
+            - test_nbdkit_workload
+      tags: always
+      vars:
+        set_nbdkit_direct: true
+        set_boot_disk_copy: true
+        port_creation_mode: nova
+
+    - name: clean the nbdkit-direct workload
+      ansible.builtin.include_tasks: tasks/tenant/clean_workload.yml
+      args:
+        apply:
+          tags:
+            - test_clean_after
+            - test_nbdkit_workload
+            - test_nbdkit_workload_clean
+      tags: always
+
     - name: clean the workloads
       ansible.builtin.include_tasks: tasks/tenant/clean_workload.yml
       args:

@@ -6,6 +6,24 @@
 
 - name: Workloads tasks
   block:
+    # nbdkit reads the instance's local disks with qemu-nbd, which requires the
+    # source instance to be SHUTOFF. It must be stopped BEFORE export, because
+    # import_from_hypervisor checks the _info.status recorded in workloads.yml
+    # (captured at export time), not the live state -- stopping after export
+    # would still leave ACTIVE in the exported data.
+    - name: stop the source instance before nbdkit-direct export
+      os_migrate.os_migrate.server_action:
+        server: osm_server
+        action: stop
+        wait: true
+        timeout: "{{ os_migrate_timeout | default(1800) }}"
+        auth: "{{ os_migrate_src_auth }}"
+        validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+        ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+        client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+        client_key: "{{ os_migrate_src_client_key | default(omit) }}"
+      when: set_nbdkit_direct|default(false)|bool
+
     - name: export workloads
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.export_workloads
@@ -46,6 +64,13 @@
         replace: "port_creation_mode: neutron"
       when: port_creation_mode|default("nova") == 'neutron'
 
+    - name: set use_nbdkit_direct
+      ansible.builtin.replace:
+        path: "{{ os_migrate_data_dir }}/workloads.yml"
+        regexp: "use_nbdkit_direct: false"
+        replace: "use_nbdkit_direct: true"
+      when: set_nbdkit_direct|default(false)|bool
+
     - name: create and set existing FIP
       ansible.builtin.include_tasks: run_workload_existing_fip.yml
       when: set_floating_ip_mode|default('') == 'existing'
@@ -67,6 +92,53 @@
       ansible.builtin.include_role:
         name: os_migrate.os_migrate.import_detached_volumes
       when: test_detached_volumes|default(false)|bool
+
+    # nbdkit reads the instance's local disks with qemu-nbd, which requires the
+    # source instance to be SHUTOFF. The stop inside import_workloads runs too
+    # late (after import_from_hypervisor), so stop it explicitly here first.
+    - name: stop the source instance before nbdkit-direct transfer
+      os_migrate.os_migrate.server_action:
+        server: "{{ resources[0]['_info']['id'] }}"
+        action: stop
+        wait: true
+        timeout: "{{ os_migrate_timeout | default(1800) }}"
+        auth: "{{ os_migrate_src_auth }}"
+        validate_certs: "{{ os_migrate_src_validate_certs | default(omit) }}"
+        ca_cert: "{{ os_migrate_src_ca_cert | default(omit) }}"
+        client_cert: "{{ os_migrate_src_client_cert | default(omit) }}"
+        client_key: "{{ os_migrate_src_client_key | default(omit) }}"
+      when: set_nbdkit_direct|default(false)|bool
+
+    # import_from_hypervisor delegates to the Nova hypervisor by its hostname,
+    # which the migrator (here the e2e container) usually cannot resolve or SSH
+    # to. Register it in the in-memory inventory with a reachable address + SSH
+    # credentials so delegate_to connects. Authenticate with either a private
+    # key (os_migrate_hypervisor_ssh_private_key) or a password
+    # (os_migrate_hypervisor_ssh_password, needs sshpass on the control node);
+    # set whichever applies in scenario_variables.yml. NOTE: the role runs
+    # `sudo qemu-nbd` etc. as raw shell commands (not Ansible become), so the
+    # hypervisor user must have passwordless sudo -- ansible_become_password
+    # does not apply here.
+    - name: register the source hypervisor for nbdkit delegation
+      ansible.builtin.add_host:
+        name: "{{ resources[0]['_info']['hypervisor_hostname'] }}"
+        ansible_host: "{{ os_migrate_hypervisor_address }}"
+        ansible_user: "{{ os_migrate_hypervisor_ssh_user }}"
+        ansible_ssh_private_key_file: "{{ os_migrate_hypervisor_ssh_private_key | default(omit, true) }}"
+        ansible_password: "{{ os_migrate_hypervisor_ssh_password | default(omit, true) }}"
+        ansible_ssh_common_args: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+      changed_when: false
+      when: set_nbdkit_direct|default(false)|bool
+
+    # Spawn qemu-nbd on the source hypervisor for every local disk of the
+    # nbdkit-direct workloads. Must run after export (so use_nbdkit_direct is
+    # set in workloads.yml) and before import_workloads (which consumes the
+    # nbdkit URIs). In a mixed workload the attached Cinder volumes are still
+    # transferred through the conversion host by import_workloads.
+    - name: spawn nbdkit on the source hypervisor
+      ansible.builtin.include_role:
+        name: os_migrate.os_migrate.import_from_hypervisor
+      when: set_nbdkit_direct|default(false)|bool
 
     - name: import workloads
       ansible.builtin.include_role:

@@ -373,7 +373,7 @@ generate-auth-files: install-deps install
 	@$(CONTAINER_ENGINE) exec -w $(CONTAINER_COLLECTION_ROOT) $(CONTAINER_NAME) bash -c '\
 		source "$(VENV_DIR)/bin/activate" && \
 		pip install --root-user-action ignore -q shyaml && \
-		dnf -y install util-linux openssh-clients && \
+		dnf -y install util-linux openssh-clients sshpass && \
 		./scripts/auth-from-clouds.sh --config "$(CONTAINER_COLLECTION_ROOT)/tests/clouds.yml" --src "$(SRC_CLOUD)" --dst "$(DST_CLOUD)" | tee "$(CONTAINER_COLLECTION_ROOT)/tests/auth_tenant.yml"'
 
 
