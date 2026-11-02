@@ -271,6 +271,9 @@ class OpenStackDestinationVolume(OpenstackVolumeTransfer):
         use_nbdkit_direct=False,
         nbdkit_socket_uri=None,
         nbdkit_export_name=None,
+        nbdcopy_connections=None,
+        nbdcopy_requests=None,
+        nbdcopy_request_size=None,
     ):
 
         super().__init__(
@@ -305,6 +308,11 @@ class OpenStackDestinationVolume(OpenstackVolumeTransfer):
         self.use_nbdkit_direct = use_nbdkit_direct
         self.nbdkit_socket_uri = nbdkit_socket_uri
         self.nbdkit_export_name = nbdkit_export_name
+
+        # Optional nbdcopy tuning (None -> use nbdcopy defaults)
+        self.nbdcopy_connections = nbdcopy_connections
+        self.nbdcopy_requests = nbdcopy_requests
+        self.nbdcopy_request_size = nbdcopy_request_size
 
     def _setup_nbdkit_disks_urls(self, nbdkit_disks):
         """
@@ -428,6 +436,9 @@ def run_module():
         use_nbdkit_direct=dict(type="bool", default=False),
         nbdkit_socket_uri=dict(type="str", default=None),
         nbdkit_export_name=dict(type="str", default=None),
+        nbdcopy_connections=dict(type="int", default=None),
+        nbdcopy_requests=dict(type="int", default=None),
+        nbdcopy_request_size=dict(type="int", default=None),
     )
 
     result = dict(
@@ -486,6 +497,9 @@ def run_module():
         use_nbdkit_direct=use_nbdkit_direct,
         nbdkit_socket_uri=nbdkit_socket_uri,
         nbdkit_export_name=nbdkit_export_name,
+        nbdcopy_connections=module.params.get("nbdcopy_connections"),
+        nbdcopy_requests=module.params.get("nbdcopy_requests"),
+        nbdcopy_request_size=module.params.get("nbdcopy_request_size"),
     )
     destination_host.transfer_exports()
 
