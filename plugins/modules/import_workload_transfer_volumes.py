@@ -135,6 +135,25 @@ options:
       - Optional, used when the nbdkit server requires an export name.
     required: false
     type: str
+  nbdcopy_connections:
+    description:
+      - Number of parallel NBD connections nbdcopy uses (nbdcopy --connections).
+      - Requires qemu-nbd to accept multiple connections (qemu-nbd -e/--shared).
+      - Leave unset to use nbdcopy's default.
+    required: false
+    type: int
+  nbdcopy_requests:
+    description:
+      - Maximum number of in-flight requests per nbdcopy connection (nbdcopy --requests).
+      - Leave unset to use nbdcopy's default.
+    required: false
+    type: int
+  nbdcopy_request_size:
+    description:
+      - Size in bytes of each nbdcopy request (nbdcopy --request-size).
+      - Leave unset to use nbdcopy's default.
+    required: false
+    type: int
 """
 
 EXAMPLES = r"""
