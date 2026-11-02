@@ -64,6 +64,7 @@
       sudo qemu-nbd
       -t
       -r
+      {{ ('-e ' ~ os_migrate_nbdkit_shared_connections) if (os_migrate_nbdkit_shared_connections | int > 0) else '' }}
       -f {{ disk_format }}
       -p {{ disk_nbd_port }}
       {{ disk_item }}

@@ -1114,6 +1114,15 @@ class OpenstackVolumeTransfer(OpenStackVolumeBase):
                 dest_dev,
                 "--progress",
             ]
+            # Optional tuning (None -> nbdcopy defaults). Parallel connections
+            # require qemu-nbd to accept multiple clients (see
+            # os_migrate_nbdkit_shared_connections / qemu-nbd -e).
+            if getattr(self, "nbdcopy_connections", None):
+                cmd.append("--connections=%d" % int(self.nbdcopy_connections))
+            if getattr(self, "nbdcopy_requests", None):
+                cmd.append("--requests=%d" % int(self.nbdcopy_requests))
+            if getattr(self, "nbdcopy_request_size", None):
+                cmd.append("--request-size=%d" % int(self.nbdcopy_request_size))
 
             self.log.info("Starting nbdcopy: %s", " ".join(cmd))
             # nbdcopy outputs progress to stderr

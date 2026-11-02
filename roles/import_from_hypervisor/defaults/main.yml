@@ -10,6 +10,13 @@ os_migrate_hypervisor_ssh_user: ""
 # NBDkit configuration
 os_migrate_nbdkit_port: 10809
 os_migrate_nbdkit_protocol: tcp  # 'tcp' or 'ssh'
+
+# Max simultaneous NBD clients qemu-nbd accepts per disk (qemu-nbd -e/--shared).
+# The export is read-only, so multiple connections are safe and let nbdcopy copy
+# a disk over several parallel streams (big win for large, incompressible disks).
+# Without this qemu-nbd defaults to 1, capping nbdcopy to a single connection.
+# Set to 0 for unlimited.
+os_migrate_nbdkit_shared_connections: 8
 os_migrate_nbdkit_ssh_user: stack
 os_migrate_nbdkit_readonly: true
 os_migrate_nbdkit_timeout: 300
