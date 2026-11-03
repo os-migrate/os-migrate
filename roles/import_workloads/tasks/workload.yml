@@ -209,6 +209,9 @@
         use_nbdkit_direct: "{{ item['_migration_params']['use_nbdkit_direct'] | default(false) }}"
         nbdkit_socket_uri: "{{ item['_migration_params']['nbdkit_socket_uri'] | default(omit) }}"
         nbdkit_export_name: "{{ item['_migration_params']['nbdkit_export_name'] | default(omit) }}"
+        nbdcopy_connections: "{{ os_migrate_nbdcopy_connections | default(omit, true) }}"
+        nbdcopy_requests: "{{ os_migrate_nbdcopy_requests | default(omit, true) }}"
+        nbdcopy_request_size: "{{ os_migrate_nbdcopy_request_size | default(omit, true) }}"
       register: transfer
       when:
         - prelim is defined and prelim.changed
