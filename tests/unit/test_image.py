@@ -213,3 +213,11 @@ class TestImage(unittest.TestCase):
         self.assertEqual(sdk_params["min_ram"], params["min_ram"])
         self.assertEqual(sdk_params["name"], params["name"])
         self.assertEqual(sdk_params["ramdisk_id"], refs["ramdisk_id"])
+
+    def test_needs_update(self):
+        img1 = Image.from_data(serialized_image())
+        img2 = Image.from_data(serialized_image())
+        img2.info()["status"] = "queued"
+        self.assertFalse(img1._needs_update(img2))
+        img2.params()["min_disk"] = 999
+        self.assertTrue(img1._needs_update(img2))

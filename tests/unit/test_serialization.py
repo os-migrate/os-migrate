@@ -267,3 +267,21 @@ class TestSerialization(unittest.TestCase):
                 },
             },
         )
+
+    def test_trim_info_empty_and_primitives(self):
+        self.assertEqual(serialization._trim_info({}), {})
+        self.assertEqual(serialization._trim_info([]), [])
+        self.assertEqual(serialization._trim_info("plain"), "plain")
+        self.assertEqual(
+            serialization._trim_info({const.RES_INFO: {"id": "x"}, "keep": 1}),
+            {"keep": 1},
+        )
+        self.assertEqual(
+            serialization._trim_info([{const.RES_INFO: {"id": "x"}, "a": 1}]),
+            [{"a": 1}],
+        )
+
+    def test_create_resources_from_struct_empty(self):
+        resources, errors = serialization.create_resources_from_struct([], {})
+        self.assertEqual(resources, [])
+        self.assertEqual(errors, [])

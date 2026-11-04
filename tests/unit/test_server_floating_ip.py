@@ -50,6 +50,16 @@ def serialized_server_floating_ip():
             "dns_name": "testname",
             "fixed_ip_address": "192.168.20.7",
             "floating_ip_address": "172.20.9.135",
+            "floating_network_ref": {
+                "domain_name": None,
+                "project_name": None,
+                "name": "test-external-net",
+            },
+            "qos_policy_ref": {
+                "domain_name": None,
+                "project_name": None,
+                "name": "test-qos-policy",
+            },
         },
         const.RES_TYPE: "openstack.network.ServerFloatingIP",
     }
@@ -59,14 +69,14 @@ def server_floating_ip_refs():
     return {
         "floating_network_id": "uuid-test-external-net",
         "floating_network_ref": {
-            "domain": None,
-            "project": None,
+            "domain_name": None,
+            "project_name": None,
             "name": "test-external-net",
         },
         "qos_policy_id": "uuid-test-qos-policy",
         "qos_policy_ref": {
-            "domain": None,
-            "project": None,
+            "domain_name": None,
+            "project_name": None,
             "name": "test-qos-policy",
         },
     }
@@ -87,11 +97,11 @@ class ServerFloatingIP(server_floating_ip.ServerFloatingIP):
 class TestServerFloatingIP(unittest.TestCase):
 
     def test_serialize_server_floating_ip(self):
-        sdk_net = sdk_server_floating_ip()
-        net = ServerFloatingIP.from_sdk(None, sdk_net)  # conn=None
-        params, info = net.params_and_info()
+        sdk_fip = sdk_server_floating_ip()
+        fip = ServerFloatingIP.from_sdk(None, sdk_fip)  # conn=None
+        params, info = fip.params_and_info()
 
-        self.assertEqual(net.type(), "openstack.network.ServerFloatingIP")
+        self.assertEqual(fip.type(), "openstack.network.ServerFloatingIP")
         self.assertEqual(params["description"], "my FIP")
         self.assertEqual(params["dns_domain"], "example.org")
         self.assertEqual(params["dns_name"], "testname")
@@ -108,9 +118,9 @@ class TestServerFloatingIP(unittest.TestCase):
         self.assertEqual(info["updated_at"], "2020-11-25T15:26:18Z")
 
     def test_server_floating_ip_sdk_params(self):
-        net = ServerFloatingIP.from_data(serialized_server_floating_ip())
-        refs = net._refs_from_ser(None)  # conn=None
-        sdk_params = net._to_sdk_params(refs)
+        fip = ServerFloatingIP.from_data(serialized_server_floating_ip())
+        refs = fip._refs_from_ser(None)  # conn=None
+        sdk_params = fip._to_sdk_params(refs)
 
         self.assertEqual(
             sdk_params,
@@ -190,3 +200,23 @@ class TestServerFloatingIP(unittest.TestCase):
         with self.assertRaises(exc.CannotConverge):
             fip._find_specified_detached_floating_ip(conn)
         conn.network.ips.assert_called_with(floating_ip_address="172.20.9.135")
+
+    def test_create_mode_invalid(self):
+        fip = ServerFloatingIP.from_sdk(None, sdk_server_floating_ip())
+        with self.assertRaises(exc.UnexpectedChoice):
+            fip.create(mock.Mock(), {"id": "uuid-srv"}, "bogus")
+
+    def test_create_mode_skip(self):
+        fip = ServerFloatingIP.from_sdk(None, sdk_server_floating_ip())
+        fip._find_my_server_port = mock.Mock(return_value={"id": "uuid-port"})
+        self.assertIsNone(fip.create(mock.Mock(), {"id": "uuid-srv"}, "skip"))
+        fip._find_my_server_port.assert_called_once()
+
+    def test_needs_update(self):
+        fip1 = ServerFloatingIP.from_sdk(None, sdk_server_floating_ip())
+        fip2 = ServerFloatingIP.from_sdk(None, sdk_server_floating_ip())
+        self.assertFalse(fip1._needs_update(fip2))
+        fip2.info()["id"] = "other-id"
+        self.assertFalse(fip1._needs_update(fip2))
+        fip2.params()["description"] = "changed"
+        self.assertTrue(fip1._needs_update(fip2))

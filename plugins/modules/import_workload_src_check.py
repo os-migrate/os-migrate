@@ -84,6 +84,16 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import os_au
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import server
 
 
+def source_status_error(server_name, status):
+    """Return an error message if the source server is not SHUTOFF, else None."""
+    if status != "SHUTOFF":
+        return (
+            "Cannot migrate instance {} because it is not in state SHUTOFF! "
+            "Currently in state {}.".format(server_name, status)
+        )
+    return None
+
+
 def run_module():
     argument_spec = os_auth.openstack_full_argument_spec(
         name=dict(type="str", required=True),
@@ -123,9 +133,9 @@ def run_module():
     #: ``REVERT_RESIZE``, ``SHUTOFF``, ``SOFT_DELETED``, ``STOPPED``,
     #: ``SUSPENDED``, ``UNKNOWN``, or ``VERIFY_RESIZE``.
     # Make sure source instance is shutdown before proceeding.
-    if info["status"] != "SHUTOFF":
-        msg = "Cannot migrate instance {} because it is not in state SHUTOFF! Currently in state {}."
-        module.fail_json(msg=msg.format(params["name"], info["status"]), **result)
+    error = source_status_error(params["name"], info["status"])
+    if error:
+        module.fail_json(msg=error, **result)
 
     module.exit_json(**result)
 

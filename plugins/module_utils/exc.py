@@ -82,6 +82,16 @@ class UnexpectedChoice(Exception):
         super().__init__(message)
 
 
+class InvalidInputType(Exception):
+    """Unexpected type of a variable."""
+
+    msg_format = "Invalid type of '{}': expected '{}'."
+
+    def __init__(self, var, expected_type):
+        message = self.msg_format.format(var, expected_type)
+        super().__init__(message)
+
+
 class Unsupported(Exception):
     """Unsupported action."""
 
