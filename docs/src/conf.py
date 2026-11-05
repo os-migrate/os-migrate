@@ -83,7 +83,10 @@ html_theme = "sphinx_rtd_theme"
 # Comment out or remove the following block if you do not need to load module_utils
 from ansible.plugins.loader import init_plugin_loader, module_utils_loader
 
-init_plugin_loader()
+# The collection finder only resolves ansible_collections.* from the
+# collection paths, so add the dir containing ansible_collections/ (this
+# repo is checked out as ansible_collections/os_migrate/os_migrate).
+init_plugin_loader([os.path.abspath("../../../../..")])
 
 needed_module_utils = ["module_1", "module_2"]
 
