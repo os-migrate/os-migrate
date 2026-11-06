@@ -134,6 +134,13 @@ first check that both conversion hosts are reachable, then
 it will export the selected source guests by exposing its volumes,
 transfering them to the destination tenant, and creating a new guest booting
 from the recently imported volume.</p>
+<p>An instance may carry a mix of local hypervisor disks (migrated with nbdkit
+direct, requiring the <code>import_from_hypervisor</code> role to have run first) and
+attached Cinder volumes (migrated through the conversion hosts). In that case a
+single <code>import_workloads</code> run transfers both: each local disk is copied with
+nbdcopy and each Cinder volume is copied with qemu-img convert via the source
+conversion host. Migrating the Cinder volumes still requires a reachable source
+conversion host even when <code>use_nbdkit_direct</code> is enabled.</p>
 <p>For further information about the role import_workloads refer to the
 <a href="https://os-migrate.github.io/os-migrate/roles/role-import_workloads.html">official docs</a>.</p><section id="r-o-l-e-d-e-f-a-u-l-t-s">
 <h3>Role Defaults<a class="headerlink" href="#r-o-l-e-d-e-f-a-u-l-t-s" title="Link to this heading"></a></h3>
@@ -147,6 +154,16 @@ from the recently imported volume.</p>
 <span class="nt">os_migrate_workloads_data_copy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="nt">os_migrate_workloads_filter</span><span class="p">:</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.*</span>
+
+<span class="c1"># nbdcopy tuning for nbdkit-direct transfers. Leave null to use nbdcopy's own</span>
+<span class="c1"># defaults (4 connections, 64 requests, 256K request size). Raising these can</span>
+<span class="c1"># markedly speed up large, incompressible disks, but needs qemu-nbd to accept</span>
+<span class="c1"># multiple connections (see os_migrate_nbdkit_shared_connections in the</span>
+<span class="c1"># import_from_hypervisor role). Test per environment; if the network link is the</span>
+<span class="c1"># ceiling, more connections will not help.</span>
+<span class="nt">os_migrate_nbdcopy_connections</span><span class="p">:</span>
+<span class="nt">os_migrate_nbdcopy_requests</span><span class="p">:</span>
+<span class="nt">os_migrate_nbdcopy_request_size</span><span class="p">:</span>
 </pre></div>
 </div>
 </section>

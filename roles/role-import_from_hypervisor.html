@@ -143,6 +143,36 @@
 <p><code>1. export_workloads.yml      # Exports workloads with hypervisor_hostname
 2. import_from_hypervisor.yml # Spawns nbdkit (this role)
 3. import_workloads.yml       # Migrates using nbdkit URIs</code></p>
+<h2>Required variables</h2>
+<p>In nbdkit direct mode each disk is streamed straight from the hypervisor's
+<code>qemu-nbd</code>, so <strong>no source conversion host is used</strong>. For the workflow to run
+correctly you must disable the source conversion host in the deploy and import
+steps, otherwise the playbooks try to create, link or wait for an
+<code>os_migrate_conv_src</code> that does not exist and fail.</p>
+<p>Set the following variables (in your <code>vars.yml</code> or via <code>-e</code>):</p>
+<p>| Variable | Value | Effect |
+| --- | --- | --- |
+| <code>os_migrate_deploy_src_conversion_host</code> | <code>false</code> | <code>deploy_conversion_hosts.yml</code> deploys only the <strong>destination</strong> conversion host, not a source one. |
+| <code>os_migrate_link_conversion_hosts</code> | <code>false</code> | Skips the conversion-host <em>link</em> step, which otherwise waits for a source conversion host to become reachable over SSH. |
+| <code>os_migrate_requires_src_conversion_host</code> | <code>false</code> | <code>import_workloads.yml</code> does not require a source conversion host; a missing <code>os_migrate_conv_src</code> is tolerated instead of failing the run. |</p>
+<p>```yaml</p>
+<h1>vars.yml</h1>
+<p>os_migrate_deploy_src_conversion_host: false
+os_migrate_link_conversion_hosts: false
+os_migrate_requires_src_conversion_host: false
+```</p>
+<blockquote>
+<p>Only the <strong>destination</strong> conversion host is required in this mode.</p>
+</blockquote>
+<h2>Hypervisor connection</h2>
+<p>The role delegates the <code>qemu-img</code> / <code>qemu-nbd</code> tasks to the hypervisor using
+<code>delegate_to: "{{ hypervisor_hostname }}"</code>, so the SSH user and other connection
+settings are taken from the hypervisor's <strong>inventory</strong> entry (<code>ansible_user</code> /
+<code>ansible_ssh_user</code>). Make sure the compute node reported by nova as
+<code>hypervisor_hostname</code> is present in your inventory with the right credentials.</p>
+<p>If you cannot (or do not want to) add the hypervisor to the inventory, set
+<code>os_migrate_hypervisor_ssh_user</code> to override the SSH user used for the delegated
+tasks (e.g. <code>root</code> or <code>stack</code>). Leaving it empty keeps the inventory settings.</p>
 <h2>Usage</h2>
 <p>```bash</p>
 <h1>1. Export workloads</h1>
@@ -158,9 +188,22 @@
 </dd>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Defaults for import_from_hypervisor role</span>
 
+<span class="c1"># SSH user for connecting to the source hypervisor(s).</span>
+<span class="c1"># Leave empty (default) to use the connection settings defined for the</span>
+<span class="c1"># hypervisor host in your inventory (recommended). Set it to override the SSH</span>
+<span class="c1"># user used for the delegated qemu-img / qemu-nbd tasks (e.g. 'root', 'stack').</span>
+<span class="nt">os_migrate_hypervisor_ssh_user</span><span class="p">:</span><span class="w"> </span><span class="s">''</span>
+
 <span class="c1"># NBDkit configuration</span>
 <span class="nt">os_migrate_nbdkit_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10809</span>
 <span class="nt">os_migrate_nbdkit_protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tcp</span><span class="w">  </span><span class="c1"># 'tcp' or 'ssh'</span>
+
+<span class="c1"># Max simultaneous NBD clients qemu-nbd accepts per disk (qemu-nbd -e/--shared).</span>
+<span class="c1"># The export is read-only, so multiple connections are safe and let nbdcopy copy</span>
+<span class="c1"># a disk over several parallel streams (big win for large, incompressible disks).</span>
+<span class="c1"># Without this qemu-nbd defaults to 1, capping nbdcopy to a single connection.</span>
+<span class="c1"># Set to 0 for unlimited.</span>
+<span class="nt">os_migrate_nbdkit_shared_connections</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8</span>
 <span class="nt">os_migrate_nbdkit_ssh_user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stack</span>
 <span class="nt">os_migrate_nbdkit_readonly</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="nt">os_migrate_nbdkit_timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span>

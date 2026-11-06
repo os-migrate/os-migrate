@@ -212,6 +212,19 @@
 <dd class="field-odd"><p>NBD export name to use when connecting to the nbdkit socket.</p>
 <p>Optional, used when the nbdkit server requires an export name.</p>
 </dd>
+<dt class="field-even">nbdcopy_connections<span class="colon">:</span></dt>
+<dd class="field-even"><p>Number of parallel NBD connections nbdcopy uses (nbdcopy --connections).</p>
+<p>Requires qemu-nbd to accept multiple connections (qemu-nbd -e/--shared).</p>
+<p>Leave unset to use nbdcopy's default.</p>
+</dd>
+<dt class="field-odd">nbdcopy_requests<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Maximum number of in-flight requests per nbdcopy connection (nbdcopy --requests).</p>
+<p>Leave unset to use nbdcopy's default.</p>
+</dd>
+<dt class="field-even">nbdcopy_request_size<span class="colon">:</span></dt>
+<dd class="field-even"><p>Size in bytes of each nbdcopy request (nbdcopy --request-size).</p>
+<p>Leave unset to use nbdcopy's default.</p>
+</dd>
 </dl>
 </section>
 <section id="a-u-t-h-o-r-s">

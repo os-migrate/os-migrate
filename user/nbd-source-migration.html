@@ -18,7 +18,9 @@
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Troubleshooting" href="troubleshooting.html" />
+    <link rel="prev" title="How it works: Workload migration" href="how-it-works-workload-migration.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -40,8 +42,49 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="README.html">OS Migrate User Documentation</a></li>
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="README.html">OS Migrate User Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="install-from-galaxy.html">Installation from Galaxy (recommended)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install-from-source.html">Installation from source (when customizing)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upgrade.html">Upgrading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="walkthrough.html">OS Migrate Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage-notes.html">General usage notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="variables-guide.html">Variables Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migration-params-guide.html">Migration Parameters Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="how-it-works-workload-migration.html">How it works: Workload migration</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">NBD Source Migration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-it-works">How it works</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#enabling-the-feature">Enabling the feature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-import-from-hypervisor-role">The import_from_hypervisor role</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#running-the-role">Running the role</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#what-the-role-does">What the role does</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#the-nbdkit-disks-field">The nbdkit_disks field</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#role-configuration">Role configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#manual-hypervisor-preparation">Manual hypervisor preparation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#the-import-workloads-role-with-nbd-direct-mode">The import_workloads role with NBD direct mode</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#standard-workflow-use-nbdkit-direct-false">Standard workflow (use_nbdkit_direct: false)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nbd-direct-workflow-use-nbdkit-direct-true">NBD direct workflow (use_nbdkit_direct: true)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transfer-process">Transfer process</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#security-considerations">Security considerations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#complete-workflow-example">Complete workflow example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#troubleshooting">Troubleshooting</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#qemu-nbd-process-not-starting">qemu-nbd process not starting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cannot-connect-to-nbd-from-destination">Cannot connect to NBD from destination</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#instance-not-in-shutoff-state">Instance not in SHUTOFF state</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#missing-hypervisor-hostname">Missing hypervisor_hostname</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#limitations">Limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../roles.html">Documented roles in os-migrate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules.html">Documented modules in os-migrate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
@@ -62,6 +105,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="README.html">OS Migrate User Documentation</a></li>
       <li class="breadcrumb-item active">NBD Source Migration</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/user/nbd-source-migration.rst.txt" rel="nofollow"> View page source</a>
@@ -356,7 +400,10 @@ sudo<span class="w"> </span>netstat<span class="w"> </span>-tlnp<span class="w">
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="how-it-works-workload-migration.html" class="btn btn-neutral float-left" title="How it works: Workload migration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="troubleshooting.html" class="btn btn-neutral float-right" title="Troubleshooting" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

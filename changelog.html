@@ -221,6 +221,26 @@
 <section id="fix">
 <h3>Fix<a class="headerlink" href="#fix" title="Link to this heading"></a></h3>
 <ul>
+<li><p>Preserve volume_image_metadata on destination boot volumes. [Claude
+Opus 5.5 (1M context), Jan Wasilewski]</p>
+<p>When migrating a VM whose boot volume carries Cinder volume_image_metadata
+(e.g. hw_firmware_type=uefi, hw_machine_type=q35), that metadata was
+dropped when the destination volume was created. Nova then falls back to
+SeaBIOS/i440fx when building the destination domain, so any UEFI guest
+(Windows Server 2016+, or a GPT/ESP-booting Linux) fails to boot with
+“No bootable device” even though the disk contents transferred correctly.</p>
+<p>Carry volume_image_metadata from the source volume through volume_map
+(both the attached-volume path and the image-based boot_disk_copy path)
+and apply it to the new destination volume after create_volume, since
+Cinder does not accept volume_image_metadata as a create parameter.</p>
+<p>The metadata is set by posting the os-set_image_metadata volume action
+directly. openstacksdk older than 4.7.0 (including the pinned 4.5.1)
+sends that action without the required ‘metadata’ wrapper and Cinder
+answers “400 Malformed request body”; 4.7.0+ adds the wrapper itself, so
+passing metadata= would double-wrap there. Building the body ourselves
+works with every SDK version.</p>
+<p>Ported from #797 (stable/1.0) as requested in review.</p>
+</li>
 <li><p>Update openstacksdk module version check. [Piotr Czarnik]</p>
 <p>After openstack.version.__version__ was removed in openstacksdk 4.15.0</p>
 </li>
@@ -229,6 +249,156 @@
 <section id="other">
 <h3>Other<a class="headerlink" href="#other" title="Link to this heading"></a></h3>
 <ul>
+<li><p>Fix docs build: resolve collection imports, add NBD doc to toctree.
+[mathieu bultel]</p>
+<p>init_plugin_loader() installs Ansible’s collection finder, which only
+resolves ansible_collections.* from the collection paths, so autodoc
+failed to import the modules. Add the checkout’s parent dir to them.
+Also add the NBD source migration guide to the user docs toctree.</p>
+</li>
+<li><p>Bump func test fixtures to 1.1.0. [mathieu bultel]</p>
+<p>The validate_data_dir fixtures must match OS_MIGRATE_VERSION exactly,
+otherwise the valid dir validation fails in the gostack functional tests.</p>
+</li>
+<li><p>Bump major release to 1.1.0. [mathieu bultel]</p></li>
+<li><p>Execute nbdkit migration at the end of the e2e run. [mathieu bultel]</p></li>
+<li><p>Merge branch ‘main’ into nbd/cinder/single/run-tests. [mathieu bultel]</p></li>
+<li><p>Remove <cite>rebtoor</cite> as repo owner. [rebtoor]</p></li>
+<li><p>Add documentation for new multi conn params. [mathieu bultel]</p></li>
+<li><p>Expose nbd multi connection for hypervisor to OS volume migration.
+[mathieu bultel]</p></li>
+<li><p>Test: coverage for single-run mixed volume migration. [mathieu bultel]</p>
+<p>Refactor import_workload_export_volume_map to extract a pure
+build_volume_map(conn, ser_server) from run_module so the volume-map
+selection and nbdcopy tagging can be unit-tested.</p>
+<ul class="simple">
+<li><p>Unit tests for the volume-map builders (nbdkit disks, attached volumes,
+ephemeral) and the nbdcopy tagging / nbdkit&gt;volumes priority.</p></li>
+<li><p>Unit tests for transfer_exports per-entry routing: mixed, pure-nbdkit,
+pure-conversion-host, legacy single-socket, and full-map restore on error.</p></li>
+<li><p>e2e: nbdkit-direct mixed workload scenario (test_nbdkit_workload) that
+migrates local disks via nbdkit and an attached Cinder volume via the
+conversion host in one import_workloads run.</p></li>
+</ul>
+</li>
+<li><p>Test: coverage for single-run mixed volume migration. [mathieu bultel]</p>
+<p>Refactor import_workload_export_volume_map to extract a pure
+build_volume_map(conn, ser_server) from run_module so the volume-map
+selection and nbdcopy tagging can be unit-tested.</p>
+<ul class="simple">
+<li><p>Unit tests for the volume-map builders (nbdkit disks, attached volumes,
+ephemeral) and the nbdcopy tagging / nbdkit&gt;volumes priority.</p></li>
+<li><p>Unit tests for transfer_exports per-entry routing: mixed, pure-nbdkit,
+pure-conversion-host, legacy single-socket, and full-map restore on error.</p></li>
+<li><p>e2e: nbdkit-direct mixed workload scenario (test_nbdkit_workload) that
+migrates local disks via nbdkit and an attached Cinder volume via the
+conversion host in one import_workloads run.</p></li>
+</ul>
+</li>
+<li><p>Test: coverage for single-run mixed volume migration. [mathieu bultel]</p>
+<p>Refactor import_workload_export_volume_map to extract a pure
+build_volume_map(conn, ser_server) from run_module so the volume-map
+selection and nbdcopy tagging can be unit-tested.</p>
+<ul class="simple">
+<li><p>Unit tests for the volume-map builders (nbdkit disks, attached volumes,
+ephemeral) and the nbdcopy tagging / nbdkit&gt;volumes priority.</p></li>
+<li><p>Unit tests for transfer_exports per-entry routing: mixed, pure-nbdkit,
+pure-conversion-host, legacy single-socket, and full-map restore on error.</p></li>
+<li><p>e2e: nbdkit-direct mixed workload scenario (test_nbdkit_workload) that
+migrates local disks via nbdkit and an attached Cinder volume via the
+conversion host in one import_workloads run.</p></li>
+</ul>
+</li>
+<li><p>Merge branch ‘main’ into nbd/cinder/single/run-tests. [mathieu bultel]</p></li>
+<li><p>Move Ansible cloud collection to 2.6.0. [mathieu bultel]</p></li>
+<li><p>Merge branch ‘main’ into sdk/4.21.0. [mathieu bultel]</p></li>
+<li><p>Bump sdk to 4.21.0 and remove osm sdk fork. [mathieu bultel]</p></li>
+<li><p>Test: coverage for single-run mixed volume migration. [mathieu bultel]</p>
+<p>Refactor import_workload_export_volume_map to extract a pure
+build_volume_map(conn, ser_server) from run_module so the volume-map
+selection and nbdcopy tagging can be unit-tested.</p>
+<ul class="simple">
+<li><p>Unit tests for the volume-map builders (nbdkit disks, attached volumes,
+ephemeral) and the nbdcopy tagging / nbdkit&gt;volumes priority.</p></li>
+<li><p>Unit tests for transfer_exports per-entry routing: mixed, pure-nbdkit,
+pure-conversion-host, legacy single-socket, and full-map restore on error.</p></li>
+<li><p>e2e: nbdkit-direct mixed workload scenario (test_nbdkit_workload) that
+migrates local disks via nbdkit and an attached Cinder volume via the
+conversion host in one import_workloads run.</p></li>
+</ul>
+</li>
+<li><p>Test: coverage for single-run mixed volume migration. [mathieu bultel]</p>
+<p>Refactor import_workload_export_volume_map to extract a pure
+build_volume_map(conn, ser_server) from run_module so the volume-map
+selection and nbdcopy tagging can be unit-tested.</p>
+<ul class="simple">
+<li><p>Unit tests for the volume-map builders (nbdkit disks, attached volumes,
+ephemeral) and the nbdcopy tagging / nbdkit&gt;volumes priority.</p></li>
+<li><p>Unit tests for transfer_exports per-entry routing: mixed, pure-nbdkit,
+pure-conversion-host, legacy single-socket, and full-map restore on error.</p></li>
+<li><p>e2e: nbdkit-direct mixed workload scenario (test_nbdkit_workload) that
+migrates local disks via nbdkit and an attached Cinder volume via the
+conversion host in one import_workloads run.</p></li>
+</ul>
+</li>
+<li><p>Merge branch ‘main’ into nbd/cinder/single/run-tests. [mathieu bultel]</p></li>
+<li><p>Merge branch ‘main’ into nbd/cinder/single/run. [mathieu bultel]</p></li>
+<li><p>Merge branch ‘main’ into func/test/coverage. [mathieu bultel]</p></li>
+<li><p>Read kwargs directly instead of unpacking. [mathieu bultel]</p></li>
+<li><p>Add unit tests for resource_ref. [mathieu bultel]</p></li>
+<li><p>Test: coverage for single-run mixed volume migration. [mathieu bultel]</p>
+<p>Refactor import_workload_export_volume_map to extract a pure
+build_volume_map(conn, ser_server) from run_module so the volume-map
+selection and nbdcopy tagging can be unit-tested.</p>
+<ul class="simple">
+<li><p>Unit tests for the volume-map builders (nbdkit disks, attached volumes,
+ephemeral) and the nbdcopy tagging / nbdkit&gt;volumes priority.</p></li>
+<li><p>Unit tests for transfer_exports per-entry routing: mixed, pure-nbdkit,
+pure-conversion-host, legacy single-socket, and full-map restore on error.</p></li>
+<li><p>e2e: nbdkit-direct mixed workload scenario (test_nbdkit_workload) that
+migrates local disks via nbdkit and an attached Cinder volume via the
+conversion host in one import_workloads run.</p></li>
+</ul>
+</li>
+<li><p>Add rescue in case of failure. [mathieu bultel]</p></li>
+<li><p>Fix ordering and add rescue in case of failure. [mathieu bultel]</p></li>
+<li><p>Enable ephemeral disk migration and attached volumes at the same time.
+[mathieu bultel]</p></li>
+<li><p>Add test-func target. [mathieu bultel]</p></li>
+<li><p>Fix shellcheck. [mathieu bultel]</p></li>
+<li><p>Fix functional tests and gostack script call. [mathieu bultel]</p></li>
+<li><p>Fix functionnal tests and use gostack. [mathieu bultel]</p></li>
+<li><p>Add documentation for the new variables. [mathieu bultel]</p></li>
+<li><p>Remove useless when statement. [mathieu bultel]</p></li>
+<li><p>Use existing os_migrate_requires_src_conversion_host instead of
+creating a new var. [mathieu bultel]</p></li>
+<li><p>Allow to disable the src conversion host in nbd migration case.
+[mathieu bultel]</p></li>
+<li><p>Make the nbd port count global to allow multiple instances for each
+migrations. [mathieu bultel]</p></li>
+<li><p>Only wait for conv host if exists. [mathieu bultel]</p></li>
+<li><p>Fix fuser instead of pkill command which cut the connection. [mathieu
+bultel]</p></li>
+<li><p>Use inventory info, check if disk if locked or in-used, use json
+output to check info. [mathieu bultel]</p></li>
+<li><p>Cherry pick and use fork to wait for the sdk tag. [mathieu bultel]</p></li>
+<li><p>Export collection path for e2e job. [mathieu bultel]</p></li>
+<li><p>Merge branch ‘main’ into sdk/fix. [mathieu bultel]</p></li>
+<li><p>Merge branch ‘main’ into flavor/extra/specs. [mathieu bultel]</p></li>
+<li><p>Swith to build image insteand of centos:stream. [mathieu bultel]</p></li>
+<li><p>Fetch flavor extra_specs for old cloud environment. [mathieu bultel]</p></li>
+<li><p>Pinning openstacksdk to 4.21.0.dev28 due to LP Bug. [mathieu bultel]</p></li>
+<li><p>Add builder image for downstream CI. [mathieu bultel]</p></li>
+<li><p>Fix make vendor link to make more robust. [mathieu bultel]</p></li>
+<li><p>Merge branch ‘main’ into run/build/aee. [mathieu bultel]</p></li>
+<li><p>Fix Automation Hub certification lint and sanity checks for 1.0.5
+(#791) [mathieu bultel, vyvle]</p>
+<p>Ship .ansible-lint in the collection build so var-naming and vendored
+module rules apply during import. Add ansible-core 2.21 sanity ignores,
+update test config and Makefile for collection-layout testing, and fix
+Jinja spacing and pylint issues found by ansible-lint 24+.</p>
+</li>
+<li><p>Make build before creating AEE. [mathieu bultel]</p></li>
 <li><p>Add ignore 2.20 for sanity tests. [mathieu bultel]</p></li>
 <li><p>Pin ruff version to 0.16.8. [mathieu bultel]</p></li>
 <li><p>Move certification workflow to main. [mathieu bultel]</p></li>
