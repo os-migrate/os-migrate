@@ -4,6 +4,12 @@ Changelog
 
 (unreleased)
 ------------
+- Remove useless comments. [mathieu bultel]
+- Remove upper constraints for openstacksdk. [mathieu bultel]
+
+
+1.1.0 (2026-11-06)
+------------------
 
 Fix
 ~~~
