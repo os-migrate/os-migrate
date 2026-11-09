@@ -1,7 +1,4 @@
 openstacksdk>=4.21.0
-# python-openstackclient 8+ requires openstacksdk >= 4.20, which conflicts with
-# the pinned 4.5.1 above (import fails: openstack.accelerator.v2 has no Proxy).
-# The 7.x series is the last line compatible with openstacksdk 4.5.
 python-openstackclient>=7.0
 passlib>=1.7.4
 PyYAML>=6.0.2
