@@ -19,16 +19,18 @@ on:
       - main
     types: [opened, synchronize, reopened, labeled]
 
-concurrency:
-  group: awx-test-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
-
 jobs:
   awx:
     name: os-migrate through AWX
     if: >-
       github.event_name != 'pull_request' ||
       contains(github.event.pull_request.labels.*.name, 'test-awx')
+    # Job-level (not workflow-level) concurrency: a run whose job is skipped by
+    # the `if` above (e.g. the "opened" event of a PR labelled afterwards) must
+    # not join the group, or it cancels the real run.
+    concurrency:
+      group: awx-test-${{ github.event.pull_request.number || github.ref }}
+      cancel-in-progress: true
     runs-on: ubuntu-24.04
     timeout-minutes: 90
     env:
