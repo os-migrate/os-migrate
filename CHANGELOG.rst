@@ -43,3 +43,8 @@ This project follows a simple changelog to satisfy collection metadata validatio
 - Bump openstacksdk to 4.21.0 and Ansible cloud collection to 2.6.0
 - Switch functional tests to gostack and add unit tests
 - Fix Automation Hub certification lint and sanity checks
+
+1.1.1
+-----
+
+- Remove upper version constraint for openstacksdk
