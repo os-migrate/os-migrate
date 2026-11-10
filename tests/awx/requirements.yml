@@ -1,0 +1,6 @@
+---
+# Collections needed on the CI runner (not in the EE) to drive AWX.
+# awx.awx matches the AWX version deployed by the pinned AWX Operator.
+collections:
+  - name: awx.awx
+    version: 24.6.1

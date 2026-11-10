@@ -1,0 +1,11 @@
+---
+# Minimal AWX instance for CI. Applied after the operator CRDs exist.
+apiVersion: awx.ansible.com/v1beta1
+kind: AWX
+metadata:
+  name: awx
+  namespace: awx
+spec:
+  service_type: nodeport
+  nodeport_port: 30080
+  admin_user: admin

@@ -1,0 +1,72 @@
+---
+# Playbook run by AWX (job template "os-migrate CI tenant migration").
+#
+# It runs the os-migrate playbooks shipped in the collection installed in the
+# execution environment, the same way an AWX user would. Export and import run
+# in the same job because every AWX job gets a fresh pod: a data dir written
+# by one job is gone by the time a second job starts.
+#
+# The "os-migrate clouds" AWX credential type injects the src/dst auth fields
+# as flat extra vars (credential injectors can only inject strings), so the
+# first play rebuilds the os_migrate_src_auth / os_migrate_dst_auth dicts the
+# os-migrate roles expect.
+
+- name: Prepare os-migrate variables from the AWX credential
+  hosts: migrator
+  gather_facts: false
+  tasks:
+    - name: Build os_migrate_src_auth and os_migrate_dst_auth
+      ansible.builtin.set_fact:
+        os_migrate_src_auth:
+          auth_url: "{{ osm_awx_src_auth_url }}"
+          username: "{{ osm_awx_src_username }}"
+          password: "{{ osm_awx_src_password }}"
+          project_name: "{{ osm_awx_src_project_name }}"
+          user_domain_name: "{{ osm_awx_src_user_domain_name }}"
+          project_domain_name: "{{ osm_awx_src_project_domain_name }}"
+        os_migrate_dst_auth:
+          auth_url: "{{ osm_awx_dst_auth_url }}"
+          username: "{{ osm_awx_dst_username }}"
+          password: "{{ osm_awx_dst_password }}"
+          project_name: "{{ osm_awx_dst_project_name }}"
+          user_domain_name: "{{ osm_awx_dst_user_domain_name }}"
+          project_domain_name: "{{ osm_awx_dst_project_domain_name }}"
+      no_log: true
+
+    - name: Create os_migrate_data_dir
+      ansible.builtin.file:
+        path: "{{ os_migrate_data_dir }}"
+        state: directory
+        mode: "0700"
+
+- name: Export networks
+  ansible.builtin.import_playbook: os_migrate.os_migrate.export_networks
+- name: Export subnets
+  ansible.builtin.import_playbook: os_migrate.os_migrate.export_subnets
+- name: Export security groups
+  ansible.builtin.import_playbook: os_migrate.os_migrate.export_security_groups
+- name: Export security group rules
+  ansible.builtin.import_playbook: os_migrate.os_migrate.export_security_group_rules
+
+- name: Check the exported resource files
+  hosts: migrator
+  gather_facts: false
+  tasks:
+    - name: Read exported networks
+      ansible.builtin.set_fact:
+        _osm_networks: "{{ (lookup('file', os_migrate_data_dir ~ '/networks.yml') | from_yaml)['resources'] }}"
+
+    - name: Check osm_net was exported
+      ansible.builtin.assert:
+        that:
+          - _osm_networks | selectattr('params.name', 'equalto', 'osm_net') | list | length == 1
+        fail_msg: "osm_net missing from {{ os_migrate_data_dir }}/networks.yml"
+
+- name: Import networks
+  ansible.builtin.import_playbook: os_migrate.os_migrate.import_networks
+- name: Import subnets
+  ansible.builtin.import_playbook: os_migrate.os_migrate.import_subnets
+- name: Import security groups
+  ansible.builtin.import_playbook: os_migrate.os_migrate.import_security_groups
+- name: Import security group rules
+  ansible.builtin.import_playbook: os_migrate.os_migrate.import_security_group_rules

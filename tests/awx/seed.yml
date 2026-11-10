@@ -1,0 +1,38 @@
+---
+# Seed the source gostack cloud with the resources the AWX job migrates.
+# Runs on the CI runner (not through AWX).
+- name: Seed the source cloud
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Create osm_net
+      os_migrate.os_migrate.network:
+        auth: "{{ os_migrate_src_auth }}"
+        name: osm_net
+        state: present
+
+    - name: Create osm_subnet
+      os_migrate.os_migrate.subnet:
+        auth: "{{ os_migrate_src_auth }}"
+        state: present
+        network_name: osm_net
+        name: osm_subnet
+        cidr: 192.168.0.0/24
+        dns_nameservers:
+          - 8.8.8.8
+
+    - name: Create osm_security_group
+      os_migrate.os_migrate.security_group:
+        auth: "{{ os_migrate_src_auth }}"
+        state: present
+        name: osm_security_group
+        description: OSM security group
+
+    - name: Create a rule in osm_security_group
+      os_migrate.os_migrate.security_group_rule:
+        auth: "{{ os_migrate_src_auth }}"
+        security_group: osm_security_group
+        protocol: tcp
+        port_range_min: 80
+        port_range_max: 80
+        remote_ip_prefix: 0.0.0.0/0
