@@ -4,6 +4,7 @@ Changelog
 
 (unreleased)
 ------------
+- Bump minor release to 1.1.1. [mathieu bultel]
 - Remove useless comments. [mathieu bultel]
 - Remove upper constraints for openstacksdk. [mathieu bultel]
 
