@@ -4,6 +4,7 @@ Changelog
 
 (unreleased)
 ------------
+- Bump minor release to 1.1.2. [Claude Opus 4.6, David Peacock]
 - Merge branch 'main' into nbd/copy/fix. [mathieu bultel]
 - Merge branch 'main' into nbd/copy/fix. [mathieu bultel]
 - Reject disk.config from migration for ephemeral disks. [mathieu
