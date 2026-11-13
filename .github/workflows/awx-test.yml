@@ -1,0 +1,144 @@
+name: Functional tests (AWX)
+
+# Runs os-migrate through AWX: AWX (via the AWX Operator) on a kind cluster,
+# the os-migrate execution environment built from this commit, and two gostack
+# fake-OpenStack clouds. See tests/awx/README.md.
+#
+# Bringing AWX up takes ~10 minutes, so this does not run on every PR push:
+# add the "test-awx" label to a PR to run it there.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * *"
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened, labeled]
+
+jobs:
+  awx:
+    name: os-migrate through AWX
+    if: >-
+      github.event_name != 'pull_request' ||
+      contains(github.event.pull_request.labels.*.name, 'test-awx')
+    # Job-level (not workflow-level) concurrency: a run whose job is skipped by
+    # the `if` above (e.g. the "opened" event of a PR labelled afterwards) must
+    # not join the group, or it cancels the real run.
+    concurrency:
+      group: awx-test-${{ github.event.pull_request.number || github.ref }}
+      cancel-in-progress: true
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      ANSIBLE_COLLECTIONS_PATH: ${{ github.workspace }}
+      COLLECTION_DIR: ansible_collections/os_migrate/os_migrate
+      OSM_AWX_ARTIFACTS: ${{ github.workspace }}/awx-artifacts
+      OSM_AWX_EE_IMAGE: os-migrate-aee:ci
+      OSM_AWX_CLUSTER: osm-awx
+    steps:
+      - name: Free disk space
+        run: |
+          df -h /
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc \
+            /usr/local/.ghcup /opt/hostedtoolcache/CodeQL /usr/local/share/boost
+          sudo docker image prune --all --force
+          df -h /
+
+      - name: Check out os-migrate (as a collection)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          path: ${{ env.COLLECTION_DIR }}
+
+      - name: Install kind
+        uses: helm/kind-action@v1
+        with:
+          install_only: true
+
+      - name: Create kind cluster and install AWX Operator
+        working-directory: ${{ env.COLLECTION_DIR }}
+        run: bash tests/awx/deploy-awx.sh install
+
+      - name: Check out gostack (main)
+        uses: actions/checkout@v4
+        with:
+          repository: os-migrate/gostack
+          ref: main
+          path: gostack
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: gostack/go.mod
+          cache-dependency-path: gostack/go.sum
+
+      - name: Build gostack
+        working-directory: gostack
+        run: go build -v -o bin/fake-openstack ./cmd/fake-openstack
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        working-directory: ${{ env.COLLECTION_DIR }}
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt ansible-core ansible-builder
+
+      - name: Link vendored openstack.cloud modules
+        working-directory: ${{ env.COLLECTION_DIR }}
+        run: make vendor-links
+
+      - name: Install collections used on the runner
+        working-directory: ${{ env.COLLECTION_DIR }}
+        run: |
+          ansible-galaxy collection install \
+            plugins/modules/_vendor/openstack.cloud \
+            -p "${ANSIBLE_COLLECTIONS_PATH}" --force
+          ansible-galaxy collection install -r tests/awx/requirements.yml \
+            -p "${ANSIBLE_COLLECTIONS_PATH}"
+
+      - name: Build the collection
+        working-directory: ${{ env.COLLECTION_DIR }}
+        run: ansible-galaxy collection build --force
+
+      - name: Build the execution environment and load it into kind
+        working-directory: ${{ env.COLLECTION_DIR }}/aee
+        run: |
+          ansible-builder build --container-runtime docker --tag "${OSM_AWX_EE_IMAGE}"
+          kind load docker-image "${OSM_AWX_EE_IMAGE}" --name "${OSM_AWX_CLUSTER}"
+          df -h /
+
+      - name: Wait for AWX
+        working-directory: ${{ env.COLLECTION_DIR }}
+        run: |
+          bash tests/awx/deploy-awx.sh wait
+          echo "::add-mask::$(bash tests/awx/deploy-awx.sh password)"
+
+      - name: Run AWX functional tests
+        working-directory: ${{ env.COLLECTION_DIR }}
+        env:
+          GOSTACK_BIN: ${{ github.workspace }}/gostack/bin/fake-openstack
+          OSM_AWX_SCM_URL: ${{ github.server_url }}/${{ github.repository }}
+          OSM_AWX_SCM_BRANCH: ${{ github.sha }}
+        run: bash tests/awx/run-awx.sh
+
+      - name: Collect diagnostics
+        if: failure()
+        working-directory: ${{ env.COLLECTION_DIR }}
+        run: bash tests/awx/collect-logs.sh "${OSM_AWX_ARTIFACTS}"
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: awx-test-artifacts
+          path: ${{ env.OSM_AWX_ARTIFACTS }}
+          if-no-files-found: ignore
+          retention-days: 7
