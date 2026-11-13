@@ -4,6 +4,14 @@ Changelog
 
 (unreleased)
 ------------
+- Merge branch 'main' into nbd/copy/fix. [mathieu bultel]
+- Merge branch 'main' into nbd/copy/fix. [mathieu bultel]
+- Reject disk.config from migration for ephemeral disks. [mathieu
+  bultel]
+
+
+1.1.1 (2026-11-10)
+------------------
 - Bump minor release to 1.1.1. [mathieu bultel]
 - Remove useless comments. [mathieu bultel]
 - Remove upper constraints for openstacksdk. [mathieu bultel]
