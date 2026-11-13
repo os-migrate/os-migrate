@@ -44,6 +44,11 @@ This project follows a simple changelog to satisfy collection metadata validatio
 - Switch functional tests to gostack and add unit tests
 - Fix Automation Hub certification lint and sanity checks
 
+1.1.2
+-----
+
+- Reject disk.config from migration for ephemeral disks
+
 1.1.1
 -----
 
