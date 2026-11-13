@@ -6,3 +6,13 @@ os_migrate_workload_stop_before_migration: false
 os_migrate_workloads_data_copy: true
 os_migrate_workloads_filter:
   - regex: .*
+
+# nbdcopy tuning for nbdkit-direct transfers. Leave null to use nbdcopy's own
+# defaults (4 connections, 64 requests, 256K request size). Raising these can
+# markedly speed up large, incompressible disks, but needs qemu-nbd to accept
+# multiple connections (see os_migrate_nbdkit_shared_connections in the
+# import_from_hypervisor role). Test per environment; if the network link is the
+# ceiling, more connections will not help.
+os_migrate_nbdcopy_connections: null
+os_migrate_nbdcopy_requests: null
+os_migrate_nbdcopy_request_size: null

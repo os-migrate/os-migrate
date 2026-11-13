@@ -250,6 +250,34 @@ def build_volume_map_from_nbdkit_disks(ser_server):
     return volume_map
 
 
+def build_volume_map(conn, ser_server):
+    """Build the nbdkit-direct volume map for `ser_server`.
+
+    Priority: nbdkit_disks (actual sizes from import_from_hypervisor) > attached
+    volumes > ephemeral (flavor-based estimate). Every entry produced here is
+    served by an nbdkit export on the hypervisor and must be copied with nbdcopy,
+    so each is tagged ``transfer_method: "nbdcopy"``. That tag lets the transfer
+    step mix these local disks with Cinder volumes exported through the source
+    conversion host (which default to the qemu-img/conversion-host path) in a
+    single workload migration.
+    """
+    migration_params = ser_server.migration_params()
+    nbdkit_disks = migration_params.get("nbdkit_disks")
+    volumes = ser_server.params().get("volumes", [])
+
+    if nbdkit_disks:
+        volume_map = build_volume_map_from_nbdkit_disks(ser_server)
+    elif volumes:
+        volume_map = build_volume_map_from_volumes(ser_server)
+    else:
+        volume_map = build_volume_map_from_ephemeral(conn, ser_server)
+
+    for mapping in volume_map.values():
+        mapping["transfer_method"] = "nbdcopy"
+
+    return volume_map
+
+
 def run_module():
     argument_spec = os_auth.openstack_full_argument_spec(
         data=dict(type="dict", required=True),
@@ -265,37 +293,12 @@ def run_module():
 
     conn = os_auth.get_connection(module)
     ser_server = server.Server.from_data(module.params["data"])
-    params = ser_server.params()
-    migration_params = ser_server.migration_params()
 
     # Generate transfer UUID
     transfer_uuid = str(uuid.uuid4())
 
-    # Build volume map
-    # Priority: nbdkit_disks (actual sizes) > volumes > ephemeral (flavor-based)
-    nbdkit_disks = migration_params.get("nbdkit_disks")
-    volumes = params.get("volumes", [])
-
-    if nbdkit_disks:
-        # Use actual disk sizes from nbdkit_disks (populated by import_from_hypervisor)
-        volume_map = build_volume_map_from_nbdkit_disks(ser_server)
-    elif volumes:
-        # Instance has attached volumes
-        volume_map = build_volume_map_from_volumes(ser_server)
-    else:
-        # Instance uses ephemeral disks - estimate from flavor
-        volume_map = build_volume_map_from_ephemeral(conn, ser_server)
-
-    # Every disk produced here is served by an nbdkit export on the hypervisor
-    # and must be copied with nbdcopy. Tagging each entry lets the transfer step
-    # mix these local disks with Cinder volumes exported through the source
-    # conversion host (which default to the qemu-img/conversion-host path) in a
-    # single workload migration.
-    for mapping in volume_map.values():
-        mapping["transfer_method"] = "nbdcopy"
-
     result["transfer_uuid"] = transfer_uuid
-    result["volume_map"] = volume_map
+    result["volume_map"] = build_volume_map(conn, ser_server)
 
     module.exit_json(**result)
 
