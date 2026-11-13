@@ -40,12 +40,36 @@
       ansible.builtin.set_fact:
         _osm_sgs: "{{ _dst_sgs.openstack_security_groups | selectattr('name', 'equalto', 'osm_security_group') | list }}"
 
-    - name: Check osm_security_group was imported exactly once, with its tcp/80 rule
+    - name: Check osm_security_group was imported exactly once
       ansible.builtin.assert:
         that:
           - _osm_sgs | length == 1
-          - (_osm_sgs[0].security_group_rules
+        fail_msg: "Expected 1 osm_security_group in dst, found: {{ _osm_sgs }}"
+
+    # Query the rules endpoint instead of reading security_group_rules from the
+    # security group list: gostack only embeds rules in single-group GETs (its
+    # list response always has security_group_rules: []).
+    - name: Get a token for the destination cloud
+      os_migrate.os_migrate.auth:
+        auth: "{{ os_migrate_dst_auth }}"
+      register: _dst_token
+      no_log: true
+
+    - name: List the rules of osm_security_group in the destination
+      ansible.builtin.uri:
+        url: >-
+          {{ os_migrate_dst_auth.auth_url | regex_replace('/v3/?$', '') }}/v2.0/security-group-rules?security_group_id={{ _osm_sgs[0].id }}
+        headers:
+          X-Auth-Token: "{{ _dst_token.auth_token }}"
+        return_content: true
+      register: _dst_rules
+
+    - name: Check the tcp/80 rule was imported exactly once
+      ansible.builtin.assert:
+        that:
+          - (_dst_rules.json.security_group_rules
              | selectattr('protocol', 'equalto', 'tcp')
              | selectattr('port_range_min', 'equalto', 80)
+             | selectattr('port_range_max', 'equalto', 80)
              | list | length) == 1
-        fail_msg: "Unexpected osm_security_group in dst: {{ _osm_sgs }}"
+        fail_msg: "Unexpected rules for osm_security_group in dst: {{ _dst_rules.json.security_group_rules }}"
