@@ -4,6 +4,39 @@ Changelog
 
 (unreleased)
 ------------
+- Merge branch 'main' into func/awx-tests. [mathieu bultel]
+- Merge branch 'main' into func/awx-tests. [mathieu bultel]
+- AWX tests: verify security group rules via the rules endpoint.
+  [mathieu bultel]
+
+  gostack only embeds security_group_rules in single security group GETs;
+  its list response always returns an empty list, so checking the rules
+  from os_security_groups_info always failed even though the rule had been
+  imported. Query /v2.0/security-group-rules?security_group_id=... on the
+  destination cloud instead, which works on gostack and real Neutron.
+- AWX tests: move concurrency to the job level. [mathieu bultel]
+
+  A workflow-level concurrency group is joined by every run, including
+  runs whose job is then skipped by the test-awx label condition. On PR
+  #820 the delayed run for the 'opened' event (no label yet) cancelled
+  the run triggered by adding the label, then skipped its own job.
+- Add AWX functional tests. [mathieu bultel]
+
+  Run os-migrate through AWX in CI: AWX (AWX Operator 2.19.1) on a kind
+  cluster, the os-migrate execution environment built from the commit under
+  test, and two gostack fake-OpenStack clouds reachable from the job pods.
+
+  The tests seed the source cloud, configure AWX with awx.awx (EE, custom
+  "os-migrate clouds" credential type, project, inventory, job template),
+  run a tenant migration job template twice and check the destination
+  cloud has each resource exactly once.
+
+  The workflow runs on pushes to main, nightly, on manual dispatch and on
+  pull requests labelled "test-awx".
+
+
+1.1.2 (2026-11-13)
+------------------
 - Bump minor release to 1.1.2. [Claude Opus 4.6, David Peacock]
 - Merge branch 'main' into nbd/copy/fix. [mathieu bultel]
 - Merge branch 'main' into nbd/copy/fix. [mathieu bultel]
