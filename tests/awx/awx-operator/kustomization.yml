@@ -1,0 +1,17 @@
+---
+# AWX Operator, pinned. Keep the ref and the image tag in sync, and bump the
+# awx.awx collection version in tests/awx/requirements.yml along with them.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: awx
+resources:
+  - github.com/ansible/awx-operator/config/default?ref=2.19.1
+images:
+  - name: quay.io/ansible/awx-operator
+    newTag: 2.19.1
+  # 2.19.1 references gcr.io/kubebuilder/kube-rbac-proxy, which no longer
+  # exists (gcr.io kubebuilder images were removed in 2025). Use the same
+  # image from the upstream project's own registry.
+  - name: gcr.io/kubebuilder/kube-rbac-proxy
+    newName: quay.io/brancz/kube-rbac-proxy
+    newTag: v0.15.0

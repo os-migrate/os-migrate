@@ -1,0 +1,75 @@
+---
+# Check the destination gostack cloud after the AWX job(s) ran.
+# The job runs twice, so "exactly one" also checks the import is idempotent.
+- name: Verify the destination cloud
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Look up osm_net in the destination
+      os_migrate.os_migrate.networks_info:
+        auth: "{{ os_migrate_dst_auth }}"
+        name: osm_net
+      register: _dst_networks
+
+    - name: Check osm_net was imported exactly once
+      ansible.builtin.assert:
+        that:
+          - _dst_networks.networks | length == 1
+        fail_msg: "Expected 1 osm_net in dst, found {{ _dst_networks.networks | length }}"
+
+    - name: Look up osm_subnet in the destination
+      os_migrate.os_migrate.subnets_info:
+        auth: "{{ os_migrate_dst_auth }}"
+        name: osm_subnet
+      register: _dst_subnets
+
+    - name: Check osm_subnet was imported exactly once, with its CIDR
+      ansible.builtin.assert:
+        that:
+          - _dst_subnets.subnets | length == 1
+          - _dst_subnets.subnets[0].cidr == '192.168.0.0/24'
+          - _dst_subnets.subnets[0].network_id == _dst_networks.networks[0].id
+        fail_msg: "Unexpected osm_subnet in dst: {{ _dst_subnets.subnets }}"
+
+    - name: Look up security groups in the destination
+      os_migrate.os_migrate.os_security_groups_info:
+        auth: "{{ os_migrate_dst_auth }}"
+      register: _dst_sgs
+
+    - name: Select osm_security_group
+      ansible.builtin.set_fact:
+        _osm_sgs: "{{ _dst_sgs.openstack_security_groups | selectattr('name', 'equalto', 'osm_security_group') | list }}"
+
+    - name: Check osm_security_group was imported exactly once
+      ansible.builtin.assert:
+        that:
+          - _osm_sgs | length == 1
+        fail_msg: "Expected 1 osm_security_group in dst, found: {{ _osm_sgs }}"
+
+    # Query the rules endpoint instead of reading security_group_rules from the
+    # security group list: gostack only embeds rules in single-group GETs (its
+    # list response always has security_group_rules: []).
+    - name: Get a token for the destination cloud
+      os_migrate.os_migrate.auth:
+        auth: "{{ os_migrate_dst_auth }}"
+      register: _dst_token
+      no_log: true
+
+    - name: List the rules of osm_security_group in the destination
+      ansible.builtin.uri:
+        url: >-
+          {{ os_migrate_dst_auth.auth_url | regex_replace('/v3/?$', '') }}/v2.0/security-group-rules?security_group_id={{ _osm_sgs[0].id }}
+        headers:
+          X-Auth-Token: "{{ _dst_token.auth_token }}"
+        return_content: true
+      register: _dst_rules
+
+    - name: Check the tcp/80 rule was imported exactly once
+      ansible.builtin.assert:
+        that:
+          - (_dst_rules.json.security_group_rules
+             | selectattr('protocol', 'equalto', 'tcp')
+             | selectattr('port_range_min', 'equalto', 80)
+             | selectattr('port_range_max', 'equalto', 80)
+             | list | length) == 1
+        fail_msg: "Unexpected rules for osm_security_group in dst: {{ _dst_rules.json.security_group_rules }}"

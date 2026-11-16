@@ -1,0 +1,22 @@
+---
+# Launch the tenant migration job template twice: the first run migrates the
+# resources, the second one checks re-running the migration through AWX
+# succeeds (verify.yml then checks nothing was duplicated).
+- name: Run the os-migrate AWX jobs
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Create the artifacts directory
+      ansible.builtin.file:
+        path: "{{ osm_awx_artifacts_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Run the tenant migration job template
+      ansible.builtin.include_tasks: tasks/launch_job.yml
+      vars:
+        osm_awx_job_template: os-migrate CI tenant migration
+        osm_awx_run_label: "tenant-run{{ osm_awx_run }}"
+      loop: [1, 2]
+      loop_control:
+        loop_var: osm_awx_run

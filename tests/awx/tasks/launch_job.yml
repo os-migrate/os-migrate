@@ -1,0 +1,41 @@
+---
+# Launch an AWX job template, wait for it, save its output as an artifact and
+# fail if the job did not succeed.
+# Vars: osm_awx_job_template, osm_awx_run_label, osm_awx_artifacts_dir
+- name: Launch {{ osm_awx_job_template }} ({{ osm_awx_run_label }})
+  awx.awx.job_launch:
+    job_template: "{{ osm_awx_job_template }}"
+  register: _osm_job
+
+- name: Wait for job {{ _osm_job.id }}
+  awx.awx.job_wait:
+    job_id: "{{ _osm_job.id }}"
+    timeout: 1800
+  register: _osm_job_wait
+  ignore_errors: true
+
+- name: Fetch the output of job {{ _osm_job.id }}
+  ansible.builtin.uri:
+    url: "{{ lookup('ansible.builtin.env', 'CONTROLLER_HOST') }}/api/v2/jobs/{{ _osm_job.id }}/stdout/?format=txt"
+    user: "{{ lookup('ansible.builtin.env', 'CONTROLLER_USERNAME') }}"
+    password: "{{ lookup('ansible.builtin.env', 'CONTROLLER_PASSWORD') }}"
+    force_basic_auth: true
+    validate_certs: false
+    return_content: true
+  register: _osm_job_stdout
+
+- name: Save the output of job {{ _osm_job.id }}
+  ansible.builtin.copy:
+    content: "{{ _osm_job_stdout.content }}"
+    dest: "{{ osm_awx_artifacts_dir }}/awx-job-{{ osm_awx_run_label }}.txt"
+    mode: "0644"
+
+- name: Check job {{ _osm_job.id }} succeeded
+  ansible.builtin.assert:
+    that:
+      - _osm_job_wait is succeeded
+      - _osm_job_wait.status | default('') == 'successful'
+    fail_msg: >-
+      AWX job {{ _osm_job.id }} ({{ osm_awx_run_label }}) ended with status
+      '{{ _osm_job_wait.status | default('unknown') }}'. Last lines of its output:
+      {{ _osm_job_stdout.content.splitlines()[-40:] | join('\n') }}

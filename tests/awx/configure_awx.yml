@@ -1,0 +1,148 @@
+---
+# Configure AWX for the os-migrate functional tests, the way a user would:
+# execution environment, credential type + credential, project, inventory
+# and job template. Runs on the CI runner and talks to AWX with awx.awx,
+# which reads CONTROLLER_HOST / CONTROLLER_USERNAME / CONTROLLER_PASSWORD.
+- name: Configure AWX
+  hosts: localhost
+  gather_facts: false
+  vars:
+    osm_awx_org: Default
+    osm_awx_prefix: os-migrate CI
+  tasks:
+    - name: Register the os-migrate execution environment
+      awx.awx.execution_environment:
+        name: "{{ osm_awx_prefix }} EE"
+        organization: "{{ osm_awx_org }}"
+        image: "{{ osm_awx_ee_image }}"
+        # The image is side-loaded into kind, there is no registry to pull from.
+        pull: never
+        state: present
+
+    - name: Create the "os-migrate clouds" credential type
+      awx.awx.credential_type:
+        name: os-migrate clouds
+        kind: cloud
+        description: Source and destination OpenStack clouds for os-migrate
+        inputs:
+          fields:
+            - {id: src_auth_url, type: string, label: Source auth URL}
+            - {id: src_username, type: string, label: Source username}
+            - {id: src_password, type: string, label: Source password, secret: true}
+            - {id: src_project_name, type: string, label: Source project}
+            - {id: src_user_domain_name, type: string, label: Source user domain, default: Default}
+            - {id: src_project_domain_name, type: string, label: Source project domain, default: Default}
+            - {id: dst_auth_url, type: string, label: Destination auth URL}
+            - {id: dst_username, type: string, label: Destination username}
+            - {id: dst_password, type: string, label: Destination password, secret: true}
+            - {id: dst_project_name, type: string, label: Destination project}
+            - {id: dst_user_domain_name, type: string, label: Destination user domain, default: Default}
+            - {id: dst_project_domain_name, type: string, label: Destination project domain, default: Default}
+          required:
+            - src_auth_url
+            - src_username
+            - src_password
+            - src_project_name
+            - dst_auth_url
+            - dst_username
+            - dst_password
+            - dst_project_name
+        # These templates are rendered by AWX at job launch, not by this play.
+        injectors:
+          extra_vars:
+            osm_awx_src_auth_url: !unsafe "{{ src_auth_url }}"
+            osm_awx_src_username: !unsafe "{{ src_username }}"
+            osm_awx_src_password: !unsafe "{{ src_password }}"
+            osm_awx_src_project_name: !unsafe "{{ src_project_name }}"
+            osm_awx_src_user_domain_name: !unsafe "{{ src_user_domain_name }}"
+            osm_awx_src_project_domain_name: !unsafe "{{ src_project_domain_name }}"
+            osm_awx_dst_auth_url: !unsafe "{{ dst_auth_url }}"
+            osm_awx_dst_username: !unsafe "{{ dst_username }}"
+            osm_awx_dst_password: !unsafe "{{ dst_password }}"
+            osm_awx_dst_project_name: !unsafe "{{ dst_project_name }}"
+            osm_awx_dst_user_domain_name: !unsafe "{{ dst_user_domain_name }}"
+            osm_awx_dst_project_domain_name: !unsafe "{{ dst_project_domain_name }}"
+        state: present
+
+    - name: Create the gostack clouds credential
+      awx.awx.credential:
+        name: "{{ osm_awx_prefix }} gostack clouds"
+        organization: "{{ osm_awx_org }}"
+        credential_type: os-migrate clouds
+        inputs:
+          src_auth_url: "{{ os_migrate_src_auth.auth_url }}"
+          src_username: "{{ os_migrate_src_auth.username }}"
+          src_password: "{{ os_migrate_src_auth.password }}"
+          src_project_name: "{{ os_migrate_src_auth.project_name }}"
+          src_user_domain_name: "{{ os_migrate_src_auth.user_domain_name }}"
+          src_project_domain_name: "{{ os_migrate_src_auth.project_domain_name }}"
+          dst_auth_url: "{{ os_migrate_dst_auth.auth_url }}"
+          dst_username: "{{ os_migrate_dst_auth.username }}"
+          dst_password: "{{ os_migrate_dst_auth.password }}"
+          dst_project_name: "{{ os_migrate_dst_auth.project_name }}"
+          dst_user_domain_name: "{{ os_migrate_dst_auth.user_domain_name }}"
+          dst_project_domain_name: "{{ os_migrate_dst_auth.project_domain_name }}"
+        update_secrets: true
+        state: present
+
+    - name: Create the project (this repository at the commit under test)
+      awx.awx.project:
+        name: "{{ osm_awx_prefix }} project"
+        organization: "{{ osm_awx_org }}"
+        scm_type: git
+        scm_url: "{{ osm_awx_scm_url }}"
+        scm_branch: "{{ osm_awx_scm_branch }}"
+        # Also fetch PR refs so a PR merge commit (github.sha on pull_request
+        # events, including PRs from forks) can be checked out.
+        scm_refspec: "+refs/pull/*:refs/remotes/origin/pull/*"
+        scm_update_on_launch: false
+        wait: true
+        update_project: true
+        timeout: 600
+        state: present
+
+    - name: Create the inventory
+      awx.awx.inventory:
+        name: "{{ osm_awx_prefix }} inventory"
+        organization: "{{ osm_awx_org }}"
+        state: present
+
+    - name: Create the localhost host
+      awx.awx.host:
+        name: localhost
+        inventory: "{{ osm_awx_prefix }} inventory"
+        variables:
+          ansible_connection: local
+          ansible_python_interpreter: /usr/bin/python3
+        state: present
+
+    - name: Create the migrator group
+      awx.awx.group:
+        name: migrator
+        inventory: "{{ osm_awx_prefix }} inventory"
+        hosts:
+          - localhost
+        state: present
+
+    - name: Create the tenant migration job template
+      awx.awx.job_template:
+        name: "{{ osm_awx_prefix }} tenant migration"
+        organization: "{{ osm_awx_org }}"
+        project: "{{ osm_awx_prefix }} project"
+        inventory: "{{ osm_awx_prefix }} inventory"
+        playbook: tests/awx/project/migrate_tenant.yml
+        execution_environment: "{{ osm_awx_prefix }} EE"
+        credentials:
+          - "{{ osm_awx_prefix }} gostack clouds"
+        extra_vars:
+          os_migrate_data_dir: /tmp/os-migrate-data
+          os_migrate_src_region_name: RegionOne
+          os_migrate_dst_region_name: RegionOne
+          os_migrate_networks_filter:
+            - regex: "^osm_"
+          os_migrate_subnets_filter:
+            - regex: "^osm_"
+          os_migrate_security_groups_filter:
+            - regex: "^osm_"
+        verbosity: 1
+        state: present
