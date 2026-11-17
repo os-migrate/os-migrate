@@ -122,9 +122,6 @@ VENDOR_DIR         := plugins/modules/_vendor
 UPSTREAM_REPO      := $(VENDOR_DIR)/openstack.cloud
 UPSTREAM_MODULES   := $(UPSTREAM_REPO)/plugins/modules
 UPSTREAM_UTILS     := $(UPSTREAM_REPO)/plugins/module_utils
-# Symlink targets must be relative to the link location (plugins/modules/ or plugins/module_utils/).
-VENDOR_MODULE_LINK_SRC := _vendor/openstack.cloud/plugins/modules
-VENDOR_UTIL_LINK_SRC   := ../modules/_vendor/openstack.cloud/plugins/module_utils
 
 # Latest stable release:
 OS_CLOUD_VERSION   ?= 2.6.0
@@ -135,7 +132,7 @@ VENDORED_MODULES := auth compute_flavor compute_flavor_info floating_ip identity
 	project_info role_assignment router security_group security_group_rule server \
 	server_action server_info server_volume subnet subnets_info volume volume_info
 
-VENDORED_MODULE_UTILS := openstack ironic
+VENDORED_MODULE_UTILS := openstack ironic resource
 
 # Sanity test excludes for vendored OpenStack modules and upstream sources.
 VENDORED_SANITY_EXCLUDES := \
@@ -176,24 +173,28 @@ vendor-import: vendor-clean
 		git fetch --tags && \
 		git checkout $(OS_CLOUD_VERSION)
 
-# Link vendored modules and module_utils.
+# Copy vendored modules and module_utils into the collection.
+# They are written as real files (not symlinks into _vendor/), so the built
+# collection is self-contained and plugins/modules/_vendor/ can be left out of
+# the tarball (see build_ignore in galaxy.yml). Modules are rewritten to use
+# os-migrate's copies of the openstack.cloud module_utils and doc fragment.
+# "rm -f" first: writing through a leftover symlink would modify _vendor/.
 vendor-links: vendor-import
-	@echo "--- Creating symlinks for vendored modules ---"
-	@# Symlink Modules
+	@echo "--- Copying vendored modules ---"
 	@for mod in $(VENDORED_MODULES); do \
-		ln -sf $(VENDOR_MODULE_LINK_SRC)/$$mod.py plugins/modules/$$mod.py; \
-		echo "Linked module: os_migrate.os_migrate.$$mod"; \
+		rm -f plugins/modules/$$mod.py; \
+		sed -e 's/ansible_collections\.openstack\.cloud\.plugins\.module_utils\./ansible_collections.os_migrate.os_migrate.plugins.module_utils./g' \
+			-e 's/^\( *\)- openstack\.cloud\.openstack$$/\1- os_migrate.os_migrate.openstack/' \
+			$(UPSTREAM_MODULES)/$$mod.py > plugins/modules/$$mod.py; \
+		echo "Vendored module: os_migrate.os_migrate.$$mod"; \
 	done
-	@# Fix for the specific 'openstack' namespace import
-	@echo "--- Fixing openstack namespace imports in modules ---"
-	@for mod in $(VENDORED_MODULES); do \
-		sed -i 's/ansible_collections\.openstack\.cloud\.plugins\.module_utils\.openstack/ansible_collections.os_migrate.os_migrate.plugins.module_utils.openstack/g' plugins/modules/$$mod.py; \
-	done
-	@# Symlink Module Utils
-	@echo "--- Linking upstream module_utils ---"
+	@echo "--- Copying vendored module_utils ---"
 	@for util in $(VENDORED_MODULE_UTILS); do \
-		ln -sf $(VENDOR_UTIL_LINK_SRC)/$$util.py plugins/module_utils/$$util.py; \
-		echo "Linked module_util: os_migrate.os_migrate.$$util"; \
+		rm -f plugins/module_utils/$$util.py; \
+		sed -e 's/ansible_collections\.openstack\.cloud\.plugins\.module_utils\./ansible_collections.os_migrate.os_migrate.plugins.module_utils./g' \
+			-e "s/collection_name='openstack\.cloud'/collection_name='os_migrate.os_migrate'/g" \
+			$(UPSTREAM_UTILS)/$$util.py > plugins/module_utils/$$util.py; \
+		echo "Vendored module_util: os_migrate.os_migrate.$$util"; \
 	done
 
 # Clean vender symlinks and module_utils.

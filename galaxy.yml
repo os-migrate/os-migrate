@@ -29,6 +29,10 @@ build_ignore:
   - .vscode
   - .idea
   - .ansible-lint-ignore
+  # Upstream openstack.cloud checkout used by `make vendor-links`; only the
+  # vendored modules copied into plugins/ are shipped.
+  - plugins/modules/_vendor
+  - .gitmodules
   - aee
   - scripts
   - Makefile
