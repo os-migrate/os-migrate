@@ -4,6 +4,21 @@ Changelog
 
 (unreleased)
 ------------
+- Address partner certification review items. [mathieu bultel]
+
+  - .ansible-lint: stop excluding all of tests/ so tests/sanity/ignore-*.txt
+    are validated by sanity[cannot-ignore]; exclude only tests/integration,
+    tests/unit and the CI-only tests/func, tests/e2e and tests/awx.
+  - .ansible-lint: drop the plugins/ exclusions (vendored openstack.cloud
+    modules); certification does not allow excluding content directories.
+    The Makefile already excludes them on the ansible-lint command line, and
+    now also excludes plugins/modules/_vendor/.
+  - .ansible-lint: enable no-log-password as a warning.
+  - Remove tests/sanity/ignore-2.15.txt (requires_ansible is >=2.16.0).
+  - README: align Python requirements with requirements.txt (openstacksdk
+    >= 4.21.0, add jmespath) and merge the two "Related Information"
+    sections.
+  - CHANGELOG: list 1.1.1 before 1.1.2.
 - Merge branch 'main' into func/awx-tests. [mathieu bultel]
 - Merge branch 'main' into func/awx-tests. [mathieu bultel]
 - AWX tests: verify security group rules via the rules endpoint.
