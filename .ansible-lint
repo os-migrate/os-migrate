@@ -5,40 +5,27 @@ skip_list:
   - 'var-naming[no-role-prefix]'  # Variables names from within roles should use role_name_ as a prefix
 exclude_paths:
   - ".ansible/"
-  - "tests/"
   - ".venv/"
-  - "plugins/modules/_vendor/"
-  # Vendored OpenStack modules (symlinked from openstack.cloud at build time)
-  - "plugins/modules/auth.py"
-  - "plugins/modules/compute_flavor.py"
-  - "plugins/modules/compute_flavor_info.py"
-  - "plugins/modules/floating_ip.py"
-  - "plugins/modules/identity_domain.py"
-  - "plugins/modules/identity_role.py"
-  - "plugins/modules/identity_user.py"
-  - "plugins/modules/identity_user_info.py"
-  - "plugins/modules/image.py"
-  - "plugins/modules/image_info.py"
-  - "plugins/modules/keypair.py"
-  - "plugins/modules/network.py"
-  - "plugins/modules/networks_info.py"
-  - "plugins/modules/port.py"
-  - "plugins/modules/project.py"
-  - "plugins/modules/project_info.py"
-  - "plugins/modules/role_assignment.py"
-  - "plugins/modules/router.py"
-  - "plugins/modules/security_group.py"
-  - "plugins/modules/security_group_rule.py"
-  - "plugins/modules/server.py"
-  - "plugins/modules/server_action.py"
-  - "plugins/modules/server_info.py"
-  - "plugins/modules/server_volume.py"
-  - "plugins/modules/subnet.py"
-  - "plugins/modules/subnets_info.py"
-  - "plugins/modules/volume.py"
-  - "plugins/modules/volume_info.py"
-  - "plugins/module_utils/openstack.py"
-  - "plugins/module_utils/ironic.py"
+  # Only test code is excluded; tests/sanity/ stays in scope so that
+  # sanity[cannot-ignore] validates the tests/sanity/ignore-*.txt entries.
+  - "tests/integration/"
+  - "tests/unit/"
+  # Functional / end-to-end test playbooks, run in CI against gostack, a
+  # migration lab or AWX; they are not part of the collection's content.
+  - "tests/func/"
+  - "tests/e2e/"
+  - "tests/awx/"
+# The vendored openstack.cloud modules (plugins/modules/<name>.py symlinks and
+# plugins/modules/_vendor/) only exist after `make vendor-links`; the Makefile
+# excludes them on the command line (ANSIBLE_LINT_VENDORED_EXCLUDES) so that no
+# content directory is excluded here.
+
+# Opt-in rule, recommended for certified content: flag tasks that may log
+# passwords. Kept as a warning so it does not block CI.
+enable_list:
+  - no-log-password
+warn_list:
+  - no-log-password
 
 # When vendor symlinks are not materialized in the checkout,
 # ansible-lint cannot resolve these collection modules.

@@ -37,10 +37,11 @@ a command fails, you can retry with the same command.
 - **Ansible**: 2.16.0 or higher
 - **Python**: 3.10 or higher
 - **Python Dependencies**: See `requirements.txt` for runtime dependencies including:
-  - openstacksdk >= 4.5.0
+  - openstacksdk >= 4.21.0
   - python-openstackclient >= 7.0
   - passlib >= 1.7.4
   - PyYAML >= 6.0.2
+  - jmespath >= 1.0.0 (required by the `os_migrate.os_migrate.json_query` filter)
 - **Binary Dependencies**: See `bindep.txt` for system package requirements
 
 
@@ -252,11 +253,6 @@ OS_MIGRATE_E2E_TEST_ARGS='-e @/root/os_migrate/local/custom-config.yaml' ./toolb
 ```
 
 
-## Related Information
-
-For more useful information see; optional tags/variables to add to run a migration [end-to-end](https://os-migrate.github.io/os-migrate/devel/dev-env-setup.html#optional-tags-to-pass-to-e2e-tests), demo on using os-migrate [here](https://www.youtube.com/watch?v=1AQKTcZi85A) and streamlining [VM Migrations](https://www.redhat.com/en/events/webinar/stream-os-migrate) on Red Hat OpenStack.
-
-
 ## Contributing
 As an open source project, OS Migrate welcomes contributions from the community at large. The following guide provides information on how to add a new role to the project and where additional testing or documentation artifacts should be added. This isn't an exhaustive reference and is a living document subject to change as needed when the project formalizes any practice or pattern. See the
 [OS Migrate developer documentation](https://os-migrate.github.io/os-migrate/devel/README.html).
@@ -294,7 +290,9 @@ For community users who obtained this collection from Galaxy or GitHub, changelo
 
 ## Related Information
 
-For detailed guides, prerequisites, and troubleshooting, please see the [OS Migrate Documentation](https://os-migrate.github.io/documentation/).
+- For detailed guides, prerequisites, and troubleshooting, please see the [OS Migrate Documentation](https://os-migrate.github.io/documentation/).
+- Optional tags and variables to run a migration [end-to-end](https://os-migrate.github.io/os-migrate/devel/dev-env-setup.html#optional-tags-to-pass-to-e2e-tests).
+- A [demo of os-migrate](https://www.youtube.com/watch?v=1AQKTcZi85A) and the webinar on streamlining [VM Migrations](https://www.redhat.com/en/events/webinar/stream-os-migrate) on Red Hat OpenStack.
 
 ## License Information
 

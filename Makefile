@@ -143,10 +143,12 @@ VENDORED_SANITY_EXCLUDES := \
 	$(foreach mod,$(VENDORED_MODULES),--exclude plugins/modules/$(mod).py ) \
 	$(foreach util,$(VENDORED_MODULE_UTILS),--exclude plugins/module_utils/$(util).py )
 
-# Ansible-lint CLI excludes for the same vendored content (exclude_paths in
-# .ansible-lint does not reliably skip Python module files in ansible-lint 24+).
+# Ansible-lint CLI excludes for the same vendored content. They are kept out of
+# .ansible-lint on purpose: partner certification does not allow exclude_paths
+# to exclude content directories such as plugins/.
 ANSIBLE_LINT_VENDORED_EXCLUDES := \
 	--exclude .ansible/collections/ \
+	--exclude plugins/modules/_vendor/ \
 	$(foreach mod,$(VENDORED_MODULES),--exclude plugins/modules/$(mod).py ) \
 	$(foreach util,$(VENDORED_MODULE_UTILS),--exclude plugins/module_utils/$(util).py )
 
