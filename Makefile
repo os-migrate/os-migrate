@@ -122,12 +122,10 @@ VENDOR_DIR         := plugins/modules/_vendor
 UPSTREAM_REPO      := $(VENDOR_DIR)/openstack.cloud
 UPSTREAM_MODULES   := $(UPSTREAM_REPO)/plugins/modules
 UPSTREAM_UTILS     := $(UPSTREAM_REPO)/plugins/module_utils
-# Symlink targets must be relative to the link location (plugins/modules/ or plugins/module_utils/).
-VENDOR_MODULE_LINK_SRC := _vendor/openstack.cloud/plugins/modules
-VENDOR_UTIL_LINK_SRC   := ../modules/_vendor/openstack.cloud/plugins/module_utils
 
 # Latest stable release:
 OS_CLOUD_VERSION   ?= 2.6.0
+OS_CLOUD_REPO      ?= https://github.com/openstack/ansible-collections-openstack.git
 
 # List of required modules from vendor openstack.cloud collection.
 VENDORED_MODULES := auth compute_flavor compute_flavor_info floating_ip identity_domain identity_role \
@@ -135,7 +133,10 @@ VENDORED_MODULES := auth compute_flavor compute_flavor_info floating_ip identity
 	project_info role_assignment router security_group security_group_rule server \
 	server_action server_info server_volume subnet subnets_info volume volume_info
 
-VENDORED_MODULE_UTILS := openstack ironic
+# module_utils copied from openstack.cloud. Upstream's resource.py (StateMachine,
+# used by the identity_* modules) is vendored as openstack_resource.py because
+# os-migrate already has its own, unrelated plugins/module_utils/resource.py.
+VENDORED_MODULE_UTILS := openstack ironic openstack_resource
 
 # Sanity test excludes for vendored OpenStack modules and upstream sources.
 VENDORED_SANITY_EXCLUDES := \
@@ -154,53 +155,69 @@ ANSIBLE_LINT_VENDORED_EXCLUDES := \
 
 .PHONY: vendor-import vendor-links vendor-clean
 
-# Import vendor openstack.cloud collection.
+# Fetch the upstream openstack.cloud collection at $(OS_CLOUD_VERSION).
+# This is a plain clone into the gitignored $(VENDOR_DIR), not a git submodule:
+# nothing is added to this repository's index or .gitmodules, and no submodule
+# state under .git/modules can get out of sync and break the build.
+# An existing checkout is reused only if it is a repository of its own: an
+# empty or stale directory would otherwise make the git commands below run
+# against the os-migrate repository itself.
 vendor-import: vendor-clean
-	@echo "--- Initializing OpenStack upstream submodule at version $(OS_CLOUD_VERSION) ---"
-	@mkdir -p $(VENDOR_DIR)
-	@# Check for an actual git repo, not just the directory: an uninitialized
-	@# submodule leaves the path present-but-empty, which would make a plain
-	@# "[ ! -d ]" guard skip setup and then run git against the parent repo.
-	@if [ ! -e "$(UPSTREAM_REPO)/.git" ]; then \
-		if git config --file .gitmodules --get submodule.$(UPSTREAM_REPO).url >/dev/null 2>&1; then \
-			echo "Initializing registered submodule..."; \
-			git submodule update --init $(UPSTREAM_REPO); \
-		else \
-			echo "Adding submodule..."; \
-			git submodule add https://github.com/openstack/ansible-collections-openstack.git $(UPSTREAM_REPO); \
-		fi \
-	fi
+	@echo "--- Fetching openstack.cloud $(OS_CLOUD_VERSION) into $(UPSTREAM_REPO) ---"
+	@# "|| true": these probes fail when there is no checkout yet, which must not
+	@# abort the recipe under .SHELLFLAGS -e (GNU make >= 3.82, e.g. in CI).
+	@top="$$(git -C "$(UPSTREAM_REPO)" rev-parse --show-toplevel 2>/dev/null || true)"; \
+	here="$$(cd "$(UPSTREAM_REPO)" 2>/dev/null && pwd -P || true)"; \
+	if [ -z "$$top" ] || [ "$$top" != "$$here" ]; then \
+		rm -rf "$(UPSTREAM_REPO)" && mkdir -p "$(VENDOR_DIR)" && \
+		git -c advice.detachedHead=false clone --quiet --depth 1 --branch "$(OS_CLOUD_VERSION)" "$(OS_CLOUD_REPO)" "$(UPSTREAM_REPO)" || exit 1; \
+	else \
+		git -C "$(UPSTREAM_REPO)" fetch --quiet --depth 1 origin tag "$(OS_CLOUD_VERSION)" && \
+		git -C "$(UPSTREAM_REPO)" -c advice.detachedHead=false checkout --quiet "$(OS_CLOUD_VERSION)" || exit 1; \
+	fi; \
+	echo "openstack.cloud checked out at $$(git -C "$(UPSTREAM_REPO)" describe --tags)"
 
-	@echo "Checking out tag $(OS_CLOUD_VERSION)..."
-	@cd $(UPSTREAM_REPO) && \
-		git fetch --tags && \
-		git checkout $(OS_CLOUD_VERSION)
-
-# Link vendored modules and module_utils.
+# Copy vendored modules and module_utils into the collection.
+# They are written as real files (not symlinks into _vendor/), so the built
+# collection is self-contained and plugins/modules/_vendor/ can be left out of
+# the tarball (see build_ignore in galaxy.yml). Modules are rewritten to use
+# os-migrate's copies of the openstack.cloud module_utils and doc fragment.
+# "rm -f" first: writing through a leftover symlink would modify _vendor/.
 vendor-links: vendor-import
-	@echo "--- Creating symlinks for vendored modules ---"
-	@# Symlink Modules
+	@echo "--- Copying vendored modules ---"
 	@for mod in $(VENDORED_MODULES); do \
-		ln -sf $(VENDOR_MODULE_LINK_SRC)/$$mod.py plugins/modules/$$mod.py; \
-		echo "Linked module: os_migrate.os_migrate.$$mod"; \
+		rm -f plugins/modules/$$mod.py; \
+		sed -e 's/ansible_collections\.openstack\.cloud\.plugins\.module_utils\.resource import/ansible_collections.os_migrate.os_migrate.plugins.module_utils.openstack_resource import/g' \
+			-e 's/ansible_collections\.openstack\.cloud\.plugins\.module_utils\./ansible_collections.os_migrate.os_migrate.plugins.module_utils./g' \
+			-e 's/^\( *\)- openstack\.cloud\.openstack$$/\1- os_migrate.os_migrate.openstack/' \
+			$(UPSTREAM_MODULES)/$$mod.py > plugins/modules/$$mod.py || exit 1; \
+		echo "Vendored module: os_migrate.os_migrate.$$mod"; \
 	done
-	@# Fix for the specific 'openstack' namespace import
-	@echo "--- Fixing openstack namespace imports in modules ---"
-	@for mod in $(VENDORED_MODULES); do \
-		sed -i 's/ansible_collections\.openstack\.cloud\.plugins\.module_utils\.openstack/ansible_collections.os_migrate.os_migrate.plugins.module_utils.openstack/g' plugins/modules/$$mod.py; \
-	done
-	@# Symlink Module Utils
-	@echo "--- Linking upstream module_utils ---"
+	@echo "--- Copying vendored module_utils ---"
 	@for util in $(VENDORED_MODULE_UTILS); do \
-		ln -sf $(VENDOR_UTIL_LINK_SRC)/$$util.py plugins/module_utils/$$util.py; \
-		echo "Linked module_util: os_migrate.os_migrate.$$util"; \
+		src=$$util; [ "$$util" = openstack_resource ] && src=resource; \
+		rm -f plugins/module_utils/$$util.py; \
+		sed -e 's/ansible_collections\.openstack\.cloud\.plugins\.module_utils\.resource import/ansible_collections.os_migrate.os_migrate.plugins.module_utils.openstack_resource import/g' \
+			-e 's/ansible_collections\.openstack\.cloud\.plugins\.module_utils\./ansible_collections.os_migrate.os_migrate.plugins.module_utils./g' \
+			-e "s/collection_name='openstack\.cloud'/collection_name='os_migrate.os_migrate'/g" \
+			$(UPSTREAM_UTILS)/$$src.py > plugins/module_utils/$$util.py || exit 1; \
+		echo "Vendored module_util: os_migrate.os_migrate.$$util"; \
 	done
 
-# Clean vender symlinks and module_utils.
+# Remove the vendored files generated by vendor-links. Refuses to delete a file
+# tracked by git, so a name clash in the lists above cannot delete os-migrate's
+# own code.
 vendor-clean:
-	@echo "--- Removing vendored symlinks ---"
-	@for mod in $(VENDORED_MODULES); do rm -f plugins/modules/$$mod.py; done
-	@for util in $(VENDORED_MODULE_UTILS); do rm -f plugins/module_utils/$$util.py; done
+	@echo "--- Removing vendored modules and module_utils ---"
+	@files="$(foreach mod,$(VENDORED_MODULES),plugins/modules/$(mod).py) \
+		$(foreach util,$(VENDORED_MODULE_UTILS),plugins/module_utils/$(util).py)"; \
+	for f in $$files; do \
+		if git ls-files --error-unmatch "$$f" >/dev/null 2>&1; then \
+			echo "ERROR: $$f is tracked by git, refusing to delete it as vendored code" >&2; \
+			exit 1; \
+		fi; \
+	done; \
+	rm -f $$files
 	@rm -rf plugins/module_utils/openstack/cloud
 
 
