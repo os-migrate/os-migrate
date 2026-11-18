@@ -279,7 +279,7 @@ this:
 
 .. code:: yaml
 
-   os_migrate_version: 1.1.2
+   os_migrate_version: 1.1.3
    resources:
    - _info:
        attachments: []
