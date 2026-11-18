@@ -17,3 +17,5 @@ tests/output/
 os_migrate-os_migrate-*
 .ansible
 aee/context/
+# Upstream openstack.cloud checkout created by `make vendor-import`
+plugins/modules/_vendor/
