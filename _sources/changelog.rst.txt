@@ -4,6 +4,7 @@ Changelog
 
 (unreleased)
 ------------
+- Bump minor release to 1.1.3. [mathieu bultel]
 - Fix make build with vendor modules. [mathieu bultel]
 - Add vendor modules to the galaxy build. [mathieu bultel]
 - Address partner certification review items. [mathieu bultel]
