@@ -53,3 +53,11 @@ This project follows a simple changelog to satisfy collection metadata validatio
 -----
 
 - Reject disk.config from migration for ephemeral disks
+
+1.1.3
+-----
+
+- Ship the vendored openstack.cloud modules in the collection; 1.1.1 and 1.1.2 were built without them, breaking roles such as export_networks
+- Make the vendored modules self-contained (copied as files, module_utils imports and doc fragment rewritten) and fetch openstack.cloud with a plain git clone instead of a submodule
+- Address partner certification review items (ansible-lint scope, no-log-password, README requirements, CHANGELOG order, drop ansible-core 2.15 sanity ignores)
+- Add AWX functional tests
