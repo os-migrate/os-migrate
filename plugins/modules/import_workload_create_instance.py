@@ -215,14 +215,20 @@ from ansible_collections.os_migrate.os_migrate.plugins.module_utils import os_au
 from ansible_collections.os_migrate.os_migrate.plugins.module_utils import server
 
 
+def build_create_instance_result(sdk_server, dst_ser_server):
+    """Build the Ansible module result for a newly created destination server."""
+    result = dict(changed=False)
+    if sdk_server:
+        result["changed"] = True
+        result["server"] = dst_ser_server.data
+        result["server_id"] = sdk_server.id
+    return result
+
+
 def run_module():
     argument_spec = os_auth.openstack_full_argument_spec(
         data=dict(type="dict", required=True),
         block_device_mapping=dict(type="list", required=True, elements="dict"),
-    )
-
-    result = dict(
-        changed=False,
     )
 
     module = AnsibleModule(
@@ -239,11 +245,7 @@ def run_module():
     sdk_server = conn.compute.wait_for_server(sdk_server, failures=["ERROR"], wait=600)
     dst_ser_server = server.Server.from_sdk(conn, sdk_server)
 
-    if sdk_server:
-        result["changed"] = True
-        result["server"] = dst_ser_server.data
-        result["server_id"] = sdk_server.id
-
+    result = build_create_instance_result(sdk_server, dst_ser_server)
     module.exit_json(**result)
 
 

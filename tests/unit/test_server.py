@@ -223,7 +223,8 @@ class TestServer(unittest.TestCase):
         )
         self.assertEqual(sdk_params["image_id"], "uuid-test-image")
 
-    def test_block_device_mapping_boot_disk_nocopy(self):
+    def test_block_device_mapping_boot_disk_copy_with_boot_volume(self):
+        """Copy mode when the boot disk is already a volume in the mapping."""
         srv = Server.from_sdk(None, sdk_server())
         srv.migration_params()["boot_disk_copy"] = True
         sdk_params = srv.sdk_params(None)
@@ -408,3 +409,23 @@ class TestServer(unittest.TestCase):
             mocked_find_keypair.assert_not_called()
             # Assert that the errors list is empty
             self.assertFalse(errors)
+
+    def test_update_migration_params_floating_ip_mode_invalid(self):
+        srv = Server.from_sdk(None, sdk_server())
+        with self.assertRaises(exc.UnexpectedChoice):
+            srv.update_migration_params({"floating_ip_mode": "bogus"})
+
+    def test_update_migration_params_floating_ip_mode_ok(self):
+        srv = Server.from_sdk(None, sdk_server())
+        srv.update_migration_params({"floating_ip_mode": "skip"})
+        self.assertEqual(srv.migration_params()["floating_ip_mode"], "skip")
+
+    def test_update_migration_params_data_copy_invalid_type(self):
+        srv = Server.from_sdk(None, sdk_server())
+        with self.assertRaises(exc.InvalidInputType):
+            srv.update_migration_params({"data_copy": "yes"})
+
+    def test_update_migration_params_data_copy_ok(self):
+        srv = Server.from_sdk(None, sdk_server())
+        srv.update_migration_params({"data_copy": False})
+        self.assertFalse(srv.migration_params()["data_copy"])

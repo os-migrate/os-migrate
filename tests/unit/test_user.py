@@ -118,3 +118,15 @@ class TestUser(unittest.TestCase):
         self.assertEqual(sdk_params["email"], "test-user@domain.com")
         self.assertEqual(sdk_params["is_enabled"], True)
         self.assertEqual(sdk_params["domain_id"], "uuid-test-domain")
+        self.assertEqual(sdk_params["default_project_id"], "uuid-test-project")
+        self.assertNotIn("domain_ref", sdk_params)
+        self.assertNotIn("default_project_ref", sdk_params)
+        self.assertNotIn("id", sdk_params)
+
+    def test_needs_update(self):
+        usr1 = User.from_data(serialized_user())
+        usr2 = User.from_data(serialized_user())
+        usr2.info()["domain_id"] = "other-domain-id"
+        self.assertFalse(usr1._needs_update(usr2))
+        usr2.params()["email"] = "other@domain.com"
+        self.assertTrue(usr1._needs_update(usr2))

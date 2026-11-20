@@ -73,6 +73,49 @@ except ImportError:
     HAS_YAML = False
 
 
+def apply_nbdkit_disks(data, instance_id, nbdkit_disks):
+    """Update nbdkit_disks on a workload resource in an in-memory file struct.
+
+    Returns:
+        True if a matching workload was found and updated, False otherwise.
+    """
+    for resource in data.get("resources", []):
+        if resource.get("_info", {}).get("id") == instance_id:
+            if "_migration_params" not in resource:
+                resource["_migration_params"] = {}
+            resource["_migration_params"]["nbdkit_disks"] = nbdkit_disks
+            return True
+    return False
+
+
+def update_workload_file(path, instance_id, nbdkit_disks):
+    """Read workloads YAML, apply nbdkit_disks, write back.
+
+    Returns:
+        True if the file was updated.
+
+    Raises:
+        OSError/IOError: on read/write failure
+        ValueError: if instance_id is not found
+        Exception: if YAML cannot be parsed (propagated from yaml.safe_load)
+    """
+    with open(path, "r", encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+
+    if data is None:
+        data = {}
+
+    if not apply_nbdkit_disks(data, instance_id, nbdkit_disks):
+        raise ValueError(
+            f"Workload with instance_id {instance_id} not found in {path}"
+        )
+
+    with open(path, "w", encoding="utf-8") as f:
+        yaml.dump(data, f, default_flow_style=False, sort_keys=False)
+
+    return True
+
+
 def run_module():
     argument_spec = dict(
         path=dict(type="str", required=True),
@@ -92,36 +135,14 @@ def run_module():
     instance_id = module.params["instance_id"]
     nbdkit_disks = module.params["nbdkit_disks"]
 
-    # Read the workloads file
     try:
-        with open(path, "r", encoding="utf-8") as f:
-            data = yaml.safe_load(f)
+        update_workload_file(path, instance_id, nbdkit_disks)
+    except ValueError as e:
+        module.fail_json(msg=str(e))
     except Exception as e:
-        module.fail_json(msg=f"Failed to read workloads file: {str(e)}")
+        module.fail_json(msg=f"Failed to update workloads file: {str(e)}")
 
-    # Find and update the workload
-    found = False
-    for resource in data.get("resources", []):
-        if resource.get("_info", {}).get("id") == instance_id:
-            # Update migration_params with list of disks
-            if "_migration_params" not in resource:
-                resource["_migration_params"] = {}
-
-            resource["_migration_params"]["nbdkit_disks"] = nbdkit_disks
-            found = True
-            result["changed"] = True
-            break
-
-    if not found:
-        module.fail_json(msg=f"Workload with instance_id {instance_id} not found in {path}")
-
-    # Write back the file
-    try:
-        with open(path, "w", encoding="utf-8") as f:
-            yaml.dump(data, f, default_flow_style=False, sort_keys=False)
-    except Exception as e:
-        module.fail_json(msg=f"Failed to write workloads file: {str(e)}")
-
+    result["changed"] = True
     module.exit_json(**result)
 
 
