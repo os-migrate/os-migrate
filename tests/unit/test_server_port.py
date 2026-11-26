@@ -60,6 +60,13 @@ def sdk_server_port(**kwargs):
                 "ip_address": "192.168.0.12",
             }
         )
+    if kwargs.get("allowed_address_pairs"):
+        # deliberately unsorted, and with a MAC-less pair
+        sdk_params["allowed_address_pairs"] = [
+            {"ip_address": "192.168.0.201", "mac_address": "fa:16:3e:ab:cd:ef"},
+            {"ip_address": "192.168.0.200", "mac_address": None},
+            {"ip_address": "192.168.0.200", "mac_address": "fa:16:3e:ab:cd:ef"},
+        ]
     return openstack.network.v2.port.Port(**sdk_params)
 
 
@@ -143,7 +150,53 @@ class TestServerPort(unittest.TestCase):
             ],
         )
         self.assertEqual(params["network_ref"]["name"], "test-net")
+        self.assertEqual(params["allowed_address_pairs"], [])
         self.assertEqual(info["id"], "uuid-test-server-port")
+
+    def test_serialize_allowed_address_pairs(self):
+        sp = ServerPort.from_sdk(None, sdk_server_port(allowed_address_pairs=True))
+        params = sp.params()
+
+        # sorted by (ip_address, mac_address), MAC-less pair keeps no MAC key
+        self.assertEqual(
+            params["allowed_address_pairs"],
+            [
+                {"ip_address": "192.168.0.200"},
+                {"ip_address": "192.168.0.200", "mac_address": "fa:16:3e:ab:cd:ef"},
+                {"ip_address": "192.168.0.201", "mac_address": "fa:16:3e:ab:cd:ef"},
+            ],
+        )
+
+    def test_allowed_address_pairs_in_sdk_params(self):
+        sp = ServerPort.from_sdk(None, sdk_server_port(allowed_address_pairs=True))
+        sdk_params = sp._to_sdk_params(sp._refs_from_ser(None))
+
+        self.assertEqual(
+            sdk_params["allowed_address_pairs"],
+            sp.params()["allowed_address_pairs"],
+        )
+        self.assertEqual(sdk_params["mac_address"], "fa:16:3e:ab:cd:ef")
+
+    def test_empty_allowed_address_pairs_not_in_sdk_params(self):
+        # an empty list must not be serialized into the create_port call
+        sp = ServerPort.from_sdk(None, sdk_server_port())
+        sdk_params = sp._to_sdk_params(sp._refs_from_ser(None))
+
+        self.assertNotIn("allowed_address_pairs", sdk_params)
+
+    def test_missing_allowed_address_pairs_is_valid(self):
+        # export files written before allowed_address_pairs existed must
+        # keep validating and importing
+        sp = ServerPort.from_sdk(None, sdk_server_port())
+        del sp.params()["allowed_address_pairs"]
+
+        self.assertEqual(sp.data_errors(), [])
+        sdk_params = sp._to_sdk_params(sp._refs_from_ser(None))
+        self.assertNotIn("allowed_address_pairs", sdk_params)
+        self.assertEqual(
+            sp.nova_sdk_params(None),
+            {"uuid": "uuid-test-net", "fixed_ip": "192.168.0.11"},
+        )
 
     def test_nova_sdk_params(self):
         sp = ServerPort.from_sdk(None, sdk_server_port())
@@ -157,6 +210,13 @@ class TestServerPort(unittest.TestCase):
 
     def test_nova_sdk_params_too_many_ips(self):
         sp = ServerPort.from_sdk(None, sdk_server_port(too_many_ips=True))
+        with self.assertRaises(exc.InconsistentState):
+            sp.nova_sdk_params(None)
+
+    def test_nova_sdk_params_allowed_address_pairs(self):
+        # Nova cannot set allowed address pairs, refuse rather than
+        # silently dropping them.
+        sp = ServerPort.from_sdk(None, sdk_server_port(allowed_address_pairs=True))
         with self.assertRaises(exc.InconsistentState):
             sp.nova_sdk_params(None)
 

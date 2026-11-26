@@ -97,3 +97,44 @@ Workload migration parameters
    not match the floating IP address of the source server. (In most
    cases, the floating IP ranges of src/dst clouds don't overlap
    anyway.)
+
+-  ``port_creation_mode`` controls which service creates the ports of
+   the destination server:
+
+   -  ``nova`` (default): Nova creates the ports, OS Migrate only
+      passes it a network and a fixed IP address per port. This is the
+      simplest path, but most port properties cannot be requested this
+      way: the destination ports get freshly assigned MAC addresses,
+      and a port can only have a single fixed IP address.
+
+   -  ``neutron``: OS Migrate creates each port in Neutron first and
+      hands the resulting port IDs to Nova. This preserves the port's
+      MAC address, ``binding_vnic_type``, ``binding_profile`` and
+      allowed address pairs.
+
+Allowed address pairs
+---------------------
+
+The ``allowed_address_pairs`` of a server's ports are exported into the
+``ports`` section of the workload's ``params``, and recreated on the
+destination. They are typically used for VIPs managed by keepalived or
+VRRP, and for VMs routing traffic for addresses other than their own.
+
+Allowed address pairs can only be set when the port is created by
+Neutron, so a workload whose ports have allowed address pairs must be
+migrated with ``port_creation_mode: neutron``. Migrating it with the
+default ``nova`` mode fails rather than silently dropping the pairs.
+
+A pair may pin an IP address to a specific MAC address. OS Migrate
+exports the MAC address as-is, which is correct as long as the MAC
+addresses it refers to are themselves preserved — which
+``port_creation_mode: neutron`` does for the ports of the migrated
+server. If a pair refers to a MAC address which will not exist in the
+destination cloud, delete the ``mac_address`` key from that pair in the
+export file; Neutron then matches the pair on any MAC address.
+
+Note that OS Migrate does not reserve the addresses used in allowed
+address pairs. If a VIP address is not held by a port in the source
+cloud, nothing stops Neutron from allocating it to another server in
+the destination cloud. Create a port holding the address in the
+destination subnet if you need the address reserved.

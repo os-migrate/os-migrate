@@ -61,6 +61,30 @@ def _neutron_port_has_fixed_ip(sdk_port, ip):
     return False
 
 
+def _serialized_allowed_address_pairs(sdk_allowed_address_pairs):
+    """Normalize SDK allowed address pairs of a port into plain dicts.
+
+    A pair without a MAC address is kept MAC-less, which makes Neutron
+    match the pair on any MAC rather than pinning it to a MAC which may
+    not exist in the destination cloud.
+
+    Returns: list of dicts, sorted for stable serialization
+    """
+    pairs = []
+    for sdk_pair in sdk_allowed_address_pairs or []:
+        pair = {"ip_address": sdk_pair.get("ip_address")}
+        mac_address = sdk_pair.get("mac_address")
+        if mac_address:
+            pair["mac_address"] = mac_address
+        pairs.append(pair)
+    # Neutron doesn't guarantee a stable order, sort so that repeated
+    # exports of an unchanged port don't produce spurious diffs.
+    return sorted(
+        pairs,
+        key=lambda pair: (pair["ip_address"] or "", pair.get("mac_address") or ""),
+    )
+
+
 class ServerPort(osm_resource.Resource):
 
     resource_type = const.RES_TYPE_SERVER_PORT
@@ -75,11 +99,23 @@ class ServerPort(osm_resource.Resource):
         "fixed_ips_refs",
         "network_ref",
     ]
-    params_from_sdk = ["binding_profile", "binding_vnic_type", "mac_address"]
+    params_from_sdk = [
+        "binding_profile",
+        "binding_vnic_type",
+        "mac_address",
+    ]
+    # `allowed_address_pairs` is deliberately kept out of
+    # `params_from_sdk` (it is serialized by `from_sdk` instead) so that
+    # it isn't a required param. Export files written before this param
+    # existed would otherwise fail validation, and a port without the
+    # param simply has no pairs.
+    sdk_params_from_params = params_from_sdk + ["allowed_address_pairs"]
     sdk_params_from_refs = [
         "fixed_ips",
         "network_id",
     ]
+    # An empty list of pairs is equivalent to not asking for any.
+    skip_falsey_sdk_params = ["allowed_address_pairs"]
 
     @classmethod
     def from_sdk(cls, conn, sdk_resource):
@@ -89,6 +125,9 @@ class ServerPort(osm_resource.Resource):
             raise exc.UnexpectedValue(
                 "device_owner", "compute:*", sdk_resource["device_owner"]
             )
+        obj.params()["allowed_address_pairs"] = _serialized_allowed_address_pairs(
+            sdk_resource["allowed_address_pairs"]
+        )
         return obj
 
     def create_or_update(self, conn, filters=None):
@@ -101,6 +140,15 @@ class ServerPort(osm_resource.Resource):
 
     def nova_sdk_params(self, conn):
         refs = self._refs_from_ser(conn)
+
+        if self.params().get("allowed_address_pairs"):
+            message = (
+                "Port creation via Nova cannot set allowed address pairs, but on network "
+                f"'{refs['network_ref'].get('name', '')}' the port has these pairs: "
+                f"{self.params()['allowed_address_pairs']}. Use "
+                "'port_creation_mode: neutron' in the workload migration params."
+            )
+            raise exc.InconsistentState(message)
 
         if len(refs["fixed_ips"]) != 1:
             message = (
